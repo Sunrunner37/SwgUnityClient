@@ -1,0 +1,7 @@
+{
+ "name":"Swg.Client",
+ "rootNamespace":"Swg.Client",
+ "references":["UnityEngine.UI","Unity.InputSystem"],
+ "autoReferenced":true
+}
+

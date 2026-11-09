@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb4ba4a60b416f4f87e9117d7122be9, type: 3}
+  m_Name: Back
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.TreButtonAsset
+  atlasPath: texture/ui_rebel_final.dds
+  stylesPath: ui/ui_styles.inc
+  frameStyle: PrevFrame
+  frameState: default
+  size: {x: 158, y: 50}
+  frameTint: {r: 1, g: 1, b: 1, a: 1}
+  patches:
+  - sourceStart: {x: 186, y: 323}
+    sourceEnd: {x: 239, y: 339}
+    destination:
+      x: 21
+      y: 11
+      width: 53
+      height: 16
+    tint: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  - sourceStart: {x: 241, y: 323}
+    sourceEnd: {x: 242, y: 339}
+    destination:
+      x: 74
+      y: 11
+      width: 28
+      height: 16
+    tint: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  - sourceStart: {x: 241, y: 323}
+    sourceEnd: {x: 285, y: 339}
+    destination:
+      x: 102
+      y: 11
+      width: 44
+      height: 16
+    tint: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}

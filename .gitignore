@@ -112,3 +112,13 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Standalone C# compatibility checks
+/Tests/bin/
+/Tests/obj/
+
+# Analyzer tools and nested test projects
+/Tools/**/bin/
+/Tools/**/obj/
+/Tests/**/bin/
+/Tests/**/obj/
