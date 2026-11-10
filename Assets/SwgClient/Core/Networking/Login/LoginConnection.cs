@@ -1,3 +1,6 @@
+using Autofac;
+using Swg.Client.Core.Networking.Game.Packets.Session;
+using Swg.Client.Core.Networking.Game.Packets.Scene;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -7,12 +10,36 @@ using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Networking.Soe;
 using Swg.Client.Core.Networking.Login.Packets;
+using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Game.Packets;
 
 namespace Swg.Client.Core.Networking.Login
 {
     public sealed class LoginConnection : IDisposable
     {
         readonly CancellationTokenSource stop = new CancellationTokenSource();
+        readonly ConcurrentQueue<WorldSelection> selections = new ConcurrentQueue<WorldSelection>();
+        int sceneReadyRequested;
+        readonly struct WorldSelection
+        {
+            public readonly ulong CharacterId;
+            public readonly ILifetimeScope Services;
+            public WorldSelection(ulong characterId, ILifetimeScope services)
+            {
+                CharacterId = characterId;
+                Services = services;
+            }
+        }
+
+        public void SelectCharacter(ulong characterId, ILifetimeScope services)
+        {
+            if (characterId == 0 || services == null || stop.IsCancellationRequested)
+                throw new InvalidOperationException("No active connection for character selection.");
+            Interlocked.Exchange(ref sceneReadyRequested, 0);
+            selections.Enqueue(new WorldSelection(characterId, services));
+        }
+
+        public void ConfirmSceneReady() => Interlocked.Exchange(ref sceneReadyRequested, 1);
         public readonly ConcurrentQueue<ClientEvent> Events = new ConcurrentQueue<ClientEvent>();
         public LoginConnection(ClientSettings settings, string username, string password)
         {
@@ -56,7 +83,6 @@ namespace Swg.Client.Core.Networking.Login
                 }
 
                 var result = loginPacketCollector.Result;
-
                 try
                 {
                     Galaxy galaxy = result.Galaxies.FirstOrDefault(g => g.Status == LoginClusterStatusPacket.OnlineStatus && (config.GalaxyId == 0 || g.Id == config.GalaxyId));
@@ -101,12 +127,23 @@ namespace Swg.Client.Core.Networking.Login
                         }
 
                         Events.Enqueue(new ClientEvent { Admission = new Admission { AccountId = result.AccountId, Galaxy = galaxy, Characters = result.Characters, CanLogin = true, CanCreate = creationAllowed }, Status = "Connected to " + galaxy.Name });
+                        GamePacketRouter gamePackets = null;
                         while (!cancel.IsCancellationRequested)
                         {
+                            while (selections.TryDequeue(out var selection))
+                            {
+                                gamePackets = new GamePacketRouter(selection.Services);
+                                Progress("Loading selected character...");
+                                zone.SendData(new SelectCharacterPacket(selection.CharacterId));
+                            }
+
+                            if (gamePackets != null && Interlocked.Exchange(ref sceneReadyRequested, 0) != 0)
+                                zone.SendData(new CmdSceneReadyPacket());
                             foreach (var b in zone.Tick())
                             {
                                 if (ByteReader.At(b, sizeof(ushort)) == ErrorPacket.Opcode)
                                     throw ErrorPacket.ReadFrom(new ByteReader(b)).ToException();
+                                gamePackets?.Accept(b);
                             }
                         }
                     }

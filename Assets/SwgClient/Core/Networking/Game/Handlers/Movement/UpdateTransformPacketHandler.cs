@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Movement;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets;
@@ -8,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
     [Preserve]
     internal sealed class UpdateTransformPacketHandler : GamePacketHandler<UpdateTransformPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         public override uint Opcode => UpdateTransformPacket.Opcode;
 
         [Preserve]
-        public UpdateTransformPacketHandler(GameWorldState world) : base(UpdateTransformPacket.ReadFrom) => this.world = world;
+        public UpdateTransformPacketHandler(GameReplication replication) : base(UpdateTransformPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(UpdateTransformPacket packet)
         {
-            world.Commit(packet.ObjectId, new GameObjectUpdate { ParentId = 0, Position = packet.Position, Rotation = MovementReader.Heading(packet.Direction), MovementCounter = packet.MovementCounter });
+            replication.Commit(packet.ObjectId, new GameObjectUpdate { ParentId = 0, Position = packet.Position, Rotation = MovementReader.Heading(packet.Direction), MovementCounter = packet.MovementCounter });
         }
     }
 }

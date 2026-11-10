@@ -11,9 +11,7 @@ namespace Swg.Client.Core.Networking.Login
         LoginEnumClusterPacket clusters;
         LoginClusterStatusPacket status;
         EnumerateCharacterIdPacket characters;
-
         readonly HashSet<uint> received = new HashSet<uint>();
-
         public bool Finished
         {
             get
@@ -24,13 +22,13 @@ namespace Swg.Client.Core.Networking.Login
 
         public LoginResult Result
         {
-            get {
+            get
+            {
                 return new LoginResult(token, clusters, status, characters);
             }
         }
 
         readonly Dictionary<uint, Action<ByteReader>> requiredPackets;
-
         public LoginPacketCollector()
         {
             requiredPackets = new Dictionary<uint, Action<ByteReader>>
@@ -45,10 +43,8 @@ namespace Swg.Client.Core.Networking.Login
         public void Accept(byte[] bytes)
         {
             uint opcode = ByteReader.At(bytes, sizeof(ushort));
-
             if (opcode == ErrorPacket.Opcode)
                 throw ErrorPacket.ReadFrom(new ByteReader(bytes)).ToException();
-
             if (requiredPackets.TryGetValue(opcode, out var store))
             {
                 store(new ByteReader(bytes));

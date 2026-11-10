@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets;
@@ -8,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class SceneEndBaselinesPacketHandler : GamePacketHandler<SceneEndBaselinesPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         public override uint Opcode => SceneEndBaselinesPacket.Opcode;
 
         [Preserve]
-        public SceneEndBaselinesPacketHandler(GameWorldState world) : base(SceneEndBaselinesPacket.ReadFrom) => this.world = world;
+        public SceneEndBaselinesPacketHandler(GameReplication replication) : base(SceneEndBaselinesPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(SceneEndBaselinesPacket packet)
         {
-            world.Commit(packet.ObjectId, new GameObjectUpdate { BaselinesComplete = true });
+            replication.Commit(packet.ObjectId, new GameObjectUpdate { BaselinesComplete = true });
         }
     }
 }

@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets;
@@ -8,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class CmdSceneReadyPacketHandler : GamePacketHandler<CmdSceneReadyPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         public override uint Opcode => CmdSceneReadyPacket.Opcode;
 
         [Preserve]
-        public CmdSceneReadyPacketHandler(GameWorldState world) : base(CmdSceneReadyPacket.ReadFrom) => this.world = world;
+        public CmdSceneReadyPacketHandler(GameReplication replication) : base(CmdSceneReadyPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(CmdSceneReadyPacket packet)
         {
-            world.AcknowledgeSceneReady();
+            replication.AcknowledgeSceneReady();
         }
     }
 }

@@ -1,9 +1,12 @@
+using System.Linq;
+using Swg.Client.Core.World;
+using Swg.Client.Core.World.SceneObjects;
+
 namespace Swg.Client.Core.Networking.Game.Replication
 {
-    // A packet is fully decoded before these owned values are committed atomically.
     internal sealed class GameObjectUpdate
     {
-        public ulong? ParentId;
+        public ObjectId? ParentId;
         public uint? TemplateCrc;
         public UnityEngine.Vector3? Position;
         public UnityEngine.Quaternion? Rotation;
@@ -13,40 +16,55 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public bool? BaselinesComplete;
         public string Name;
         public byte[] Customization;
-        public GameEquipment[] Equipment;
+        public WorldEquipment[] Equipment;
         public string AlternateAppearance;
         public float? Height;
         public byte? Posture;
-        public void ApplyTo(GameObjectState target)
+        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None);
+
+        public GameObjectUpdate CopyForQueue()
         {
-            if (ParentId.HasValue)
-                target.ParentId = ParentId.Value;
+            var copy = (GameObjectUpdate)MemberwiseClone();
+            if (Customization != null)
+                copy.Customization = (byte[])Customization.Clone();
+            if (Equipment != null)
+                copy.Equipment = Equipment.Select(item => new WorldEquipment((byte[])item.Customization.Clone(), item.Arrangement, item.ObjectId, item.TemplateCrc)).ToArray();
+            return copy;
+        }
+
+        public void ApplyTo(SceneObject target)
+        {
             if (TemplateCrc.HasValue)
                 target.TemplateCrc = TemplateCrc.Value;
-            if (Position.HasValue)
-                target.Position = Position.Value;
-            if (Rotation.HasValue)
-                target.Rotation = Rotation.Value;
             if (Arrangement.HasValue)
                 target.Arrangement = Arrangement.Value;
-            if (MovementCounter.HasValue)
-                target.MovementCounter = MovementCounter.Value;
-            if (BaselineType.HasValue)
-                target.BaselineType = BaselineType.Value;
-            if (BaselinesComplete.HasValue)
-                target.BaselinesComplete = BaselinesComplete.Value;
             if (Name != null)
                 target.Name = Name;
-            if (Customization != null)
-                target.Customization = Customization;
-            if (Equipment != null)
-                target.Equipment = Equipment;
-            if (AlternateAppearance != null)
-                target.AlternateAppearance = AlternateAppearance;
-            if (Height.HasValue)
-                target.Height = Height.Value;
-            if (Posture.HasValue)
-                target.Posture = Posture.Value;
+            if (target is SpatialSceneObject spatial)
+            {
+                if (Position.HasValue)
+                    spatial.Position = Position.Value;
+                if (Rotation.HasValue)
+                    spatial.Rotation = Rotation.Value;
+                if (Height.HasValue)
+                    spatial.Scale = Height.Value;
+            }
+
+            if (target is TangibleSceneObject tangible)
+            {
+                if (Customization != null)
+                    tangible.Customization = Customization;
+                if (AlternateAppearance != null)
+                    tangible.AlternateAppearance = AlternateAppearance;
+            }
+
+            if (target is CreatureSceneObject creature)
+            {
+                if (Equipment != null)
+                    creature.Equipment = Equipment;
+                if (Posture.HasValue)
+                    creature.Posture = Posture.Value;
+            }
         }
     }
 }

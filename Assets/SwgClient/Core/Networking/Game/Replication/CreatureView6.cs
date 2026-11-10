@@ -1,3 +1,4 @@
+using Swg.Client.Core.World;
 using Swg.Client.Core.Assets.Formats.Binary;
 
 namespace Swg.Client.Core.Networking.Game.Replication
@@ -21,9 +22,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicationReader.SkipVector(reader, sizeof(uint)); // Maximum HAM.
             int count = reader.Count();
             reader.U32(); // Equipment update counter.
-            var equipment = new GameEquipment[count];
+            var equipment = new WorldEquipment[count];
             for (int i = 0; i < count; i++)
-                equipment[i] = new GameEquipment(ReplicationReader.Customization(reader), reader.U32(), reader.U64(), reader.U32());
+                equipment[i] = new WorldEquipment(ReplicationReader.Customization(reader), reader.U32(), reader.U64(), reader.U32());
             string appearance = reader.Ascii();
             reader.Byte(); // Frozen.
             return new GameObjectUpdate

@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Replication;
 using UnityEngine;
 using System;
@@ -13,14 +14,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
     [Preserve]
     internal sealed class DeltasPacketHandler : GamePacketHandler<DeltasPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<ushort, ByteReader, GameObjectUpdate, bool>> deltaFields;
         public override uint Opcode => DeltasPacket.Opcode;
 
         [Preserve]
-        public DeltasPacketHandler(GameWorldState world) : base(DeltasPacket.ReadFrom)
+        public DeltasPacketHandler(GameReplication replication) : base(DeltasPacket.ReadFrom)
         {
-            this.world = world;
+            this.replication = replication;
             deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<ushort, ByteReader, GameObjectUpdate, bool>>
             {
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadDeltaField,
@@ -47,7 +48,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             }
 
             ReplicationReader.RequireEnd(reader);
-            world.Commit(packet.ObjectId, update);
+            replication.Commit(packet.ObjectId, update);
         }
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Autofac;
 using System;
 using System.Collections.Generic;
 using Swg.Client.Core.Assets.Formats.Binary;
@@ -9,11 +10,11 @@ namespace Swg.Client.Core.Networking.Game
     public sealed class GamePacketRouter
     {
         readonly Dictionary<uint, IGamePacketHandler> routes;
-        public GamePacketRouter(GameWorldState world)
+        public GamePacketRouter(ILifetimeScope services)
         {
-            if (world == null)
-                throw new ArgumentNullException(nameof(world));
-            routes = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IGamePacketHandler>(world), handler => handler.Opcode);
+            if (services == null)
+                throw new ArgumentNullException(nameof(services));
+            routes = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IGamePacketHandler>(services), handler => handler.Opcode);
         }
 
         public void Accept(byte[] packet)

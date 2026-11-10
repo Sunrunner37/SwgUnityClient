@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Replication;
 using UnityEngine;
 using System;
@@ -12,14 +13,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
     [Preserve]
     internal sealed class BaselinesPacketHandler : GamePacketHandler<BaselinesPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<ByteReader, GameObjectUpdate>> baselines;
         public override uint Opcode => BaselinesPacket.Opcode;
 
         [Preserve]
-        public BaselinesPacketHandler(GameWorldState world) : base(BaselinesPacket.ReadFrom)
+        public BaselinesPacketHandler(GameReplication replication) : base(BaselinesPacket.ReadFrom)
         {
-            this.world = world;
+            this.replication = replication;
             baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, GameObjectUpdate>>
             {
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadBaseline,
@@ -34,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             {
                 Debug.LogWarning("Unsupported baseline type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);
                 // Preserve identity even when this object's view is not implemented yet.
-                world.Commit(packet.ObjectId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.Commit(packet.ObjectId, new GameObjectUpdate { BaselineType = packet.ObjectType });
                 return;
             }
 
@@ -43,7 +44,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             var update = read(reader);
             ReplicationReader.RequireEnd(reader);
             update.BaselineType = packet.ObjectType;
-            world.Commit(packet.ObjectId, update);
+            replication.Commit(packet.ObjectId, update);
         }
     }
 }

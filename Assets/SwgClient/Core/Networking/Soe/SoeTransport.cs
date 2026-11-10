@@ -81,7 +81,7 @@ namespace Swg.Client.Core.Networking.Soe
                             return new SoeTransport(socket, r.Net32());
                         }
                     }
-                    catch (SocketException e) when (IsTimeout(e))
+                    catch (SocketException e)when (IsTimeout(e))
                     {
                     }
                 }
@@ -171,7 +171,7 @@ namespace Swg.Client.Core.Networking.Soe
                 Handle(plain, result, 0);
                 return result;
             }
-            catch (SocketException e) when (IsTimeout(e))
+            catch (SocketException e)when (IsTimeout(e))
             {
                 return new List<byte[]>();
             }

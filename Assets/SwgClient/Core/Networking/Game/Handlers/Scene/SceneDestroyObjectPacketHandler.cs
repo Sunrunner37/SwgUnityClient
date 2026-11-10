@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets;
@@ -8,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class SceneDestroyObjectPacketHandler : GamePacketHandler<SceneDestroyObjectPacket>
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         public override uint Opcode => SceneDestroyObjectPacket.Opcode;
 
         [Preserve]
-        public SceneDestroyObjectPacketHandler(GameWorldState world) : base(SceneDestroyObjectPacket.ReadFrom) => this.world = world;
+        public SceneDestroyObjectPacketHandler(GameReplication replication) : base(SceneDestroyObjectPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(SceneDestroyObjectPacket packet)
         {
-            world.Remove(packet.ObjectId);
+            replication.Remove(packet.ObjectId);
         }
     }
 }

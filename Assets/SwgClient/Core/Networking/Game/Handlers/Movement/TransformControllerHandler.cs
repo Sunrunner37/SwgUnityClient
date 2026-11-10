@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Networking.Game.Packets;
@@ -8,15 +9,16 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
     [Preserve]
     internal sealed class TransformControllerHandler : IObjectControllerHandler
     {
-        readonly GameWorldState world;
+        readonly GameReplication replication;
         public uint ControllerType => 0x71;
 
         [Preserve]
-        public TransformControllerHandler(GameWorldState world) => this.world = world;
+        public TransformControllerHandler(GameReplication replication) => this.replication = replication;
+
         public void Handle(ObjectControllerPacket packet)
         {
             var update = MovementReader.ReadControllerTransform(new ByteReader(packet.Payload), false);
-            world.Commit(packet.ObjectId, update);
+            replication.Commit(packet.ObjectId, update);
         }
     }
 }

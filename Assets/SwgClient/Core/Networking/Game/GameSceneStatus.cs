@@ -1,5 +1,4 @@
 using Swg.Client.Core.Networking.Game.Packets.Scene;
-using Swg.Client.Core.Networking.Game.Packets;
 
 namespace Swg.Client.Core.Networking.Game
 {
