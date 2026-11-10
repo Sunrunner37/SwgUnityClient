@@ -3,19 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 
-namespace Swg.Client.Core.Characters.Appearance
+namespace Swg.Client.Core.Assets.Formats.Customization
 {
     /// <summary>The native client's escaped customization string, preserved without UTF-8 conversion.</summary>
     public sealed class PackedCustomization
     {
-        public byte[] Encoded
-        {
-            get; private set;
-        }
-        public IReadOnlyDictionary<byte, short> Values
-        {
-            get; private set;
-        }
+        public byte[] Encoded { get; private set; }
+        public IReadOnlyDictionary<byte, short> Values { get; private set; }
 
         public static PackedCustomization Decode(byte[] encoded)
         {
@@ -74,6 +68,24 @@ namespace Swg.Client.Core.Characters.Appearance
                 Encoded = (byte[])encoded.Clone(),
                 Values = new ReadOnlyDictionary<byte, short>(values)
             };
+        }
+
+        /// <summary>Returns the zero-free representation required by native customization strings.</summary>
+        public byte[] Serialize()
+        {
+            var bytes = new List<byte>();
+            foreach (byte value in Encoded)
+            {
+                if (value == 0)
+                {
+                    bytes.Add(255);
+                    bytes.Add(1);
+                }
+                else
+                    bytes.Add(value);
+            }
+
+            return bytes.ToArray();
         }
 
         public IReadOnlyDictionary<string, short> ResolveNames(IReadOnlyDictionary<ushort, string> ids)

@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,7 +6,6 @@ using System.Linq;
 using System.Text;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Characters.Animation;
-using Swg.Client.Core.Geometry;
 
 namespace Swg.Client.Core.Assets.Formats.Animation
 {
@@ -19,7 +19,7 @@ namespace Swg.Client.Core.Assets.Formats.Animation
             var version = root.Children.First(n => n.Tag == "FORM");
             if (version.Kind != "0001")
                 throw new NotSupportedException("Animation version " + version.Kind);
-            var animatedRotations = new List<QuaternionData>();
+            var animatedRotations = new List<Quaternion>();
             var ar = IffNode.Form(version.Children, "AROT");
             if (ar != null)
                 foreach (var channel in ar.Children.Where(n => n.Tag == "QCHN"))
@@ -31,7 +31,7 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                     animatedRotations.Add(Expand(BitConverter.ToUInt32(b, 7), b[2], b[3], b[4]));
                 }
 
-            var staticRotations = new List<QuaternionData>();
+            var staticRotations = new List<Quaternion>();
             var sr = version.Chunk("SROT");
             if (sr != null)
                 for (int i = 0; i + 7 <= sr.Length; i += 7)
@@ -71,7 +71,7 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                 result[Encoding.ASCII.GetString(b, 0, end)] = new JointSample
                 {
                     Rotation = animated ? animatedRotations[rotation] : staticRotations[rotation],
-                    Translation = new Float3(v[0], v[1], v[2])
+                    Translation = new Vector3(v[0], v[1], v[2])
                 };
             }
 
@@ -80,14 +80,14 @@ namespace Swg.Client.Core.Assets.Formats.Animation
 
         // The packed quaternion stores sign/magnitude X11,Y11,Z10. Format bytes describe
         // a base on an evenly spaced grid and its precision; positive W is reconstructed.
-        static QuaternionData Expand(uint packed, byte xf, byte yf, byte zf)
+        static Quaternion Expand(uint packed, byte xf, byte yf, byte zf)
         {
             float x = Component(packed >> 21, xf, 10);
             float y = Component(packed >> 10, yf, 10);
             float z = Component(packed, zf, 9);
             float w = (float)Math.Sqrt(Math.Max(0, 1 - x * x - y * y - z * z));
             float length = (float)Math.Sqrt(w * w + x * x + y * y + z * z);
-            return new QuaternionData(w / length, x / length, y / length, z / length);
+            return new Quaternion(x / length, y / length, z / length, w / length);
         }
 
         static float Component(uint value, byte format, int magnitudeBits)

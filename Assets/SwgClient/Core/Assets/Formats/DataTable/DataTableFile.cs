@@ -50,7 +50,6 @@ namespace Swg.Client.Core.Assets.Formats.DataTable
             var columns = new DataTableColumn[columnCount];
             for (int i = 0; i < columnCount; i++)
                 columns[i] = DataTableColumn.Parse(names.CString(), types.CString());
-
             int rowCount = checked((int)rows.U32());
             // Every supported cell requires at least one byte. Reject impossible allocations before materializing rows.
             if ((long)rowCount * columnCount > rows.Remaining)
@@ -65,6 +64,8 @@ namespace Swg.Client.Core.Assets.Formats.DataTable
                 result[r] = new DataTableRow(schema, values);
             }
 
+            if (names.Remaining != 0 || types.Remaining != 0 || rows.Remaining != 0)
+                throw new InvalidDataException("Unexpected trailing data in DTII COLS, TYPE, or ROWS chunk.");
             return new DataTableFile(version.Kind, schema, result);
         }
 

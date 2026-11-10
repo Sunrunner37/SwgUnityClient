@@ -1,19 +1,20 @@
+using Swg.Client.Core;
+using Swg.Client.Core.Assets.Formats.Customization;
+using Swg.Client.Core.Assets;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Swg.Client.Core.Assets.Formats.Binary;
-using Swg.Client.Core.Assets.Formats.Iff;
+using System.Security.Cryptography;
+using Swg.Client.Core.Assets.Formats.Cadf;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Networking.Login;
 
 namespace Swg.Client.Core.Characters.Appearance
 {
     /// <summary>
-    /// Reads the native CADF/0000 .ca cache directly from the configured installation.
+    /// Stores server-supplied appearances in the client-owned CADF/0000 cache.
     /// Character-list packets carry only template CRC/name/IDs, not this appearance state.
     /// </summary>
     public static class CharacterAppearanceCache
@@ -21,95 +22,28 @@ namespace Swg.Client.Core.Characters.Appearance
         const int MaxCacheBytes = 1024 * 1024;
         public static CachedCharacterAppearance Parse(byte[] bytes)
         {
-            if (bytes == null || bytes.Length < 24 || bytes.Length > MaxCacheBytes)
+            if (bytes == null || bytes.Length > MaxCacheBytes)
                 throw new InvalidDataException("Invalid character appearance cache size");
-            var roots = IffNode.Parse(bytes);
-            if (roots.Count != 1 || roots[0].Kind != "CADF")
-                throw new InvalidDataException("Not a CADF character cache");
-            var root = roots[0];
-            var versions = root.Children.Where(n => n.Tag == "FORM").ToArray();
-            if (versions.Length != 1 || versions[0].Kind != "0000")
-                throw new InvalidDataException("Unsupported character cache version");
-            var version = versions[0];
-            var data = version.Children.Where(n => n.Tag == "DATA").ToArray();
-            if (data.Length != 1)
-                throw new InvalidDataException("Missing or duplicated character cache DATA");
-            var body = new ByteReader(data[0].Data);
-            string template = Template(ReadString(body));
-            var customization = PackedCustomization.Decode(ReadBytes(body));
-            if (body.Remaining != 0)
-                throw new InvalidDataException("Unexpected character DATA fields");
-            string planet = "";
-            var planets = version.Children.Where(n => n.Tag == "PLAN").ToArray();
-            if (planets.Length > 1)
-                throw new InvalidDataException("Duplicated character planet");
-            if (planets.Length == 1)
-            {
-                var p = new ByteReader(planets[0].Data);
-                planet = ReadString(p);
-                if (p.Remaining != 0)
-                    throw new InvalidDataException("Unexpected planet data");
-            }
-
-            var wearables = new List<CachedWearableAppearance>();
-            var wear = version.Children.Where(n => n.Kind == "WEAR").ToArray();
-            if (wear.Length > 1)
-                throw new InvalidDataException("Duplicated wearable form");
-            if (wear.Length == 1)
-                foreach (var item in wear[0].Children.Where(n => n.Tag == "ITEM"))
-                {
-                    if (wearables.Count >= 256)
-                        throw new InvalidDataException("Too many cached wearable items");
-                    var r = new ByteReader(item.Data);
-                    var entry = new CachedWearableAppearance
-                    {
-                        TemplatePath = Template(ReadString(r)),
-                        Customization = PackedCustomization.Decode(ReadBytes(r))
-                    };
-                    if (r.Remaining != 4)
-                        throw new InvalidDataException("Unsupported cached ITEM record");
-                    entry.ArrangementHint = r.U32();
-                    wearables.Add(entry);
-                }
-
+            var file = CadfFile.Parse(bytes);
             return new CachedCharacterAppearance
             {
-                TemplatePath = template,
-                Customization = customization,
-                Planet = planet,
-                Wearables = wearables.AsReadOnly(),
+                TemplatePath = Template(file.TemplatePath),
+                Customization = PackedCustomization.Decode(file.Customization),
+                Planet = file.Planet,
+                Wearables = file.Wearables.Select(item => new CachedWearableAppearance { TemplatePath = Template(item.TemplatePath), Customization = PackedCustomization.Decode(item.Customization), ArrangementHint = item.Arrangement }).ToArray(),
                 FromCache = true,
                 SourcePath = "",
                 Diagnostic = ""
             };
         }
 
-        public static bool TryReadProfile(string gameDirectory, string username, string galaxyName, ulong objectId, out CachedCharacterAppearance appearance, out string diagnostic)
+        public static bool TryReadProfile(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId, out CachedCharacterAppearance appearance, out string diagnostic)
         {
             appearance = null;
             diagnostic = "Cached appearance is unavailable for this character.";
             try
             {
-                string root = Path.GetFullPath(gameDirectory);
-                string profiles = Path.Combine(root, "profiles");
-                string user = Path.Combine(profiles, Segment(username));
-                string galaxy = Path.Combine(user, Segment(galaxyName));
-                string path = Path.GetFullPath(Path.Combine(galaxy, objectId.ToString(CultureInfo.InvariantCulture) + ".ca"));
-                string confined = Path.GetFullPath(profiles).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-                if (!path.StartsWith(confined, StringComparison.OrdinalIgnoreCase))
-                    throw new InvalidDataException("Profile path escapes configured installation");
-                // Do not follow profile-directory or cache-file reparse points outside the selected account.
-                foreach (string part in new[]
-                {
-                    profiles,
-                    user,
-                    galaxy,
-                    path
-                }
-
-                )
-                    if ((File.Exists(part) || Directory.Exists(part)) && (File.GetAttributes(part) & FileAttributes.ReparsePoint) != 0)
-                        throw new InvalidDataException("Linked profile paths are not supported");
+                string path = ProfilePath(cacheDirectory, server, username, galaxyName, objectId);
                 if (!File.Exists(path))
                     return false;
                 if (new FileInfo(path).Length > MaxCacheBytes)
@@ -119,27 +53,27 @@ namespace Swg.Client.Core.Characters.Appearance
                 diagnostic = "";
                 return true;
             }
-            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException || e is ArgumentException)
+            catch (Exception e)when (e is IOException || e is UnauthorizedAccessException || e is ArgumentException || e is InvalidDataException || e is OverflowException)
             {
                 diagnostic = "Cached appearance could not be read: " + e.Message;
                 return false;
             }
         }
 
-        public static CachedCharacterAppearance LoadOrFallback(TreAssetLoader loader, string gameDirectory, string username, string galaxyName, CharacterInfo character)
+        public static CachedCharacterAppearance LoadOrFallback(TreAssetLoader loader, string cacheDirectory, string server, string username, string galaxyName, CharacterInfo character)
         {
             if (loader == null)
                 throw new ArgumentNullException(nameof(loader));
             if (character == null)
                 throw new ArgumentNullException(nameof(character));
-            if (TryReadProfile(gameDirectory, username, galaxyName, character.ObjectId, out var cached, out var diagnostic))
+            if (TryReadProfile(cacheDirectory, server, username, galaxyName, character.ObjectId, out var cached, out var diagnostic))
             {
-                if (MatchesRace(cached.TemplatePath, character.Race))
+                if (ObjectTemplateNames.MatchesRace(cached.TemplatePath, character.Race))
                     return cached;
                 diagnostic = "Cached template does not match this character's server template CRC.";
             }
 
-            string template = ResolveTemplate(loader, character.Race);
+            string template = ObjectTemplateNames.ResolvePlayerTemplate(loader, character.Race);
             if (template == null)
                 throw new InvalidDataException("No original player template matches the character's race CRC");
             return new CachedCharacterAppearance
@@ -150,57 +84,58 @@ namespace Swg.Client.Core.Characters.Appearance
                 Wearables = Array.Empty<CachedWearableAppearance>(),
                 FromCache = false,
                 SourcePath = "",
-                Diagnostic = diagnostic + " Showing the original template's default appearance."
+                Diagnostic = diagnostic + " Showing the TRE template's default appearance."
             };
         }
 
-        public static string ResolveTemplate(TreAssetLoader loader, uint crc)
+        public static void SaveProfile(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId, CachedCharacterAppearance appearance)
         {
-            // The server hashes the unshared raceFile; TRE contains the shared client template.
-            return loader.Catalog().Keys.Where(p => p.StartsWith("object/creature/player/shared_", StringComparison.Ordinal) && p.EndsWith(".iff", StringComparison.Ordinal)).OrderBy(p => p, StringComparer.Ordinal).FirstOrDefault(p => MatchesRace(p, crc));
-        }
-
-        public static uint TemplateCrc(string path)
-        {
-            uint crc = uint.MaxValue;
-            foreach (byte b in Encoding.ASCII.GetBytes(path))
+            string path = ProfilePath(cacheDirectory, server, username, galaxyName, objectId);
+            byte[] bytes = Serialize(appearance);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+            try
             {
-                crc ^= (uint)b << 24;
-                for (int i = 0; i < 8; i++)
-                    crc = (crc & 0x80000000) != 0 ? (crc << 1) ^ 0x04c11db7u : crc << 1;
+                File.WriteAllBytes(temporary, bytes);
+                if (File.Exists(path))
+                    File.Replace(temporary, path, null);
+                else
+                    File.Move(temporary, path);
             }
-
-            return ~crc;
-        }
-
-        public static IReadOnlyDictionary<ushort, string> LoadCustomizationIds(TreAssetLoader loader)
-        {
-            var roots = IffNode.Parse(loader.Read("customization/customization_id_manager.iff"));
-            var form = IffNode.Form(roots, "CIDM") ?? throw new InvalidDataException("Missing customization ID manager");
-            var version = form.Children.SingleOrDefault(n => n.Kind == "0001") ?? throw new InvalidDataException("Unsupported customization ID map version");
-            var chunk = version.Children.SingleOrDefault(n => n.Tag == "DATA") ?? throw new InvalidDataException("Missing customization ID data");
-            var reader = new ByteReader(chunk.Data);
-            var ids = new Dictionary<ushort, string>();
-            while (reader.Remaining != 0)
+            finally
             {
-                if (ids.Count >= 4096)
-                    throw new InvalidDataException("Oversized customization ID map");
-                ushort id = reader.U16();
-                string name = ReadString(reader);
-                if (name.Length == 0 || ids.ContainsKey(id))
-                    throw new InvalidDataException("Invalid customization ID entry");
-                ids.Add(id, name);
+                if (File.Exists(temporary))
+                    File.Delete(temporary);
             }
-
-            return new ReadOnlyDictionary<ushort, string>(ids);
         }
 
-        static bool MatchesRace(string shared, uint crc)
+        public static byte[] Serialize(CachedCharacterAppearance appearance)
         {
-            if (TemplateCrc(shared) == crc)
-                return true;
-            int slash = shared.LastIndexOf('/') + 1;
-            return shared.Substring(slash).StartsWith("shared_", StringComparison.Ordinal) && TemplateCrc(shared.Remove(slash, 7)) == crc;
+            if (appearance == null)
+                throw new ArgumentNullException(nameof(appearance));
+            var file = new CadfFile
+            {
+                TemplatePath = Template(appearance.TemplatePath),
+                Customization = appearance.Customization.Serialize(),
+                Planet = appearance.Planet ?? "",
+                Wearables = appearance.Wearables.Select(item => new CadfWearable { TemplatePath = Template(item.TemplatePath), Customization = item.Customization.Serialize(), Arrangement = item.ArrangementHint }).ToArray()
+            };
+            byte[] result = file.Serialize();
+            if (result.Length > MaxCacheBytes)
+                throw new InvalidDataException("Oversized character cache");
+            return result;
+        }
+
+        static string ProfilePath(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId)
+        {
+            string root = Path.GetFullPath(cacheDirectory);
+            using var hash = SHA256.Create();
+            string serverKey = string.Concat(hash.ComputeHash(Encoding.UTF8.GetBytes(server.ToLowerInvariant())).Select(value => value.ToString("x2", CultureInfo.InvariantCulture)));
+            string serverDirectory = Path.Combine(root, serverKey);
+            string user = Path.Combine(serverDirectory, Segment(username));
+            string galaxy = Path.Combine(user, Segment(galaxyName));
+            string path = Path.Combine(galaxy, objectId.ToString(CultureInfo.InvariantCulture) + ".ca");
+            return path;
         }
 
         static string Segment(string value)
@@ -216,25 +151,6 @@ namespace Swg.Client.Core.Characters.Appearance
             if (!normalized.StartsWith("object/", StringComparison.Ordinal) || !normalized.EndsWith(".iff", StringComparison.Ordinal))
                 throw new InvalidDataException("Invalid cached object template path");
             return normalized;
-        }
-
-        static byte[] ReadBytes(ByteReader reader)
-        {
-            int start = reader.Position;
-            while (reader.Byte() != 0)
-                if (reader.Position - start > 65536)
-                    throw new InvalidDataException("Oversized cached string");
-            var result = new byte[reader.Position - start - 1];
-            Buffer.BlockCopy(reader.Bytes, start, result, 0, result.Length);
-            return result;
-        }
-
-        static string ReadString(ByteReader reader)
-        {
-            var bytes = ReadBytes(reader);
-            if (bytes.Length > 4096 || bytes.Any(b => b > 127))
-                throw new InvalidDataException("Invalid cached path or name");
-            return Encoding.ASCII.GetString(bytes);
         }
     }
 }

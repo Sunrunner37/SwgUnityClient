@@ -81,10 +81,10 @@ namespace Swg.Client.Core.Assets.Tre
 
         readonly string root;
         readonly List<Archive> archives = new List<Archive>();
-        readonly object gate = new object();
+        readonly object gate = new object ();
         public int ArchiveCount => archives.Count;
 
-        // Same precedence as Read: the first configured archive containing a name wins.
+        // Same precedence as Read: the first listed archive containing a name wins.
         public IReadOnlyDictionary<string, string> Catalog()
         {
             lock (gate)
@@ -99,24 +99,42 @@ namespace Swg.Client.Core.Assets.Tre
         }
 
         public readonly Dictionary<string, string> Sources = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        public TreAssetLoader(string directory, string config)
+        public TreAssetLoader(string directory, IReadOnlyDictionary<string, int> priorityOverrides = null)
         {
-            root = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            var trees = new List<Tuple<uint, string>>();
-            uint max = uint.MaxValue;
+            root = Path.GetFullPath(directory);
             try
             {
-                ReadConfig(config, new HashSet<string>(StringComparer.OrdinalIgnoreCase), trees, ref max);
+                var archiveOrder = TreArchiveDiscovery.Discover(root, priorityOverrides);
                 var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var tree in trees.Where(t => t.Item1 <= max).OrderByDescending(t => t.Item1))
+                foreach (string name in archiveOrder)
                 {
-                    string path = Confined(tree.Item2);
+                    if (!string.Equals(Path.GetExtension(name), ".tre", StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidDataException("Only TRE archives may be mounted: " + name);
+                    string path = Confined(name);
                     if (seen.Add(path))
                         archives.Add(new Archive(path));
                 }
 
-                if (archives.Count == 0)
-                    throw new InvalidDataException("No TRE archives configured");
+                // Only custom archives need collision validation; standard installations avoid a second catalog index.
+                var unresolved = new HashSet<string>(archives.Select(archive => Path.GetFileName(archive.Path)).Where(name => !TreArchiveDiscovery.HasKnownPriority(name) && !(priorityOverrides?.Keys.Contains(name, StringComparer.OrdinalIgnoreCase) ?? false)), StringComparer.OrdinalIgnoreCase);
+                if (unresolved.Count > 0)
+                {
+                    var owners = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (var archive in archives)
+                    {
+                        string name = Path.GetFileName(archive.Path);
+                        foreach (string asset in archive.Entries.Keys)
+                        {
+                            if (owners.TryGetValue(asset, out string other))
+                            {
+                                if (unresolved.Contains(name) || unresolved.Contains(other))
+                                    throw new InvalidDataException("Ambiguous TRE priority: '" + name + "' and '" + other + "' both contain '" + asset + "'. Set their order in [TreArchivePriorities].");
+                            }
+                            else
+                                owners.Add(asset, name);
+                        }
+                    }
+                }
             }
             catch
             {
@@ -130,15 +148,6 @@ namespace Swg.Client.Core.Assets.Tre
             lock (gate)
             {
                 name = Normalize(name);
-                string loose = Confined(name);
-                if (File.Exists(loose))
-                {
-                    if (new FileInfo(loose).Length > Limit)
-                        throw new InvalidDataException("Asset too large");
-                    Sources[name] = loose;
-                    return File.ReadAllBytes(loose);
-                }
-
                 foreach (var archive in archives)
                 {
                     if (archive.Entries.ContainsKey(name))
@@ -167,48 +176,9 @@ namespace Swg.Client.Core.Assets.Tre
         string Confined(string name)
         {
             string full = Path.GetFullPath(Path.Combine(root, Normalize(name)));
-            if (!full.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidDataException("Path outside game directory");
+            if (!full.StartsWith(root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidDataException("Path outside TRE directory");
             return full;
-        }
-
-        void ReadConfig(string name, HashSet<string> stack, List<Tuple<uint, string>> trees, ref uint max)
-        {
-            string path = Confined(name);
-            if (stack.Count >= 32 || !stack.Add(path))
-                throw new InvalidDataException("Recursive config include");
-            bool shared = false;
-            foreach (var raw in File.ReadAllLines(path))
-            {
-                string line = raw.Split('#')[0].Trim();
-                if (line.Length == 0)
-                    continue;
-                if (line.StartsWith(".include"))
-                {
-                    ReadConfig(line.Substring(8).Trim().Trim('"'), stack, trees, ref max);
-                    continue;
-                }
-
-                if (line.StartsWith("["))
-                {
-                    shared = line.Equals("[SharedFile]", StringComparison.OrdinalIgnoreCase);
-                    continue;
-                }
-
-                if (!shared)
-                    continue;
-                int eq = line.IndexOf('=');
-                if (eq < 0)
-                    continue;
-                string key = line.Substring(0, eq).Trim();
-                string value = line.Substring(eq + 1).Trim().Trim('"');
-                if (key.Equals("maxSearchPriority", StringComparison.OrdinalIgnoreCase))
-                    max = uint.Parse(value);
-                else if (key.StartsWith("searchTree_", StringComparison.OrdinalIgnoreCase))
-                    trees.Add(Tuple.Create(uint.Parse(key.Substring(key.LastIndexOf('_') + 1)), value));
-            }
-
-            stack.Remove(path);
         }
 
         static byte[] ReadBlock(FileStream stream, long offset, int stored, uint method, int expected)

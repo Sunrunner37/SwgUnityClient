@@ -14,7 +14,6 @@ namespace Swg.Client.Core.Assets.Formats.DataTable
     {
         public static List<T> Read<T>(byte[] bytes)
             where T : class, new() => Read<T>(DataTableFile.Parse(bytes));
-
         public static List<T> Read<T>(DataTableFile table)
             where T : class, new()
         {
