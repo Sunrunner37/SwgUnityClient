@@ -5,6 +5,9 @@ namespace Swg.Client.Runtime.UI.Screens
         Intro,
         Login,
         CharacterList,
-        CharacterCreation
+        CharacterCreation,
+        LoadingThematic,
+        LoadingHorizontal,
+        World
     }
 }

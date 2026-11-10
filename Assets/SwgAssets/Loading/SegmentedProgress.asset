@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15d557f00620c0408148caa43724ff5, type: 3}
+  m_Name: SegmentedProgress
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TrePanel
+  atlasPath: texture/ui_rebel_final.dds
+  stylesPath: ui/ui_styles.inc
+  size: {x: 507, y: 20}
+  layers:
+  - style: load_progress
+    state: 
+    destination:
+      x: 0
+      y: 0
+      width: 41
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 37
+      y: 0
+      width: 22
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 55
+      y: 0
+      width: 76
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 127
+      y: 0
+      width: 62
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 185
+      y: 0
+      width: 22
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 204
+      y: 0
+      width: 108
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 309
+      y: 0
+      width: 46
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 350
+      y: 0
+      width: 23
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 369
+      y: 0
+      width: 74
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 440
+      y: 0
+      width: 39
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
+  - style: load_progress
+    state: 
+    destination:
+      x: 476
+      y: 0
+      width: 29
+      height: 20
+    tint: {r: 1, g: 1, b: 1, a: 1}
