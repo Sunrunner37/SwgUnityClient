@@ -1,32 +1,25 @@
+using UnityEngine;
+
 namespace Swg.Client.Core.Geometry
 {
+    // Value-only pose for decoded skeletons. It does not reference scene objects.
     internal struct RigidTransform
     {
-        public QuaternionData Rotation;
-        public Float3 Translation;
-        public static RigidTransform Identity
+        public Quaternion Rotation;
+        public Vector3 Translation;
+        public static RigidTransform Identity => new RigidTransform
         {
-            get
-            {
-                return new RigidTransform
-                {
-                    Rotation = QuaternionData.Identity
-                };
-            }
-        }
+            Rotation = Quaternion.identity
+        };
 
-        public Float3 Point(Float3 p)
-        {
-            return Float3Math.Add(Rotation.Rotate(p), Translation);
-        }
-
+        public Vector3 Point(Vector3 point) => Rotation * point + Translation;
         public RigidTransform Inverse()
         {
-            var r = Rotation.Inverse();
+            var rotation = Quaternion.Inverse(Rotation);
             return new RigidTransform
             {
-                Rotation = r,
-                Translation = r.Rotate(Float3Math.Scale(Translation, -1))
+                Rotation = rotation,
+                Translation = rotation * -Translation
             };
         }
 
