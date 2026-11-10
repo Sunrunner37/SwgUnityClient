@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.IO;
 using System.Linq;
 using Swg.Client.Core.Assets.Formats.Dds;
@@ -9,17 +11,41 @@ namespace Swg.Client.Runtime.UI
 {
     public sealed class UiCompositor
     {
+        sealed class Sources
+        {
+            public readonly Dictionary<string, TextureData> Atlases = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
+            public readonly Dictionary<string, UiNode> Styles = new Dictionary<string, UiNode>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        static readonly ConditionalWeakTable<TreAssetLoader, Sources> sharedSources = new ConditionalWeakTable<TreAssetLoader, Sources>();
         readonly TextureData atlas;
         readonly UiNode styles;
         public UiCompositor(TreAssetLoader loader, string atlasPath, string stylesPath)
         {
-            atlas = TextureData.Load(loader, atlasPath);
-            styles = UiNode.Parse(loader.Text(stylesPath));
+            // Decoded sources are immutable during composition and belong to this mounted asset set.
+            var sources = sharedSources.GetValue(loader, _ => new Sources());
+            atlasPath = TreAssetLoader.Normalize(atlasPath);
+            stylesPath = TreAssetLoader.Normalize(stylesPath);
+            lock (sources)
+            {
+                if (!sources.Atlases.TryGetValue(atlasPath, out atlas))
+                {
+                    atlas = TextureData.Load(loader, atlasPath);
+                    sources.Atlases.Add(atlasPath, atlas);
+                }
+
+                if (!sources.Styles.TryGetValue(stylesPath, out styles))
+                {
+                    styles = UiNode.Parse(loader.Text(stylesPath));
+                    sources.Styles.Add(stylesPath, styles);
+                }
+            }
         }
 
         public void Nine(TextureData dst, string name, int x, int y, int w, int h, int[] tint = null, float opacity = 1, string state = "default")
         {
-            var node = styles.Find(name)?.Children.FirstOrDefault(c => c.Get("Name") == state) ?? throw new InvalidDataException("Missing UI style " + name);
+            var style = styles.Find(name) ?? throw new InvalidDataException("Missing UI style " + name);
+            var node = string.IsNullOrEmpty(state) ? style : style.Children.FirstOrDefault(c => c.Get("Name") == state) ?? throw new InvalidDataException("Missing UI state " + name + "/" + state);
             var p = node.Children.Where(c => c.Get("SourceRect") != "").ToDictionary(c => c.Get("Name"), c => c.Get("SourceRect").Split(',').Select(int.Parse).ToArray());
             int Width(string k) => p.TryGetValue(k, out var v) ? Math.Abs(v[2] - v[0]) : 0;
             int Height(string k) => p.TryGetValue(k, out var v) ? Math.Abs(v[3] - v[1]) : 0;

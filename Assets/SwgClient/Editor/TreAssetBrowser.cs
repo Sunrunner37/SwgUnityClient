@@ -27,7 +27,7 @@ namespace Swg.Client.Editor
                 if (loader == null)
                 {
                     var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
-                    loader = new TreAssetLoader(settings.GameDirectory, settings.TreeConfig);
+                    loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
                 }
 
                 return loader;

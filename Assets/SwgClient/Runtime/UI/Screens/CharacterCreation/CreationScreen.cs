@@ -1,5 +1,8 @@
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Assets.Tre;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -9,6 +12,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
 {
     public sealed class CreationScreen : ClientScreen
     {
+        ClientConnection connection;
         public Text account;
         public Text speciesName;
         public Text description;
@@ -21,15 +25,74 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
         CharacterCreationData creation;
         int species;
         bool female;
-        protected override async Task PrepareAsync()
+        public CanvasGroup content;
+        void Awake()
         {
-            creation = await Client.Assets.ReadAsync(loader => new CharacterCreationData(loader));
+            content.alpha = 0;
+            content.interactable = false;
+            content.blocksRaycasts = false;
+            preview.previewCamera.enabled = false;
         }
 
-        protected override void OnReady()
+        TreRuntimeAssets assets;
+        IEnumerator Start()
         {
-            Client.Music.Request(Client.Assets, musicPath, loopMusic);
-            var accepted = Client.Session.Admission;
+            connection = GameServices.Resolve<ClientConnection>();
+            assets = GameServices.Resolve<TreRuntimeAssets>();
+            System.Threading.Tasks.Task<CharacterCreationData> task;
+            try
+            {
+                Debug.Log("CreationScreen: Loading species", this);
+                task = assets.ReadAsync(loader => new CharacterCreationData(loader));
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            yield return new WaitUntil(() => task.IsCompleted);
+            if (task.IsFaulted)
+            {
+                Debug.LogException(task.Exception.GetBaseException(), this);
+                yield break;
+            }
+
+            if (task.IsCanceled)
+                yield break;
+            try
+            {
+                creation = task.Result;
+                PopulateSpecies();
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            yield return null;
+            try
+            {
+                TreTextureBinding.ThrowIfFailed(content.transform);
+                content.alpha = 1;
+                content.interactable = true;
+                content.blocksRaycasts = true;
+                preview.previewCamera.enabled = true;
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            IsReady = true;
+            Debug.Log("CreationScreen: Ready", this);
+        }
+
+        void PopulateSpecies()
+        {
+            var accepted = connection.Admission;
             account.text = accepted == null ? "Offline character preview" : accepted.Galaxy.Name + "  |  Account " + accepted.AccountId + "  |  " + accepted.Characters.Count + " character(s)";
             next.interactable = false;
             back.onClick.AddListener(Back);
@@ -44,7 +107,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
                 speciesButtons[i].onClick.AddListener(() => SelectSpecies(index));
             }
 
-            preview.Initialize(Client.Assets);
+            preview.Initialize(assets);
             UpdateSpecies();
         }
 
@@ -86,16 +149,16 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
 
         public void Back()
         {
-            ClientNavigation.Open(Client.Session.Admission == null ? ScreenId.Login : ScreenId.CharacterList);
+            ScreenChanger.Open(connection.Admission == null ? ScreenId.Login : ScreenId.CharacterList);
         }
 
         void Update()
         {
-            if (!IsReady || ClientNavigation.IsChanging)
+            if (!IsReady)
                 return;
-            if (Client.Session.FailureReason != null)
+            if (connection.FailureReason != null)
             {
-                ClientNavigation.Open(ScreenId.Login);
+                ScreenChanger.Open(ScreenId.Login);
                 return;
             }
 

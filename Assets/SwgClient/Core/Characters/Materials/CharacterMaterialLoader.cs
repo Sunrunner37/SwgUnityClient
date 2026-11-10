@@ -71,6 +71,6 @@ namespace Swg.Client.Core.Characters.Materials
             return null;
         }
 
-        static string Tag(byte[] bytes, int offset) => new string(new[] { (char)bytes[offset + 3], (char)bytes[offset + 2], (char)bytes[offset + 1], (char)bytes[offset] });
+        static string Tag(byte[] bytes, int offset) => new string (new[] { (char)bytes[offset + 3], (char)bytes[offset + 2], (char)bytes[offset + 1], (char)bytes[offset] });
     }
 }

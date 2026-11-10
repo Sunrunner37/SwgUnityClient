@@ -13,7 +13,8 @@ namespace Swg.Client.Runtime.Assets.Tre
     public sealed class TreRuntimeAssets : IDisposable
     {
         readonly Task<TreAssetLoader> mounting;
-        readonly List<Task> reads = new List<Task>();
+        readonly HashSet<Task> reads = new HashSet<Task>();
+        readonly object readGate = new object ();
         readonly Dictionary<TextureData, Texture2D> textures = new Dictionary<TextureData, Texture2D>();
         readonly Dictionary<TreVisual, Texture2D> visuals = new Dictionary<TreVisual, Texture2D>();
         bool disposed;
@@ -22,16 +23,26 @@ namespace Swg.Client.Runtime.Assets.Tre
 
         public TreRuntimeAssets(ClientSettings settings)
         {
-            mounting = Task.Run(() => new TreAssetLoader(settings.GameDirectory, settings.TreeConfig));
+            mounting = Task.Run(() => new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities));
         }
 
         public Task<T> ReadAsync<T>(Func<TreAssetLoader, T> read)
         {
-            if (disposed)
-                throw new ObjectDisposedException(nameof(TreRuntimeAssets));
-            var task = Task.Run(async () => read(await mounting.ConfigureAwait(false)));
-            reads.Add(task);
-            return task;
+            lock (readGate)
+            {
+                if (disposed)
+                    throw new ObjectDisposedException(nameof(TreRuntimeAssets));
+                var task = Task.Run(async () => read(await mounting.ConfigureAwait(false)));
+                reads.Add(task);
+                _ = task.ContinueWith(completed =>
+                {
+                    if (completed.IsFaulted)
+                        _ = completed.Exception;
+                    lock (readGate)
+                        reads.Remove(completed);
+                }, TaskScheduler.Default);
+                return task;
+            }
         }
 
         public Texture2D LoadVisual(TreVisual asset)
@@ -65,9 +76,15 @@ namespace Swg.Client.Runtime.Assets.Tre
 
         public void Dispose()
         {
-            if (disposed)
-                return;
-            disposed = true;
+            Task[] active;
+            lock (readGate)
+            {
+                if (disposed)
+                    return;
+                disposed = true;
+                active = reads.ToArray();
+            }
+
             foreach (var texture in textures.Values)
                 if (texture != null)
                 {
@@ -80,7 +97,7 @@ namespace Swg.Client.Runtime.Assets.Tre
             textures.Clear();
             visuals.Clear();
             // Reads may still be decoding while a screen is closed or Play mode exits.
-            Task.WhenAll(reads.Concat(new Task[] { mounting })).ContinueWith(completed =>
+            Task.WhenAll(active.Concat(new Task[] { mounting })).ContinueWith(completed =>
             {
                 _ = completed.Exception;
                 if (mounting.Status == TaskStatus.RanToCompletion)

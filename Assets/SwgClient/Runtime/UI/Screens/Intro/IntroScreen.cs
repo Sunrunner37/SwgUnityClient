@@ -1,4 +1,8 @@
-using System.Threading.Tasks;
+using Swg.Client.Runtime.Assets.Audio;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Runtime.Assets.Tre;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Playables;
@@ -8,62 +12,105 @@ namespace Swg.Client.Runtime.UI.Screens.Intro
     public sealed class IntroScreen : ClientScreen
     {
         public PlayableDirector sequence;
-        AudioClip music;
-        bool playing;
-        protected override bool RedirectOnStart()
+        public CanvasGroup content;
+        [Range(0, 1)]
+        public float musicVolume = .65f;
+        public string musicPath;
+        bool isClosing;
+        ClientMusic music;
+        void Awake()
         {
-#if UNITY_EDITOR
-            if (UnityEditor.SessionState.GetBool(ClientNavigation.PreviewSessionKey, false))
-                return false;
-#endif
-            if (!Client.Settings.SkipIntro)
-                return false;
-            ClientNavigation.Open(ScreenId.Login);
-            return true;
+            content.alpha = 0;
+            content.interactable = false;
+            content.blocksRaycasts = false;
         }
 
-        protected override void OnAssetsBound()
+        IEnumerator Start()
         {
-            sequence.time = 0;
-            sequence.Evaluate();
-        }
+            System.Threading.Tasks.Task<AudioClip> task;
+            try
+            {
+                if (GameServices.Resolve<ClientSettings>().SkipIntro)
+                {
+                    Skip();
+                    yield break;
+                }
 
-        protected override async Task PrepareAsync()
-        {
-            music = await Client.Music.LoadAsync(Client.Assets, musicPath);
-        }
+                sequence.time = 0;
+                sequence.Evaluate();
+                Debug.Log("IntroScreen: Loading intro music", this);
+                music = GameServices.Resolve<ClientMusic>();
+                task = GameServices.Resolve<AudioClipLoader>().LoadAsync(musicPath);
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
 
-        protected override void OnReady()
-        {
-            sequence.stopped += OnSequenceStopped;
-            Client.Music.Play(music, loopMusic);
-            music = null;
-            playing = true;
-            sequence.time = 0;
-            sequence.Play();
+            yield return new WaitUntil(() => task.IsCompleted);
+            if (task.IsFaulted)
+            {
+                Debug.LogException(task.Exception.GetBaseException(), this);
+                yield break;
+            }
+
+            if (task.IsCanceled)
+                yield break;
+            if (isClosing)
+                yield break;
+            yield return null;
+            try
+            {
+                TreTextureBinding.ThrowIfFailed(content.transform);
+                content.alpha = 1;
+                content.interactable = true;
+                content.blocksRaycasts = true;
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            try
+            {
+                sequence.stopped += OnSequenceStopped;
+                music.Volume = musicVolume;
+                music.Play(task.Result, true);
+                sequence.time = 0;
+                sequence.Play();
+                IsReady = true;
+                Debug.Log("IntroScreen: Playing intro", this);
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+            }
         }
 
         public void Skip()
         {
-            playing = false;
-            ClientNavigation.Open(ScreenId.Login);
+            if (isClosing)
+                return;
+            isClosing = true;
+            ScreenChanger.Open(ScreenId.Login);
         }
 
         void Update()
         {
-            if (!ClientNavigation.IsChanging && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 Skip();
         }
 
         void OnSequenceStopped(PlayableDirector director)
         {
-            if (playing && isActiveAndEnabled && !ClientNavigation.IsChanging)
+            if (isActiveAndEnabled)
                 Skip();
         }
 
         void OnDestroy()
         {
-            playing = false;
             if (sequence != null)
                 sequence.stopped -= OnSequenceStopped;
         }

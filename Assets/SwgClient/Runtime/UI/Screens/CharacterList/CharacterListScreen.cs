@@ -1,18 +1,20 @@
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Runtime.Assets.Tre;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Swg.Client.Core.Characters.Appearance;
 using Swg.Client.Core.Characters.Models;
-using Swg.Client.Runtime;
-using Swg.Client.Runtime.UI.Screens;
 
 namespace Swg.Client.Runtime.UI.Screens.CharacterList
 {
     public sealed class CharacterListScreen : ClientScreen
     {
+        ClientConnection connection;
         public Text account;
         public Text message;
         public Text characterName;
@@ -31,42 +33,111 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         public int CharacterCount => rows.Count;
         public string SelectedCharacter => selected < 0 ? null : rows[selected].Character.Name;
 
-        protected override async Task PrepareAsync()
+        public CanvasGroup content;
+        void Awake()
         {
-            var admission = Client.Session.Admission;
-            if (admission == null)
-                return;
-            var settings = Client.Settings;
-            string username = Client.Session.Username;
-            appearances.AddRange(await Client.Assets.ReadAsync(loader =>
-            {
-                var result = new List<CachedCharacterAppearance>();
-                foreach (var ch in admission.Characters)
-                {
-                    try
-                    {
-                        result.Add(CharacterAppearanceCache.LoadOrFallback(loader, settings.GameDirectory, username, admission.Galaxy.Name, ch));
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogWarning("Character appearance unavailable: " + e.Message);
-                        result.Add(null);
-                    }
-                }
-
-                return result;
-            }));
+            content.alpha = 0;
+            content.interactable = false;
+            content.blocksRaycasts = false;
+            preview.previewCamera.enabled = false;
         }
 
-        protected override void OnReady()
+        TreRuntimeAssets assets;
+        IEnumerator Start()
         {
-            Client.Music.Request(Client.Assets, musicPath, loopMusic);
-            preview.Initialize(Client.Assets);
+            connection = GameServices.Resolve<ClientConnection>();
+            assets = GameServices.Resolve<TreRuntimeAssets>();
+            next.interactable = false;
+            create.interactable = false;
+            delete.interactable = false;
+            Debug.Log("CharacterListScreen: Loading characters", this);
+            var admission = connection.Admission;
+            if (admission == null)
+            {
+                yield return new WaitUntil(() => assets.Ready.IsCompleted);
+                if (assets.Ready.IsFaulted)
+                {
+                    Debug.LogException(assets.Ready.Exception.GetBaseException(), this);
+                    yield break;
+                }
+            }
+
+            if (admission != null)
+            {
+                var settings = GameServices.Resolve<ClientSettings>();
+                string cacheDirectory = settings.AppearanceCacheDirectory;
+                string server = settings.LoginEndpoint;
+                string username = connection.Username;
+                var task = assets.ReadAsync(loader =>
+                {
+                    var result = new List<CachedCharacterAppearance>();
+                    foreach (var ch in admission.Characters)
+                    {
+                        try
+                        {
+                            result.Add(CharacterAppearanceCache.LoadOrFallback(loader, cacheDirectory, server, username, admission.Galaxy.Name, ch));
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogWarning("Character appearance unavailable: " + e.Message);
+                            result.Add(null);
+                        }
+                    }
+
+                    return result;
+                });
+                yield return new WaitUntil(() => task.IsCompleted);
+                if (task.IsFaulted)
+                {
+                    Debug.LogException(task.Exception.GetBaseException(), this);
+                    yield break;
+                }
+
+                if (task.IsCanceled)
+                    yield break;
+                appearances.AddRange(task.Result);
+            }
+
+            try
+            {
+                PopulateCharacterList();
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            if (rows.Count > 0)
+                yield return SelectCharacter(0);
+            yield return null;
+            try
+            {
+                TreTextureBinding.ThrowIfFailed(content.transform);
+                content.alpha = 1;
+                content.interactable = true;
+                content.blocksRaycasts = true;
+                preview.previewCamera.enabled = true;
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            IsReady = true;
+            Debug.Log("CharacterListScreen: Ready", this);
+        }
+
+        void PopulateCharacterList()
+        {
+            preview.Initialize(assets);
             back.onClick.AddListener(Back);
             create.onClick.AddListener(CreateNew);
             next.interactable = false;
+            next.onClick.AddListener(EnterWorld);
             delete.interactable = false;
-            var admission = Client.Session.Admission;
+            var admission = connection.Admission;
             create.interactable = admission != null && admission.CanCreate;
             account.text = "";
             characterName.text = "";
@@ -87,18 +158,18 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
                 rows.Add(row);
             }
 
-            if (rows.Count > 0)
-                Select(0);
-            else
+            if (rows.Count == 0)
                 message.text = "No characters on this account. Choose Create to make a character.";
         }
 
         static string PlanetName(string name) => string.IsNullOrEmpty(name) ? "" : char.ToUpperInvariant(name[0]) + name.Substring(1);
-        public async void Select(int index)
+        public void Select(int index) => StartCoroutine(SelectCharacter(index));
+        IEnumerator SelectCharacter(int index)
         {
             if (index < 0 || index >= rows.Count)
-                return;
+                yield break;
             selected = index;
+            next.interactable = connection.Admission != null && rows[index].Character.Galaxy == connection.Admission.Galaxy.Id;
             int version = ++selectionVersion;
             for (int i = 0; i < rows.Count; i++)
                 rows[i].SetSelected(i == selected);
@@ -106,57 +177,74 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             if (appearances[index] == null)
             {
                 message.text = "Character appearance unavailable.";
-                return;
+                yield break;
             }
 
-            try
+            if (!models.TryGetValue(index, out var model))
             {
-                if (!models.TryGetValue(index, out var model))
+                var appearance = appearances[index];
+                var task = assets.ReadAsync(loader => CachedCharacterModel.LoadDetailed(loader, appearance));
+                yield return new WaitUntil(() => task.IsCompleted);
+                if (task.IsFaulted)
                 {
-                    var appearance = appearances[index];
-                    model = await Client.Assets.ReadAsync(loader => CachedCharacterModel.LoadDetailed(loader, appearance));
-                    if (this == null)
-                        return;
-                    models[index] = model;
+                    message.text = "Character preview unavailable.";
+                    Debug.LogException(task.Exception.GetBaseException(), this);
+                    yield break;
                 }
 
-                if (this == null || version != selectionVersion)
-                    return;
+                if (task.IsCanceled)
+                    yield break;
+                model = task.Result;
+                if (this == null)
+                    yield break;
+                models[index] = model;
+            }
+
+            if (this == null || version != selectionVersion)
+                yield break;
+            try
+            {
                 preview.Show(rows[index].Character.ObjectId.ToString(), model);
-                message.text = appearances[index].FromCache ? "Choose the Character you would like to play now.\nYou may also choose to Create a new Character, or Delete one of your existing Characters." : "No native appearance cache: showing this character's default species appearance.";
+                message.text = "Choose the Character you would like to play now.\nYou may also choose to Create a new Character, or Delete one of your existing Characters.";
                 foreach (var warning in model.Warnings)
                     Debug.LogWarning(warning);
             }
-            catch (Exception e)
+            catch (Exception error)
             {
-                if (this != null && version == selectionVersion)
-                {
-                    message.text = "Character preview unavailable.";
-                    Debug.LogException(e);
-                }
+                message.text = "Character preview unavailable.";
+                Debug.LogException(error, this);
             }
+        }
+
+        public void EnterWorld()
+        {
+            if (!IsReady || selected < 0 || !next.interactable)
+                return;
+            connection.SelectCharacter(rows[selected].Character.ObjectId);
+            next.interactable = false;
+            ScreenChanger.Open(ScreenId.LoadingThematic);
         }
 
         public void CreateNew()
         {
-            if (!IsReady || Client.Session.Admission == null || !Client.Session.Admission.CanCreate)
+            if (!IsReady || connection.Admission == null || !connection.Admission.CanCreate)
                 return;
-            ClientNavigation.Open(ScreenId.CharacterCreation);
+            ScreenChanger.Open(ScreenId.CharacterCreation);
         }
 
         public void Back()
         {
-            Client.Session.Disconnect();
-            ClientNavigation.Open(ScreenId.Login);
+            connection.Disconnect();
+            ScreenChanger.Open(ScreenId.Login);
         }
 
         void Update()
         {
-            if (!IsReady || ClientNavigation.IsChanging)
+            if (!IsReady)
                 return;
-            if (Client.Session.FailureReason != null)
+            if (connection.FailureReason != null)
             {
-                ClientNavigation.Open(ScreenId.Login);
+                ScreenChanger.Open(ScreenId.Login);
                 return;
             }
 

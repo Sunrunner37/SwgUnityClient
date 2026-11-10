@@ -18,10 +18,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         public Color selectedColor = new Color32(53, 203, 215, 255);
         public Color textColor = new Color32(150, 244, 252, 255);
         public Color selectedTextColor = new Color32(0, 56, 66, 255);
-        public CharacterInfo Character
-        {
-            get; private set;
-        }
+        public CharacterInfo Character { get; private set; }
 
         public void Bind(CharacterInfo character, string galaxyName, Action select)
         {

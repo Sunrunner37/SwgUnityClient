@@ -1,3 +1,4 @@
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -72,9 +73,9 @@ namespace Swg.Client.Core.Characters.Models
                 var nidx = new ByteReader(psdt.Chunk("NIDX"));
                 var uvBytes = IffNode.Form(psdt.Children, "TCSF")?.Chunk("TCSD") ?? throw new InvalidDataException("Missing texture coordinates");
                 var uv = new ByteReader(uvBytes);
-                var vertices = new Float3[count];
-                var ns = new Float3[count];
-                var uvs = new Float2[count];
+                var vertices = new Vector3[count];
+                var ns = new Vector3[count];
+                var uvs = new Vector2[count];
                 for (int i = 0; i < count; i++)
                 {
                     int p = checked((int)indices.U32() * 12);
@@ -87,9 +88,9 @@ namespace Swg.Client.Core.Characters.Models
                     {
                         Position = n
                     };
-                    vertices[i] = new Float3(rp.Float(), rp.Float(), rp.Float());
-                    ns[i] = new Float3(rn.Float(), rn.Float(), rn.Float());
-                    uvs[i] = new Float2(uv.Float(), uv.Float());
+                    vertices[i] = new Vector3(rp.Float(), rp.Float(), rp.Float());
+                    ns[i] = new Vector3(rn.Float(), rn.Float(), rn.Float());
+                    uvs[i] = new Vector2(uv.Float(), uv.Float());
                 }
 
                 var triangles = new List<int>();

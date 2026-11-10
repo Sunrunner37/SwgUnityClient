@@ -51,7 +51,6 @@ namespace Swg.Client.Runtime.UI.Screens
         public void Initialize(TreRuntimeAssets source)
         {
             assets = source;
-            previewCamera.enabled = true;
         }
 
         public void Show(string path)
@@ -88,9 +87,9 @@ namespace Swg.Client.Runtime.UI.Screens
                 g.transform.SetParent(model.transform, false);
                 g.layer = PreviewLayer;
                 var mesh = Own(new Mesh { indexFormat = IndexFormat.UInt32 });
-                mesh.vertices = part.Vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray();
-                mesh.normals = part.Normals.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray();
-                mesh.uv = part.Uvs.Select(v => new Vector2(v.X, 1 - v.Y)).ToArray();
+                mesh.vertices = part.Vertices;
+                mesh.normals = part.Normals;
+                mesh.uv = part.Uvs.Select(v => new Vector2(v.x, 1 - v.y)).ToArray();
                 mesh.triangles = part.Triangles;
                 mesh.RecalculateBounds();
                 g.GetComponent<MeshFilter>().sharedMesh = mesh;
@@ -125,6 +124,7 @@ namespace Swg.Client.Runtime.UI.Screens
         void OnDestroy()
         {
             foreach (var item in owned)
+            {
                 if (item != null)
                 {
                     if (Application.isPlaying)
@@ -132,6 +132,7 @@ namespace Swg.Client.Runtime.UI.Screens
                     else
                         DestroyImmediate(item);
                 }
+            }
         }
     }
 }

@@ -127,6 +127,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 489724571597421647, guid: 24a18605638cb5d4c99ad110fc5c8992, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 781844117535241122, guid: 24a18605638cb5d4c99ad110fc5c8992, type: 3}
       propertyPath: m_Name
       value: CharacterCreationScreen

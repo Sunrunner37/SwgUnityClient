@@ -2,7 +2,6 @@ using Swg.Client.Runtime.UI.Screens;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using Swg.Client.Runtime;
 
 namespace Swg.Client.Editor
 {
@@ -14,11 +13,8 @@ namespace Swg.Client.Editor
             EditorApplication.delayCall += SetDefaultStartScene;
             EditorApplication.playModeStateChanged += state =>
             {
-                if (state == PlayModeStateChange.ExitingEditMode && !SessionState.GetBool(ClientNavigation.PreviewSessionKey, false))
-                    SetDefaultStartScene();
                 if (state == PlayModeStateChange.EnteredEditMode)
                 {
-                    SessionState.SetBool(ClientNavigation.PreviewSessionKey, false);
                     SetDefaultStartScene();
                 }
             };
@@ -26,7 +22,7 @@ namespace Swg.Client.Editor
 
         static void SetDefaultStartScene()
         {
-            if (Application.isBatchMode || EditorApplication.isPlaying || SessionState.GetBool(ClientNavigation.PreviewSessionKey, false))
+            if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
             EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.Scenes + "/" + ScreenId.Intro + ".unity");
         }
@@ -35,7 +31,6 @@ namespace Swg.Client.Editor
         {
             if (EditorApplication.isPlaying)
                 return;
-            SessionState.SetBool(ClientNavigation.PreviewSessionKey, false);
             SetDefaultStartScene();
             EditorApplication.isPlaying = true;
         }
@@ -45,7 +40,6 @@ namespace Swg.Client.Editor
         {
             if (EditorApplication.isPlaying)
                 return;
-            SessionState.SetBool(ClientNavigation.PreviewSessionKey, true);
             EditorSceneManager.playModeStartScene = null;
             EditorApplication.isPlaying = true;
         }

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Audio;
 using System;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace Swg.Client.Editor
             try
             {
                 var s = ClientSettings.From(Path.Combine(Root, "client.ini"));
-                using (var loader = new TreAssetLoader(s.GameDirectory, s.TreeConfig))
+                using (var loader = new TreAssetLoader(s.TreDirectory, s.TreArchivePriorities))
                 {
                     var visuals = AssetDatabase.FindAssets("t:TreVisual", new[] { SwgProjectPaths.SwgAssets }).Select(AssetDatabase.GUIDToAssetPath).Select(path => AssetDatabase.LoadAssetAtPath<TreVisual>(path)).ToArray();
                     if (visuals.Length == 0)
@@ -137,7 +138,7 @@ namespace Swg.Client.Editor
             if (EditorApplication.timeSinceStartup - lastDiagnostic > 5)
             {
                 lastDiagnostic = EditorApplication.timeSinceStartup;
-                Debug.Log("SWG_SMOKE_WAIT: play=" + EditorApplication.isPlaying + ", app=" + (screen == null ? "missing" : screen.Phase));
+                Debug.Log("SWG_SMOKE_WAIT: play=" + EditorApplication.isPlaying + ", app=" + (screen == null ? "missing" : screen.GetType().Name + ", ready=" + screen.IsReady));
             }
 
             if (!EditorApplication.isPlaying)

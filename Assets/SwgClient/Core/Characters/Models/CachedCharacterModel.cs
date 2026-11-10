@@ -1,3 +1,5 @@
+using Swg.Client.Core.Assets.Formats.Cidm;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +31,7 @@ namespace Swg.Client.Core.Characters.Models
             if (appearance == null)
                 throw new ArgumentNullException(nameof(appearance));
             var result = new CachedCharacterModelResult();
-            var ids = CharacterAppearanceCache.LoadCustomizationIds(loader);
+            var ids = CidmFile.Parse(loader.Read("customization/customization_id_manager.iff"));
             var owner = appearance.Customization.ResolveNames(ids);
             var textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
             if (!appearance.FromCache && !string.IsNullOrEmpty(appearance.Diagnostic))
@@ -44,7 +46,7 @@ namespace Swg.Client.Core.Characters.Models
                     if (!loaded && IsVisibleWearable(item.TemplatePath))
                         Warn(result, "Unsupported wearable appearance: " + item.TemplatePath);
                 }
-                catch (Exception e) when (e is IOException || e is ArgumentException)
+                catch (Exception e)when (e is IOException || e is ArgumentException)
                 {
                     if (IsVisibleWearable(item.TemplatePath))
                         Warn(result, "Wearable could not be loaded: " + item.TemplatePath + ": " + e.Message);
@@ -138,9 +140,9 @@ namespace Swg.Client.Core.Characters.Models
                 if (texcoords.Length != count * 8)
                     throw new InvalidDataException("Unsupported skeletal UV layout");
                 var uv = new ByteReader(texcoords);
-                var vertices = new Float3[count];
-                var ns = new Float3[count];
-                var uvs = new Float2[count];
+                var vertices = new Vector3[count];
+                var ns = new Vector3[count];
+                var uvs = new Vector2[count];
                 var sourceIndices = new int[count];
                 for (int i = 0; i < count; i++)
                 {
@@ -156,9 +158,9 @@ namespace Swg.Client.Core.Characters.Models
                     {
                         Position = ni * 12
                     };
-                    vertices[i] = pose.TransformPosition(pi, new Float3(rp.Float(), rp.Float(), rp.Float()));
-                    ns[i] = Normalize(pose.TransformNormal(pi, new Float3(rn.Float(), rn.Float(), rn.Float())));
-                    uvs[i] = new Float2(uv.Float(), uv.Float());
+                    vertices[i] = pose.TransformPosition(pi, new Vector3(rp.Float(), rp.Float(), rp.Float()));
+                    ns[i] = pose.TransformNormal(pi, new Vector3(rn.Float(), rn.Float(), rn.Float())).normalized;
+                    uvs[i] = new Vector2(uv.Float(), uv.Float());
                     sourceIndices[i] = pi;
                 }
 
@@ -190,12 +192,6 @@ namespace Swg.Client.Core.Characters.Models
                 result.Parts.Add(new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint });
                 result.Sources.Add(new CachedMeshPartSource { ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, MeshVersion = version });
             }
-        }
-
-        static Float3 Normalize(Float3 n)
-        {
-            float len = (float)Math.Sqrt(n.X * n.X + n.Y * n.Y + n.Z * n.Z);
-            return len > 0 ? new Float3(n.X / len, n.Y / len, n.Z / len) : n;
         }
 
         static void Warn(CachedCharacterModelResult result, string message)

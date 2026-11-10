@@ -1,4 +1,9 @@
-using System.Threading.Tasks;
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Runtime.Assets.Tre;
+using UnityEngine;
+using System;
+using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Swg.Client.Core.Networking.Login;
@@ -7,6 +12,7 @@ namespace Swg.Client.Runtime.UI.Screens.Login
 {
     public sealed class LoginScreen : ClientScreen
     {
+        ClientConnection connection;
         public InputField username;
         public InputField password;
         public Text status;
@@ -14,22 +20,63 @@ namespace Swg.Client.Runtime.UI.Screens.Login
         public Button back;
         public Button next;
         LoginConnection connecting;
-        protected override Task PrepareAsync() => Task.CompletedTask;
-        protected override void OnReady()
+        public CanvasGroup content;
+        void Awake()
         {
-            Client.Music.Request(Client.Assets, musicPath, loopMusic);
-            server.text = "Server: " + Client.Settings.LoginEndpoint;
-            username.text = Client.Session.Username ?? "";
-            status.text = Client.Session.ConsumeFailure() ?? "";
-            back.onClick.AddListener(Back);
-            next.onClick.AddListener(Submit);
-            SetInteractable(true);
+            content.alpha = 0;
+            content.interactable = false;
+            content.blocksRaycasts = false;
+        }
+
+        TreRuntimeAssets assets;
+        IEnumerator Start()
+        {
+            connection = GameServices.Resolve<ClientConnection>();
+            assets = GameServices.Resolve<TreRuntimeAssets>();
+            try
+            {
+                server.text = "Server: " + GameServices.Resolve<ClientSettings>().LoginEndpoint;
+                username.text = connection.Username ?? "";
+                status.text = connection.ConsumeFailure() ?? "";
+                back.onClick.AddListener(Back);
+                next.onClick.AddListener(Submit);
+                SetInteractable(true);
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
+            yield return new WaitUntil(() => assets.Ready.IsCompleted);
+            if (assets.Ready.IsFaulted)
+            {
+                Debug.LogException(assets.Ready.Exception.GetBaseException(), this);
+                yield break;
+            }
+
+            yield return null;
+            try
+            {
+                TreTextureBinding.ThrowIfFailed(content.transform);
+                content.alpha = 1;
+                content.interactable = true;
+                content.blocksRaycasts = true;
+            }
+            catch (Exception error)
+            {
+                Debug.LogException(error, this);
+                yield break;
+            }
+
             username.ActivateInputField();
+            IsReady = true;
+            Debug.Log("LoginScreen: Ready", this);
         }
 
         public void Submit()
         {
-            if (!IsReady || connecting != null || ClientNavigation.IsChanging)
+            if (!IsReady || connecting != null)
                 return;
             if (string.IsNullOrWhiteSpace(username.text) || string.IsNullOrEmpty(password.text))
             {
@@ -37,8 +84,8 @@ namespace Swg.Client.Runtime.UI.Screens.Login
                 return;
             }
 
-            Client.Session.Username = username.text;
-            connecting = new LoginConnection(Client.Settings, username.text, password.text);
+            connection.Username = username.text;
+            connecting = new LoginConnection(GameServices.Resolve<ClientSettings>(), username.text, password.text);
             password.text = "";
             SetInteractable(false);
             status.text = "Connecting to login server...";
@@ -60,12 +107,15 @@ namespace Swg.Client.Runtime.UI.Screens.Login
                 return;
             }
 
-            ClientNavigation.Quit();
+            Application.Quit();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
         }
 
         void Update()
         {
-            if (!IsReady || ClientNavigation.IsChanging)
+            if (!IsReady)
                 return;
             if (connecting != null)
                 while (connecting.Events.TryDequeue(out var message))
@@ -81,9 +131,9 @@ namespace Swg.Client.Runtime.UI.Screens.Login
 
                     if (message.Admission != null)
                     {
-                        Client.Session.Accept(connecting, message.Admission);
+                        connection.Accept(connecting, message.Admission);
                         connecting = null;
-                        ClientNavigation.Open(ScreenId.CharacterList);
+                        ScreenChanger.Open(ScreenId.CharacterList);
                         return;
                     }
 
@@ -95,6 +145,15 @@ namespace Swg.Client.Runtime.UI.Screens.Login
                 return;
             if (keyboard.escapeKey.wasPressedThisFrame)
                 Back();
+            else if (keyboard.tabKey.wasPressedThisFrame && connecting == null)
+            {
+                var target = username.isFocused ? password : username;
+                if (target.IsActive() && target.IsInteractable())
+                {
+                    target.Select();
+                    target.ActivateInputField();
+                }
+            }
             else if (keyboard.enterKey.wasPressedThisFrame)
                 Submit();
         }

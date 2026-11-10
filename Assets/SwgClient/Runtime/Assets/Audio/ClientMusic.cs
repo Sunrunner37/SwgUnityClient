@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Swg.Client.Core.Audio;
-using Swg.Client.Runtime.Assets.Tre;
+using System.Collections;
 using UnityEngine;
 
 namespace Swg.Client.Runtime.Assets.Audio
@@ -10,103 +7,78 @@ namespace Swg.Client.Runtime.Assets.Audio
     [RequireComponent(typeof(AudioSource))]
     public sealed class ClientMusic : MonoBehaviour
     {
-        readonly Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>(StringComparer.OrdinalIgnoreCase);
-        readonly Dictionary<string, Task<AudioClip>> pending = new Dictionary<string, Task<AudioClip>>(StringComparer.OrdinalIgnoreCase);
-        int requestVersion;
-        AudioSource Source => GetComponent<AudioSource>();
-        public float Volume
-        {
-            set => Source.volume = value;
-        }
+        AudioSource source;
+        AudioClipLoader clips;
+        Coroutine pendingPlayback;
+        void Awake() => source = GetComponent<AudioSource>();
+        public float Volume { set => source.volume = value; }
 
-        public Task<AudioClip> LoadAsync(TreRuntimeAssets assets, string path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentException("A virtual music asset path is required.", nameof(path));
-            path = path.Replace('\\', '/');
-            if (clips.TryGetValue(path, out var clip))
-                return Task.FromResult(clip);
-            if (!pending.TryGetValue(path, out var task))
-            {
-                task = DecodeAsync(assets, path);
-                pending.Add(path, task);
-            }
-
-            return task;
-        }
-
-        async Task<AudioClip> DecodeAsync(TreRuntimeAssets assets, string path)
-        {
-            try
-            {
-                var pcm = await assets.ReadAsync(loader => MusicLoader.Load(loader, path));
-                if (this == null)
-                    throw new OperationCanceledException("Music player was disposed.");
-                var clip = AudioClip.Create(path, pcm.Samples.Length / pcm.Channels, pcm.Channels, pcm.Rate, false);
-                clip.SetData(pcm.Samples, 0);
-                clips.Add(path, clip);
-                return clip;
-            }
-            finally
-            {
-                pending.Remove(path);
-            }
-        }
-
-        public void Request(TreRuntimeAssets assets, string path, bool loop = true)
+        public void Request(string path, bool loop = true)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return;
-            if (Source.clip != null && (!clips.TryGetValue(path, out var clip) || Source.clip != clip))
-                Source.Stop();
-            int version = ++requestVersion;
-            _ = PlayWhenReady(assets, path, loop, version);
+            StopPendingPlayback();
+            clips = clips ?? GameServices.Resolve<AudioClipLoader>();
+            // Start with a frame boundary so even a cached clip cannot complete before the handle is assigned.
+            pendingPlayback = StartCoroutine(PlayWhenReady(path, loop));
         }
 
-        async Task PlayWhenReady(TreRuntimeAssets assets, string path, bool loop, int version)
+        IEnumerator PlayWhenReady(string path, bool loop)
         {
-            try
+            yield return null;
+            var task = clips.LoadAsync(path);
+            yield return new WaitUntil(() => task.IsCompleted);
+            pendingPlayback = null;
+            if (task.IsFaulted)
             {
-                var clip = await LoadAsync(assets, path);
-                if (this != null && version == requestVersion)
-                    PlayClip(clip, loop);
+                Debug.LogWarning("Music unavailable (" + path + "): " + task.Exception.GetBaseException().Message, this);
+                yield break;
             }
-            catch (Exception e)
-            {
-                if (this != null && version == requestVersion)
-                    Debug.LogWarning("Music unavailable (" + path + "): " + e.Message);
-            }
+
+            if (!task.IsCanceled)
+                PlayClip(task.Result, loop);
         }
 
         public void Play(AudioClip clip, bool loop)
         {
-            requestVersion++;
+            StopPendingPlayback();
             PlayClip(clip, loop);
         }
 
         void PlayClip(AudioClip clip, bool loop)
         {
-            if (Source.clip == clip && Source.isPlaying)
+            if (source.clip == clip && source.isPlaying)
             {
-                Source.loop = loop;
+                source.loop = loop;
                 return;
             }
 
-            Source.Stop();
-            Source.clip = clip;
-            Source.spatialBlend = 0;
-            Source.loop = loop;
-            Source.Play();
+            source.Stop();
+            source.clip = clip;
+            source.spatialBlend = 0;
+            source.loop = loop;
+            source.Play();
+        }
+
+        void StopPendingPlayback()
+        {
+            if (pendingPlayback == null)
+                return;
+            StopCoroutine(pendingPlayback);
+            pendingPlayback = null;
+        }
+
+        public void Stop()
+        {
+            StopPendingPlayback();
+            source.Stop();
         }
 
         void OnDestroy()
         {
-            requestVersion++;
-            if (Source != null)
-                Source.Stop();
-            foreach (var clip in clips.Values)
-                if (clip != null)
-                    Destroy(clip);
+            StopPendingPlayback();
+            if (source != null)
+                source.Stop();
         }
     }
 }

@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,10 +18,7 @@ namespace Swg.Client.Core.Characters.Animation
         public const string NeutralIdleAnimation = "appearance/animation/all_b_idl_breathe_normally.ans";
         readonly List<Influence>[] weights;
         readonly RigidTransform[] skin;
-        public string AnimationPath
-        {
-            get; private set;
-        }
+        public string AnimationPath { get; private set; }
 
         public int PositionCount
         {
@@ -84,9 +82,9 @@ namespace Swg.Client.Core.Characters.Animation
                     if (parent >= bind.Count)
                         throw new InvalidDataException("Skeleton parent order");
                     var t = Vector(translations, j * 12);
-                    var r = Quaternion(rotations, j * 16);
-                    var before = Quaternion(pre, j * 16);
-                    var after = Quaternion(post, j * 16);
+                    var r = ReadQuaternion(rotations, j * 16);
+                    var before = ReadQuaternion(pre, j * 16);
+                    var after = ReadQuaternion(post, j * 16);
                     var b = new RigidTransform
                     {
                         Rotation = after * (r * before),
@@ -98,7 +96,7 @@ namespace Swg.Client.Core.Characters.Animation
                         p = new RigidTransform
                         {
                             Rotation = after * ((sample.Rotation * r) * before),
-                            Translation = Float3Math.Add(t, sample.Translation)
+                            Translation = t + sample.Translation
                         };
                     bind.Add(parent < 0 ? b : bind[parent] * b);
                     posed.Add(parent < 0 ? p : posed[parent] * p);
@@ -140,30 +138,30 @@ namespace Swg.Client.Core.Characters.Animation
             return new SkeletalPose(weights, skin, NeutralIdleAnimation);
         }
 
-        public Float3 TransformPosition(int sourcePositionIndex, Float3 value)
+        public Vector3 TransformPosition(int sourcePositionIndex, Vector3 value)
         {
             return Transform(sourcePositionIndex, value, false);
         }
 
         // MGN normal indices differ from position indices. The position supplies the weights.
-        public Float3 TransformNormal(int sourcePositionIndex, Float3 value)
+        public Vector3 TransformNormal(int sourcePositionIndex, Vector3 value)
         {
             return Transform(sourcePositionIndex, value, true);
         }
 
-        Float3 Transform(int index, Float3 value, bool normal)
+        Vector3 Transform(int index, Vector3 value, bool normal)
         {
             if (index < 0 || index >= weights.Length)
                 throw new ArgumentOutOfRangeException("sourcePositionIndex");
             var influences = weights[index];
             if (influences.Count == 0)
                 return value;
-            var result = new Float3();
+            var result = new Vector3();
             float total = 0;
             foreach (var w in influences)
             {
                 var t = skin[w.Joint];
-                result = Float3Math.Add(result, Float3Math.Scale(normal ? t.Rotation.Rotate(value) : t.Point(value), w.Weight));
+                result += (normal ? t.Rotation * value : t.Point(value)) * w.Weight;
                 total += w.Weight;
             }
 
@@ -171,11 +169,11 @@ namespace Swg.Client.Core.Characters.Animation
                 return value;
             if (normal)
             {
-                float length = (float)Math.Sqrt(result.X * result.X + result.Y * result.Y + result.Z * result.Z);
-                return length > 0 ? Float3Math.Scale(result, 1 / length) : value;
+                float length = result.magnitude;
+                return length > 0 ? result / length : value;
             }
 
-            return Float3Math.Scale(result, 1 / total);
+            return result / total;
         }
 
         static string[] Strings(byte[] b)
@@ -194,14 +192,15 @@ namespace Swg.Client.Core.Characters.Animation
             return values.ToArray();
         }
 
-        static Float3 Vector(byte[] b, int p)
+        static Vector3 Vector(byte[] b, int p)
         {
-            return new Float3(BitConverter.ToSingle(b, p), BitConverter.ToSingle(b, p + 4), BitConverter.ToSingle(b, p + 8));
+            return new Vector3(BitConverter.ToSingle(b, p), BitConverter.ToSingle(b, p + 4), BitConverter.ToSingle(b, p + 8));
         }
 
-        static QuaternionData Quaternion(byte[] b, int p)
+        static Quaternion ReadQuaternion(byte[] b, int p)
         {
-            return new QuaternionData(BitConverter.ToSingle(b, p), BitConverter.ToSingle(b, p + 4), BitConverter.ToSingle(b, p + 8), BitConverter.ToSingle(b, p + 12));
+            // Native skeleton rotations are stored W, X, Y, Z.
+            return new Quaternion(x: BitConverter.ToSingle(b, p + 4), y: BitConverter.ToSingle(b, p + 8), z: BitConverter.ToSingle(b, p + 12), w: BitConverter.ToSingle(b, p));
         }
     }
 }

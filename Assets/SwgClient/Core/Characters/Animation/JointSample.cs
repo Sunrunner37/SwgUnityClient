@@ -1,10 +1,10 @@
-using Swg.Client.Core.Geometry;
+using UnityEngine;
 
 namespace Swg.Client.Core.Characters.Animation
 {
     internal struct JointSample
     {
-        public QuaternionData Rotation;
-        public Float3 Translation;
+        public Quaternion Rotation;
+        public Vector3 Translation;
     }
 }

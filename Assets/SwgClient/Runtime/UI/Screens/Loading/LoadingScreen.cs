@@ -20,7 +20,6 @@ namespace Swg.Client.Runtime.UI.Screens.Loading
 
         readonly CancellationTokenSource lifetime = new CancellationTokenSource();
         bool failed;
-        public ScreenErrorView errors;
         public CanvasGroup content;
         void Awake()
         {
@@ -123,7 +122,7 @@ namespace Swg.Client.Runtime.UI.Screens.Loading
             failed = true;
             IsReady = false;
             entry?.Abort(error.Message);
-            errors.Show(error);
+            Debug.LogException(error, this);
             if (view != null && view.status != null)
                 status.text = "Unable to load world.";
         }
