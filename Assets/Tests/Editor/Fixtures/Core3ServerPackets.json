@@ -1,0 +1,3920 @@
+{
+  "scope": "Core3 server/zone game packets and concrete controller types, including inline sends. Login/authentication and SOE transport keep their existing paths; baseline/delta schemas share their existing envelopes. Client-only request builders and uninstantiated dynamic templates are excluded.",
+  "packets": [
+    {
+      "kind": "Packet",
+      "value": 43294324,
+      "name": "PlayClientEffectLoc",
+      "operands": [
+        9
+      ],
+      "group": "Effects",
+      "packet": "PlayClientEffectLocPacket",
+      "handler": "PlayClientEffectLocPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayClientEffectLoc",
+          "source": "server/zone/packets/scene/PlayClientEffectLocMessage.h",
+          "line": 10,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.PlayClientEffectLocPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEffectLocPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 69668234,
+      "name": "PlayMusicMessage",
+      "operands": [
+        5
+      ],
+      "group": "Audio",
+      "packet": "PlayMusicPacket",
+      "handler": "PlayMusicPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayMusicMessage",
+          "source": "server/zone/packets/player/PlayMusicMessage.h",
+          "line": 10,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Audio.PlayMusicPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Audio.PlayMusicPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 138960407,
+      "name": "ChatPersistentMessageToClient",
+      "operands": [
+        2
+      ],
+      "group": "Chat",
+      "packet": "ChatPersistentMessageToClientPacket",
+      "handler": "ChatPersistentMessageToClientPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatPersistentMessageToClient",
+          "source": "server/zone/packets/chat/ChatPersistentMessageToClient.h",
+          "line": 13,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatPersistentMessageToClientPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatPersistentMessageToClientPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 144818470,
+      "name": "UpdatePVPStatusMessage",
+      "operands": [
+        4
+      ],
+      "group": "Combat",
+      "packet": "UpdatePVPStatusPacket",
+      "handler": "UpdatePVPStatusPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "UpdatePVPStatusMessage",
+          "source": "server/zone/packets/tangible/UpdatePVPStatusMessage.h",
+          "line": 11,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.UpdatePVPStatusPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.UpdatePVPStatusPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 147192950,
+      "name": "ConGenericMessage",
+      "operands": [
+        3
+      ],
+      "group": "Ui",
+      "packet": "ConGenericPacket",
+      "handler": "ConGenericPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ConGenericMessage",
+          "source": "server/zone/packets/ui/ConGenericMessage.h",
+          "line": 13,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.ConGenericPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ConGenericPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 237033449,
+      "name": "ConnectionServerTestMessage",
+      "operands": [
+        2
+      ],
+      "group": "Session",
+      "packet": "ConnectionServerTestPacket",
+      "handler": "ConnectionServerTestPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ConnectionServerTestMessage",
+          "source": "server/zone/packets/zone/ConnectionServerTestMessage.h",
+          "line": 13,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.ConnectionServerTestPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectionServerTestPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 241290386,
+      "name": "ItemSoldMessage",
+      "operands": [
+        3
+      ],
+      "group": "Auction",
+      "packet": "ItemSoldPacket",
+      "handler": "ItemSoldPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ItemSoldMessage",
+          "source": "server/zone/packets/auction/ItemSoldMessage.h",
+          "line": 29,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.ItemSoldPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.ItemSoldPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 310780243,
+      "name": "DeltaMessage",
+      "operands": [
+        5
+      ],
+      "group": "Replication",
+      "packet": "DeltasPacket",
+      "handler": "DeltasPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "DeltaMessage",
+          "source": "server/zone/packets/DeltaMessage.h",
+          "line": 11,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Replication.DeltasPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Replication.DeltasPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 323157063,
+      "name": "ChatOnRemoveModeratorFromRoom",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnRemoveModeratorFromRoomPacket",
+      "handler": "ChatOnRemoveModeratorFromRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnRemoveModeratorFromRoom",
+          "source": "server/zone/packets/chat/ChatOnRemoveModeratorFromRoom.h",
+          "line": 13,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnRemoveModeratorFromRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnRemoveModeratorFromRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 361821756,
+      "name": "ConnectionServerLagResponse",
+      "operands": [
+        1
+      ],
+      "group": "Session",
+      "packet": "ConnectionServerLagResponsePacket",
+      "handler": "ConnectionServerLagResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ConnectionServerLagResponse",
+          "source": "server/zone/packets/zone/LagReport.h",
+          "line": 23,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.ConnectionServerLagResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectionServerLagResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 455407624,
+      "name": "LightUpdateTransformMessage",
+      "operands": [
+        8
+      ],
+      "group": "Movement",
+      "packet": "UpdateTransformPacket",
+      "handler": "UpdateTransformPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "LightUpdateTransformMessage",
+          "source": "server/zone/packets/scene/LightUpdateTransformMessage.h",
+          "line": 20,
+          "operands": 8
+        },
+        {
+          "name": "UpdateTransformMessage",
+          "source": "server/zone/packets/scene/UpdateTransformMessage.h",
+          "line": 13,
+          "operands": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.UpdateTransformPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.UpdateTransformPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 498431436,
+      "name": "ClientCreateCharacterSuccess",
+      "operands": [
+        2
+      ],
+      "group": "CharacterCreation",
+      "packet": "ClientCreateCharacterSuccessPacket",
+      "handler": "ClientCreateCharacterSuccessPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientCreateCharacterSuccess",
+          "source": "server/zone/packets/charcreation/ClientCreateCharacterSuccess.h",
+          "line": 13,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.CharacterCreation.ClientCreateCharacterSuccessPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientCreateCharacterSuccessPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 512562006,
+      "name": "AddItemMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "AddItemPacket",
+      "handler": "AddItemPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AddItemMessage",
+          "source": "server/zone/packets/trade/AddItemMessage.h",
+          "line": 8,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.AddItemPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AddItemPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 724176276,
+      "name": "ChatOnAddFriend",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnAddFriendPacket",
+      "handler": "ChatOnAddFriendPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnAddFriend",
+          "source": "server/zone/packets/chat/ChatOnAddFriend.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnAddFriendPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnAddFriendPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 742613047,
+      "name": "SceneObjectCloseMessage",
+      "operands": [
+        2
+      ],
+      "group": "Scene",
+      "packet": "SceneEndBaselinesPacket",
+      "handler": "SceneEndBaselinesPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "SceneObjectCloseMessage",
+          "source": "server/zone/packets/scene/SceneObjectCloseMessage.h",
+          "line": 12,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.SceneEndBaselinesPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.SceneEndBaselinesPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 757952225,
+      "name": "ClientMfdStatusUpdateMessage",
+      "operands": [
+        6
+      ],
+      "group": "Ui",
+      "packet": "ClientMfdStatusUpdatePacket",
+      "handler": "ClientMfdStatusUpdatePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientMfdStatusUpdateMessage",
+          "source": "server/zone/packets/ui/ClientMfdStatusUpdateMessage.h",
+          "line": 12,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.ClientMfdStatusUpdatePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ClientMfdStatusUpdatePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 784088025,
+      "name": "ServerTimeMessage",
+      "operands": [
+        2
+      ],
+      "group": "Scene",
+      "packet": "ServerTimePacket",
+      "handler": "ServerTimePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ServerTimeMessage",
+          "source": "server/zone/packets/scene/ServerTimeMessage.h",
+          "line": 12,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.ServerTimePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ServerTimePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 841367328,
+      "name": "GuildResponseMessage",
+      "operands": [
+        4
+      ],
+      "group": "Player",
+      "packet": "GuildResponsePacket",
+      "handler": "GuildResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GuildResponseMessage",
+          "source": "server/zone/packets/player/GuildResponseMessage.h",
+          "line": 12,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.GuildResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.GuildResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 844706520,
+      "name": "BeginTradeMessage",
+      "operands": [
+        2
+      ],
+      "group": "Trade",
+      "packet": "BeginTradePacket",
+      "handler": "BeginTradePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "BeginTradeMessage",
+          "source": "server/zone/packets/trade/BeginTradeMessage.h",
+          "line": 8,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.BeginTradePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.BeginTradePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 903335071,
+      "name": "ChatOnCreateRoom",
+      "operands": [
+        4
+      ],
+      "group": "Chat",
+      "packet": "ChatOnCreateRoomPacket",
+      "handler": "ChatOnCreateRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnCreateRoom",
+          "source": "server/zone/packets/chat/ChatOnCreateRoom.h",
+          "line": 11,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnCreateRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnCreateRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 914256766,
+      "name": "PlayerMoneyResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Player",
+      "packet": "PlayerMoneyResponsePacket",
+      "handler": "PlayerMoneyResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayerMoneyResponseMessage",
+          "source": "server/zone/packets/player/PlayerMoneyResponseMessage.h",
+          "line": 11,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.PlayerMoneyResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlayerMoneyResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 916469848,
+      "name": "ChatOnAddModeratorToRoom",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnAddModeratorToRoomPacket",
+      "handler": "ChatOnAddModeratorToRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnAddModeratorToRoom",
+          "source": "server/zone/packets/chat/ChatOnAddModeratorToRoom.h",
+          "line": 13,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnAddModeratorToRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnAddModeratorToRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 988209070,
+      "name": "CmdStartScene",
+      "operands": [
+        9
+      ],
+      "group": "Scene",
+      "packet": "CmdStartScenePacket",
+      "handler": "CmdStartScenePacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "CmdStartScene",
+          "source": "server/zone/packets/zone/CmdStartScene.h",
+          "line": 13,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.CmdStartScenePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.CmdStartScenePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1012292845,
+      "name": "ChatInstantMessageToClient",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "ChatInstantMessageToClientPacket",
+      "handler": "ChatInstantMessageToClientPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatInstantMessageToClient",
+          "source": "server/zone/packets/chat/ChatInstantMessageToClient.h",
+          "line": 10,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatInstantMessageToClientPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatInstantMessageToClientPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1123883485,
+      "name": "LogoutMessage",
+      "operands": [
+        1
+      ],
+      "group": "Player",
+      "packet": "LogoutPacket",
+      "handler": "LogoutPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "LogoutMessage",
+          "source": "server/zone/packets/player/LogoutMessage.h",
+          "line": 11,
+          "operands": 1
+        },
+        {
+          "name": "ClientLogout",
+          "source": "server/zone/packets/zone/ClientLogout.h",
+          "line": 10,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.LogoutPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.LogoutPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1140661282,
+      "name": "CmdSceneReady",
+      "operands": [
+        1
+      ],
+      "group": "Scene",
+      "packet": "CmdSceneReadyPacket",
+      "handler": "CmdSceneReadyPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "CmdSceneReady",
+          "source": "server/zone/packets/zone/CmdSceneReady.h",
+          "line": 10,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.CmdSceneReadyPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.CmdSceneReadyPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1214469866,
+      "name": "ServerWeatherMessage",
+      "operands": [
+        3
+      ],
+      "group": "Scene",
+      "packet": "ServerWeatherPacket",
+      "handler": "ServerWeatherPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ServerWeatherMessage",
+          "source": "server/zone/packets/scene/ServerWeatherMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.ServerWeatherPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ServerWeatherPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1215714010,
+      "name": "ParametersMessage",
+      "operands": [
+        2
+      ],
+      "group": "Session",
+      "packet": "ParametersPacket",
+      "handler": "ParametersPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ParametersMessage",
+          "source": "server/zone/packets/zone/ParametersMessage.h",
+          "line": 12,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.ParametersPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ParametersPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1228924746,
+      "name": "ChatOnInviteToRoom",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "ChatOnInviteToRoomPacket",
+      "handler": "ChatOnInviteToRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnInviteToRoom",
+          "source": "server/zone/packets/chat/ChatOnInviteToRoom.h",
+          "line": 13,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnInviteToRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnInviteToRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1295143967,
+      "name": "PlanetTravelPointListResponse",
+      "operands": [
+        6
+      ],
+      "group": "Player",
+      "packet": "PlanetTravelPointListResponsePacket",
+      "handler": "PlanetTravelPointListResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlanetTravelPointListResponse",
+          "source": "server/zone/packets/player/PlanetTravelPointListResponse.h",
+          "line": 35,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.PlanetTravelPointListResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlanetTravelPointListResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1296422148,
+      "name": "SceneObjectDestroyMessage",
+      "operands": [
+        3
+      ],
+      "group": "Scene",
+      "packet": "SceneDestroyObjectPacket",
+      "handler": "SceneDestroyObjectPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "SceneObjectDestroyMessage",
+          "source": "server/zone/packets/scene/SceneObjectDestroyMessage.h",
+          "line": 12,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.SceneDestroyObjectPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.SceneDestroyObjectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1312981128,
+      "name": "GalaxyLoopTimesResponse",
+      "operands": [
+        3
+      ],
+      "group": "Session",
+      "packet": "GalaxyLoopTimesResponsePacket",
+      "handler": "GalaxyLoopTimesResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GalaxyLoopTimesResponse",
+          "source": "server/zone/packets/zone/GalaxyLoopTimes.h",
+          "line": 14,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.GalaxyLoopTimesResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.GalaxyLoopTimesResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1320202346,
+      "name": "IsFlattenedTheaterMessage",
+      "operands": [
+        3
+      ],
+      "group": "Scene",
+      "packet": "IsFlattenedTheaterPacket",
+      "handler": "IsFlattenedTheaterPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "IsFlattenedTheaterMessage",
+          "source": "server/zone/packets/scene/IsFlattenedTheaterMessage.h",
+          "line": 13,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.IsFlattenedTheaterPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.IsFlattenedTheaterPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1391682744,
+      "name": "PermissionListCreateMessage",
+      "operands": [
+        4
+      ],
+      "group": "Ui",
+      "packet": "PermissionListCreatePacket",
+      "handler": "PermissionListCreatePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PermissionListCreateMessage",
+          "source": "server/zone/packets/ui/PermissionListCreateMessage.h",
+          "line": 8,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.PermissionListCreatePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.PermissionListCreatePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1412654886,
+      "name": "ChatOnChangeFriendStatus",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnChangeFriendStatusPacket",
+      "handler": "ChatOnChangeFriendStatusPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnChangeFriendStatus",
+          "source": "server/zone/packets/chat/ChatOnChangeFriendStatus.h",
+          "line": 10,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnChangeFriendStatusPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnChangeFriendStatusPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1426735226,
+      "name": "CreateTicketResponseMessage",
+      "operands": [
+        9
+      ],
+      "group": "Support",
+      "packet": "CreateTicketResponsePacket",
+      "handler": "CreateTicketResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CreateTicketResponseMessage",
+          "source": "server/zone/packets/ui/CreateTicketResponseMessage.h",
+          "line": 13,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.CreateTicketResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.CreateTicketResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1456201374,
+      "name": "UpdateContainmentMessage",
+      "operands": [
+        4
+      ],
+      "group": "Scene",
+      "packet": "UpdateContainmentPacket",
+      "handler": "UpdateContainmentPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "UpdateContainmentMessage",
+          "source": "server/zone/packets/scene/UpdateContainmentMessage.h",
+          "line": 12,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.UpdateContainmentPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.UpdateContainmentPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1489010465,
+      "name": "unkZone",
+      "operands": [
+        2
+      ],
+      "group": "Session",
+      "packet": "unkZonePacket",
+      "handler": "unkZonePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "unkZone",
+          "source": "server/zone/packets/zone/unkZone.h",
+          "line": 14,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.unkZonePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.unkZonePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1513640845,
+      "name": "ChatOnBanFromRoom",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnBanFromRoomPacket",
+      "handler": "ChatOnBanFromRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnBanFromRoom",
+          "source": "server/zone/packets/chat/ChatOnBanFromRoom.h",
+          "line": 13,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnBanFromRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnBanFromRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1574254935,
+      "name": "FactionResponseMessage",
+      "operands": [
+        7
+      ],
+      "group": "Player",
+      "packet": "FactionResponsePacket",
+      "handler": "FactionResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "FactionResponseMessage",
+          "source": "server/zone/packets/player/FactionResponseMessage.h",
+          "line": 10,
+          "operands": 7
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.FactionResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.FactionResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1597194998,
+      "name": "SuiUpdatePageMessage",
+      "operands": [
+        2
+      ],
+      "group": "Ui",
+      "packet": "SuiUpdatePagePacket",
+      "handler": "SuiUpdatePagePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SuiUpdatePageMessage",
+          "source": "server/zone/packets/ui/SuiUpdatePageMessage.h",
+          "line": 7,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.SuiUpdatePagePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiUpdatePagePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1622477195,
+      "name": "ChatOnLeaveRoom",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnLeaveRoomPacket",
+      "handler": "ChatOnLeaveRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnLeaveRoom",
+          "source": "server/zone/packets/chat/ChatOnLeaveRoom.h",
+          "line": 12,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnLeaveRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnLeaveRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1628737492,
+      "name": "RequestCategoriesResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "RequestCategoriesResponsePacket",
+      "handler": "RequestCategoriesResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "RequestCategoriesResponseMessage",
+          "source": "server/zone/packets/ui/RequestCategoriesResponseMessage.h",
+          "line": 14,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.RequestCategoriesResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.RequestCategoriesResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1631016303,
+      "name": "ConnectPlayerResponseMessage",
+      "operands": [
+        2
+      ],
+      "group": "Session",
+      "packet": "ConnectPlayerResponsePacket",
+      "handler": "ConnectPlayerResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ConnectPlayerResponseMessage",
+          "source": "server/zone/packets/zone/ConnectPlayerResponseMessage.h",
+          "line": 14,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.ConnectPlayerResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectPlayerResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1710389639,
+      "name": "CreateNebulaLightningMessage",
+      "operands": [
+        17
+      ],
+      "group": "Space",
+      "packet": "CreateNebulaLightningPacket",
+      "handler": "CreateNebulaLightningPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CreateNebulaLightningMessage",
+          "source": "server/zone/packets/jtl/CreateNebulaLightningMessage.h",
+          "line": 13,
+          "operands": 17
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.CreateNebulaLightningPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateNebulaLightningPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1755799308,
+      "name": "BaseLineMessage",
+      "operands": [
+        5
+      ],
+      "group": "Replication",
+      "packet": "BaselinesPacket",
+      "handler": "BaselinesPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "BaseLineMessage",
+          "source": "server/zone/packets/BaseLineMessage.h",
+          "line": 12,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Replication.BaselinesPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Replication.BaselinesPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1825766616,
+      "name": "ChatFriendsListUpdate",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatFriendsListUpdatePacket",
+      "handler": "ChatFriendsListUpdatePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatFriendsListUpdate",
+          "source": "server/zone/packets/chat/ChatFriendsListUpdate.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatFriendsListUpdatePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatFriendsListUpdatePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1831494675,
+      "name": "ChatSystemMessage",
+      "operands": [
+        4
+      ],
+      "group": "Chat",
+      "packet": "ChatSystemPacket",
+      "handler": "ChatSystemPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatSystemMessage",
+          "source": "server/zone/packets/chat/ChatSystemMessage.h",
+          "line": 11,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatSystemPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatSystemPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1837748827,
+      "name": "BadgesResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Player",
+      "packet": "BadgesResponsePacket",
+      "handler": "BadgesResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "BadgesResponseMessage",
+          "source": "server/zone/packets/player/BadgesResponseMessage.h",
+          "line": 12,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.BadgesResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.BadgesResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1856253312,
+      "name": "NewTicketActivityResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "NewTicketActivityResponsePacket",
+      "handler": "NewTicketActivityResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "NewTicketActivityResponseMessage",
+          "source": "server/zone/packets/ui/NewTicketActivityResponseMessage.h",
+          "line": 11,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.NewTicketActivityResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.NewTicketActivityResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1858242160,
+      "name": "DenyTradeMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "DenyTradePacket",
+      "handler": "DenyTradePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DenyTradeMessage",
+          "source": "server/zone/packets/trade/DenyTradeMessage.h",
+          "line": 11,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.DenyTradePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.DenyTradePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1893642647,
+      "name": "ChatRoomList",
+      "operands": [
+        2
+      ],
+      "group": "Chat",
+      "packet": "ChatRoomListPacket",
+      "handler": "ChatRoomListPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatRoomList",
+          "source": "server/zone/packets/chat/ChatRoomList.h",
+          "line": 17,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatRoomListPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatRoomListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1894373903,
+      "name": "ChatOnChangeIgnoreStatus",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnChangeIgnoreStatusPacket",
+      "handler": "ChatOnChangeIgnoreStatusPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnChangeIgnoreStatus",
+          "source": "server/zone/packets/chat/ChatOnChangeIgnoreStatus.h",
+          "line": 10,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnChangeIgnoreStatusPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnChangeIgnoreStatusPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1896001887,
+      "name": "ChatServerStatus",
+      "operands": [
+        2
+      ],
+      "group": "Chat",
+      "packet": "ChatServerStatusPacket",
+      "handler": "ChatServerStatusPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatServerStatus",
+          "source": "server/zone/packets/chat/ChatServerStatus.h",
+          "line": 13,
+          "operands": 2
+        },
+        {
+          "name": "unkByteFlag",
+          "source": "server/zone/packets/zone/unkByteFlag.h",
+          "line": 10,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatServerStatusPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatServerStatusPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1905620520,
+      "name": "CreateClientPathMessage",
+      "operands": [
+        5
+      ],
+      "group": "Ui",
+      "packet": "CreateClientPathPacket",
+      "handler": "CreateClientPathPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CreateClientPathMessage",
+          "source": "server/zone/packets/ui/CreateClientPathMessage.h",
+          "line": 13,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.CreateClientPathPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CreateClientPathPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1914499211,
+      "name": "CreateMissileMessage",
+      "operands": [
+        20
+      ],
+      "group": "Space",
+      "packet": "CreateMissilePacket",
+      "handler": "CreateMissilePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CreateMissileMessage",
+          "source": "server/zone/packets/jtl/CreateMissileMessage.h",
+          "line": 13,
+          "operands": 20
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.CreateMissilePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateMissilePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1979871161,
+      "name": "ShipUpdateTransformMessage",
+      "operands": [
+        8
+      ],
+      "group": "Space",
+      "packet": "ShipUpdateTransformPacket",
+      "handler": "ShipUpdateTransformPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ShipUpdateTransformMessage",
+          "source": "server/zone/packets/ship/ShipUpdateTransformMessage.h",
+          "line": 16,
+          "operands": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.ShipUpdateTransformPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.ShipUpdateTransformPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 1983269072,
+      "name": "ShipUpdateTransformCollisionMessage",
+      "operands": [
+        8
+      ],
+      "group": "Space",
+      "packet": "ShipUpdateTransformCollisionPacket",
+      "handler": "ShipUpdateTransformCollisionPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ShipUpdateTransformCollisionMessage",
+          "source": "server/zone/packets/ship/ShipUpdateTransformCollisionMessage.h",
+          "line": 13,
+          "operands": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.ShipUpdateTransformCollisionPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.ShipUpdateTransformCollisionPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2023378442,
+      "name": "GameServerLagResponse",
+      "operands": [
+        1
+      ],
+      "group": "Session",
+      "packet": "GameServerLagResponsePacket",
+      "handler": "GameServerLagResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GameServerLagResponse",
+          "source": "server/zone/packets/zone/LagReport.h",
+          "line": 14,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.GameServerLagResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.GameServerLagResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2092322849,
+      "name": "OpenHolocronToPageMessage",
+      "operands": [
+        9
+      ],
+      "group": "Ui",
+      "packet": "OpenHolocronToPagePacket",
+      "handler": "OpenHolocronToPagePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "OpenHolocronToPageMessage",
+          "source": "server/zone/packets/ui/OpenHolocronToPageMessage.h",
+          "line": 11,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.OpenHolocronToPagePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.OpenHolocronToPagePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2092732263,
+      "name": "SearchKnowledgebaseResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "SearchKnowledgebaseResponsePacket",
+      "handler": "SearchKnowledgebaseResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SearchKnowledgebaseResponseMessage",
+          "source": "server/zone/packets/ui/SearchKnowledgebaseResponseMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.SearchKnowledgebaseResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.SearchKnowledgebaseResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2107778156,
+      "name": "CancelLiveAuctionResponseMessage",
+      "operands": [
+        4
+      ],
+      "group": "Auction",
+      "packet": "CancelLiveAuctionResponsePacket",
+      "handler": "CancelLiveAuctionResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CancelLiveAuctionResponseMessage",
+          "source": "server/zone/packets/auction/CancelLiveAuctionResponseMessage.h",
+          "line": 17,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.CancelLiveAuctionResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.CancelLiveAuctionResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2161008198,
+      "name": "ObjectControllerMessage",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "ObjectControllerPacket",
+      "handler": "ObjectControllerPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "ObjectControllerMessage",
+          "source": "server/zone/packets/object/ObjectControllerMessage.h",
+          "line": 10,
+          "operands": 5
+        },
+        {
+          "name": "StandaloneObjectControllerMessage",
+          "source": "server/zone/packets/object/StandaloneObjectControllerMessage.h",
+          "line": 12,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.ObjectControllerPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ObjectControllerPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2273278380,
+      "name": "SurveyMessage",
+      "operands": [
+        2
+      ],
+      "group": "Resource",
+      "packet": "SurveyPacket",
+      "handler": "SurveyPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SurveyMessage",
+          "source": "server/zone/packets/resource/SurveyMessage.h",
+          "line": 10,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Resource.SurveyPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Resource.SurveyPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2287289162,
+      "name": "PlayClientEffectObjectMessage",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "PlayClientEffectObjectPacket",
+      "handler": "PlayClientEffectObjectPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayClientEffectObjectMessage",
+          "source": "server/zone/packets/object/PlayClientEffectObjectMessage.h",
+          "line": 12,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.PlayClientEffectObjectPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEffectObjectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2295957596,
+      "name": "PopulateMissionBrowserMessage",
+      "operands": [
+        3
+      ],
+      "group": "Mission",
+      "packet": "PopulateMissionBrowserPacket",
+      "handler": "PopulateMissionBrowserPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PopulateMissionBrowserMessage",
+          "source": "server/zone/packets/mission/PopulateMissionBrowserMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Mission.PopulateMissionBrowserPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.PopulateMissionBrowserPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2296099713,
+      "name": "ChatOnSendInstantMessage",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnSendInstantPacket",
+      "handler": "ChatOnSendInstantPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnSendInstantMessage",
+          "source": "server/zone/packets/chat/ChatOnSendInstantMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnSendInstantPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendInstantPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2321854933,
+      "name": "ResourceListForSurveyMessage",
+      "operands": [
+        4
+      ],
+      "group": "Resource",
+      "packet": "ResourceListForSurveyPacket",
+      "handler": "ResourceListForSurveyPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ResourceListForSurveyMessage",
+          "source": "server/zone/packets/resource/ResourceListForSurveyMessage.h",
+          "line": 10,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Resource.ResourceListForSurveyPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Resource.ResourceListForSurveyPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2380784147,
+      "name": "LaunchBrowserMessage",
+      "operands": [
+        2
+      ],
+      "group": "Ui",
+      "packet": "LaunchBrowserPacket",
+      "handler": "LaunchBrowserPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "LaunchBrowserMessage",
+          "source": "server/zone/packets/ui/LaunchBrowserMessage.h",
+          "line": 13,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.LaunchBrowserPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.LaunchBrowserPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2412506954,
+      "name": "BidAuctionResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Auction",
+      "packet": "BidAuctionResponsePacket",
+      "handler": "BidAuctionResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "BidAuctionResponseMessage",
+          "source": "server/zone/packets/auction/BidAuctionResponseMessage.h",
+          "line": 19,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.BidAuctionResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.BidAuctionResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2421009946,
+      "name": "EnterTicketPurchaseModeMessage",
+      "operands": [
+        4
+      ],
+      "group": "Player",
+      "packet": "EnterTicketPurchaseModePacket",
+      "handler": "EnterTicketPurchaseModePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "EnterTicketPurchaseModeMessage",
+          "source": "server/zone/packets/player/EnterTicketPurchaseModeMessage.h",
+          "line": 11,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.EnterTicketPurchaseModePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.EnterTicketPurchaseModePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2430427567,
+      "name": "NewbieTutorialRequest",
+      "operands": [
+        2
+      ],
+      "group": "Tutorial",
+      "packet": "NewbieTutorialRequestPacket",
+      "handler": "NewbieTutorialRequestPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "NewbieTutorialRequest",
+          "source": "server/zone/packets/player/NewbieTutorialRequest.h",
+          "line": 31,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Tutorial.NewbieTutorialRequestPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Tutorial.NewbieTutorialRequestPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2471210720,
+      "name": "GetArticleResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "GetArticleResponsePacket",
+      "handler": "GetArticleResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GetArticleResponseMessage",
+          "source": "server/zone/packets/ui/GetArticleResponseMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.GetArticleResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.GetArticleResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2493116300,
+      "name": "RetrieveAuctionItemResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Auction",
+      "packet": "RetrieveAuctionItemResponsePacket",
+      "handler": "RetrieveAuctionItemResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "RetrieveAuctionItemResponseMessage",
+          "source": "server/zone/packets/auction/RetrieveAuctionItemResponseMessage.h",
+          "line": 15,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.RetrieveAuctionItemResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.RetrieveAuctionItemResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2498209710,
+      "name": "ChatOnSendPersistentMessage",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnSendPersistentPacket",
+      "handler": "ChatOnSendPersistentPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnSendPersistentMessage",
+          "source": "server/zone/packets/chat/ChatOnSendPersistentMessage.h",
+          "line": 12,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnSendPersistentPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendPersistentPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2567658976,
+      "name": "SuiForceClosePage",
+      "operands": [
+        2
+      ],
+      "group": "Ui",
+      "packet": "SuiForceClosePagePacket",
+      "handler": "SuiForceClosePagePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SuiForceClosePage",
+          "source": "server/zone/packets/ui/SuiForceClosePage.h",
+          "line": 8,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.SuiForceClosePagePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiForceClosePagePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2604275652,
+      "name": "CharacterSheetResponseMessage",
+      "operands": [
+        13
+      ],
+      "group": "Player",
+      "packet": "CharacterSheetResponsePacket",
+      "handler": "CharacterSheetResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CharacterSheetResponseMessage",
+          "source": "server/zone/packets/player/CharacterSheetResponseMessage.h",
+          "line": 11,
+          "operands": 13
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.CharacterSheetResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.CharacterSheetResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2628259736,
+      "name": "AbortTradeMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "AbortTradePacket",
+      "handler": "AbortTradePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AbortTradeMessage",
+          "source": "server/zone/packets/trade/AbortTradeMessage.h",
+          "line": 8,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.AbortTradePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AbortTradePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2675983948,
+      "name": "GetMapLocationsResponseMessage",
+      "operands": [
+        5
+      ],
+      "group": "Player",
+      "packet": "GetMapLocationsResponsePacket",
+      "handler": "GetMapLocationsResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GetMapLocationsResponseMessage",
+          "source": "server/zone/packets/player/GetMapLocationsResponseMessage.h",
+          "line": 12,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.GetMapLocationsResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.GetMapLocationsResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2689220298,
+      "name": "AppendCommentsResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "AppendCommentsResponsePacket",
+      "handler": "AppendCommentsResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AppendCommentsResponseMessage",
+          "source": "server/zone/packets/ui/AppendCommentsResponseMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.AppendCommentsResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.AppendCommentsResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2708273583,
+      "name": "HeartBeat",
+      "operands": [
+        1,
+        5
+      ],
+      "group": "Session",
+      "packet": "HeartBeatPacket",
+      "handler": "HeartBeatPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "HeartBeat",
+          "source": "server/zone/packets/HeartBeat.h",
+          "line": 12,
+          "operands": 1
+        },
+        {
+          "name": "LinkDeadMessage",
+          "source": "server/zone/packets/LinkDeadMessage.h",
+          "line": 10,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.HeartBeatPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.HeartBeatPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2807989739,
+      "name": "DestroyClientPathMessage",
+      "operands": [
+        1
+      ],
+      "group": "Ui",
+      "packet": "DestroyClientPathPacket",
+      "handler": "DestroyClientPathPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DestroyClientPathMessage",
+          "source": "server/zone/packets/ui/DestroyClientPathMessage.h",
+          "line": 11,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.DestroyClientPathPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.DestroyClientPathPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2944648178,
+      "name": "PlayClientEventObjectMessage",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "PlayClientEventObjectPacket",
+      "handler": "PlayClientEventObjectPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayClientEventObjectMessage",
+          "source": "server/zone/packets/scene/PlayClientEventObjectMessage.h",
+          "line": 15,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.PlayClientEventObjectPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEventObjectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2972830231,
+      "name": "AcceptTransactionMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "AcceptTransactionPacket",
+      "handler": "AcceptTransactionPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AcceptTransactionMessage",
+          "source": "server/zone/packets/trade/AcceptTransactionMessage.h",
+          "line": 8,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.AcceptTransactionPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AcceptTransactionPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 2983185948,
+      "name": "ExecuteConsoleCommand",
+      "operands": [
+        1
+      ],
+      "group": "Ui",
+      "packet": "ExecuteConsoleCommandPacket",
+      "handler": "ExecuteConsoleCommandPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ExecuteConsoleCommand",
+          "source": "server/zone/packets/ui/ExecuteConsoleCommand.h",
+          "line": 11,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.ExecuteConsoleCommandPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ExecuteConsoleCommandPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3096115621,
+      "name": "CreateProjectileMessage",
+      "operands": [
+        18
+      ],
+      "group": "Space",
+      "packet": "CreateProjectilePacket",
+      "handler": "CreateProjectilePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CreateProjectileMessage",
+          "source": "server/zone/packets/jtl/CreateProjectileMessage.h",
+          "line": 13,
+          "operands": 18
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.CreateProjectilePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateProjectilePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3136927765,
+      "name": "ChatOnUnbanFromRoom",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnUnbanFromRoomPacket",
+      "handler": "ChatOnUnbanFromRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnUnbanFromRoom",
+          "source": "server/zone/packets/chat/ChatOnUnbanFromRoom.h",
+          "line": 13,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnUnbanFromRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnUnbanFromRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3143008152,
+      "name": "GetTicketsResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "GetTicketsResponsePacket",
+      "handler": "GetTicketsResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GetTicketsResponseMessage",
+          "source": "server/zone/packets/ui/GetTicketsResponseMessage.h",
+          "line": 7,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.GetTicketsResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.GetTicketsResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3148721849,
+      "name": "GameSceneChangedMessage",
+      "operands": [
+        1
+      ],
+      "group": "Scene",
+      "packet": "GameSceneChangedPacket",
+      "handler": "GameSceneChangedPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GameSceneChangedMessage",
+          "source": "server/zone/packets/scene/GameSceneChangedMessage.h",
+          "line": 10,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.GameSceneChangedPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.GameSceneChangedPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3172517497,
+      "name": "ResourceHarvesterActivatePageMessage",
+      "operands": [
+        2
+      ],
+      "group": "Harvester",
+      "packet": "ResourceHarvesterActivatePagePacket",
+      "handler": "ResourceHarvesterActivatePagePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ResourceHarvesterActivatePageMessage",
+          "source": "server/zone/packets/harvester/ResourceHarvesterActivatePageMessage.h",
+          "line": 11,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Harvester.ResourceHarvesterActivatePagePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.ResourceHarvesterActivatePagePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3191064552,
+      "name": "ChatOnUninviteFromRoom",
+      "operands": [
+        6
+      ],
+      "group": "Chat",
+      "packet": "ChatOnUninviteFromRoomPacket",
+      "handler": "ChatOnUninviteFromRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnUninviteFromRoom",
+          "source": "server/zone/packets/chat/ChatOnUninviteFromRoom.h",
+          "line": 13,
+          "operands": 6
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnUninviteFromRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnUninviteFromRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3230894749,
+      "name": "CloseHolocronMessage",
+      "operands": [
+        1
+      ],
+      "group": "Ui",
+      "packet": "CloseHolocronPacket",
+      "handler": "CloseHolocronPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CloseHolocronMessage",
+          "source": "server/zone/packets/ui/CloseHolocronMessage.h",
+          "line": 13,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.CloseHolocronPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CloseHolocronPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3246305389,
+      "name": "ChatOnReceiveRoomInvitation",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnReceiveRoomInvitationPacket",
+      "handler": "ChatOnReceiveRoomInvitationPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnReceiveRoomInvitation",
+          "source": "server/zone/packets/chat/ChatOnReceiveRoomInvitation.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnReceiveRoomInvitationPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnReceiveRoomInvitationPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3302917710,
+      "name": "ChatQueryRoomResults",
+      "operands": [
+        7
+      ],
+      "group": "Chat",
+      "packet": "ChatQueryRoomResultsPacket",
+      "handler": "ChatQueryRoomResultsPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatQueryRoomResults",
+          "source": "server/zone/packets/chat/ChatQueryRoomResults.h",
+          "line": 14,
+          "operands": 7
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatQueryRoomResultsPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatQueryRoomResultsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3309437835,
+      "name": "TradeCompleteMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "TradeCompletePacket",
+      "handler": "TradeCompletePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "TradeCompleteMessage",
+          "source": "server/zone/packets/trade/TradeCompleteMessage.h",
+          "line": 8,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.TradeCompletePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.TradeCompletePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3314173038,
+      "name": "AcceptAuctionResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Auction",
+      "packet": "AcceptAuctionResponsePacket",
+      "handler": "AcceptAuctionResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AcceptAuctionResponseMessage",
+          "source": "server/zone/packets/auction/AcceptAuctionResponseMessage.h",
+          "line": 13,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.AcceptAuctionResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AcceptAuctionResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3362237274,
+      "name": "LightUpdateTransformWithParentMessage",
+      "operands": [
+        8
+      ],
+      "group": "Movement",
+      "packet": "UpdateTransformWithParentPacket",
+      "handler": "UpdateTransformWithParentPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "LightUpdateTransformWithParentMessage",
+          "source": "server/zone/packets/scene/LightUpdateTransformWithParentMessage.h",
+          "line": 14,
+          "operands": 8
+        },
+        {
+          "name": "UpdateTransformWithParentMessage",
+          "source": "server/zone/packets/scene/UpdateTransformWithParentMessage.h",
+          "line": 12,
+          "operands": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.UpdateTransformWithParentPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.UpdateTransformWithParentPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3391771787,
+      "name": "DogfightTauntPlayerMessage",
+      "operands": [
+        9
+      ],
+      "group": "Space",
+      "packet": "DogfightTauntPlayerPacket",
+      "handler": "DogfightTauntPlayerPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DogfightTauntPlayerMessage",
+          "source": "server/zone/packets/jtl/DogfightTauntPlayerMessage.h",
+          "line": 13,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.DogfightTauntPlayerPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.DogfightTauntPlayerPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3392622884,
+      "name": "NewbieTutorialEnableHudElement",
+      "operands": [
+        4
+      ],
+      "group": "Tutorial",
+      "packet": "NewbieTutorialEnableHudElementPacket",
+      "handler": "NewbieTutorialEnableHudElementPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "NewbieTutorialEnableHudElement",
+          "source": "server/zone/packets/ui/NewbieTutorialEnableHudElement.h",
+          "line": 19,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Tutorial.NewbieTutorialEnableHudElementPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Tutorial.NewbieTutorialEnableHudElementPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3444368452,
+      "name": "ChatRoomMessage",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "ChatRoomPacket",
+      "handler": "ChatRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatRoomMessage",
+          "source": "server/zone/packets/chat/ChatRoomMessage.h",
+          "line": 10,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3456374590,
+      "name": "IsVendorOwnerResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Auction",
+      "packet": "IsVendorOwnerResponsePacket",
+      "handler": "IsVendorOwnerResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "IsVendorOwnerResponseMessage",
+          "source": "server/zone/packets/auction/IsVendorOwnerResponseMessage.h",
+          "line": 13,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.IsVendorOwnerResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.IsVendorOwnerResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3503139426,
+      "name": "DebugTransformMessage",
+      "operands": [
+        9
+      ],
+      "group": "Movement",
+      "packet": "DebugTransformPacket",
+      "handler": "DebugTransformPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DebugTransformMessage",
+          "source": "server/zone/packets/scene/DebugTransformMessage.h",
+          "line": 13,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.DebugTransformPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.DebugTransformPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3511844584,
+      "name": "GiveMoneyMessage",
+      "operands": [
+        2
+      ],
+      "group": "Trade",
+      "packet": "GiveMoneyPacket",
+      "handler": "GiveMoneyPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GiveMoneyMessage",
+          "source": "server/zone/packets/trade/GiveMoneyMessage.h",
+          "line": 8,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.GiveMoneyPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.GiveMoneyPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3561714265,
+      "name": "SuiCreatePageMessage",
+      "operands": [
+        2
+      ],
+      "group": "Ui",
+      "packet": "SuiCreatePagePacket",
+      "handler": "SuiCreatePagePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SuiCreatePageMessage",
+          "source": "server/zone/packets/ui/SuiCreatePageMessage.h",
+          "line": 17,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.SuiCreatePagePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiCreatePagePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3572054012,
+      "name": "CommoditiesItemTypeListResponse",
+      "operands": [
+        2
+      ],
+      "group": "Ui",
+      "packet": "CommoditiesItemTypeListResponsePacket",
+      "handler": "CommoditiesItemTypeListResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CommoditiesItemTypeListResponse",
+          "source": "server/zone/packets/ui/CommoditiesItemTypeListResponse.h",
+          "line": 11,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.CommoditiesItemTypeListResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CommoditiesItemTypeListResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3606835992,
+      "name": "CancelTicketResponseMessage",
+      "operands": [
+        3
+      ],
+      "group": "Support",
+      "packet": "CancelTicketResponsePacket",
+      "handler": "CancelTicketResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CancelTicketResponseMessage",
+          "source": "server/zone/packets/ui/CancelTicketResponseMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.CancelTicketResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.CancelTicketResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3610241470,
+      "name": "ChatOnConnectAvatar",
+      "operands": [
+        1
+      ],
+      "group": "Chat",
+      "packet": "ChatOnConnectAvatarPacket",
+      "handler": "ChatOnConnectAvatarPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnConnectAvatar",
+          "source": "server/zone/packets/chat/ChatOnConnectAvatar.h",
+          "line": 13,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnConnectAvatarPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnConnectAvatarPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3701830665,
+      "name": "ClientOpenContainerMessage",
+      "operands": [
+        4
+      ],
+      "group": "Scene",
+      "packet": "ClientOpenContainerPacket",
+      "handler": "ClientOpenContainerPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientOpenContainerMessage",
+          "source": "server/zone/packets/scene/ClientOpenContainerMessage.h",
+          "line": 12,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.ClientOpenContainerPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ClientOpenContainerPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3744676974,
+      "name": "ClientCreateCharacterFailed",
+      "operands": [
+        3
+      ],
+      "group": "CharacterCreation",
+      "packet": "ClientCreateCharacterFailedPacket",
+      "handler": "ClientCreateCharacterFailedPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientCreateCharacterFailed",
+          "source": "server/zone/packets/charcreation/ClientCreateCharacterFailed.h",
+          "line": 13,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.CharacterCreation.ClientCreateCharacterFailedPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientCreateCharacterFailedPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3758567653,
+      "name": "ClientPermissionsMessage",
+      "operands": [
+        4
+      ],
+      "group": "Session",
+      "packet": "ClientPermissionsPacket",
+      "handler": "ClientPermissionsPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientPermissionsMessage",
+          "source": "server/zone/packets/zone/ClientPermissionsMessage.h",
+          "line": 10,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Session.ClientPermissionsPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Login.Packets.ClientPermissionsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3868974090,
+      "name": "ChatOnEnteredRoom",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "ChatOnEnteredRoomPacket",
+      "handler": "ChatOnEnteredRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnEnteredRoom",
+          "source": "server/zone/packets/chat/ChatOnEnteredRoom.h",
+          "line": 10,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnEnteredRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnEnteredRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3887470131,
+      "name": "ChatOnSendRoomMessage",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnSendRoomPacket",
+      "handler": "ChatOnSendRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnSendRoomMessage",
+          "source": "server/zone/packets/chat/ChatOnSendRoomMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnSendRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3894297474,
+      "name": "UnAcceptTransactionMessage",
+      "operands": [
+        1
+      ],
+      "group": "Trade",
+      "packet": "UnAcceptTransactionPacket",
+      "handler": "UnAcceptTransactionPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "UnAcceptTransactionMessage",
+          "source": "server/zone/packets/trade/UnAcceptTransactionMessage.h",
+          "line": 8,
+          "operands": 1
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Trade.UnAcceptTransactionPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.UnAcceptTransactionPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3898587240,
+      "name": "ClientRandomNameResponse",
+      "operands": [
+        4
+      ],
+      "group": "CharacterCreation",
+      "packet": "ClientRandomNameResponsePacket",
+      "handler": "ClientRandomNameResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ClientRandomNameResponse",
+          "source": "server/zone/packets/charcreation/ClientRandomNameResponse.h",
+          "line": 10,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.CharacterCreation.ClientRandomNameResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientRandomNameResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3903147457,
+      "name": "EnterStructurePlacementModeMessage",
+      "operands": [
+        3
+      ],
+      "group": "Player",
+      "packet": "EnterStructurePlacementModePacket",
+      "handler": "EnterStructurePlacementModePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "EnterStructurePlacementModeMessage",
+          "source": "server/zone/packets/player/EnterStructurePlacementModeMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.EnterStructurePlacementModePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.EnterStructurePlacementModePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3907803255,
+      "name": "ChatOnDestroyRoom",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "ChatOnDestroyRoomPacket",
+      "handler": "ChatOnDestroyRoomPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnDestroyRoom",
+          "source": "server/zone/packets/chat/ChatOnDestroyRoom.h",
+          "line": 8,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnDestroyRoomPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnDestroyRoomPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 3917133204,
+      "name": "ChatOnGetFriendsList",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnGetFriendsListPacket",
+      "handler": "ChatOnGetFriendsListPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnGetFriendsList",
+          "source": "server/zone/packets/chat/ChatOnGetFriendsList.h",
+          "line": 11,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnGetFriendsListPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnGetFriendsListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4021041348,
+      "name": "StatMigrationTargetsMessage",
+      "operands": [
+        9
+      ],
+      "group": "Player",
+      "packet": "StatMigrationTargetsPacket",
+      "handler": "StatMigrationTargetsPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "StatMigrationTargetsMessage",
+          "source": "server/zone/packets/player/StatMigrationTargetsMessage.h",
+          "line": 10,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.StatMigrationTargetsPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.StatMigrationTargetsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4092669738,
+      "name": "AttributeListMessage",
+      "operands": [
+        4
+      ],
+      "group": "Scene",
+      "packet": "AttributeListPacket",
+      "handler": "AttributeListPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AttributeListMessage",
+          "source": "server/zone/packets/scene/AttributeListMessage.h",
+          "line": 17,
+          "operands": 4
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.AttributeListPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.AttributeListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4106524925,
+      "name": "VerifyPlayerNameResponseMessage",
+      "operands": [
+        9
+      ],
+      "group": "Support",
+      "packet": "VerifyPlayerNameResponsePacket",
+      "handler": "VerifyPlayerNameResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "VerifyPlayerNameResponseMessage",
+          "source": "server/zone/packets/ui/VerifyPlayerNameResponseMessage.h",
+          "line": 11,
+          "operands": 9
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Support.VerifyPlayerNameResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.VerifyPlayerNameResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4128393628,
+      "name": "UpdateCellPermissionsMessage",
+      "operands": [
+        3
+      ],
+      "group": "Scene",
+      "packet": "UpdateCellPermissionsPacket",
+      "handler": "UpdateCellPermissionsPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "UpdateCellPermissionsMessage",
+          "source": "server/zone/packets/cell/UpdateCellPermissionsMessage.h",
+          "line": 10,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.UpdateCellPermissionsPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.UpdateCellPermissionsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4173493680,
+      "name": "ChatOnGetIgnoreList",
+      "operands": [
+        3
+      ],
+      "group": "Chat",
+      "packet": "ChatOnGetIgnoreListPacket",
+      "handler": "ChatOnGetIgnoreListPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ChatOnGetIgnoreList",
+          "source": "server/zone/packets/chat/ChatOnGetIgnoreList.h",
+          "line": 11,
+          "operands": 3
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.ChatOnGetIgnoreListPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnGetIgnoreListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4199550546,
+      "name": "AuctionQueryHeadersResponseMessage",
+      "operands": [
+        8
+      ],
+      "group": "Auction",
+      "packet": "AuctionQueryHeadersResponsePacket",
+      "handler": "AuctionQueryHeadersResponsePacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AuctionQueryHeadersResponseMessage",
+          "source": "server/zone/packets/auction/AuctionQueryHeadersResponseMessage.h",
+          "line": 14,
+          "operands": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.AuctionQueryHeadersResponsePacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AuctionQueryHeadersResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4262356043,
+      "name": "AuctionItemDescriptionMessage",
+      "operands": [
+        2
+      ],
+      "group": "Auction",
+      "packet": "AuctionItemDescriptionPacket",
+      "handler": "AuctionItemDescriptionPacketHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AuctionItemDescriptionMessage",
+          "source": "server/zone/packets/auction/AuctionItemDescriptionMessage.h",
+          "line": 10,
+          "operands": 2
+        },
+        {
+          "name": "GetAuctionDetailsResponse",
+          "source": "server/zone/packets/auction/GetAuctionDetailsResponse.h",
+          "line": 6,
+          "operands": 2
+        },
+        {
+          "name": "AttributeListMessage",
+          "source": "server/zone/packets/scene/AttributeListMessage.h",
+          "line": 17,
+          "operands": 2
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Auction.AuctionItemDescriptionPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AuctionItemDescriptionPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Packet",
+      "value": 4270448106,
+      "name": "SceneObjectCreateMessage",
+      "operands": [
+        5
+      ],
+      "group": "Scene",
+      "packet": "SceneCreateObjectPacket",
+      "handler": "SceneCreateObjectPacketHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "SceneObjectCreateMessage",
+          "source": "server/zone/packets/scene/SceneObjectCreateMessage.h",
+          "line": 12,
+          "operands": 5
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Scene.SceneCreateObjectPacketHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.SceneCreateObjectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 113,
+      "name": "DataTransform",
+      "operands": [
+        5
+      ],
+      "group": "Controllers",
+      "packet": "ObjectControllerPacket",
+      "handler": "TransformControllerHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "DataTransform",
+          "source": "server/zone/packets/object/DataTransform.h",
+          "line": 23
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.TransformControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ObjectControllerPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 204,
+      "name": "CombatAction",
+      "operands": [
+        5
+      ],
+      "group": "Combat",
+      "packet": "CombatActionPacket",
+      "handler": "CombatActionControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CombatAction",
+          "source": "server/zone/packets/object/CombatAction.h",
+          "line": 11
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.CombatActionControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatActionPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 221,
+      "name": "StartNpcConversation",
+      "operands": [
+        5
+      ],
+      "group": "Conversation",
+      "packet": "StartNpcConversationPacket",
+      "handler": "StartNpcConversationControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "StartNpcConversation",
+          "source": "server/zone/packets/object/StartNpcConversation.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Conversation.StartNpcConversationControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StartNpcConversationPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 222,
+      "name": "StopNpcConversation",
+      "operands": [
+        5
+      ],
+      "group": "Conversation",
+      "packet": "StopNpcConversationPacket",
+      "handler": "StopNpcConversationControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "StopNpcConversation",
+          "source": "server/zone/packets/object/StopNpcConversation.h",
+          "line": 8
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Conversation.StopNpcConversationControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StopNpcConversationPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 223,
+      "name": "NpcConversationMessage",
+      "operands": [
+        5
+      ],
+      "group": "Conversation",
+      "packet": "NpcConversationPacket",
+      "handler": "NpcConversationControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "NpcConversationMessage",
+          "source": "server/zone/packets/object/NpcConversationMessage.h",
+          "line": 14
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Conversation.NpcConversationControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.NpcConversationPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 224,
+      "name": "StringList",
+      "operands": [
+        5
+      ],
+      "group": "Conversation",
+      "packet": "StringListPacket",
+      "handler": "StringListControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "StringList",
+          "source": "server/zone/packets/object/StringList.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Conversation.StringListControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StringListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 234,
+      "name": "HarvesterResourceDataMessage",
+      "operands": [
+        5
+      ],
+      "group": "Harvester",
+      "packet": "HarvesterResourceDataPacket",
+      "handler": "HarvesterResourceDataControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "HarvesterResourceDataMessage",
+          "source": "server/zone/packets/harvester/HarvesterResourceDataMessage.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Harvester.HarvesterResourceDataControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.HarvesterResourceDataPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 238,
+      "name": "GenericResponse",
+      "operands": [
+        5
+      ],
+      "group": "Harvester",
+      "packet": "GenericResponsePacket",
+      "handler": "GenericResponseControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "GenericResponse",
+          "source": "server/zone/packets/object/GenericResponse.h",
+          "line": 13
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Harvester.GenericResponseControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.GenericResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 241,
+      "name": "DataTransformWithParent",
+      "operands": [
+        5
+      ],
+      "group": "Controllers",
+      "packet": "ObjectControllerPacket",
+      "handler": "TransformWithParentControllerHandler",
+      "skeleton": false,
+      "sources": [
+        {
+          "name": "DataTransformWithParent",
+          "source": "server/zone/packets/object/DataTransformWithParent.h",
+          "line": 23
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.TransformWithParentControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ObjectControllerPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 242,
+      "name": "Animation",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "AnimationPacket",
+      "handler": "AnimationControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "Animation",
+          "source": "server/zone/packets/object/Animation.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.AnimationControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.AnimationPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 244,
+      "name": "SpatialChat",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "SpatialChatPacket",
+      "handler": "SpatialChatControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SpatialChat",
+          "source": "server/zone/packets/object/SpatialChat.h",
+          "line": 12
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.SpatialChatControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.SpatialChatPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 250,
+      "name": "MissionAcceptResponse",
+      "operands": [
+        5
+      ],
+      "group": "Mission",
+      "packet": "MissionAcceptResponsePacket",
+      "handler": "MissionAcceptResponseControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "MissionAcceptResponse",
+          "source": "server/zone/packets/object/MissionAcceptCallback.h",
+          "line": 80
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Mission.MissionAcceptResponseControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.MissionAcceptResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 258,
+      "name": "CraftingSchematicList",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CraftingSchematicListPacket",
+      "handler": "CraftingSchematicListControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CraftingSchematicList",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 154
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CraftingSchematicListControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingSchematicListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 259,
+      "name": "CraftingIngredientSlots",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CraftingIngredientSlotsPacket",
+      "handler": "CraftingIngredientSlotsControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CraftingIngredientSlots",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 477
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CraftingIngredientSlotsControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingIngredientSlotsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 268,
+      "name": "CraftingResult",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CraftingResultPacket",
+      "handler": "CraftingResultControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/tangible/tool/CraftingToolImplementation.cpp",
+          "line": 155
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 278
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 285
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 309
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 625
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 1216
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 1259
+        },
+        {
+          "name": "CraftingResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 1370
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CraftingResultControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingResultPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 275,
+      "name": "CraftingExperimentationResult",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CraftingExperimentationResultPacket",
+      "handler": "CraftingExperimentationResultControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CraftingExperimentationResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 1090
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CraftingExperimentationResultControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingExperimentationResultPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 279,
+      "name": "CommandQueueRemove",
+      "operands": [
+        5
+      ],
+      "group": "Commands",
+      "packet": "CommandQueueRemovePacket",
+      "handler": "CommandQueueRemoveControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CommandQueueRemove",
+          "source": "server/zone/packets/object/CommandQueueRemove.h",
+          "line": 12
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Commands.CommandQueueRemoveControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Commands.CommandQueueRemovePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 302,
+      "name": "Emote",
+      "operands": [
+        5
+      ],
+      "group": "Chat",
+      "packet": "EmotePacket",
+      "handler": "EmoteControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "Emote",
+          "source": "server/zone/packets/object/Emote.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Chat.EmoteControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.EmotePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 305,
+      "name": "PostureMessage",
+      "operands": [
+        5
+      ],
+      "group": "Movement",
+      "packet": "PosturePacket",
+      "handler": "PostureControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PostureMessage",
+          "source": "server/zone/packets/object/PostureMessage.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.PostureControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.PosturePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 308,
+      "name": "CombatSpam",
+      "operands": [
+        5
+      ],
+      "group": "Combat",
+      "packet": "CombatSpamPacket",
+      "handler": "CombatSpamControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CombatSpam",
+          "source": "server/zone/packets/object/CombatSpam.h",
+          "line": 12
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.CombatSpamControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatSpamPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 315,
+      "name": "SitOnObject",
+      "operands": [
+        5
+      ],
+      "group": "Movement",
+      "packet": "SitOnObjectPacket",
+      "handler": "SitOnObjectControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "SitOnObject",
+          "source": "server/zone/packets/object/SitOnObject.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Movement.SitOnObjectControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.SitOnObjectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 320,
+      "name": "WeaponRanges",
+      "operands": [
+        5
+      ],
+      "group": "Combat",
+      "packet": "WeaponRangesPacket",
+      "handler": "WeaponRangesControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "WeaponRanges",
+          "source": "server/zone/packets/object/WeaponRanges.h",
+          "line": 14
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.WeaponRangesControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.WeaponRangesPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 322,
+      "name": "MissionAbortResponse",
+      "operands": [
+        5
+      ],
+      "group": "Mission",
+      "packet": "MissionAbortResponsePacket",
+      "handler": "MissionAbortResponseControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "MissionAbortResponse",
+          "source": "server/zone/packets/object/MissionAbortCallback.h",
+          "line": 56
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Mission.MissionAbortResponseControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.MissionAbortResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 327,
+      "name": "ObjectMenuResponse",
+      "operands": [
+        5
+      ],
+      "group": "Ui",
+      "packet": "ObjectMenuResponsePacket",
+      "handler": "ObjectMenuResponseControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ObjectMenuResponse",
+          "source": "server/zone/packets/object/ObjectMenuResponse.h",
+          "line": 17
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Ui.ObjectMenuResponseControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ObjectMenuResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 358,
+      "name": "Flourish",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "FlourishPacket",
+      "handler": "FlourishControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "Flourish",
+          "source": "server/zone/packets/object/Flourish.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.FlourishControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.FlourishPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 359,
+      "name": "CommandQueueAdd",
+      "operands": [
+        5
+      ],
+      "group": "Commands",
+      "packet": "CommandQueueAddPacket",
+      "handler": "CommandQueueAddControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CommandQueueAdd",
+          "source": "server/zone/packets/object/CommandQueueAdd.h",
+          "line": 13
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Commands.CommandQueueAddControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Commands.CommandQueueAddPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 445,
+      "name": "ShowFlyText",
+      "operands": [
+        5
+      ],
+      "group": "Effects",
+      "packet": "ShowFlyTextPacket",
+      "handler": "ShowFlyTextControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ShowFlyText",
+          "source": "server/zone/packets/object/ShowFlyText.h",
+          "line": 11
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Effects.ShowFlyTextControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.ShowFlyTextPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 446,
+      "name": "CraftingAssemblyResult",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CraftingAssemblyResultPacket",
+      "handler": "CraftingAssemblyResultControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CraftingAssemblyResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 898
+        },
+        {
+          "name": "CraftingAssemblyResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 955
+        },
+        {
+          "name": "CraftingAssemblyResult",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 1237
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CraftingAssemblyResultControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingAssemblyResultPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 447,
+      "name": "DraftSchematicSlots",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "DraftSchematicSlotsPacket",
+      "handler": "DraftSchematicSlotsControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DraftSchematicSlots",
+          "source": "server/zone/objects/draftschematic/DraftSchematicImplementation.cpp",
+          "line": 43
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.DraftSchematicSlotsControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.DraftSchematicSlotsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 450,
+      "name": "CloseCraftingWindow",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "CloseCraftingWindowPacket",
+      "handler": "CloseCraftingWindowControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CloseCraftingWindow",
+          "source": "server/zone/objects/player/sessions/crafting/CraftingSessionImplementation.cpp",
+          "line": 294
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.CloseCraftingWindowControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CloseCraftingWindowPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 475,
+      "name": "Biography",
+      "operands": [
+        5
+      ],
+      "group": "Player",
+      "packet": "BiographyPacket",
+      "handler": "BiographyControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "Biography",
+          "source": "server/zone/packets/object/Biography.h",
+          "line": 11
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.BiographyControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.BiographyPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 487,
+      "name": "PlayersNearYouMessage",
+      "operands": [
+        5
+      ],
+      "group": "Player",
+      "packet": "PlayersNearYouPacket",
+      "handler": "PlayersNearYouControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "PlayersNearYouMessage",
+          "source": "server/zone/packets/object/PlayersNearYou.h",
+          "line": 13
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.PlayersNearYouControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlayersNearYouPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 508,
+      "name": "StartingLocationListMessage",
+      "operands": [
+        5
+      ],
+      "group": "Player",
+      "packet": "StartingLocationListPacket",
+      "handler": "StartingLocationListControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "StartingLocationListMessage",
+          "source": "server/zone/packets/object/StartingLocationListMessage.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Player.StartingLocationListControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.StartingLocationListPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 519,
+      "name": "DraftSchematicResourceWeights",
+      "operands": [
+        5
+      ],
+      "group": "Crafting",
+      "packet": "DraftSchematicResourceWeightsPacket",
+      "handler": "DraftSchematicResourceWeightsControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "DraftSchematicResourceWeights",
+          "source": "server/zone/objects/draftschematic/DraftSchematicImplementation.cpp",
+          "line": 76
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Crafting.DraftSchematicResourceWeightsControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.DraftSchematicResourceWeightsPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 553,
+      "name": "AddBuffMessage",
+      "operands": [
+        5
+      ],
+      "group": "Combat",
+      "packet": "AddBuffPacket",
+      "handler": "AddBuffControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "AddBuffMessage",
+          "source": "server/zone/packets/object/Buffs.h",
+          "line": 10
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.AddBuffControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.AddBuffPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 554,
+      "name": "RemoveBuffMessage",
+      "operands": [
+        5
+      ],
+      "group": "Combat",
+      "packet": "RemoveBuffPacket",
+      "handler": "RemoveBuffControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "RemoveBuffMessage",
+          "source": "server/zone/packets/object/Buffs.h",
+          "line": 27
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Combat.RemoveBuffControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.RemoveBuffPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 555,
+      "name": "HarvesterSetupSharedNetworkMessage",
+      "operands": [
+        5
+      ],
+      "group": "Harvester",
+      "packet": "HarvesterSetupSharedNetworkPacket",
+      "handler": "HarvesterSetupSharedNetworkControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "HarvesterSetupSharedNetworkMessage",
+          "source": "server/zone/packets/installation/HarvesterSetupSharedNetworkMessage.h",
+          "line": 14
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Harvester.HarvesterSetupSharedNetworkControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.HarvesterSetupSharedNetworkPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 568,
+      "name": "ImageDesignChangeMessage",
+      "operands": [
+        5
+      ],
+      "group": "ImageDesign",
+      "packet": "ImageDesignChangePacket",
+      "handler": "ImageDesignChangeControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ImageDesignChangeMessage",
+          "source": "server/zone/packets/object/ImageDesignMessage.h",
+          "line": 33
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.ImageDesign.ImageDesignChangeControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignChangePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 569,
+      "name": "ImageDesignRejectMessage",
+      "operands": [
+        5
+      ],
+      "group": "ImageDesign",
+      "packet": "ImageDesignRejectPacket",
+      "handler": "ImageDesignRejectControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ImageDesignRejectMessage",
+          "source": "server/zone/packets/object/ImageDesignMessage.h",
+          "line": 22
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.ImageDesign.ImageDesignRejectControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignRejectPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 570,
+      "name": "ImageDesignStartMessage",
+      "operands": [
+        5
+      ],
+      "group": "ImageDesign",
+      "packet": "ImageDesignStartPacket",
+      "handler": "ImageDesignStartControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "ImageDesignStartMessage",
+          "source": "server/zone/packets/object/ImageDesignMessage.h",
+          "line": 11
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.ImageDesign.ImageDesignStartControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignStartPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 1053,
+      "name": "JtlShipListResponse",
+      "operands": [
+        5
+      ],
+      "group": "Space",
+      "packet": "JtlShipListResponsePacket",
+      "handler": "JtlShipListResponseControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "JtlShipListResponse",
+          "source": "server/zone/packets/object/JtlShipListResponse.h",
+          "line": 15
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Space.JtlShipListResponseControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.JtlShipListResponsePacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 1084,
+      "name": "OpenLotteryWindow",
+      "operands": [
+        5
+      ],
+      "group": "Loot",
+      "packet": "OpenLotteryWindowPacket",
+      "handler": "OpenLotteryWindowControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "OpenLotteryWindow",
+          "source": "server/zone/packets/object/OpenLotteryWindow.h",
+          "line": 14
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Loot.OpenLotteryWindowControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Loot.OpenLotteryWindowPacket",
+      "opaque": false
+    },
+    {
+      "kind": "Controller",
+      "value": 1085,
+      "name": "CloseLotteryWindow",
+      "operands": [
+        5
+      ],
+      "group": "Loot",
+      "packet": "CloseLotteryWindowPacket",
+      "handler": "CloseLotteryWindowControllerHandler",
+      "skeleton": true,
+      "sources": [
+        {
+          "name": "CloseLotteryWindow",
+          "source": "server/zone/packets/object/CloseLotteryWindow.h",
+          "line": 14
+        }
+      ],
+      "handlerType": "Swg.Client.Core.Networking.Game.Handlers.Loot.CloseLotteryWindowControllerHandler",
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Loot.CloseLotteryWindowPacket",
+      "opaque": false
+    }
+  ]
+}

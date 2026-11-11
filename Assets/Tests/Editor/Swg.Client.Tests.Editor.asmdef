@@ -1,0 +1,21 @@
+{
+  "name": "Swg.Client.Tests.Editor",
+  "rootNamespace": "Swg.Client.Tests.Editor",
+  "references": [
+    "Swg.Client",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll",
+    "Autofac.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ]
+}

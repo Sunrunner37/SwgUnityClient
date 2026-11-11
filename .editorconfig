@@ -17,3 +17,6 @@ csharp_preserve_single_line_statements = false
 
 # Enforced by Swg.Client.Analyzers in Unity, IDEs and core checks.
 dotnet_diagnostic.SWG001.severity = error
+
+# Prefer imports and short type names; retain qualification when required for disambiguation.
+dotnet_diagnostic.IDE0001.severity = warning

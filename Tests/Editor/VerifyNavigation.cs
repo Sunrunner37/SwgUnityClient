@@ -1,3 +1,4 @@
+using Swg.Client.Core;
 using System;
 using System.IO;
 using System.Net;
@@ -64,7 +65,7 @@ namespace Swg.Client.Tests.Editor
                 ClientSettings settings;
                 try
                 {
-                    File.WriteAllText(ini, "[Assets]\nDirectory=.\nConfig=swgemu.cfg\n[Network]\nLoginServerAddress=127.0.0.1\nLoginServerPort=" + ((IPEndPoint)local.Client.LocalEndPoint).Port + "\nClientVersion=20050408-18:00\n");
+                    File.WriteAllText(ini, "[Assets]\nTreDirectory=.\n[Network]\nLoginServerAddress=127.0.0.1\nLoginServerPort=" + ((IPEndPoint)local.Client.LocalEndPoint).Port + "\nClientVersion=20050408-18:00\n");
                     settings = ClientSettings.From(ini);
                 }
                 finally
@@ -80,7 +81,7 @@ namespace Swg.Client.Tests.Editor
                     typeof(LoginScreen).GetField("connecting", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(login, connection);
                     var characters = new List<Swg.Client.Core.Networking.Login.CharacterInfo>();
                     for (int i = 0; i < count; i++)
-                        characters.Add(new Swg.Client.Core.Networking.Login.CharacterInfo { Name = "Fixture " + i, Galaxy = 1, ObjectId = (ulong)(100 + i) });
+                        characters.Add(new Swg.Client.Core.Networking.Login.CharacterInfo { Name = "Fixture " + i, Galaxy = 1, SwgId = (ulong)(100 + i) });
                     var admission = new Admission
                     {
                         AccountId = 42,

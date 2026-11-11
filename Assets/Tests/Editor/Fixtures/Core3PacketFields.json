@@ -1,0 +1,6842 @@
+{
+  "packets": [
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEffectLocPacket",
+      "name": "PlayClientEffectLoc",
+      "kind": "Packet",
+      "value": 43294324,
+      "hex": "0900749e9402100045666665637446696c655f76616c75650c00506c616e65745f76616c75650000a03f00007040000020c02a07060504030201dbffffff0b004c6162656c5f76616c7565",
+      "expected": [
+        {
+          "path": "EffectFile",
+          "value": "EffectFile_value",
+          "numeric": false
+        },
+        {
+          "path": "Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "CellSwgId",
+          "value": "72623859790382890",
+          "numeric": true
+        },
+        {
+          "path": "TerrainDelta",
+          "value": "-37",
+          "numeric": true
+        },
+        {
+          "path": "Label",
+          "value": "Label_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Audio.PlayMusicPacket",
+      "name": "PlayMusicMessage",
+      "kind": "Packet",
+      "value": 69668234,
+      "hex": "05008a0d27040f00536f756e6446696c655f76616c75651407060504030201e5ffffff01",
+      "expected": [
+        {
+          "path": "SoundFile",
+          "value": "SoundFile_value",
+          "numeric": false
+        },
+        {
+          "path": "TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "UnknownInt",
+          "value": "-27",
+          "numeric": true
+        },
+        {
+          "path": "UnknownFlag",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatPersistentMessageToClientPacket",
+      "name": "ChatPersistentMessageToClient",
+      "kind": "Packet",
+      "value": 138960407,
+      "hex": "0200175e48080c0053656e6465725f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75651e000000010600000042006f00640079002000a903090000005300750062006a006500630074002000a903000000000120000000",
+      "expected": [
+        {
+          "path": "Sender",
+          "value": "Sender_value",
+          "numeric": false
+        },
+        {
+          "path": "Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "MailId",
+          "value": "30",
+          "numeric": true
+        },
+        {
+          "path": "MessageType",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Body",
+          "value": "Body \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Subject",
+          "value": "Subject \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Status",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Timestamp",
+          "value": "32",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.UpdatePVPStatusPacket",
+      "name": "UpdatePVPStatusMessage",
+      "kind": "Packet",
+      "value": 144818470,
+      "hex": "040026c1a108170000000b0000002607060504030201",
+      "expected": [
+        {
+          "path": "PvpStatus",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "Faction",
+          "value": "11",
+          "numeric": true
+        },
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ConGenericPacket",
+      "name": "ConGenericMessage",
+      "kind": "Packet",
+      "value": 147192950,
+      "hex": "030076fcc5080d004d6573736167655f76616c756507000000",
+      "expected": [
+        {
+          "path": "Message",
+          "value": "Message_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectionServerTestPacket",
+      "name": "ConnectionServerTestMessage",
+      "kind": "Packet",
+      "value": 237033449,
+      "hex": "0200e9d7200e10005365727665724e616d655f76616c7565",
+      "expected": [
+        {
+          "path": "ServerName",
+          "value": "ServerName_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.ItemSoldPacket",
+      "name": "ItemSoldMessage",
+      "kind": "Packet",
+      "value": 241290386,
+      "hex": "030092cc610e26070605040302010c000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnRemoveModeratorFromRoomPacket",
+      "name": "ChatOnRemoveModeratorFromRoom",
+      "kind": "Packet",
+      "value": 323157063,
+      "hex": "060047fc42130a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565050000000e00526f6f6d506174685f76616c756512000000",
+      "expected": [
+        {
+          "path": "Target.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectionServerLagResponsePacket",
+      "name": "ConnectionServerLagResponse",
+      "kind": "Packet",
+      "value": 361821756,
+      "hex": "01003cf69015",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientCreateCharacterSuccessPacket",
+      "name": "ClientCreateCharacterSuccess",
+      "kind": "Packet",
+      "value": 498431436,
+      "hex": "0200cc75b51d2607060504030201",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AddItemPacket",
+      "name": "AddItemMessage",
+      "kind": "Packet",
+      "value": 512562006,
+      "hex": "010056138d1e1107060504030201",
+      "expected": [
+        {
+          "path": "ItemSwgId",
+          "value": "72623859790382865",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnAddFriendPacket",
+      "name": "ChatOnAddFriend",
+      "kind": "Packet",
+      "value": 724176276,
+      "hex": "0300940d2a2b0f07060504030201",
+      "expected": [
+        {
+          "path": "Reserved",
+          "value": "72623859790382863",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ClientMfdStatusUpdatePacket",
+      "name": "ClientMfdStatusUpdateMessage",
+      "kind": "Packet",
+      "value": 757952225,
+      "hex": "0600e16e2d2d0c00506c616e65745f76616c756526070605040302010000a03f00007040000020c00c00506c616e65745f76616c756526070605040302010000a03f00007040000020c0",
+      "expected": [
+        {
+          "path": "Members[0].Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Members[0].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Members[0].Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Members[0].Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Members[0].Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Members[1].Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Members[1].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Members[1].Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Members[1].Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Members[1].Position.z",
+          "value": "3.75",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ServerTimePacket",
+      "name": "ServerTimeMessage",
+      "kind": "Packet",
+      "value": 784088025,
+      "hex": "0200d93bbc2e2407060504030201",
+      "expected": [
+        {
+          "path": "Time",
+          "value": "72623859790382884",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.GuildResponsePacket",
+      "name": "GuildResponseMessage",
+      "kind": "Packet",
+      "value": 841367328,
+      "hex": "0400203f263226070605040302010f004775696c644e616d655f76616c75650700",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "GuildName",
+          "value": "GuildName_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.BeginTradePacket",
+      "name": "BeginTradeMessage",
+      "kind": "Packet",
+      "value": 844706520,
+      "hex": "0200d83259320a07060504030201",
+      "expected": [
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnCreateRoomPacket",
+      "name": "ChatOnCreateRoom",
+      "kind": "Packet",
+      "value": 903335071,
+      "hex": "04009fccd73505000000020000000f000000010a00506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565070000005400690074006c0065002000a903020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c756512000000",
+      "expected": [
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Room.Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Room.Private",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "Room.Moderated",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Room.Path",
+          "value": "Path_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlayerMoneyResponsePacket",
+      "name": "PlayerMoneyResponseMessage",
+      "kind": "Packet",
+      "value": 914256766,
+      "hex": "03007e737e36eaffffffefffffff",
+      "expected": [
+        {
+          "path": "BankCredits",
+          "value": "-22",
+          "numeric": true
+        },
+        {
+          "path": "CashCredits",
+          "value": "-17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnAddModeratorToRoomPacket",
+      "name": "ChatOnAddModeratorToRoom",
+      "kind": "Packet",
+      "value": 916469848,
+      "hex": "06005838a0360a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565050000000e00526f6f6d506174685f76616c756512000000",
+      "expected": [
+        {
+          "path": "Target.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatInstantMessageToClientPacket",
+      "name": "ChatInstantMessageToClient",
+      "kind": "Packet",
+      "value": 1012292845,
+      "hex": "0500ed5c563c0a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565090000004d006500730073006100670065002000a90307000000",
+      "expected": [
+        {
+          "path": "Sender.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Sender.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Sender.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Message",
+          "value": "Message \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.LogoutPacket",
+      "name": "LogoutMessage",
+      "kind": "Packet",
+      "value": 1123883485,
+      "hex": "0100dd19fd42",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ServerWeatherPacket",
+      "name": "ServerWeatherMessage",
+      "kind": "Packet",
+      "value": 1214469866,
+      "hex": "0300ea566348f3ffffff0000f2410000ca4100005040",
+      "expected": [
+        {
+          "path": "Weather",
+          "value": "-13",
+          "numeric": true
+        },
+        {
+          "path": "WindX",
+          "value": "30.25",
+          "numeric": true
+        },
+        {
+          "path": "WindMagnitude",
+          "value": "25.25",
+          "numeric": true
+        },
+        {
+          "path": "WindY",
+          "value": "3.25",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ParametersPacket",
+      "name": "ParametersMessage",
+      "kind": "Packet",
+      "value": 1215714010,
+      "hex": "0200da5276480b000000",
+      "expected": [
+        {
+          "path": "Value",
+          "value": "11",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnInviteToRoomPacket",
+      "name": "ChatOnInviteToRoom",
+      "kind": "Packet",
+      "value": 1228924746,
+      "hex": "05004ae73f490a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650e00526f6f6d506174685f76616c75650500000012000000",
+      "expected": [
+        {
+          "path": "Inviter.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Inviter.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Inviter.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Invitee.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Invitee.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Invitee.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlanetTravelPointListResponsePacket",
+      "name": "PlanetTravelPointListResponse",
+      "kind": "Packet",
+      "value": 1295143967,
+      "hex": "06001f54324d0c00506c616e65745f76616c7565020000000b004e616d65735f76616c75650b004e616d65735f76616c7565020000000000a03f00007040000020c00000a03f00007040000020c0020000001100000011000000020000000101",
+      "expected": [
+        {
+          "path": "Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Names[0]",
+          "value": "Names_value",
+          "numeric": false
+        },
+        {
+          "path": "Names[1]",
+          "value": "Names_value",
+          "numeric": false
+        },
+        {
+          "path": "Positions[0].x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Positions[0].y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Positions[0].z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Positions[1].x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Positions[1].y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Positions[1].z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Taxes[0]",
+          "value": "17",
+          "numeric": true
+        },
+        {
+          "path": "Taxes[1]",
+          "value": "17",
+          "numeric": true
+        },
+        {
+          "path": "Starports[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Starports[1]",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.GalaxyLoopTimesResponsePacket",
+      "name": "GalaxyLoopTimesResponse",
+      "kind": "Packet",
+      "value": 1312981128,
+      "hex": "03008880424e050000002100000007000000",
+      "expected": [
+        {
+          "path": "GameLoopTime",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "ObjectLoopTime",
+          "value": "33",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.IsFlattenedTheaterPacket",
+      "name": "IsFlattenedTheaterMessage",
+      "kind": "Packet",
+      "value": 1320202346,
+      "hex": "03006ab0b04e260706050403020101",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "ShouldFlatten",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.PermissionListCreatePacket",
+      "name": "PermissionListCreateMessage",
+      "kind": "Packet",
+      "value": 1391682744,
+      "hex": "0400b864f35202000000070000004e0061006d00650073002000a903070000004e0061006d00650073002000a903070000000a000000430065006c006c004e0061006d0065002000a903",
+      "expected": [
+        {
+          "path": "Names[0]",
+          "value": "Names \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Names[1]",
+          "value": "Names \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "CellName",
+          "value": "CellName \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnChangeFriendStatusPacket",
+      "name": "ChatOnChangeFriendStatus",
+      "kind": "Packet",
+      "value": 1412654886,
+      "hex": "06002667335426070605040302010a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000001800000001",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Friend.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Friend.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Friend.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Added",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.CreateTicketResponsePacket",
+      "name": "CreateTicketResponseMessage",
+      "kind": "Packet",
+      "value": 1426735226,
+      "hex": "09007a400a550c000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.unkZonePacket",
+      "name": "unkZone",
+      "kind": "Packet",
+      "value": 1489010465,
+      "hex": "0200217fc05801010101",
+      "expected": [
+        {
+          "path": "Reserved[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[2]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[3]",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnBanFromRoomPacket",
+      "name": "ChatOnBanFromRoom",
+      "kind": "Packet",
+      "value": 1513640845,
+      "hex": "06008d53385a0e00526f6f6d506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650500000012000000",
+      "expected": [
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.FactionResponsePacket",
+      "name": "FactionResponseMessage",
+      "kind": "Packet",
+      "value": 1574254935,
+      "hex": "07005739d55d0a0052616e6b5f76616c7565e1ffffffe8fffffff9ffffff02000000120046616374696f6e4e616d65735f76616c7565120046616374696f6e4e616d65735f76616c7565020000000000054200000542",
+      "expected": [
+        {
+          "path": "Rank",
+          "value": "Rank_value",
+          "numeric": false
+        },
+        {
+          "path": "RebelPoints",
+          "value": "-31",
+          "numeric": true
+        },
+        {
+          "path": "ImperialPoints",
+          "value": "-24",
+          "numeric": true
+        },
+        {
+          "path": "HuttPoints",
+          "value": "-7",
+          "numeric": true
+        },
+        {
+          "path": "FactionNames[0]",
+          "value": "FactionNames_value",
+          "numeric": false
+        },
+        {
+          "path": "FactionNames[1]",
+          "value": "FactionNames_value",
+          "numeric": false
+        },
+        {
+          "path": "Standings[0]",
+          "value": "33.25",
+          "numeric": true
+        },
+        {
+          "path": "Standings[1]",
+          "value": "33.25",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiUpdatePagePacket",
+      "name": "SuiUpdatePageMessage",
+      "kind": "Packet",
+      "value": 1597194998,
+      "hex": "0200f642335f020000000e00526f6f74506167655f76616c7565020000000200000000000000000200000000000000001407060504030201000011422d07060504030201",
+      "expected": [
+        {
+          "path": "Page.Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.RootPage",
+          "value": "RootPage_value",
+          "numeric": false
+        },
+        {
+          "path": "Page.Commands[0].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.Commands[1].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "Page.ForceCloseDistance",
+          "value": "36.25",
+          "numeric": true
+        },
+        {
+          "path": "Page.UnknownId",
+          "value": "72623859790382893",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnLeaveRoomPacket",
+      "name": "ChatOnLeaveRoom",
+      "kind": "Packet",
+      "value": 1622477195,
+      "hex": "03008b09b5600a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565050000000f00000012000000",
+      "expected": [
+        {
+          "path": "Player.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RoomId",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.RequestCategoriesResponsePacket",
+      "name": "RequestCategoriesResponseMessage",
+      "kind": "Packet",
+      "value": 1628737492,
+      "hex": "0300d48f14610c00000002000000060000004e0061006d0065002000a9030200000002000000060000004e0061006d0065002000a90302000000000000000101060000004e0061006d0065002000a903020000000000000001010101060000004e0061006d0065002000a9030200000002000000060000004e0061006d0065002000a90302000000000000000101060000004e0061006d0065002000a903020000000000000001010101",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[0].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[0].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[0].Children[0].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[0].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[0].Reserved2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[1].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[0].Children[1].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[1].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Children[1].Reserved2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[0].Reserved2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[1].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[0].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[1].Children[0].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[0].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[0].Reserved2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[1].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Categories[1].Children[1].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[1].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Children[1].Reserved2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Categories[1].Reserved2",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.ConnectPlayerResponsePacket",
+      "name": "ConnectPlayerResponseMessage",
+      "kind": "Packet",
+      "value": 1631016303,
+      "hex": "02006f5537610c000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateNebulaLightningPacket",
+      "name": "CreateNebulaLightningMessage",
+      "kind": "Packet",
+      "value": 1710389639,
+      "hex": "11008779f2650700150000001500000015000000150000001500000015000000150000001500000015000000",
+      "expected": [
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[0]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[1]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[2]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[3]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[4]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[5]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[6]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[7]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[8]",
+          "value": "21",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatFriendsListUpdatePacket",
+      "name": "ChatFriendsListUpdate",
+      "kind": "Packet",
+      "value": 1825766616,
+      "hex": "0300d8fcd26c0a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c756501",
+      "expected": [
+        {
+          "path": "Friend.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Friend.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Friend.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Online",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatSystemPacket",
+      "name": "ChatSystemMessage",
+      "kind": "Packet",
+      "value": 1831494675,
+      "hex": "040013642a6d01090000004d006500730073006100670065002000a90300000000",
+      "expected": [
+        {
+          "path": "DisplayType",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Message",
+          "value": "Message \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.BadgesResponsePacket",
+      "name": "BadgesResponseMessage",
+      "kind": "Packet",
+      "value": 1837748827,
+      "hex": "03005bd2896d0a07060504030201130000001f0000001f0000001f0000001f0000001f0000000700000007000000070000000700000007000000070000000700000007000000070000000700000007000000",
+      "expected": [
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "ReportedCount",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "Bitmasks[0]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Bitmasks[1]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Bitmasks[2]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Bitmasks[3]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Bitmasks[4]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[0]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[1]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[2]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[3]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[4]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[5]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[6]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[7]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[8]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[9]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[10]",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.NewTicketActivityResponsePacket",
+      "name": "NewTicketActivityResponseMessage",
+      "kind": "Packet",
+      "value": 1856253312,
+      "hex": "0300802da46e011f000000",
+      "expected": [
+        {
+          "path": "Flag",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "TicketId",
+          "value": "31",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.DenyTradePacket",
+      "name": "DenyTradeMessage",
+      "kind": "Packet",
+      "value": 1858242160,
+      "hex": "01007086c26e",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatRoomListPacket",
+      "name": "ChatRoomList",
+      "kind": "Packet",
+      "value": 1893642647,
+      "hex": "020097b1de7002000000020000000f000000010a00506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565070000005400690074006c0065002000a903020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000f000000010a00506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565070000005400690074006c0065002000a903020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565",
+      "expected": [
+        {
+          "path": "Rooms[0].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[0].Private",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[0].Moderated",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[0].Path",
+          "value": "Path_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Owner.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Owner.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Owner.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Creator.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Creator.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Creator.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Moderators[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[0].Users[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[1].Private",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[1].Moderated",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Rooms[1].Path",
+          "value": "Path_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Owner.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Owner.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Owner.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Creator.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Creator.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Creator.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Moderators[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Rooms[1].Users[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnChangeIgnoreStatusPacket",
+      "name": "ChatOnChangeIgnoreStatus",
+      "kind": "Packet",
+      "value": 1894373903,
+      "hex": "06000fdae97026070605040302010a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c756502000000010c000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Ignored.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Ignored.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Ignored.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Added",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatServerStatusPacket",
+      "name": "ChatServerStatus",
+      "kind": "Packet",
+      "value": 1896001887,
+      "hex": "02005fb1027101",
+      "expected": [
+        {
+          "path": "Flag",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CreateClientPathPacket",
+      "name": "CreateClientPathMessage",
+      "kind": "Packet",
+      "value": 1905620520,
+      "hex": "050028769571020000000000a03f00007040000020c00000a03f00007040000020c0",
+      "expected": [
+        {
+          "path": "Coordinates[0].x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Coordinates[0].y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Coordinates[0].z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Coordinates[1].x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Coordinates[1].y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Coordinates[1].z",
+          "value": "3.75",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateMissilePacket",
+      "name": "CreateMissileMessage",
+      "kind": "Packet",
+      "value": 1914499211,
+      "hex": "14008bf01c72020000001507060504030201140706050403020115000000150000001500000015000000150000001500000015000000150000001500000015000000",
+      "expected": [
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "SourceSwgId",
+          "value": "72623859790382869",
+          "numeric": true
+        },
+        {
+          "path": "TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[0]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[1]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[2]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[3]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[4]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[5]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[6]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[7]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[8]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[9]",
+          "value": "21",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.ShipUpdateTransformPacket",
+      "name": "ShipUpdateTransformMessage",
+      "kind": "Packet",
+      "value": 1979871161,
+      "hex": "0800b96f02761200f6f6f6f6e3ffe3ffe3ffdfff0100e2e2e202000000",
+      "expected": [
+        {
+          "path": "UniqueId",
+          "value": "18",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotation[0]",
+          "value": "-10",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotation[1]",
+          "value": "-10",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotation[2]",
+          "value": "-10",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotation[3]",
+          "value": "-10",
+          "numeric": true
+        },
+        {
+          "path": "PackedPosition[0]",
+          "value": "-29",
+          "numeric": true
+        },
+        {
+          "path": "PackedPosition[1]",
+          "value": "-29",
+          "numeric": true
+        },
+        {
+          "path": "PackedPosition[2]",
+          "value": "-29",
+          "numeric": true
+        },
+        {
+          "path": "PackedSpeed",
+          "value": "-33",
+          "numeric": true
+        },
+        {
+          "path": "PackedDirection",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotationRate[0]",
+          "value": "-30",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotationRate[1]",
+          "value": "-30",
+          "numeric": true
+        },
+        {
+          "path": "PackedRotationRate[2]",
+          "value": "-30",
+          "numeric": true
+        },
+        {
+          "path": "MovementCounter",
+          "value": "2",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.ShipUpdateTransformCollisionPacket",
+      "name": "ShipUpdateTransformCollisionMessage",
+      "kind": "Packet",
+      "value": 1983269072,
+      "hex": "0800d04836762607060504030201cdcccc3dcdcc4c3e9a99993e6666663f0000a03f00007040000020c00000a03f000020c00000704002000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Rotation.x",
+          "value": "0.1",
+          "numeric": true
+        },
+        {
+          "path": "Rotation.y",
+          "value": "0.2",
+          "numeric": true
+        },
+        {
+          "path": "Rotation.z",
+          "value": "0.3",
+          "numeric": true
+        },
+        {
+          "path": "Rotation.w",
+          "value": "0.9",
+          "numeric": true
+        },
+        {
+          "path": "Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Velocity.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Velocity.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Velocity.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "MovementCounter",
+          "value": "2",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.GameServerLagResponsePacket",
+      "name": "GameServerLagResponse",
+      "kind": "Packet",
+      "value": 2023378442,
+      "hex": "01000a4e9a78",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.OpenHolocronToPagePacket",
+      "name": "OpenHolocronToPageMessage",
+      "kind": "Packet",
+      "value": 2092322849,
+      "hex": "09002150b67c0a00506167655f76616c75650700",
+      "expected": [
+        {
+          "path": "Page",
+          "value": "Page_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.SearchKnowledgebaseResponsePacket",
+      "name": "SearchKnowledgebaseResponseMessage",
+      "kind": "Packet",
+      "value": 2092732263,
+      "hex": "0300678fbc7c0c00000002000000070000005400690074006c0065002000a9030f0041727469636c6549645f76616c75650700070000005400690074006c0065002000a9030f0041727469636c6549645f76616c75650700",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Articles[0].Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Articles[0].ArticleId",
+          "value": "ArticleId_value",
+          "numeric": false
+        },
+        {
+          "path": "Articles[0].Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Articles[1].Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Articles[1].ArticleId",
+          "value": "ArticleId_value",
+          "numeric": false
+        },
+        {
+          "path": "Articles[1].Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.CancelLiveAuctionResponsePacket",
+      "name": "CancelLiveAuctionResponseMessage",
+      "kind": "Packet",
+      "value": 2107778156,
+      "hex": "04006c24a27d26070605040302010c00000001",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Resource.SurveyPacket",
+      "name": "SurveyMessage",
+      "kind": "Packet",
+      "value": 2273278380,
+      "hex": "0200ac797f87020000000000a03f00007040000020c0000082410000a03f00007040000020c000008241",
+      "expected": [
+        {
+          "path": "Points[0].Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Points[0].Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Points[0].Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Points[0].Concentration",
+          "value": "16.25",
+          "numeric": true
+        },
+        {
+          "path": "Points[1].Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Points[1].Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Points[1].Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Points[1].Concentration",
+          "value": "16.25",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEffectObjectPacket",
+      "name": "PlayClientEffectObjectMessage",
+      "kind": "Packet",
+      "value": 2287289162,
+      "hex": "05004a4355880a0046696c655f76616c75650f00417578696c696172795f76616c75652607060504030201",
+      "expected": [
+        {
+          "path": "File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Auxiliary",
+          "value": "Auxiliary_value",
+          "numeric": false
+        },
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.PopulateMissionBrowserPacket",
+      "name": "PopulateMissionBrowserMessage",
+      "kind": "Packet",
+      "value": 2295957596,
+      "hex": "03005c88d98807000000",
+      "expected": [
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendInstantPacket",
+      "name": "ChatOnSendInstantMessage",
+      "kind": "Packet",
+      "value": 2296099713,
+      "hex": "030081b3db880c0000000a000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Sequence",
+          "value": "10",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Resource.ResourceListForSurveyPacket",
+      "name": "ResourceListForSurveyMessage",
+      "kind": "Packet",
+      "value": 2321854933,
+      "hex": "0400d5b1648a020000000a004e616d655f76616c756526070605040302010a00547970655f76616c75650a004e616d655f76616c756526070605040302010a00547970655f76616c756512005265736f75726365547970655f76616c75650a07060504030201",
+      "expected": [
+        {
+          "path": "Resources[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[0].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Resources[0].Type",
+          "value": "Type_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[1].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Resources[1].Type",
+          "value": "Type_value",
+          "numeric": false
+        },
+        {
+          "path": "ResourceType",
+          "value": "ResourceType_value",
+          "numeric": false
+        },
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.LaunchBrowserPacket",
+      "name": "LaunchBrowserMessage",
+      "kind": "Packet",
+      "value": 2380784147,
+      "hex": "020013e2e78d090055726c5f76616c7565",
+      "expected": [
+        {
+          "path": "Url",
+          "value": "Url_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.BidAuctionResponsePacket",
+      "name": "BidAuctionResponseMessage",
+      "kind": "Packet",
+      "value": 2412506954,
+      "hex": "03004aefcb8f26070605040302010c000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.EnterTicketPurchaseModePacket",
+      "name": "EnterTicketPurchaseModeMessage",
+      "kind": "Packet",
+      "value": 2421009946,
+      "hex": "04001aae4d900c00506c616e65745f76616c75650f00506f696e744e616d655f76616c756501",
+      "expected": [
+        {
+          "path": "Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "PointName",
+          "value": "PointName_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Tutorial.NewbieTutorialRequestPacket",
+      "name": "NewbieTutorialRequest",
+      "kind": "Packet",
+      "value": 2430427567,
+      "hex": "0200af61dd900c00416374696f6e5f76616c7565",
+      "expected": [
+        {
+          "path": "Action",
+          "value": "Action_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.GetArticleResponsePacket",
+      "name": "GetArticleResponseMessage",
+      "kind": "Packet",
+      "value": 2471210720,
+      "hex": "0300e0ae4b930c00000009000000410072007400690063006c0065002000a903",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Article",
+          "value": "Article \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.RetrieveAuctionItemResponsePacket",
+      "name": "RetrieveAuctionItemResponseMessage",
+      "kind": "Packet",
+      "value": 2493116300,
+      "hex": "03008cef999426070605040302010c000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendPersistentPacket",
+      "name": "ChatOnSendPersistentMessage",
+      "kind": "Packet",
+      "value": 2498209710,
+      "hex": "0300aea7e7940c0000000a000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Sequence",
+          "value": "10",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiForceClosePagePacket",
+      "name": "SuiForceClosePage",
+      "kind": "Packet",
+      "value": 2567658976,
+      "hex": "0200e05d0b9924000000",
+      "expected": [
+        {
+          "path": "PageId",
+          "value": "36",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.CharacterSheetResponsePacket",
+      "name": "CharacterSheetResponseMessage",
+      "kind": "Packet",
+      "value": 2604275652,
+      "hex": "0d00c4173a9b020000000c0000000000a03f00007040000020c01300436c6f6e696e67506c616e65745f76616c75650000a03f00007040000020c0100042616e6b506c616e65745f76616c75650000a03f00007040000020c015005265736964656e6365506c616e65745f76616c75650c000000530070006f007500730065004e0061006d0065002000a903dbffffff0b00000016000000",
+      "expected": [
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "CloningPosition.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "CloningPosition.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "CloningPosition.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "CloningPlanet",
+          "value": "CloningPlanet_value",
+          "numeric": false
+        },
+        {
+          "path": "BankPosition.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "BankPosition.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "BankPosition.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "BankPlanet",
+          "value": "BankPlanet_value",
+          "numeric": false
+        },
+        {
+          "path": "ResidencePosition.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "ResidencePosition.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "ResidencePosition.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "ResidencePlanet",
+          "value": "ResidencePlanet_value",
+          "numeric": false
+        },
+        {
+          "path": "SpouseName",
+          "value": "SpouseName \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "LotsRemaining",
+          "value": "-37",
+          "numeric": true
+        },
+        {
+          "path": "Faction",
+          "value": "11",
+          "numeric": true
+        },
+        {
+          "path": "FactionStatus",
+          "value": "22",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AbortTradePacket",
+      "name": "AbortTradeMessage",
+      "kind": "Packet",
+      "value": 2628259736,
+      "hex": "0100980fa89c",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.GetMapLocationsResponsePacket",
+      "name": "GetMapLocationsResponseMessage",
+      "kind": "Packet",
+      "value": 2675983948,
+      "hex": "05004c46809f0c00506c616e65745f76616c7565020000002607060504030201060000004e0061006d0065002000a90300005040000054410101012607060504030201060000004e0061006d0065002000a90300005040000054410101010700000007000000070000000700000007000000",
+      "expected": [
+        {
+          "path": "Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Locations[0].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Locations[0].X",
+          "value": "3.25",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0].Y",
+          "value": "13.25",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0].Category",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0].Subcategory",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0].Icon",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Locations[1].X",
+          "value": "3.25",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].Y",
+          "value": "13.25",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].Category",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].Subcategory",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Locations[1].Icon",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[0]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[1]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[2]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[3]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[4]",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.AppendCommentsResponsePacket",
+      "name": "AppendCommentsResponseMessage",
+      "kind": "Packet",
+      "value": 2689220298,
+      "hex": "0300ca3e4aa00c0000001f000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "TicketId",
+          "value": "31",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.HeartBeatPacket",
+      "name": "HeartBeat",
+      "kind": "Packet",
+      "value": 2708273583,
+      "hex": "0100aff96ca1",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Session.HeartBeatPacket",
+      "name": "HeartBeat",
+      "kind": "Packet",
+      "value": 2708273583,
+      "hex": "0500aff96ca1",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.DestroyClientPathPacket",
+      "name": "DestroyClientPathMessage",
+      "kind": "Packet",
+      "value": 2807989739,
+      "hex": "0100eb855ea7",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.PlayClientEventObjectPacket",
+      "name": "PlayClientEventObjectMessage",
+      "kind": "Packet",
+      "value": 2944648178,
+      "hex": "0500f2c383af0a0046696c655f76616c75650f00417578696c696172795f76616c75652607060504030201",
+      "expected": [
+        {
+          "path": "File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Auxiliary",
+          "value": "Auxiliary_value",
+          "numeric": false
+        },
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.AcceptTransactionPacket",
+      "name": "AcceptTransactionMessage",
+      "kind": "Packet",
+      "value": 2972830231,
+      "hex": "010017ca31b1",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ExecuteConsoleCommandPacket",
+      "name": "ExecuteConsoleCommand",
+      "kind": "Packet",
+      "value": 2983185948,
+      "hex": "01001ccecfb10d00436f6d6d616e645f76616c7565",
+      "expected": [
+        {
+          "path": "Command",
+          "value": "Command_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.CreateProjectilePacket",
+      "name": "CreateProjectileMessage",
+      "kind": "Packet",
+      "value": 3096115621,
+      "hex": "1200a5f98ab802000101011300130013001300130013000c000000",
+      "expected": [
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "ReservedBytes[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "ReservedBytes[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "ReservedBytes[2]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[0]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[1]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[2]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[3]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[4]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "ReservedShorts[5]",
+          "value": "19",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnUnbanFromRoomPacket",
+      "name": "ChatOnUnbanFromRoom",
+      "kind": "Packet",
+      "value": 3136927765,
+      "hex": "060015b8f9ba0e00526f6f6d506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650500000012000000",
+      "expected": [
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.GetTicketsResponsePacket",
+      "name": "GetTicketsResponseMessage",
+      "kind": "Packet",
+      "value": 3143008152,
+      "hex": "0300987f56bb07000000070000000f000000020000000c0000000a004e616d655f76616c75650600000042006f00640079002000a90312005265736572766564546578745f76616c75651f00000028070605040302010101020000000c0000000a004e616d655f76616c75650600000042006f00640079002000a90312005265736572766564546578745f76616c75651f00000028070605040302010101",
+      "expected": [
+        {
+          "path": "HeaderWords[0]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "HeaderWords[1]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "HeaderWords[2]",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[0].Body",
+          "value": "Body \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[0].ReservedText",
+          "value": "ReservedText_value",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[0].TicketId",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Timestamp",
+          "value": "72623859790382888",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Unread",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[0].Closed",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[1].Body",
+          "value": "Body \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[1].ReservedText",
+          "value": "ReservedText_value",
+          "numeric": false
+        },
+        {
+          "path": "Tickets[1].TicketId",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Timestamp",
+          "value": "72623859790382888",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Unread",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Tickets[1].Closed",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.GameSceneChangedPacket",
+      "name": "GameSceneChangedMessage",
+      "kind": "Packet",
+      "value": 3148721849,
+      "hex": "0100b9aeadbb",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.ResourceHarvesterActivatePagePacket",
+      "name": "ResourceHarvesterActivatePageMessage",
+      "kind": "Packet",
+      "value": 3172517497,
+      "hex": "020079c618bd2607060504030201",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnUninviteFromRoomPacket",
+      "name": "ChatOnUninviteFromRoom",
+      "kind": "Packet",
+      "value": 3191064552,
+      "hex": "0600e8c733be0e00526f6f6d506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650500000012000000",
+      "expected": [
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Actor.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Target.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CloseHolocronPacket",
+      "name": "CloseHolocronMessage",
+      "kind": "Packet",
+      "value": 3230894749,
+      "hex": "01009d8a93c0",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnReceiveRoomInvitationPacket",
+      "name": "ChatOnReceiveRoomInvitation",
+      "kind": "Packet",
+      "value": 3246305389,
+      "hex": "03006db07ec10a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650e00526f6f6d506174685f76616c7565",
+      "expected": [
+        {
+          "path": "Moderator.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderator.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderator.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "RoomPath",
+          "value": "RoomPath_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatQueryRoomResultsPacket",
+      "name": "ChatQueryRoomResults",
+      "kind": "Packet",
+      "value": 3302917710,
+      "hex": "07004e86dec4020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c756512000000020000000f000000010a00506174685f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565070000005400690074006c0065002000a903020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565",
+      "expected": [
+        {
+          "path": "Players[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Invited[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Moderators[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Banned[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        },
+        {
+          "path": "Room.Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Room.Private",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "Room.Moderated",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Room.Path",
+          "value": "Path_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Owner.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Creator.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Title",
+          "value": "Title \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Moderators[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Room.Users[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.TradeCompletePacket",
+      "name": "TradeCompleteMessage",
+      "kind": "Packet",
+      "value": 3309437835,
+      "hex": "01008b0342c5",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AcceptAuctionResponsePacket",
+      "name": "AcceptAuctionResponseMessage",
+      "kind": "Packet",
+      "value": 3314173038,
+      "hex": "03006e448ac526070605040302010c000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.DogfightTauntPlayerPacket",
+      "name": "DogfightTauntPlayerMessage",
+      "kind": "Packet",
+      "value": 3391771787,
+      "hex": "09008b542aca260706050403020107000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Tutorial.NewbieTutorialEnableHudElementPacket",
+      "name": "NewbieTutorialEnableHudElement",
+      "kind": "Packet",
+      "value": 3392622884,
+      "hex": "0400245137ca0d00456c656d656e745f76616c75650100004441",
+      "expected": [
+        {
+          "path": "Element",
+          "value": "Element_value",
+          "numeric": false
+        },
+        {
+          "path": "Enable",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "BlinkCount",
+          "value": "12.25",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatRoomPacket",
+      "name": "ChatRoomMessage",
+      "kind": "Packet",
+      "value": 3444368452,
+      "hex": "050044e44ccd0a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c756508000000090000004d006500730073006100670065002000a90307000000",
+      "expected": [
+        {
+          "path": "Sender.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Sender.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Sender.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "ChannelId",
+          "value": "8",
+          "numeric": true
+        },
+        {
+          "path": "Message",
+          "value": "Message \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.IsVendorOwnerResponsePacket",
+      "name": "IsVendorOwnerResponseMessage",
+      "kind": "Packet",
+      "value": 3456374590,
+      "hex": "03003e1704ce0b000000180000002d070605040302010f0056656e646f725569645f76616c75650700",
+      "expected": [
+        {
+          "path": "Rights",
+          "value": "11",
+          "numeric": true
+        },
+        {
+          "path": "ErrorCode",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "VendorSwgId",
+          "value": "72623859790382893",
+          "numeric": true
+        },
+        {
+          "path": "VendorUid",
+          "value": "VendorUid_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.DebugTransformPacket",
+      "name": "DebugTransformMessage",
+      "kind": "Packet",
+      "value": 3503139426,
+      "hex": "090062aacdd0150000001500000015000000150000001500000015000000150000002b07060504030201",
+      "expected": [
+        {
+          "path": "ReservedInts[0]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[1]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[2]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[3]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[4]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[5]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedInts[6]",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "ReservedId",
+          "value": "72623859790382891",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.GiveMoneyPacket",
+      "name": "GiveMoneyMessage",
+      "kind": "Packet",
+      "value": 3511844584,
+      "hex": "0200e87e52d101000000",
+      "expected": [
+        {
+          "path": "Amount",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiCreatePagePacket",
+      "name": "SuiCreatePageMessage",
+      "kind": "Packet",
+      "value": 3561714265,
+      "hex": "020059724bd4020000000e00526f6f74506167655f76616c7565020000000200000000000000000200000000000000001407060504030201000011422d07060504030201",
+      "expected": [
+        {
+          "path": "Page.Id",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.RootPage",
+          "value": "RootPage_value",
+          "numeric": false
+        },
+        {
+          "path": "Page.Commands[0].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.Commands[1].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Page.TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "Page.ForceCloseDistance",
+          "value": "36.25",
+          "numeric": true
+        },
+        {
+          "path": "Page.UnknownId",
+          "value": "72623859790382893",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.CommoditiesItemTypeListResponsePacket",
+      "name": "CommoditiesItemTypeListResponse",
+      "kind": "Packet",
+      "value": 3572054012,
+      "hex": "0200fc37e9d40d0056657273696f6e5f76616c756507000000",
+      "expected": [
+        {
+          "path": "Version",
+          "value": "Version_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.CancelTicketResponsePacket",
+      "name": "CancelTicketResponseMessage",
+      "kind": "Packet",
+      "value": 3606835992,
+      "hex": "030018f3fbd60c0000001f000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "TicketId",
+          "value": "31",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnConnectAvatarPacket",
+      "name": "ChatOnConnectAvatar",
+      "kind": "Packet",
+      "value": 3610241470,
+      "hex": "0100bee92fd7",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientCreateCharacterFailedPacket",
+      "name": "ClientCreateCharacterFailed",
+      "kind": "Packet",
+      "value": 3744676974,
+      "hex": "03006e3c33df020000001000537472696e6746696c655f76616c75650c0000000e004572726f724b65795f76616c7565",
+      "expected": [
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "StringFile",
+          "value": "StringFile_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "ErrorKey",
+          "value": "ErrorKey_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnEnteredRoomPacket",
+      "name": "ChatOnEnteredRoom",
+      "kind": "Packet",
+      "value": 3868974090,
+      "hex": "05000adc9be60a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565050000000f00000012000000",
+      "expected": [
+        {
+          "path": "Player.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RoomId",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnSendRoomPacket",
+      "name": "ChatOnSendRoomMessage",
+      "kind": "Packet",
+      "value": 3887470131,
+      "hex": "03003316b6e70c0000000a000000",
+      "expected": [
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Sequence",
+          "value": "10",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Trade.UnAcceptTransactionPacket",
+      "name": "UnAcceptTransactionMessage",
+      "kind": "Packet",
+      "value": 3894297474,
+      "hex": "010082431ee8",
+      "expected": []
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.CharacterCreation.ClientRandomNameResponsePacket",
+      "name": "ClientRandomNameResponse",
+      "kind": "Packet",
+      "value": 3898587240,
+      "hex": "040068b85fe812005261636554656d706c6174655f76616c7565060000004e0061006d0065002000a9031000537472696e6746696c655f76616c7565070000001100417070726f76616c4b65795f76616c7565",
+      "expected": [
+        {
+          "path": "RaceTemplate",
+          "value": "RaceTemplate_value",
+          "numeric": false
+        },
+        {
+          "path": "Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "StringFile",
+          "value": "StringFile_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "ApprovalKey",
+          "value": "ApprovalKey_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.EnterStructurePlacementModePacket",
+      "name": "EnterStructurePlacementModeMessage",
+      "kind": "Packet",
+      "value": 3903147457,
+      "hex": "0300c14da5e81507060504030201120054656d706c617465506174685f76616c7565",
+      "expected": [
+        {
+          "path": "DeedSwgId",
+          "value": "72623859790382869",
+          "numeric": true
+        },
+        {
+          "path": "TemplatePath",
+          "value": "TemplatePath_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnDestroyRoomPacket",
+      "name": "ChatOnDestroyRoom",
+      "kind": "Packet",
+      "value": 3907803255,
+      "hex": "05007758ece80a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565050000000f00000012000000",
+      "expected": [
+        {
+          "path": "Player.Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Player.Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Error",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "RoomId",
+          "value": "15",
+          "numeric": true
+        },
+        {
+          "path": "RequestId",
+          "value": "18",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnGetFriendsListPacket",
+      "name": "ChatOnGetFriendsList",
+      "kind": "Packet",
+      "value": 3917133204,
+      "hex": "030094b57ae90a07060504030201020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565",
+      "expected": [
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Players[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.StatMigrationTargetsPacket",
+      "name": "StatMigrationTargetsMessage",
+      "kind": "Packet",
+      "value": 4021041348,
+      "hex": "0900c438aceffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffff9ffffff",
+      "expected": [
+        {
+          "path": "Attributes[0]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[1]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[2]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[3]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[4]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[5]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[6]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[7]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[8]",
+          "value": "-5",
+          "numeric": true
+        },
+        {
+          "path": "RemainingPoints",
+          "value": "-7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.AttributeListPacket",
+      "name": "AttributeListMessage",
+      "kind": "Packet",
+      "value": 4092669738,
+      "hex": "04002a2ff1f32607060504030201020000000a004e616d655f76616c756507000000560061006c00750065002000a9030a004e616d655f76616c756507000000560061006c00750065002000a903",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Attributes[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[0].Value",
+          "value": "Value \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[1].Value",
+          "value": "Value \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Support.VerifyPlayerNameResponsePacket",
+      "name": "VerifyPlayerNameResponseMessage",
+      "kind": "Packet",
+      "value": 4106524925,
+      "hex": "0900fd98c4f40107000000",
+      "expected": [
+        {
+          "path": "Success",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.UpdateCellPermissionsPacket",
+      "name": "UpdateCellPermissionsMessage",
+      "kind": "Packet",
+      "value": 4128393628,
+      "hex": "03009c4912f6012a07060504030201",
+      "expected": [
+        {
+          "path": "AllowEntry",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "CellSwgId",
+          "value": "72623859790382890",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatOnGetIgnoreListPacket",
+      "name": "ChatOnGetIgnoreList",
+      "kind": "Packet",
+      "value": 4173493680,
+      "hex": "0300b075c2f80a07060504030201020000000a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c75650a0047616d655f76616c75650c0047616c6178795f76616c75650a004e616d655f76616c7565",
+      "expected": [
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Players[0].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Game",
+          "value": "Game_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Galaxy",
+          "value": "Galaxy_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AuctionQueryHeadersResponsePacket",
+      "name": "AuctionQueryHeadersResponseMessage",
+      "kind": "Packet",
+      "value": 4199550546,
+      "hex": "0800520e50fa1500000025000000020000000f004c6f636174696f6e735f76616c75650f004c6f636174696f6e735f76616c7565020000000b0000004900740065006d004e0061006d00650073002000a9030b0000004900740065006d004e0061006d00650073002000a90302000000260706050403020101f4ffffff12000000011f00270706050403020107000a070605040302011600f2ffffffe9ffffff1a00000019000000fcffffff260706050403020101f4ffffff12000000011f00270706050403020107000a070605040302011600f2ffffffe9ffffff1a00000019000000fcffffff250001",
+      "expected": [
+        {
+          "path": "Counter",
+          "value": "21",
+          "numeric": true
+        },
+        {
+          "path": "Screen",
+          "value": "37",
+          "numeric": true
+        },
+        {
+          "path": "Locations[0]",
+          "value": "Locations_value",
+          "numeric": false
+        },
+        {
+          "path": "Locations[1]",
+          "value": "Locations_value",
+          "numeric": false
+        },
+        {
+          "path": "ItemNames[0]",
+          "value": "ItemNames \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "ItemNames[1]",
+          "value": "ItemNames \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Items[0].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].NameIndex",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].Price",
+          "value": "-12",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].SecondsRemaining",
+          "value": "18",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].InstantSale",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].VendorIndex",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].OwnerSwgId",
+          "value": "72623859790382887",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].OwnerNameIndex",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].BuyerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].BuyerNameIndex",
+          "value": "22",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].ProxyPrice",
+          "value": "-14",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].CurrentPrice",
+          "value": "-23",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].ItemType",
+          "value": "26",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].Options",
+          "value": "25",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].AccessFee",
+          "value": "-4",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].NameIndex",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].Price",
+          "value": "-12",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].SecondsRemaining",
+          "value": "18",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].InstantSale",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].VendorIndex",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].OwnerSwgId",
+          "value": "72623859790382887",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].OwnerNameIndex",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].BuyerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].BuyerNameIndex",
+          "value": "22",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].ProxyPrice",
+          "value": "-14",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].CurrentPrice",
+          "value": "-23",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].ItemType",
+          "value": "26",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].Options",
+          "value": "25",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].AccessFee",
+          "value": "-4",
+          "numeric": true
+        },
+        {
+          "path": "Offset",
+          "value": "37",
+          "numeric": true
+        },
+        {
+          "path": "Continues",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Auction.AuctionItemDescriptionPacket",
+      "name": "AuctionItemDescriptionMessage",
+      "kind": "Packet",
+      "value": 4262356043,
+      "hex": "02004b640efe26070605040302010d0000004400650073006300720069007000740069006f006e002000a903020000000a004e616d655f76616c756507000000560061006c00750065002000a9030a004e616d655f76616c756507000000560061006c00750065002000a903",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Description",
+          "value": "Description \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[0].Value",
+          "value": "Value \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Attributes[1].Value",
+          "value": "Value \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StartNpcConversationPacket",
+      "name": "StartNpcConversation",
+      "kind": "Controller",
+      "value": 221,
+      "hex": "0500465ece801b000000dd0000002a00000000000000110000002107060504030201011600436f6e766572736174696f6e46696c655f76616c75650c000000",
+      "expected": [
+        {
+          "path": "NpcSwgId",
+          "value": "72623859790382881",
+          "numeric": true
+        },
+        {
+          "path": "Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "ConversationFile",
+          "value": "ConversationFile_value",
+          "numeric": false
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StopNpcConversationPacket",
+      "name": "StopNpcConversation",
+      "kind": "Controller",
+      "value": 222,
+      "hex": "0500465ece801b000000de0000002a00000000000000110000002107060504030201",
+      "expected": [
+        {
+          "path": "NpcSwgId",
+          "value": "72623859790382881",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.NpcConversationPacket",
+      "name": "NpcConversationMessage",
+      "kind": "Controller",
+      "value": 223,
+      "hex": "0500465ece801b000000df0000002a00000000000000110000000e00000043006f006e0076006500720073006100740069006f006e002000a903",
+      "expected": [
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.StringListPacket",
+      "name": "StringList",
+      "kind": "Controller",
+      "value": 224,
+      "hex": "0500465ece801b000000e00000002a000000000000001100000002090000004f007000740069006f006e0073002000a903090000004f007000740069006f006e0073002000a903",
+      "expected": [
+        {
+          "path": "Options[0]",
+          "value": "Options \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Options[1]",
+          "value": "Options \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.HarvesterResourceDataPacket",
+      "name": "HarvesterResourceDataMessage",
+      "kind": "Controller",
+      "value": 234,
+      "hex": "0500465ece801b000000ea0000002a00000000000000110000002d070605040302010200000026070605040302010a004e616d655f76616c75650a00547970655f76616c75650126070605040302010a004e616d655f76616c75650a00547970655f76616c756501",
+      "expected": [
+        {
+          "path": "HarvesterSwgId",
+          "value": "72623859790382893",
+          "numeric": true
+        },
+        {
+          "path": "Resources[0].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Resources[0].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[0].Type",
+          "value": "Type_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[0].DensityPercent",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Resources[1].SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "Resources[1].Name",
+          "value": "Name_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[1].Type",
+          "value": "Type_value",
+          "numeric": false
+        },
+        {
+          "path": "Resources[1].DensityPercent",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.GenericResponsePacket",
+      "name": "GenericResponse",
+      "kind": "Controller",
+      "value": 238,
+      "hex": "0500465ece801b000000ee0000002a0000000000000011000000180000000101",
+      "expected": [
+        {
+          "path": "Message",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Result1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Result2",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.AnimationPacket",
+      "name": "Animation",
+      "kind": "Controller",
+      "value": 242,
+      "hex": "0500465ece801b000000f20000002a00000000000000110000000f00416e696d6174696f6e5f76616c7565",
+      "expected": [
+        {
+          "path": "Animation",
+          "value": "Animation_value",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.SpatialChatPacket",
+      "name": "SpatialChat",
+      "kind": "Controller",
+      "value": 244,
+      "hex": "0500465ece801b000000f40000002a00000000000000110000000b070605040302011707060504030201090000004d006500730073006100670065002000a9030600200017000101000000000700000007000000",
+      "expected": [
+        {
+          "path": "SenderSwgId",
+          "value": "72623859790382859",
+          "numeric": true
+        },
+        {
+          "path": "ChatTargetSwgId",
+          "value": "72623859790382871",
+          "numeric": true
+        },
+        {
+          "path": "Message",
+          "value": "Message \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Volume",
+          "value": "6",
+          "numeric": true
+        },
+        {
+          "path": "ChatType",
+          "value": "32",
+          "numeric": true
+        },
+        {
+          "path": "MoodType",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "ChatFlags",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "LanguageId",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[0]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved[1]",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.MissionAcceptResponsePacket",
+      "name": "MissionAcceptResponse",
+      "kind": "Controller",
+      "value": 250,
+      "hex": "0500465ece801b000000fa0000002a000000000000001100000010070605040302010101",
+      "expected": [
+        {
+          "path": "MissionSwgId",
+          "value": "72623859790382864",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "TerminalIndex",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingSchematicListPacket",
+      "name": "CraftingSchematicList",
+      "kind": "Controller",
+      "value": 258,
+      "hex": "0500465ece801b000000020100002a00000000000000110000001f070605040302011d07060504030201020000000c00000017000000220000000c0000001700000022000000",
+      "expected": [
+        {
+          "path": "ToolSwgId",
+          "value": "72623859790382879",
+          "numeric": true
+        },
+        {
+          "path": "StationId",
+          "value": "72623859790382877",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[0].ClientCrc",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[0].ServerCrc",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[0].ToolTab",
+          "value": "34",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[1].ClientCrc",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[1].ServerCrc",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "Schematics[1].ToolTab",
+          "value": "34",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingIngredientSlotsPacket",
+      "name": "CraftingIngredientSlots",
+      "kind": "Controller",
+      "value": 259,
+      "hex": "0500465ece801b000000030100002a00000000000000110000001f0706050403020123070605040302012d070605040302010200000001020000000a0046696c655f76616c75650700000009004b65795f76616c756501050000000a0046696c655f76616c75650700000009004b65795f76616c75650e0000005200650073006f00750072006300650054007900700065002000a903022000000007000a0046696c655f76616c75650700000009004b65795f76616c756501050000000a0046696c655f76616c75650700000009004b65795f76616c75650e0000005200650073006f00750072006300650054007900700065002000a903022000000007000c00",
+      "expected": [
+        {
+          "path": "ToolSwgId",
+          "value": "72623859790382879",
+          "numeric": true
+        },
+        {
+          "path": "ManufactureSchematicSwgId",
+          "value": "72623859790382883",
+          "numeric": true
+        },
+        {
+          "path": "PrototypeSwgId",
+          "value": "72623859790382893",
+          "numeric": true
+        },
+        {
+          "path": "Reserved1",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "AllowFactory",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Name.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Name.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Name.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Optional",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].OptionCount",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].IngredientName.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].IngredientName.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].IngredientName.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].ResourceType",
+          "value": "ResourceType \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Quantity",
+          "value": "32",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Name.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Name.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Name.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Optional",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].OptionCount",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].IngredientName.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].IngredientName.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].IngredientName.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].ResourceType",
+          "value": "ResourceType \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Quantity",
+          "value": "32",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingResultPacket",
+      "name": "CraftingResult",
+      "kind": "Controller",
+      "value": 268,
+      "hex": "0500465ece801b0000000c0100002a0000000000000011000000180000000c00000001",
+      "expected": [
+        {
+          "path": "Message",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Counter",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingExperimentationResultPacket",
+      "name": "CraftingExperimentationResult",
+      "kind": "Controller",
+      "value": 275,
+      "hex": "0500465ece801b000000130100002a0000000000000011000000180000000c00000001",
+      "expected": [
+        {
+          "path": "Message",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Counter",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Commands.CommandQueueRemovePacket",
+      "name": "CommandQueueRemove",
+      "kind": "Controller",
+      "value": 279,
+      "hex": "0500465ece801b000000170100002a00000000000000110000001c000000000001420e00000018000000",
+      "expected": [
+        {
+          "path": "ActionCounter",
+          "value": "28",
+          "numeric": true
+        },
+        {
+          "path": "Timer",
+          "value": "32.25",
+          "numeric": true
+        },
+        {
+          "path": "ErrorType",
+          "value": "14",
+          "numeric": true
+        },
+        {
+          "path": "ErrorCode",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.EmotePacket",
+      "name": "Emote",
+      "kind": "Controller",
+      "value": 302,
+      "hex": "0500465ece801b0000002e0100002a00000000000000110000000b0706050403020114070605040302010300000001",
+      "expected": [
+        {
+          "path": "SenderSwgId",
+          "value": "72623859790382859",
+          "numeric": true
+        },
+        {
+          "path": "TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "EmoteId",
+          "value": "3",
+          "numeric": true
+        },
+        {
+          "path": "DisplayFlags",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.PosturePacket",
+      "name": "PostureMessage",
+      "kind": "Controller",
+      "value": 305,
+      "hex": "0500465ece801b000000310100002a00000000000000110000000101",
+      "expected": [
+        {
+          "path": "Posture",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatSpamPacket",
+      "name": "CombatSpam",
+      "kind": "Controller",
+      "value": 308,
+      "hex": "0500465ece801b000000340100002a00000000000000110000000a070605040302010d0706050403020111070605040302011d0000000a0046696c655f76616c75650700000009004b65795f76616c7565010600000054006500780074002000a903",
+      "expected": [
+        {
+          "path": "AttackerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "DefenderSwgId",
+          "value": "72623859790382861",
+          "numeric": true
+        },
+        {
+          "path": "ItemSwgId",
+          "value": "72623859790382865",
+          "numeric": true
+        },
+        {
+          "path": "Damage",
+          "value": "29",
+          "numeric": true
+        },
+        {
+          "path": "StringId.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "StringId.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "StringId.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Color",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Text",
+          "value": "Text \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Movement.SitOnObjectPacket",
+      "name": "SitOnObject",
+      "kind": "Controller",
+      "value": 315,
+      "hex": "0500465ece801b0000003b0100002a00000000000000110000002b070605040302010000a03f000020c000007040",
+      "expected": [
+        {
+          "path": "ParentSwgId",
+          "value": "72623859790382891",
+          "numeric": true
+        },
+        {
+          "path": "Position.x",
+          "value": "1.25",
+          "numeric": true
+        },
+        {
+          "path": "Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Position.z",
+          "value": "3.75",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.WeaponRangesPacket",
+      "name": "WeaponRanges",
+      "kind": "Controller",
+      "value": 320,
+      "hex": "0500465ece801b000000400100002a00000000000000110000001c070605040302010000ba410000c241f2ffffffebfffffff4ffffff",
+      "expected": [
+        {
+          "path": "WeaponSwgId",
+          "value": "72623859790382876",
+          "numeric": true
+        },
+        {
+          "path": "IdealRange",
+          "value": "23.25",
+          "numeric": true
+        },
+        {
+          "path": "MaximumRange",
+          "value": "24.25",
+          "numeric": true
+        },
+        {
+          "path": "PointBlankAccuracy",
+          "value": "-14",
+          "numeric": true
+        },
+        {
+          "path": "IdealAccuracy",
+          "value": "-21",
+          "numeric": true
+        },
+        {
+          "path": "MaximumRangeAccuracy",
+          "value": "-12",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Mission.MissionAbortResponsePacket",
+      "name": "MissionAbortResponse",
+      "kind": "Controller",
+      "value": 322,
+      "hex": "0500465ece801b000000420100002a00000000000000110000001007060504030201",
+      "expected": [
+        {
+          "path": "MissionSwgId",
+          "value": "72623859790382864",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.ObjectMenuResponsePacket",
+      "name": "ObjectMenuResponse",
+      "kind": "Controller",
+      "value": 327,
+      "hex": "0500465ece801b000000470100002a000000000000001100000014070605040302010a0706050403020102000000010101010600000054006500780074002000a903010101010600000054006500780074002000a90301",
+      "expected": [
+        {
+          "path": "TargetSwgId",
+          "value": "72623859790382868",
+          "numeric": true
+        },
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].Index",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].ParentIndex",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].RadialId",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].Callback",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[0].Text",
+          "value": "Text \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Items[1].Index",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].ParentIndex",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].RadialId",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].Callback",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Items[1].Text",
+          "value": "Text \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Counter",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.FlourishPacket",
+      "name": "Flourish",
+      "kind": "Controller",
+      "value": 358,
+      "hex": "0500465ece801b000000660100002a0000000000000011000000eaffffff",
+      "expected": [
+        {
+          "path": "FlourishId",
+          "value": "-22",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Commands.CommandQueueAddPacket",
+      "name": "CommandQueueAdd",
+      "kind": "Controller",
+      "value": 359,
+      "hex": "0500465ece801b000000670100002a00000000000000110000001c0000000d000000",
+      "expected": [
+        {
+          "path": "ActionCounter",
+          "value": "28",
+          "numeric": true
+        },
+        {
+          "path": "ActionCrc",
+          "value": "13",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Effects.ShowFlyTextPacket",
+      "name": "ShowFlyText",
+      "kind": "Controller",
+      "value": 445,
+      "hex": "0500465ece801b000000bd0100002a000000000000001100000026070605040302010a0046696c655f76616c75650700000009004b65795f76616c75650000824101010101",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "72623859790382886",
+          "numeric": true
+        },
+        {
+          "path": "StringId.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "StringId.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "StringId.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Size",
+          "value": "16.25",
+          "numeric": true
+        },
+        {
+          "path": "Red",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Green",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Blue",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CraftingAssemblyResultPacket",
+      "name": "CraftingAssemblyResult",
+      "kind": "Controller",
+      "value": 446,
+      "hex": "0500465ece801b000000be0100002a0000000000000011000000180000000c00000001",
+      "expected": [
+        {
+          "path": "Message",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Result",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Counter",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.DraftSchematicSlotsPacket",
+      "name": "DraftSchematicSlots",
+      "kind": "Controller",
+      "value": 447,
+      "hex": "0500465ece801b000000bf0100002a00000000000000110000000c00000017000000dffffffff0ffffff01020000000a0046696c655f76616c75650700000009004b65795f76616c756501050000000a0046696c655f76616c75650700000009004b65795f76616c75650e0000005200650073006f00750072006300650054007900700065002000a903022000000007000a0046696c655f76616c75650700000009004b65795f76616c756501050000000a0046696c655f76616c75650700000009004b65795f76616c75650e0000005200650073006f00750072006300650054007900700065002000a903022000000007000c00",
+      "expected": [
+        {
+          "path": "ClientCrc",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "ServerCrc",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "Complexity",
+          "value": "-33",
+          "numeric": true
+        },
+        {
+          "path": "Size",
+          "value": "-16",
+          "numeric": true
+        },
+        {
+          "path": "Reserved1",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Name.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Name.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Name.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Optional",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].OptionCount",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].IngredientName.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].IngredientName.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].IngredientName.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].ResourceType",
+          "value": "ResourceType \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Slots[0].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Quantity",
+          "value": "32",
+          "numeric": true
+        },
+        {
+          "path": "Slots[0].Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Name.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Name.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Name.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Optional",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].OptionCount",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].IngredientName.File",
+          "value": "File_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].IngredientName.Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].IngredientName.Key",
+          "value": "Key_value",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].ResourceType",
+          "value": "ResourceType \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Slots[1].Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Quantity",
+          "value": "32",
+          "numeric": true
+        },
+        {
+          "path": "Slots[1].Reserved",
+          "value": "7",
+          "numeric": true
+        },
+        {
+          "path": "Reserved2",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.CloseCraftingWindowPacket",
+      "name": "CloseCraftingWindow",
+      "kind": "Controller",
+      "value": 450,
+      "hex": "0500465ece801b000000c20100002a000000000000001100000001",
+      "expected": [
+        {
+          "path": "Counter",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.BiographyPacket",
+      "name": "Biography",
+      "kind": "Controller",
+      "value": 475,
+      "hex": "0500465ece801b000000db0100002a00000000000000110000000a070605040302010b000000420069006f006700720061007000680079002000a903",
+      "expected": [
+        {
+          "path": "PlayerSwgId",
+          "value": "72623859790382858",
+          "numeric": true
+        },
+        {
+          "path": "Biography",
+          "value": "Biography \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.PlayersNearYouPacket",
+      "name": "PlayersNearYouMessage",
+      "kind": "Controller",
+      "value": 487,
+      "hex": "0500465ece801b000000e70100002a000000000000001100000002000000020000001f0000001f000000060000004e0061006d0065002000a9031d0000000c00526567696f6e5f76616c75650c00506c616e65745f76616c75650b004775696c645f76616c75650b005469746c655f76616c7565020000001f0000001f000000060000004e0061006d0065002000a9031d0000000c00526567696f6e5f76616c75650c00506c616e65745f76616c75650b004775696c645f76616c75650b005469746c655f76616c7565",
+      "expected": [
+        {
+          "path": "Players[0].Bitmasks[0]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Players[0].Bitmasks[1]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Players[0].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Species",
+          "value": "29",
+          "numeric": true
+        },
+        {
+          "path": "Players[0].Region",
+          "value": "Region_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Guild",
+          "value": "Guild_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[0].Title",
+          "value": "Title_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Bitmasks[0]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Players[1].Bitmasks[1]",
+          "value": "31",
+          "numeric": true
+        },
+        {
+          "path": "Players[1].Name",
+          "value": "Name \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Species",
+          "value": "29",
+          "numeric": true
+        },
+        {
+          "path": "Players[1].Region",
+          "value": "Region_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Planet",
+          "value": "Planet_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Guild",
+          "value": "Guild_value",
+          "numeric": false
+        },
+        {
+          "path": "Players[1].Title",
+          "value": "Title_value",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Player.StartingLocationListPacket",
+      "name": "StartingLocationListMessage",
+      "kind": "Controller",
+      "value": 508,
+      "hex": "0500465ece801b000000fc0100002a0000000000000011000000",
+      "expected": [
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Crafting.DraftSchematicResourceWeightsPacket",
+      "name": "DraftSchematicResourceWeights",
+      "kind": "Controller",
+      "value": 519,
+      "hex": "0500465ece801b000000070200002a00000000000000110000000c000000170000000202010102010102020101020101",
+      "expected": [
+        {
+          "path": "ClientCrc",
+          "value": "12",
+          "numeric": true
+        },
+        {
+          "path": "ServerCrc",
+          "value": "23",
+          "numeric": true
+        },
+        {
+          "path": "BatchWeights[0].Weights[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "BatchWeights[0].Weights[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "BatchWeights[1].Weights[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "BatchWeights[1].Weights[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Weights[0].Weights[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Weights[0].Weights[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Weights[1].Weights[0]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Weights[1].Weights[1]",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.AddBuffPacket",
+      "name": "AddBuffMessage",
+      "kind": "Controller",
+      "value": 553,
+      "hex": "0500465ece801b000000290200002a0000000000000011000000180000000000ea41",
+      "expected": [
+        {
+          "path": "BuffCrc",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Duration",
+          "value": "29.25",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.RemoveBuffPacket",
+      "name": "RemoveBuffMessage",
+      "kind": "Controller",
+      "value": 554,
+      "hex": "0500465ece801b0000002a0200002a000000000000001100000018000000",
+      "expected": [
+        {
+          "path": "BuffCrc",
+          "value": "24",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Harvester.HarvesterSetupSharedNetworkPacket",
+      "name": "HarvesterSetupSharedNetworkMessage",
+      "kind": "Controller",
+      "value": 555,
+      "hex": "0500465ece801b0000002b0200002a0000000000000011000000",
+      "expected": [
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignChangePacket",
+      "name": "ImageDesignChangeMessage",
+      "kind": "Controller",
+      "value": 568,
+      "hex": "0500465ece801b000000380200002a000000000000001100000023070605040302012b07060504030201110706050403020102",
+      "expected": [
+        {
+          "path": "DesignerSwgId",
+          "value": "72623859790382883",
+          "numeric": true
+        },
+        {
+          "path": "ClientSwgId",
+          "value": "72623859790382891",
+          "numeric": true
+        },
+        {
+          "path": "TentSwgId",
+          "value": "72623859790382865",
+          "numeric": true
+        },
+        {
+          "path": "Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignRejectPacket",
+      "name": "ImageDesignRejectMessage",
+      "kind": "Controller",
+      "value": 569,
+      "hex": "0500465ece801b000000390200002a000000000000001100000023070605040302012b07060504030201110706050403020102",
+      "expected": [
+        {
+          "path": "DesignerSwgId",
+          "value": "72623859790382883",
+          "numeric": true
+        },
+        {
+          "path": "ClientSwgId",
+          "value": "72623859790382891",
+          "numeric": true
+        },
+        {
+          "path": "TentSwgId",
+          "value": "72623859790382865",
+          "numeric": true
+        },
+        {
+          "path": "Type",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.ImageDesign.ImageDesignStartPacket",
+      "name": "ImageDesignStartMessage",
+      "kind": "Controller",
+      "value": 570,
+      "hex": "0500465ece801b0000003a0200002a000000000000001100000023070605040302012b0706050403020111070605040302010f00486f6c6f656d6f74655f76616c7565",
+      "expected": [
+        {
+          "path": "DesignerSwgId",
+          "value": "72623859790382883",
+          "numeric": true
+        },
+        {
+          "path": "ClientSwgId",
+          "value": "72623859790382891",
+          "numeric": true
+        },
+        {
+          "path": "TentSwgId",
+          "value": "72623859790382865",
+          "numeric": true
+        },
+        {
+          "path": "Holoemote",
+          "value": "Holoemote_value",
+          "numeric": false
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Space.JtlShipListResponsePacket",
+      "name": "JtlShipListResponse",
+      "kind": "Controller",
+      "value": 1053,
+      "hex": "0500465ece801b0000001d0400002a000000000000001100000006000000",
+      "expected": [
+        {
+          "path": "ShipCount",
+          "value": "6",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Loot.OpenLotteryWindowPacket",
+      "name": "OpenLotteryWindow",
+      "kind": "Controller",
+      "value": 1084,
+      "hex": "0500465ece801b0000003c0400002a00000000000000110000000d07060504030201",
+      "expected": [
+        {
+          "path": "InventorySwgId",
+          "value": "72623859790382861",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Loot.CloseLotteryWindowPacket",
+      "name": "CloseLotteryWindow",
+      "kind": "Controller",
+      "value": 1085,
+      "hex": "0500465ece801b0000003d0400002a00000000000000110000000d07060504030201",
+      "expected": [
+        {
+          "path": "InventorySwgId",
+          "value": "72623859790382861",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ClientOpenContainerPacket",
+      "name": "ClientOpenContainerMessage",
+      "kind": "Packet",
+      "value": 3701830665,
+      "hex": "04000974a5dc7856341200000000000000000200",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "305419896",
+          "numeric": true
+        },
+        {
+          "path": "UsesSlotName",
+          "value": "False",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "0",
+          "numeric": true
+        },
+        {
+          "path": "Mode",
+          "value": "2",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatActionPacket",
+      "name": "CombatAction",
+      "kind": "Controller",
+      "value": 204,
+      "hex": "0500465ece801b000000cc0000002a00000000000000110000007b000000c801000000000000150300000000000001020001006300000000000000030400",
+      "expected": [
+        {
+          "path": "AnimationCrc",
+          "value": "123",
+          "numeric": true
+        },
+        {
+          "path": "AttackerSwgId",
+          "value": "456",
+          "numeric": true
+        },
+        {
+          "path": "WeaponSwgId",
+          "value": "789",
+          "numeric": true
+        },
+        {
+          "path": "AttackerPosture",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Trails",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Reserved",
+          "value": "0",
+          "numeric": true
+        },
+        {
+          "path": "ExtendedDefenders",
+          "value": "False",
+          "numeric": false
+        },
+        {
+          "path": "Defenders[0].SwgId",
+          "value": "99",
+          "numeric": true
+        },
+        {
+          "path": "Defenders[0].Posture",
+          "value": "3",
+          "numeric": true
+        },
+        {
+          "path": "Defenders[0].Hit",
+          "value": "4",
+          "numeric": true
+        },
+        {
+          "path": "Defenders[0].Reserved",
+          "value": "0",
+          "numeric": true
+        },
+        {
+          "path": "Flags",
+          "value": "27",
+          "numeric": true
+        },
+        {
+          "path": "ReceiverSwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "EnvelopeReserved",
+          "value": "17",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Login.Packets.ClientPermissionsPacket",
+      "name": "ClientPermissionsMessage",
+      "kind": "Packet",
+      "value": 3758567653,
+      "hex": "0400e53007e0010000",
+      "expected": [
+        {
+          "path": "CanLogin",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "CanCreate",
+          "value": "False",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "0",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatSystemPacket",
+      "name": "ChatSystemMessage_Variant",
+      "kind": "Packet",
+      "value": 1831494675,
+      "hex": "040013642a6d020000000052000000010001ffffffff020075690000000008006772656574696e67630000000000000005006e616d65730000000006007461726765740600000055007300650072002000a903640000000000000005006e616d657300000000060074617267657406000000540061007200670065007400650000000000000005006e616d6573000000000600746172676574060000004f0062006a00650063007400f9ffffff0000a03f0000",
+      "expected": [
+        {
+          "path": "DisplayType",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Message",
+          "value": "",
+          "numeric": false
+        },
+        {
+          "path": "Parameters.Parameters.Length",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.StringId.File",
+          "value": "ui",
+          "numeric": false
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.StringId.Key",
+          "value": "greeting",
+          "numeric": false
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.User.SwgId",
+          "value": "99",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.User.Text",
+          "value": "User \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.IntegerParameter",
+          "value": "-7",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.FloatParameter",
+          "value": "1.25",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatPersistentMessageToClientPacket",
+      "name": "ChatPersistentMessageToClient_Variant",
+      "kind": "Packet",
+      "value": 138960407,
+      "hex": "0200175e4808060073656e6465720300535747060067616c6178797b000000000400000042006f0064007900070000005300750062006a0065006300740071000000010001ffffffff020075690000000008006772656574696e67630000000000000005006e616d65730000000006007461726765740600000055007300650072002000a903640000000000000005006e616d657300000000060074617267657406000000540061007200670065007400650000000000000005006e616d6573000000000600746172676574060000004f0062006a00650063007400f9ffffff0000a03f0000010004fdffffff000000000000a03f00007040000020c00000000000000000d20400000600000048006f006d0065002000a9034d000000000000000201004ee8030000",
+      "expected": [
+        {
+          "path": "MailId",
+          "value": "123",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters.Length",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[1].Waypoint.Position.y",
+          "value": "-2.5",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[1].Waypoint.Name",
+          "value": "Home \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Status",
+          "value": "78",
+          "numeric": true
+        },
+        {
+          "path": "Timestamp",
+          "value": "1000",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.ChatPersistentMessageToClientPacket",
+      "name": "ChatPersistentMessageToClient_Variant",
+      "kind": "Packet",
+      "value": 138960407,
+      "hex": "0200175e4808060073656e6465720300535747060067616c6178797b000000000400000042006f0064007900070000005300750062006a00650063007400010001ffffffff020075690000000008006772656574696e67630000000000000005006e616d65730000000006007461726765740600000055007300650072002000a903640000000000000005006e616d657300000000060074617267657406000000540061007200670065007400650000000000000005006e616d6573000000000600746172676574060000004f0062006a00650063007400f9ffffff0000a03f00004ee803000000000000",
+      "expected": [
+        {
+          "path": "Parameters.Unframed",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.StringId.Key",
+          "value": "greeting",
+          "numeric": false
+        },
+        {
+          "path": "Reserved",
+          "value": "0",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Conversation.NpcConversationPacket",
+      "name": "NpcConversationMessage_Variant",
+      "kind": "Controller",
+      "value": 223,
+      "hex": "0500465ece801b000000df0000002a0000000000000011000000530000000000010001ffffffff020075690000000008006772656574696e67630000000000000005006e616d65730000000006007461726765740600000055007300650072002000a903640000000000000005006e616d657300000000060074617267657406000000540061007200670065007400650000000000000005006e616d6573000000000600746172676574060000004f0062006a00650063007400f9ffffff0000a03f0000",
+      "expected": [
+        {
+          "path": "Message.Localized.StringId.StringId.Key",
+          "value": "greeting",
+          "numeric": false
+        },
+        {
+          "path": "Message.Localized.StringId.User.Text",
+          "value": "User \u03a9",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.SpatialChatPacket",
+      "name": "SpatialChat_Variant",
+      "kind": "Controller",
+      "value": 244,
+      "hex": "0500465ece801b000000f40000002a00000000000000110000000800000000000000090000000000000005000000480065006c006c006f00140002000300000100000000000000000000000000000000",
+      "expected": [
+        {
+          "path": "SenderSwgId",
+          "value": "8",
+          "numeric": true
+        },
+        {
+          "path": "Message",
+          "value": "Hello",
+          "numeric": false
+        },
+        {
+          "path": "Reserved.Length",
+          "value": "3",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Chat.SpatialChatPacket",
+      "name": "SpatialChat_Variant",
+      "kind": "Controller",
+      "value": 244,
+      "hex": "0500465ece801b000000f40000002a00000000000000110000000800000000000000090000000000000000000000140002000300000152000000010001ffffffff020075690000000008006772656574696e67630000000000000005006e616d65730000000006007461726765740600000055007300650072002000a903640000000000000005006e616d657300000000060074617267657406000000540061007200670065007400650000000000000005006e616d6573000000000600746172676574060000004f0062006a00650063007400f9ffffff0000a03f000000000000",
+      "expected": [
+        {
+          "path": "Parameters.Parameters.Length",
+          "value": "1",
+          "numeric": true
+        },
+        {
+          "path": "Parameters.Parameters[0].StringId.StringId.Key",
+          "value": "greeting",
+          "numeric": false
+        },
+        {
+          "path": "Reserved.Length",
+          "value": "1",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ClientOpenContainerPacket",
+      "name": "ClientOpenContainerMessage_Variant",
+      "kind": "Packet",
+      "value": 3701830665,
+      "hex": "04000974a5dc2a000000000000000900696e76656e746f7279",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "UsesSlotName",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "SlotName",
+          "value": "inventory",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Scene.ClientOpenContainerPacket",
+      "name": "ClientOpenContainerMessage_Variant",
+      "kind": "Packet",
+      "value": 3701830665,
+      "hex": "04000974a5dc2a000000000000000000",
+      "expected": [
+        {
+          "path": "SwgId",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "UsesSlotName",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "SlotName",
+          "value": "",
+          "numeric": false
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatActionPacket",
+      "name": "CombatAction_Variant",
+      "kind": "Controller",
+      "value": 204,
+      "hex": "0500465ece801b000000cc0000002a00000000000000110000007b000000c80100000000000015030000000000000102000000",
+      "expected": [
+        {
+          "path": "ExtendedDefenders",
+          "value": "False",
+          "numeric": false
+        },
+        {
+          "path": "Defenders.Length",
+          "value": "0",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatActionPacket",
+      "name": "CombatAction_Variant",
+      "kind": "Controller",
+      "value": 204,
+      "hex": "0500465ece801b000000cc0000002a00000000000000110000007b000000c8010000000000001503000000000000010200010063000000000000000304000506020064000000000000000405000607",
+      "expected": [
+        {
+          "path": "ExtendedDefenders",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "Defenders.Length",
+          "value": "2",
+          "numeric": true
+        },
+        {
+          "path": "Defenders[0].HitLocation",
+          "value": "5",
+          "numeric": true
+        },
+        {
+          "path": "Defenders[1].InitialDamage",
+          "value": "7",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Combat.CombatActionPacket",
+      "name": "CombatAction_Variant",
+      "kind": "Controller",
+      "value": 204,
+      "hex": "0500465ece801b000000cc0000002a00000000000000110000007b000000c8010000000000001503000000000000010200",
+      "expected": [
+        {
+          "path": "ExtendedDefenders",
+          "value": "True",
+          "numeric": false
+        },
+        {
+          "path": "Defenders.Length",
+          "value": "0",
+          "numeric": true
+        }
+      ]
+    },
+    {
+      "packetType": "Swg.Client.Core.Networking.Game.Packets.Ui.SuiCreatePagePacket",
+      "name": "SuiCreatePageMessage_Variant",
+      "kind": "Packet",
+      "value": 3561714265,
+      "hex": "020059724bd42a00000011005363726970742e6d657373616765426f78010000000301000000090000004d006500730073006100670065002000a90302000000040070616765040054657874630000000000000000002041000000000000000000000000",
+      "expected": [
+        {
+          "path": "Page.Id",
+          "value": "42",
+          "numeric": true
+        },
+        {
+          "path": "Page.Commands[0].WideParameters[0]",
+          "value": "Message \u03a9",
+          "numeric": false
+        },
+        {
+          "path": "Page.TargetSwgId",
+          "value": "99",
+          "numeric": true
+        },
+        {
+          "path": "Page.ExtraFooterWord",
+          "value": "0",
+          "numeric": true
+        }
+      ]
+    }
+  ]
+}
