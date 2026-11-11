@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Assets.Formats.Dds;
+using Swg.Client.Core.Assets.Formats.Eft;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Characters.Materials;
@@ -18,12 +19,13 @@ namespace Swg.Client.Core.World
     /// <summary>Loads original APT/DTLA/MESH/PRTO/CMPA render geometry without extracting TRE members.</summary>
     public static class StaticModel
     {
-        sealed class TextureCache
+        sealed class AssetCache
         {
-            public readonly Dictionary<string, TextureData> Items = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
+            public readonly Dictionary<string, TextureData> Textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
+            public readonly Dictionary<string, EftFile> Effects = new Dictionary<string, EftFile>(StringComparer.OrdinalIgnoreCase);
         }
 
-        static readonly ConditionalWeakTable<TreAssetLoader, TextureCache> Textures = new ConditionalWeakTable<TreAssetLoader, TextureCache>();
+        static readonly ConditionalWeakTable<TreAssetLoader, AssetCache> CachedAssets = new ConditionalWeakTable<TreAssetLoader, AssetCache>();
         static readonly IReadOnlyDictionary<string, short> Defaults = new Dictionary<string, short>();
         public static List<MeshPart> Load(TreAssetLoader loader, string path) => LoadDetailed(loader, path).Parts;
         public static StaticModelResult LoadDetailed(TreAssetLoader loader, string path)
@@ -254,7 +256,7 @@ namespace Swg.Client.Core.World
                         texture = Texture(loader, diffuse);
                     tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, Defaults, Defaults, message => Warn(result, message));
                     var effect = References(shaderBytes, "effect/", new[] { ".eft" }).FirstOrDefault();
-                    cutout = effect != null && Path.GetFileName(effect).StartsWith("a_", StringComparison.OrdinalIgnoreCase);
+                    cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
                 }
                 catch (Exception e)when (e is IOException || e is ArgumentException)
                 {
@@ -274,16 +276,30 @@ namespace Swg.Client.Core.World
 
         static TextureData Texture(TreAssetLoader loader, string path)
         {
-            var cache = Textures.GetValue(loader, _ => new TextureCache());
+            var cache = CachedAssets.GetValue(loader, _ => new AssetCache());
             lock (cache)
             {
-                if (!cache.Items.TryGetValue(path, out var texture))
+                if (!cache.Textures.TryGetValue(path, out var texture))
                 {
                     texture = TextureData.Load(loader, path);
-                    cache.Items.Add(path, texture);
+                    cache.Textures.Add(path, texture);
                 }
 
                 return texture;
+            }
+        }
+
+        static EftFile Effect(TreAssetLoader loader, string path)
+        {
+            var cache = CachedAssets.GetValue(loader, _ => new AssetCache());
+            lock (cache)
+            {
+                if (!cache.Effects.TryGetValue(path, out var effect))
+                {
+                    effect = EftFile.Parse(loader.Read(path));
+                    cache.Effects.Add(path, effect);
+                }
+                return effect;
             }
         }
 

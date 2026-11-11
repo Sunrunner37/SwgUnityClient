@@ -5,7 +5,7 @@ namespace Swg.Client.Core.World
         public string AppearancePath;
         public string ShaderPath;
         public string DiffusePath;
-        // Hint follows native effect naming; unsupported multi-pass effects are not recreated here.
+        // Taken from the native effect base pass; additional passes are not recreated here.
         public bool AlphaCutoutHint;
         public byte[] VertexColors;
     }
