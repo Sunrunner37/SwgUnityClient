@@ -1,43 +1,22 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Swg.Client.Core.Configuration
 {
     public sealed class ClientSettings
     {
-        public string GameDirectory
-        {
-            get; private set;
-        }
-        public string TreeConfig
-        {
-            get; private set;
-        }
-        public string LoginHost
-        {
-            get; private set;
-        }
-        public string ClientVersion
-        {
-            get; private set;
-        }
-        public string ZoneHost
-        {
-            get; private set;
-        }
-        public ushort LoginPort
-        {
-            get; private set;
-        }
-        public uint GalaxyId
-        {
-            get; private set;
-        }
-        public bool SkipIntro
-        {
-            get; private set;
-        }
+        public string AppearanceCacheDirectory { get; private set; }
+        public string TreDirectory { get; private set; }
+        public IReadOnlyDictionary<string, int> TreArchivePriorities { get; private set; }
+        public string LoginHost { get; private set; }
+        public string ClientVersion { get; private set; }
+        public string ZoneHost { get; private set; }
+        public ushort LoginPort { get; private set; }
+        public uint GalaxyId { get; private set; }
+        public bool SkipIntro { get; private set; }
 
         public string LoginEndpoint
         {
@@ -50,16 +29,29 @@ namespace Swg.Client.Core.Configuration
         public static ClientSettings From(string filename)
         {
             var values = Parse(File.ReadAllText(filename));
-            var s = new ClientSettings();
+            var s = new ClientSettings
+            {
+                AppearanceCacheDirectory = Path.Combine(Application.persistentDataPath, "CharacterAppearances")
+            };
             string Get(string group, string key, string fallback)
             {
                 return values.TryGetValue(group + "/" + key, out var value) && value.Length > 0 ? value : fallback;
             }
 
-            s.GameDirectory = Get("assets", "directory", s.GameDirectory);
-            if (!Path.IsPathRooted(s.GameDirectory))
-                s.GameDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(filename)), s.GameDirectory));
-            s.TreeConfig = Get("assets", "config", s.TreeConfig);
+            s.TreDirectory = Get("assets", "tredirectory", null);
+            if (string.IsNullOrWhiteSpace(s.TreDirectory))
+                throw new InvalidDataException("Assets.TreDirectory must identify the folder containing the TRE archives.");
+            s.TreDirectory = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(filename)), s.TreDirectory));
+            var priorities = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in values.Where(item => item.Key.StartsWith("trearchivepriorities/", StringComparison.OrdinalIgnoreCase)))
+            {
+                string name = item.Key.Substring("trearchivepriorities/".Length);
+                if (Path.GetFileName(name) != name || name.IndexOf('\\') >= 0 || !name.EndsWith(".tre", StringComparison.OrdinalIgnoreCase) || !int.TryParse(item.Value, out int priority))
+                    throw new InvalidDataException("TreArchivePriorities entries require a TRE filename and an integer priority (larger wins).");
+                priorities.Add(name, priority);
+            }
+
+            s.TreArchivePriorities = priorities;
             s.LoginHost = Get("network", "loginserveraddress", s.LoginHost);
             s.LoginPort = ushort.Parse(Get("network", "loginserverport", "44453"));
             if (s.LoginPort == 0)
