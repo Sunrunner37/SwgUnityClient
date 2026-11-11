@@ -11,5 +11,8 @@ namespace Swg.Client.Core.Geometry
         public int[] Triangles;
         public TextureData Diffuse;
         public byte[] Tint;
+        public bool AlphaCutout;
+        public byte[] VertexColors;
+        public bool UseCharacterShader;
     }
 }

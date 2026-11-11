@@ -20,17 +20,17 @@ namespace Swg.Client.Tests.Editor
     {
         const string Human = "object/creature/player/shared_human_female.iff";
         const string Hair = "object/tangible/hair/human/shared_hair_human_female_s01.iff";
-        WorldState data;
+        WorldState state;
         [OneTimeSetUp]
         public void LoadTemplateNames()
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
-            data = new WorldState(new SceneObjectRegistry())
+            this.state = new WorldState(new SceneObjectRegistry())
             {
                 Templates = new ObjectTemplateCatalog(loader)
             };
-            Assert.That(data.Templates.Resolve(ObjectTemplateNames.TemplateCrc(Hair)), Is.EqualTo(Hair));
+            Assert.That(this.state.Templates.Resolve(ObjectTemplateNames.TemplateCrc(Hair)), Is.EqualTo(Hair));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Swg.Client.Tests.Editor
             world.SceneObjects.Add(child);
             int notifications = 0;
             world.SceneObjects.Subscribe(1, changes => notifications++);
-            world.SetTemplates(data.Templates);
+            world.SetTemplates(this.state.Templates);
             Assert.That(world.SceneObjects.TryGet<CreatureSceneObject>(1, out var creature), Is.True);
             Assert.That(creature.TemplatePath, Is.EqualTo(Human));
             Assert.That(creature.Position, Is.EqualTo(new Vector3(1, 2, 3)));
@@ -75,12 +75,12 @@ namespace Swg.Client.Tests.Editor
         public void MovementAndNamesDoNotInvalidateModelIdentity()
         {
             var player = Player();
-            var original = WorldAppearance.Capture(data, Snapshot(player))[1];
+            var original = AppearanceRequest.Capture(this.state, Snapshot(player))[1];
             player.Position = new Vector3(100, 20, 50);
             player.Rotation = Quaternion.Euler(0, 60, 0);
             player.Name = "Updated name";
             player.Scale = 1.5f;
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player))[1].Key, Is.EqualTo(original.Key));
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player))[1].Key, Is.EqualTo(original.Key));
             player.Customization = new byte[]
             {
                 1,
@@ -90,7 +90,7 @@ namespace Swg.Client.Tests.Editor
                 255,
                 3
             };
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player))[1].Key, Is.Not.EqualTo(original.Key));
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player))[1].Key, Is.Not.EqualTo(original.Key));
         }
 
         [Test]
@@ -102,14 +102,14 @@ namespace Swg.Client.Tests.Editor
             {
                 new WorldEquipment(Array.Empty<byte>(), 4, 2, hairCrc)
             };
-            var first = WorldAppearance.Capture(data, Snapshot(player))[1];
+            var first = AppearanceRequest.Capture(this.state, Snapshot(player))[1];
             player.Equipment = new[]
             {
                 new WorldEquipment(Array.Empty<byte>(), 5, 2, hairCrc)
             };
-            var second = WorldAppearance.Capture(data, Snapshot(player))[1];
+            var second = AppearanceRequest.Capture(this.state, Snapshot(player))[1];
             Assert.That(second.Key, Is.Not.EqualTo(first.Key));
-            Assert.That(new WorldAppearance(second.TemplatePath, second.Character).Key, Is.EqualTo(second.Key));
+            Assert.That(new AppearanceRequest(second.TemplatePath, second.Character).Key, Is.EqualTo(second.Key));
             player.Equipment = new[] { new WorldEquipment(Array.Empty<byte>(), 4, 2, hairCrc) };
             var child = new TangibleSceneObject
             {
@@ -118,7 +118,7 @@ namespace Swg.Client.Tests.Editor
                 TemplatePath = Hair,
                 Arrangement = 4
             };
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player, child))[1].Key, Is.EqualTo(first.Key));
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player, child))[1].Key, Is.EqualTo(first.Key));
             child.Customization = new byte[]
             {
                 1,
@@ -128,9 +128,9 @@ namespace Swg.Client.Tests.Editor
                 255,
                 3
             };
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player, child))[1].Key, Is.Not.EqualTo(first.Key));
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player, child))[1].Key, Is.Not.EqualTo(first.Key));
             player.Equipment = Array.Empty<WorldEquipment>();
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player, child))[1].Character.Wearables, Is.Empty,
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player, child))[1].Character.Wearables, Is.Empty,
                 "A lingering containment child must not keep an unequipped item visible.");
         }
 
@@ -149,7 +149,7 @@ namespace Swg.Client.Tests.Editor
                 TemplatePath = Hair,
                 Arrangement = 4
             };
-            var captured = WorldAppearance.Capture(data, Snapshot(child, player));
+            var captured = AppearanceRequest.Capture(this.state, Snapshot(child, player));
             Assert.That(captured.Count, Is.EqualTo(1));
             Assert.That(captured[1].Character.Wearables.Count, Is.EqualTo(1));
         }
@@ -172,7 +172,7 @@ namespace Swg.Client.Tests.Editor
                 TemplatePath = Hair,
                 Arrangement = 5
             };
-            Assert.That(WorldAppearance.Capture(data, Snapshot(player, hair, other))[1].Key, Is.EqualTo(WorldAppearance.Capture(data, Snapshot(other, player, hair))[1].Key));
+            Assert.That(AppearanceRequest.Capture(this.state, Snapshot(player, hair, other))[1].Key, Is.EqualTo(AppearanceRequest.Capture(this.state, Snapshot(other, player, hair))[1].Key));
         }
     }
 }

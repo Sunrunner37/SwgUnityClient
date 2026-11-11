@@ -108,24 +108,24 @@ namespace Swg.Client.Runtime.Networking
             var owned = update.CopyForQueue();
             pending.Enqueue(() =>
             {
-                if (!SceneObjects.TryGet(swgId, out var entity))
+                if (!SceneObjects.TryGet(swgId, out var sceneObject))
                 {
-                    entity = ReplicatedSceneObjectFactory.Create(swgId, owned, State.Templates);
-                    SceneObjects.Add(entity);
+                    sceneObject = ReplicatedSceneObjectFactory.Create(swgId, owned, State.Templates);
+                    SceneObjects.Add(sceneObject);
                 }
                 else
                 {
-                    var updated = ReplicatedSceneObjectFactory.Apply(entity, owned, State.Templates);
-                    if (!ReferenceEquals(entity, updated))
+                    var updated = ReplicatedSceneObjectFactory.Apply(sceneObject, owned, State.Templates);
+                    if (!ReferenceEquals(sceneObject, updated))
                     {
                         SceneObjects.Replace(updated);
-                        entity = updated;
+                        sceneObject = updated;
                     }
                 }
 
                 if (owned.ParentSwgId.HasValue)
                     SceneObjects.Reparent(swgId, owned.ParentSwgId.Value);
-                SceneObjects.NotifyChanged(entity, owned.Changes);
+                SceneObjects.NotifyChanged(sceneObject, owned.Changes);
                 revision++;
                 if (!replication.TryGetValue(swgId, out var state))
                     replication.Add(swgId, state = new ReplicationState());
@@ -134,6 +134,12 @@ namespace Swg.Client.Runtime.Networking
                 if (owned.MovementCounter.HasValue)
                     state.MovementCounter = owned.MovementCounter.Value;
             });
+        }
+
+        // Main-thread local prediction shares the registry and targeted pose notifications with replication.
+        public uint NextPlayerMovementCounter()
+        {
+            return ++replication[State.PlayerSwgId].MovementCounter;
         }
 
         public void SetTemplates(ObjectTemplateCatalog catalog)

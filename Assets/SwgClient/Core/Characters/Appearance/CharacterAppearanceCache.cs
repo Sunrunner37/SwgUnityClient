@@ -20,23 +20,24 @@ namespace Swg.Client.Core.Characters.Appearance
     public static class CharacterAppearanceCache
     {
         const int MaxCacheBytes = 1024 * 1024;
-        public static CachedCharacterAppearance Parse(byte[] bytes)
+        public static CharacterAppearanceProfile Parse(byte[] bytes)
         {
             if (bytes == null || bytes.Length > MaxCacheBytes)
                 throw new InvalidDataException("Invalid character appearance cache size");
             var file = CadfFile.Parse(bytes);
-            return new CachedCharacterAppearance
+            return new CharacterAppearanceProfile
             {
-                TemplatePath = Template(file.TemplatePath),
-                Customization = PackedCustomization.Decode(file.Customization),
                 Planet = file.Planet,
-                Wearables = file.Wearables.Select(item => new CachedWearableAppearance { TemplatePath = Template(item.TemplatePath), Customization = PackedCustomization.Decode(item.Customization), ArrangementHint = item.Arrangement }).ToArray(),
-                FromCache = true,
-                SourcePath = "",
+                Appearance = new CharacterAppearance
+                {
+                    TemplatePath = Template(file.TemplatePath),
+                    Customization = PackedCustomization.Decode(file.Customization),
+                    Wearables = file.Wearables.Select(item => new WearableAppearance { TemplatePath = Template(item.TemplatePath), Customization = PackedCustomization.Decode(item.Customization), ArrangementHint = item.Arrangement }).ToArray(),
+                }
             };
         }
 
-        public static bool TryReadProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, out CachedCharacterAppearance appearance)
+        public static bool TryReadProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, out CharacterAppearanceProfile appearance)
         {
             appearance = null;
             try
@@ -57,42 +58,38 @@ namespace Swg.Client.Core.Characters.Appearance
             }
         }
 
-        public static CachedCharacterAppearance LoadOrFallback(TreAssetLoader loader, string cacheDirectory, string server, string username, string galaxyName, CharacterInfo character)
+        public static CharacterAppearanceProfile LoadOrFallback(TreAssetLoader loader, string cacheDirectory, string server, string username, string galaxyName, CharacterInfo character)
         {
             if (loader == null)
                 throw new ArgumentNullException(nameof(loader));
             if (character == null)
                 throw new ArgumentNullException(nameof(character));
-
             if (TryReadProfile(cacheDirectory, server, username, galaxyName, character.SwgId, out var cached))
             {
-                if (ObjectTemplateNames.MatchesRace(cached.TemplatePath, character.Race))
+                if (ObjectTemplateNames.MatchesRace(cached.Appearance.TemplatePath, character.Race))
                     return cached;
                 Debug.LogWarning("Cached template for " + character.SwgId + " does not match the character's server template CRC.");
             }
 
             string template = ObjectTemplateNames.ResolvePlayerTemplate(loader, character.Race);
-
             if (template == null)
                 throw new InvalidDataException("No original player template matches the character's race CRC");
-
             Debug.Log("Showing the TRE template's default appearance for " + character.Name + " (" + character.SwgId + ").");
-
-            return new CachedCharacterAppearance
+            return new CharacterAppearanceProfile
             {
-                TemplatePath = template,
-                Customization = PackedCustomization.Decode(Array.Empty<byte>()),
-                Planet = "",
-                Wearables = Array.Empty<CachedWearableAppearance>(),
-                FromCache = false,
-                SourcePath = "",
+                Appearance = new CharacterAppearance
+                {
+                    TemplatePath = template,
+                    Customization = PackedCustomization.Decode(Array.Empty<byte>()),
+                    Wearables = Array.Empty<WearableAppearance>(),
+                }
             };
         }
 
-        public static void SaveProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, CachedCharacterAppearance appearance)
+        public static void SaveProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, CharacterAppearance appearance, string planet = "")
         {
             string path = ProfilePath(cacheDirectory, server, username, galaxyName, swgId);
-            byte[] bytes = Serialize(appearance);
+            byte[] bytes = Serialize(appearance, planet);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
@@ -110,7 +107,7 @@ namespace Swg.Client.Core.Characters.Appearance
             }
         }
 
-        public static byte[] Serialize(CachedCharacterAppearance appearance)
+        public static byte[] Serialize(CharacterAppearance appearance, string planet = "")
         {
             if (appearance == null)
                 throw new ArgumentNullException(nameof(appearance));
@@ -118,7 +115,7 @@ namespace Swg.Client.Core.Characters.Appearance
             {
                 TemplatePath = Template(appearance.TemplatePath),
                 Customization = appearance.Customization.Serialize(),
-                Planet = appearance.Planet ?? "",
+                Planet = planet ?? "",
                 Wearables = appearance.Wearables.Select(item => new CadfWearable { TemplatePath = Template(item.TemplatePath), Customization = item.Customization.Serialize(), Arrangement = item.ArrangementHint }).ToArray()
             };
             byte[] result = file.Serialize();

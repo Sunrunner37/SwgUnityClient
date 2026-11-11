@@ -1,9 +1,8 @@
+using Swg.Client.Runtime.Assets.Appearances;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UObj = UnityEngine.Object;
+using Swg.Client.Runtime.World;
 using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Geometry;
 using Swg.Client.Runtime.Assets.Tre;
@@ -18,7 +17,7 @@ namespace Swg.Client.Runtime.UI.Screens
         public Shader characterShader;
         TreRuntimeAssets assets;
         SwgMaterialFactory materials;
-        readonly List<UObj> owned = new List<UObj>();
+        readonly List<MeshPartResources> resources = new List<MeshPartResources>();
         readonly Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
         GameObject modelRoot;
         [Range(.1f, 1f)]
@@ -41,13 +40,6 @@ namespace Swg.Client.Runtime.UI.Screens
             Warnings = result.Warnings;
             modelRoot.SetActive(true);
             FrameModel(modelRoot);
-        }
-
-        T Own<T>(T item)
-            where T : UObj
-        {
-            owned.Add(item);
-            return item;
         }
 
         public void Initialize(TreRuntimeAssets source)
@@ -89,19 +81,15 @@ namespace Swg.Client.Runtime.UI.Screens
                 var g = new GameObject("Original mesh", typeof(MeshFilter), typeof(MeshRenderer));
                 g.transform.SetParent(model.transform, false);
                 g.layer = PreviewLayer;
-                var mesh = Own(new Mesh { indexFormat = IndexFormat.UInt32 });
-                mesh.vertices = part.Vertices;
-                mesh.normals = part.Normals;
-                mesh.uv = part.Uvs.Select(v => new Vector2(v.x, 1 - v.y)).ToArray();
-                mesh.triangles = part.Triangles;
-                mesh.RecalculateBounds();
-                g.GetComponent<MeshFilter>().sharedMesh = mesh;
                 var shader = characterShader;
                 if (shader == null)
                     throw new InvalidOperationException("SWG character shader is missing");
                 bool cutout = sources != null && sources[partIndex].ObjectTemplate.StartsWith("object/tangible/hair/", StringComparison.Ordinal);
-                var material = Own(materials.Create(shader, part.Diffuse, part.Tint, cutout ? .35f : 0, false, TextureWrapMode.Clamp));
-                g.GetComponent<MeshRenderer>().sharedMaterial = material;
+                var material = materials.Create(shader, part.Diffuse, part.Tint, cutout ? .35f : 0, false, TextureWrapMode.Clamp);
+                var resource = new MeshPartResources(path + " part " + partIndex, part, material);
+                resources.Add(resource);
+                g.GetComponent<MeshFilter>().sharedMesh = resource.Mesh;
+                g.GetComponent<MeshRenderer>().sharedMaterial = resource.Material;
             }
 
             return model;
@@ -124,16 +112,9 @@ namespace Swg.Client.Runtime.UI.Screens
 
         void OnDestroy()
         {
-            foreach (var item in owned)
-            {
-                if (item != null)
-                {
-                    if (Application.isPlaying)
-                        Destroy(item);
-                    else
-                        DestroyImmediate(item);
-                }
-            }
+            foreach (var resource in resources)
+                resource.Dispose();
+            resources.Clear();
         }
     }
 }

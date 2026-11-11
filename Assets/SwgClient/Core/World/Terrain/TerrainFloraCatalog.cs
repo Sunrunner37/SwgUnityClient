@@ -31,7 +31,7 @@ namespace Swg.Client.Core.World.Terrain
                         path = prefix + path;
                     if (definition.Radial && !path.EndsWith(".sht", StringComparison.Ordinal))
                         path += ".sht";
-                    family.Items.Add(new TerrainFloraItem { Path = path, Weight = child.Weight, Radial = definition.Radial, Floats = definition.Floats, Distance = child.Distance, Width = (child.MinimumWidth + child.MaximumWidth) * .5f, Height = (child.MinimumHeight + child.MaximumHeight) * .5f, SwayDisplacement = child.Sways ? child.SwayDisplacement : 0, SwayPeriod = child.SwayPeriod, AlignToTerrain = child.AlignToTerrain, Crossed = child.Crossed, MinimumScale = child.Scale ? child.MinimumScale : 1, MaximumScale = child.Scale ? child.MaximumScale : 1 });
+                    family.Items.Add(new TerrainFloraItem { Path = path, Weight = child.Weight, Radial = definition.Radial, Floats = definition.Floats, Distance = child.Distance, MinimumWidth = child.MinimumWidth, MaximumWidth = child.MaximumWidth, MinimumHeight = child.MinimumHeight, MaximumHeight = child.MaximumHeight, MaintainAspectRatio = child.MaintainAspectRatio, SwayDisplacement = child.Sways ? child.SwayDisplacement : 0, SwayPeriod = child.SwayPeriod, AlignToTerrain = child.AlignToTerrain, Crossed = child.Crossed, MinimumScale = child.Scale ? child.MinimumScale : 1, MaximumScale = child.Scale ? child.MaximumScale : 1 });
                 }
 
                 (definition.Radial ? radial : flora).Add(definition.Id, family);

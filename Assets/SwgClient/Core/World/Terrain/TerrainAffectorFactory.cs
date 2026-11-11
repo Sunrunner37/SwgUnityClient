@@ -21,6 +21,13 @@ namespace Swg.Client.Core.World.Terrain
             TrnFloraRule flora => TerrainFloraAffector.Create(flora, terrain),
             TrnShaderRule shader => TerrainShaderAffector.Create(shader, terrain),
             TrnEnvironmentRule environment => TerrainEnvironmentAffector.Create(environment, terrain),
+            TrnConstantColorRule color => TerrainColorAffector.Create(color),
+            TrnHeightColorRampRule ramp => TerrainColorAffector.Create(ramp, assets),
+            TrnExcludeRule _ => (float x, float z, float weight, ref TerrainSample sample) =>
+            {
+                if (weight > 0)
+                    sample.Excluded = true;
+            },
             TrnColorRampRule color => TerrainColorRampAffector.Create(color, terrain, assets),
             TrnTerraceRule terrace => TerrainTerraceAffector.Create(terrace),
             TrnHeightRule height => TerrainHeightAffector.Create(height, terrain),

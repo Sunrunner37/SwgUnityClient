@@ -202,14 +202,13 @@ namespace Swg.Client.Tests.Editor
             string cacheRoot = Path.Combine(Path.GetTempPath(), "swg-appearance-" + Guid.NewGuid());
             try
             {
-                var source = new CachedCharacterAppearance
+                var source = new CharacterAppearance
                 {
                     TemplatePath = "object/creature/player/shared_human_female.iff",
-                    Planet = "corellia",
                     Customization = PackedCustomization.Decode(new byte[] { 1, 0, 255, 3 }),
                     Wearables = new[]
                     {
-                        new CachedWearableAppearance
+                        new WearableAppearance
                         {
                             TemplatePath = "object/tangible/hair/human/shared_hair_human_female_s31.iff",
                             Customization = PackedCustomization.Decode(Array.Empty<byte>()),
@@ -217,13 +216,13 @@ namespace Swg.Client.Tests.Editor
                         }
                     }
                 };
-                CharacterAppearanceCache.SaveProfile(cacheRoot, "test-server:44453", "test-user", "Core3", 42, source);
+                CharacterAppearanceCache.SaveProfile(cacheRoot, "test-server:44453", "test-user", "Core3", 42, source, "corellia");
                 Check(CharacterAppearanceCache.TryReadProfile(cacheRoot, "test-server:44453", "test-user", "Core3", 42, out var appearance), "Saved appearance cache could not be read");
                 Check(appearance.Planet == "corellia" && appearance.FromCache, "Client-owned planet/cache source");
                 Check(appearance.SourcePath.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase), "Cache escaped client directory");
                 Check(!CharacterAppearanceCache.TryReadProfile(cacheRoot, "other-server:44453", "test-user", "Core3", 42, out _), "Cache leaked between servers");
-                Check(appearance.Wearables.Count == 1 && appearance.Wearables[0].ArrangementHint == 4, "Cached wearable record");
-                var model = CachedCharacterModel.LoadDetailed(loader, appearance);
+                Check(appearance.Appearance.Wearables.Count == 1 && appearance.Appearance.Wearables[0].ArrangementHint == 4, "Cached wearable record");
+                var model = CachedCharacterModel.LoadDetailed(loader, appearance.Appearance);
                 Check(model.Parts.Count > 0, "Cached character has no mesh");
                 var positions = model.Parts.SelectMany(p => p.Vertices).ToArray();
                 Check(positions.All(p => !float.IsNaN(p.x) && !float.IsInfinity(p.x) && !float.IsNaN(p.y) && !float.IsInfinity(p.y) && !float.IsNaN(p.z) && !float.IsInfinity(p.z)), "Nonfinite cached character");
@@ -231,7 +230,7 @@ namespace Swg.Client.Tests.Editor
                 var cache = File.ReadAllBytes(appearance.SourcePath);
                 Throws(() => CharacterAppearanceCache.Parse(cache.Take(cache.Length - 1).ToArray()));
                 var fallback = CharacterAppearanceCache.LoadOrFallback(loader, cacheRoot, "test-server:44453", "missing-user", "Core3", new CharacterInfo { Race = 3567725168, SwgId = 1 });
-                Check(!fallback.FromCache && fallback.TemplatePath == appearance.TemplatePath, "Missing-cache TRE template default");
+                Check(!fallback.FromCache && fallback.Appearance.TemplatePath == appearance.Appearance.TemplatePath, "Missing-cache TRE template default");
             }
             finally
             {

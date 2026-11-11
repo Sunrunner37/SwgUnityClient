@@ -1,3 +1,7 @@
+using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Runtime.World.SceneObjects;
+using Swg.Client.Runtime.World.Streaming;
+using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Handlers;
 using System.IO;
@@ -11,7 +15,7 @@ using UnityEngine;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.World;
-using Swg.Client.Core.Assets.Models;
+using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Assets.Audio;
 using Swg.Client.Runtime.World;
@@ -61,20 +65,20 @@ namespace Swg.Client.Runtime
                     UnityEngine.Object.DontDestroyOnLoad(replication.gameObject);
                     return replication;
                 }).AsSelf().SingleInstance().AutoActivate();
-                builder.RegisterType<ModelCache>().SingleInstance();
+                builder.RegisterType<AppearanceCache>().SingleInstance();
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
-                builder.RegisterType<WorldRenderingSettings>().SingleInstance();
-                builder.RegisterType<WorldMeshLibrary>().SingleInstance();
+                builder.RegisterType<WorldRenderingContext>().SingleInstance();
+                builder.RegisterType<WorldAppearanceLibrary>().SingleInstance();
                 builder.RegisterType<WorldTerrainRenderer>().SingleInstance();
                 builder.Register(context =>
                 {
-                    var rendering = context.Resolve<WorldRenderingSettings>();
-                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming, context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
+                    var rendering = context.Resolve<WorldRenderingContext>();
+                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming, context.Resolve<WorldAppearanceLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
                 }).SingleInstance();
                 builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().SingleInstance();
             });
         }
-        
+
         internal static void AcceptConnection(GameConnection connection)
         {
             Disconnect();

@@ -10,7 +10,9 @@ namespace Swg.Client.Core.World.Terrain
         public readonly Vector3 ServerPosition;
         public readonly float Yaw;
         public readonly float Scale;
-        public TerrainFloraPlacement(TerrainFloraItem item, TerrainFloraKind kind, Vector3 serverPosition, Vector3 normal, float yaw, float scale)
+        public readonly Vector3 Size;
+        public readonly Color Color;
+        public TerrainFloraPlacement(TerrainFloraItem item, TerrainFloraKind kind, Vector3 serverPosition, Vector3 normal, float yaw, float scale, Vector3 size, Color color)
         {
             Item = item;
             Kind = kind;
@@ -18,6 +20,8 @@ namespace Swg.Client.Core.World.Terrain
             ServerPosition = serverPosition;
             Yaw = yaw;
             Scale = scale;
+            Size = size;
+            Color = color;
         }
     }
 }

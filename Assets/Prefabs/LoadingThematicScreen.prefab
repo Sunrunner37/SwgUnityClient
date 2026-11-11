@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 61f968f1a5be70742a181ad8c7864325, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.WorldEntryController
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.Loading.WorldEntryController
   settings: {fileID: 11400000, guid: 814591fa9cde4bb41b157922874ddd08, type: 2}
   sceneTimeout: 45
   worldBuildTimeout: 120

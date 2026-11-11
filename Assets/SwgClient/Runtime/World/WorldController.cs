@@ -1,3 +1,7 @@
+using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Runtime.World.SceneObjects;
+using Swg.Client.Runtime.World.Streaming;
+using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.Assets.Audio;
 using Autofac;
@@ -5,46 +9,43 @@ using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using System;
 using System.Collections;
-using Swg.Client.Runtime.UI.Screens;
 using UnityEngine;
 
 namespace Swg.Client.Runtime.World
 {
     public sealed class WorldController : MonoBehaviour
     {
-        ClientConnection connection;
         public Shader worldShader;
         public Shader characterShader;
+        public Shader particleShader;
         public WorldOrbitCamera orbit;
         public WorldEnvironment environment;
         public bool IsReady { get; private set; }
         public float Progress => IsReady ? 1 : Streaming?.Progress ?? 0;
         public WorldStreamer Streaming { get; private set; }
         public WorldContentLoader Content { get; private set; }
-        public SceneObjectRegistry SceneObjects => worldState?.SceneObjects;
+        public SceneObjectRegistry SceneObjects => this.state?.SceneObjects;
 
-        WorldState worldState;
+        WorldState state;
         WorldLoadingData loadedData;
         ILifetimeScope session;
         WorldStreamingSettings settings;
-        WorldMeshLibrary meshes;
+        WorldAppearanceLibrary appearanceLibrary;
         WorldSceneObjectRenderer objectRenderer;
         bool revealed;
-
         public void Initialize(ILifetimeScope session, WorldLoadingData sceneData, WorldStreamingSettings streamingSettings)
         {
-            if (worldState != null)
+            if (this.state != null)
                 throw new InvalidOperationException("WorldController was already initialized.");
             loadedData = sceneData ?? throw new ArgumentNullException(nameof(sceneData));
             this.session = session;
-            worldState = session.Resolve<WorldState>();
+            this.state = session.Resolve<WorldState>();
             Content = session.Resolve<WorldContentLoader>();
             settings = streamingSettings ?? throw new ArgumentNullException(nameof(streamingSettings));
         }
 
         IEnumerator Start()
         {
-            connection = GameServices.Resolve<ClientConnection>();
             try
             {
                 orbit.worldCamera.enabled = false;
@@ -54,11 +55,12 @@ namespace Swg.Client.Runtime.World
                 objectRenderer.enabled = false;
                 var flora = new GameObject("Procedural flora").AddComponent<WorldFloraRenderer>();
                 flora.transform.SetParent(transform, false);
-                flora.Initialize(worldState, worldShader, settings);
-                environment.Initialize(worldState);
-                session.Resolve<WorldRenderingSettings>().Initialize(worldShader, characterShader, settings, objectRenderer, this, flora);
-                meshes = session.Resolve<WorldMeshLibrary>();
-                objectRenderer.Initialize(worldState, Content, loadedData, session.Resolve<GameReplication>(), meshes, settings.uploadsPerFrame);
+                flora.Initialize(this.state, worldShader, particleShader, settings);
+                environment.Initialize(this.state);
+                session.Resolve<WorldRenderingContext>().Initialize(worldShader, characterShader, particleShader, settings, objectRenderer, this, flora);
+                session.Resolve<WorldRenderingContext>().WorldCamera = orbit.worldCamera;
+                appearanceLibrary = session.Resolve<WorldAppearanceLibrary>();
+                objectRenderer.Initialize(this.state, Content, loadedData, session.Resolve<GameReplication>(), appearanceLibrary, settings.uploadsPerFrame, flora);
                 Streaming = session.Resolve<WorldStreamer>();
             }
             catch (Exception error)
@@ -69,7 +71,6 @@ namespace Swg.Client.Runtime.World
 
             yield return Streaming.LoadInitial(loadedData.InitialRegion);
             loadedData.InitialRegion = null;
-
             loadedData = null;
             IsReady = true;
         }
@@ -83,7 +84,7 @@ namespace Swg.Client.Runtime.World
             objectRenderer.enabled = true;
             orbit.enabled = true;
             orbit.worldCamera.enabled = true;
-            orbit.target = ManagedSceneObject.CurrentPlayer.transform;
+            ManagedSceneObject.CurrentPlayer.GetComponent<PlayerMovement>().enabled = true;
             foreach (var listener in GetComponentsInChildren<AudioListener>(true))
                 listener.enabled = true;
             GameServices.Resolve<ClientMusic>().Stop();
@@ -93,14 +94,7 @@ namespace Swg.Client.Runtime.World
         {
             if (!revealed || !IsReady)
                 return;
-
-            if (connection.FailureReason != null)
-            {
-                ScreenChanger.Open(ScreenId.Login);
-                return;
-            }
-
-            if (SceneObjects.TryGet<SpatialSceneObject>(worldState.PlayerSwgId, out var player))
+            if (SceneObjects.TryGet<SpatialSceneObject>(this.state.PlayerSwgId, out var player))
                 Streaming.Update(SceneObjects.GetServerWorldPose(player.SwgId).position);
         }
 

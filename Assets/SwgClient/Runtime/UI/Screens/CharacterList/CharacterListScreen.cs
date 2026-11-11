@@ -27,7 +27,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         public Button delete;
         public CharacterPreview preview;
         readonly List<CharacterListRow> rows = new List<CharacterListRow>();
-        readonly List<CachedCharacterAppearance> appearances = new List<CachedCharacterAppearance>();
+        readonly List<CharacterAppearanceProfile> profiles = new List<CharacterAppearanceProfile>();
         readonly Dictionary<int, CachedCharacterModelResult> models = new Dictionary<int, CachedCharacterModelResult>();
         int selected = -1;
         int selectionVersion;
@@ -71,7 +71,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
                 string username = connection.Admission.Username;
                 var task = assets.ReadAsync(loader =>
                 {
-                    var result = new List<CachedCharacterAppearance>();
+                    var result = new List<CharacterAppearanceProfile>();
                     foreach (var ch in admission.Characters)
                     {
                         try
@@ -96,7 +96,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
 
                 if (task.IsCanceled)
                     yield break;
-                appearances.AddRange(task.Result);
+                profiles.AddRange(task.Result);
             }
 
             try
@@ -154,7 +154,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
                 var row = Instantiate(rowPrefab, listContent);
                 string galaxy = ch.Galaxy == admission.Galaxy.Id ? admission.Galaxy.Name : "Galaxy " + ch.Galaxy;
                 row.Bind(ch, galaxy, () => Select(index));
-                row.planet.text = appearances[index] == null ? "" : PlanetName(appearances[index].Planet);
+                row.planet.text = profiles[index] == null ? "" : PlanetName(profiles[index].Planet);
                 row.server.text = admission.Galaxy.Status == 2 ? "Online" : "Offline";
                 rows.Add(row);
             }
@@ -175,7 +175,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             for (int i = 0; i < rows.Count; i++)
                 rows[i].SetSelected(i == selected);
             characterName.text = rows[index].Character.Name;
-            if (appearances[index] == null)
+            if (profiles[index] == null)
             {
                 message.text = "Character appearance unavailable.";
                 yield break;
@@ -183,7 +183,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
 
             if (!models.TryGetValue(index, out var model))
             {
-                var appearance = appearances[index];
+                var appearance = profiles[index].Appearance;
                 var task = assets.ReadAsync(loader => CachedCharacterModel.LoadDetailed(loader, appearance));
                 yield return new WaitUntil(() => task.IsCompleted);
                 if (task.IsFaulted)
@@ -221,12 +221,9 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         {
             if (!IsReady || selected < 0 || !next.interactable)
                 return;
-
             var character = rows[selected].Character;
-
             if (character.Galaxy != connection.Admission.Galaxy.Id)
                 throw new InvalidOperationException("The selected character does not belong to this admitted galaxy.");
-
             GameServices.BeginGame(connection);
             connection.SetReceiver(new GamePacketRouter(GameServices.GameScope).Accept);
             connection.Send(new SelectCharacterPacket((ulong)character.SwgId));

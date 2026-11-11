@@ -1,0 +1,167 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using Swg.Client.Core.Assets.Formats.Binary;
+using Swg.Client.Core.Assets.Formats.Iff;
+using Swg.Client.Core.Assets.Particles;
+using Swg.Client.Core.Assets.Tre;
+using Swg.Client.Core.Geometry;
+using UnityEngine;
+
+namespace Swg.Client.Core.Assets.Appearances
+{
+    /// <summary>Traverses original templates and compound appearances, collecting mesh geometry and particle effects directly from TRE members.</summary>
+    public static class AppearanceLoader
+    {
+        public static List<MeshPart> Load(TreAssetLoader loader, string path) => LoadDetailed(loader, path).Parts;
+        public static AppearanceData LoadDetailed(TreAssetLoader loader, string path)
+        {
+            var result = new AppearanceData
+            {
+                Key = TreAssetLoader.Normalize(path)
+            };
+            LoadAppearance(loader, TreAssetLoader.Normalize(path), Matrix4x4.identity, result, new HashSet<string>(StringComparer.OrdinalIgnoreCase), 0);
+            result.RecalculateBounds();
+            return result;
+        }
+
+        static void LoadAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result, HashSet<string> stack, int depth)
+        {
+            if (depth > 24 || !stack.Add(path))
+                throw new InvalidDataException("Appearance reference cycle/depth limit: " + path);
+            try
+            {
+                var bytes = loader.Read(path);
+                var roots = IffNode.Parse(bytes);
+                var root = roots.SingleOrDefault(n => n.Tag == "FORM") ?? throw new InvalidDataException("Expected appearance form: " + path);
+                if (path.StartsWith("object/", StringComparison.Ordinal))
+                {
+                    var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt" });
+                    if (appearances.Count > 0)
+                    {
+                        LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1);
+                        return;
+                    }
+
+                    if (path.StartsWith("object/cell/", StringComparison.Ordinal) || path.StartsWith("object/intangible/", StringComparison.Ordinal))
+                        return;
+                    foreach (var inherited in References(bytes, "object/", new[] { ".iff" }).Where(p => p != path))
+                    {
+                        int count = result.Parts.Count + result.Particles.Count;
+                        LoadAppearance(loader, inherited, transform, result, stack, depth + 1);
+                        if (result.Parts.Count + result.Particles.Count != count)
+                            return;
+                    }
+
+                    return;
+                }
+
+                if (root.Kind == "APT ")
+                {
+                    var version = root.Children.First(n => n.Tag == "FORM");
+                    LoadAppearance(loader, AppearancePath(new ByteReader(version.Chunk("NAME")).CString()), transform, result, stack, depth + 1);
+                }
+                else if (root.Kind == "DTLA")
+                {
+                    var version = root.Children.First(n => n.Tag == "FORM");
+                    var data = version.Children.Single(n => n.Kind == "DATA");
+                    var child = data.Children.LastOrDefault(n => n.Tag == "CHLD") ?? throw new InvalidDataException("Empty detail appearance");
+                    var reader = new ByteReader(child.Data);
+                    reader.U32();
+                    LoadAppearance(loader, AppearancePath(reader.CString()), transform, result, stack, depth + 1);
+                }
+                else if (root.Kind == "MESH")
+                    MeshAppearanceReader.Load(loader, path, root, transform, result);
+                else if (root.Kind == "PEFT")
+                    result.Particles.Add(new ParticleAppearance(loader, path, transform, root, child =>
+                    {
+                        var appearance = new AppearanceData
+                        {
+                            Key = AppearancePath(child)
+                        };
+                        LoadAppearance(loader, AppearancePath(child), Matrix4x4.identity, appearance, stack, depth + 1);
+                        foreach (var warning in appearance.Warnings)
+                            Warn(result, warning);
+                        appearance.RecalculateBounds();
+                        return appearance;
+                    }));
+                else if (root.Kind == "PRTO")
+                {
+                    var version = root.Children.First(n => n.Tag == "FORM");
+                    var cells = version.Children.Single(n => n.Kind == "CELS");
+                    foreach (var cell in cells.Children.Where(n => n.Kind == "CELL"))
+                    {
+                        var cellVersion = cell.Children.First(n => n.Tag == "FORM");
+                        if (cellVersion.Kind != "0004" && cellVersion.Kind != "0005")
+                        {
+                            Warn(result, "Unsupported portal cell version " + cellVersion.Kind);
+                            continue;
+                        }
+
+                        var reader = new ByteReader(cellVersion.Chunk("DATA"));
+                        reader.U32();
+                        reader.Byte();
+                        reader.CString();
+                        string appearance = reader.CString();
+                        if (!string.IsNullOrEmpty(appearance))
+                            LoadChild(loader, AppearancePath(appearance), transform, result, stack, depth + 1);
+                    }
+                }
+                else if (root.Kind == "CMPA")
+                {
+                    var version = root.Children.First(n => n.Tag == "FORM");
+                    foreach (var part in version.Children.Where(n => n.Tag == "PART"))
+                    {
+                        var reader = new ByteReader(part.Data);
+                        string appearance = AppearancePath(reader.CString());
+                        // CMPA stores three affine rows; Unity indexes matrices by row and column.
+                        var local = Matrix4x4.identity;
+                        for (int row = 0; row < 3; row++)
+                            for (int column = 0; column < 4; column++)
+                                local[row, column] = reader.Float();
+                        LoadChild(loader, appearance, transform * local, result, stack, depth + 1);
+                    }
+                }
+                else
+                    Warn(result, "Unsupported render appearance " + root.Kind + ": " + path);
+            }
+            finally
+            {
+                stack.Remove(path);
+            }
+        }
+
+        static void LoadChild(TreAssetLoader loader, string path, Matrix4x4 matrix, AppearanceData result, HashSet<string> stack, int depth)
+        {
+            try
+            {
+                LoadAppearance(loader, path, matrix, result, stack, depth);
+            }
+            catch (Exception e)when (e is IOException || e is InvalidOperationException || e is ArgumentException)
+            {
+                Warn(result, "Appearance could not be loaded " + path + ": " + e.Message);
+            }
+        }
+
+        static string AppearancePath(string path)
+        {
+            path = TreAssetLoader.Normalize(path);
+            return path.StartsWith("appearance/", StringComparison.Ordinal) ? path : "appearance/" + path;
+        }
+
+        static List<string> References(byte[] bytes, string prefix, string[] suffixes)
+        {
+            string pattern = Regex.Escape(prefix.TrimEnd('/')) + @"[\\/][A-Za-z0-9_./\\-]+";
+            return Regex.Matches(Encoding.ASCII.GetString(bytes), pattern, RegexOptions.IgnoreCase).Cast<Match>().Select(m => m.Value.Replace('\\', '/').ToLowerInvariant()).Where(p => suffixes.Any(s => p.EndsWith(s, StringComparison.Ordinal))).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
+
+        static void Warn(AppearanceData result, string text)
+        {
+            if (!result.Warnings.Contains(text))
+                result.Warnings.Add(text);
+        }
+    }
+}

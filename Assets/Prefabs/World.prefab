@@ -49,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.WorldController
   worldShader: {fileID: 4800000, guid: e5d865deeb21869458ce0de7e6303447, type: 3}
   characterShader: {fileID: 4800000, guid: 6af1ca3655ecfad45be7ea7ff2256a5b, type: 3}
+  particleShader: {fileID: 4800000, guid: 8538057b73994cc38535ae75f94a9558, type: 3}
   orbit: {fileID: 6939532888089667915}
   environment: {fileID: 7190012345678901234}
 --- !u!1 &3835399749626775641

@@ -11,11 +11,14 @@ namespace Swg.Client.Runtime.World
     {
         static readonly int EnvironmentLightingId = Shader.PropertyToID("_SwgEnvironmentLighting");
         static readonly int SkyTintId = Shader.PropertyToID("_SkyTint");
-        [SerializeField] Light sun;
-        [SerializeField] Camera cameraView;
+        [SerializeField]
+        Light sun;
+        [SerializeField]
+        Camera cameraView;
         [Tooltip("Native lighting-ramp phase: 0.25 is midday; 0.75 is midnight.")]
-        [Range(0, 1)] public float timeOfDay = .25f;
-        WorldState world;
+        [Range(0, 1)]
+        public float timeOfDay = .25f;
+        WorldState state;
         Material originalSky;
         Material sky;
         float nextSample;
@@ -25,15 +28,16 @@ namespace Swg.Client.Runtime.World
         float appliedFarClip;
         public string CurrentEnvironment => environment?.Name;
 
-        public void Initialize(WorldState world)
+        public void Initialize(WorldState state)
         {
-            this.world = world;
+            this.state = state;
             sun.enabled = false;
         }
 
         void OnEnable()
         {
-            if (world == null) return;
+            if (this.state == null)
+                return;
             sun.enabled = true;
             RenderSettings.sun = sun;
             originalSky = RenderSettings.skybox;
@@ -42,6 +46,7 @@ namespace Swg.Client.Runtime.World
                 sky = new Material(originalSky);
                 RenderSettings.skybox = sky;
             }
+
             Shader.SetGlobalFloat(EnvironmentLightingId, 1);
             nextSample = 0;
             appliedEnvironment = null;
@@ -49,20 +54,23 @@ namespace Swg.Client.Runtime.World
         }
 
         void Update() => Refresh();
-
         void Refresh()
         {
-            if (world?.Terrain == null) return;
+            if (this.state?.Terrain == null)
+                return;
             if (Time.unscaledTime >= nextSample)
             {
-                var position = world.SceneObjects.GetServerWorldPose(world.PlayerSwgId).position;
-                environment = world.Terrain.Environments.Get(world.Terrain.Sample(position.x, position.z).EnvironmentFamily);
+                var position = this.state.SceneObjects.GetServerWorldPose(this.state.PlayerSwgId).position;
+                environment = this.state.Terrain.Environments.Get(this.state.Terrain.Sample(position.x, position.z).EnvironmentFamily);
                 nextSample = Time.unscaledTime + .25f;
             }
-            if (environment == null) return;
+
+            if (environment == null)
+                return;
             int column = environment.GetColumn(timeOfDay);
             float farClip = cameraView.farClipPlane;
-            if (environment == appliedEnvironment && column == appliedColumn && farClip == appliedFarClip) return;
+            if (environment == appliedEnvironment && column == appliedColumn && farClip == appliedFarClip)
+                return;
             Apply(environment.SampleColumn(column), farClip);
             appliedEnvironment = environment;
             appliedColumn = column;
@@ -84,12 +92,14 @@ namespace Swg.Client.Runtime.World
             // Native GroundEnvironment scales fog between its 512m and 2048m view distances.
             RenderSettings.fogDensity = Mathf.Lerp(environment.MinimumFogDensity, environment.MaximumFogDensity, Mathf.InverseLerp(512, 2048, farClip));
             cameraView.backgroundColor = lighting.Clear;
-            if (sky != null && sky.HasProperty(SkyTintId)) sky.SetColor(SkyTintId, lighting.Clear);
+            if (sky != null && sky.HasProperty(SkyTintId))
+                sky.SetColor(SkyTintId, lighting.Clear);
         }
 
         void OnDisable()
         {
-            if (world == null) return;
+            if (this.state == null)
+                return;
             Shader.SetGlobalFloat(EnvironmentLightingId, 0);
             sun.enabled = false;
             if (sky != null)
@@ -99,6 +109,7 @@ namespace Swg.Client.Runtime.World
                 Destroy(sky);
                 sky = null;
             }
+
             appliedEnvironment = null;
         }
     }

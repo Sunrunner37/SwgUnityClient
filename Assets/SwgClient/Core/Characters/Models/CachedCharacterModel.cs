@@ -24,8 +24,8 @@ namespace Swg.Client.Core.Characters.Models
     /// </summary>
     public static class CachedCharacterModel
     {
-        public static List<MeshPart> Load(TreAssetLoader loader, CachedCharacterAppearance appearance) => LoadDetailed(loader, appearance).Parts;
-        public static CachedCharacterModelResult LoadDetailed(TreAssetLoader loader, CachedCharacterAppearance appearance)
+        public static List<MeshPart> Load(TreAssetLoader loader, CharacterAppearance appearance) => LoadDetailed(loader, appearance).Parts;
+        public static CachedCharacterModelResult LoadDetailed(TreAssetLoader loader, CharacterAppearance appearance)
         {
             if (loader == null)
                 throw new ArgumentNullException(nameof(loader));
@@ -129,8 +129,7 @@ namespace Swg.Client.Core.Characters.Models
                     textures.Add(diffusePath, diffuse);
                 }
 
-                byte[] tint = CharacterMaterialLoader.TextureRendererBaseTint(loader, version, shaderIndex++, own, owner)
-                    ?? CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, own, owner, message => Warn(result, message));
+                byte[] tint = CharacterMaterialLoader.TextureRendererBaseTint(loader, version, shaderIndex++, own, owner) ?? CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, own, owner, message => Warn(result, message));
                 var pidx = new ByteReader(psdt.Chunk("PIDX"));
                 int count = checked((int)pidx.U32());
                 if (count > 100000 || pidx.Remaining != count * 4)

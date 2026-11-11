@@ -23,6 +23,7 @@ namespace Swg.Client.Core.Assets.Formats.Trn
         public uint TilesPerChunk;
         public bool HasGlobalWater;
         public float GlobalWaterHeight;
+        public readonly TerrainFloraDistribution[] FloraDistributions = new TerrainFloraDistribution[4];
         public readonly Dictionary<int, NativeTerrainFractal> Fractals = new Dictionary<int, NativeTerrainFractal>();
         public readonly List<TrnShaderFamily> Shaders = new List<TrnShaderFamily>();
         public readonly List<TrnFloraFamily> Flora = new List<TrnFloraFamily>();
@@ -45,6 +46,33 @@ namespace Swg.Client.Core.Assets.Formats.Trn
                 HasGlobalWater = header.U32() != 0,
                 GlobalWaterHeight = header.Float()
             };
+            header.Float(); // Global water shader size.
+            header.CString(); // Global water shader.
+            header.Float(); // Native day/night cycle duration.
+            if (version.Kind == "0013")
+            {
+                header.CString();
+                header.CString();
+                header.Float();
+                for (int i = 0; i < 4; i++)
+                {
+                    header.CString();
+                    header.Float();
+                }
+
+                header.U32();
+                header.CString();
+            }
+
+            for (int i = 0; i < result.FloraDistributions.Length; i++)
+                result.FloraDistributions[i] = new TerrainFloraDistribution
+                {
+                    MinimumDistance = header.Float(),
+                    MaximumDistance = header.Float(),
+                    Spacing = header.Float(),
+                    Border = header.Float(),
+                    Seed = header.U32()
+                };
             if (result.Size <= 0 || result.Size > 1000000)
                 throw new InvalidDataException("Invalid terrain size");
             var generator = IffNode.Form(version.Children, "TGEN") ?? throw new InvalidDataException("Missing terrain generator");
@@ -189,6 +217,9 @@ namespace Swg.Client.Core.Assets.Formats.Trn
                     case "AFSN":
                     case "AENV":
                     case "AROA":
+                    case "ACCN":
+                    case "ACRH":
+                    case "AEXC":
                     case "ACRF":
                         layer.Affectors.Add(TrnRule.Parse(child.Kind, rule, data));
                         break;

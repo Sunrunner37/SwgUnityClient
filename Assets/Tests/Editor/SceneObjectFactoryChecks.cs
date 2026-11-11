@@ -31,12 +31,12 @@ namespace Swg.Client.Tests.Editor
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
             CreatureSceneObject published = null;
-            world.SceneObjects.ObjectChanged += (state, changes) =>
+            world.SceneObjects.ObjectChanged += (sceneObject, changes) =>
             {
                 if (published == null)
                 {
-                    published = (CreatureSceneObject)state.Copy();
-                    Assert.That(state.ParentSwgId, Is.EqualTo(new SwgId(20)));
+                    published = (CreatureSceneObject)sceneObject.Copy();
+                    Assert.That(sceneObject.ParentSwgId, Is.EqualTo(new SwgId(20)));
                 }
             };
             world.Commit(10, new GameObjectUpdate { BaselineType = 0x4352454f, ParentSwgId = 20, TemplateCrc = 123, Position = new Vector3(1, 2, 3), Rotation = Quaternion.Euler(0, 90, 0), Name = "Creature", Height = 1.25f, Arrangement = 4, Customization = new byte[] { 1, 2 }, Equipment = new[] { new WorldEquipment(new byte[] { 3 }, 4, 99, 5) }, AlternateAppearance = "appearance/test.iff", Posture = 7 });

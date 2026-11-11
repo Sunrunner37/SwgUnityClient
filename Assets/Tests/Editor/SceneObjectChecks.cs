@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Core;
 using Swg.Client.Runtime.World;
 using System;
@@ -55,9 +56,9 @@ namespace Swg.Client.Tests.Editor
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
             world.Commit(1, new GameObjectUpdate { BaselineType = wireType, Height = 1.25f });
             world.ApplyPending();
-            Assert.That(world.SceneObjects.TryGet<SpatialSceneObject>(1, out var entity), Is.True);
-            Assert.That(entity.GetType(), Is.EqualTo(expected));
-            Assert.That(entity.Scale, Is.EqualTo(1.25f));
+            Assert.That(world.SceneObjects.TryGet<SpatialSceneObject>(1, out var sceneObject), Is.True);
+            Assert.That(sceneObject.GetType(), Is.EqualTo(expected));
+            Assert.That(sceneObject.Scale, Is.EqualTo(1.25f));
         }
 
         [Test]

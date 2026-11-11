@@ -10,11 +10,13 @@ namespace Swg.Client.Runtime.Assets.Shaders
 
         public SwgMaterialFactory(TreRuntimeAssets assets) => this.assets = assets;
 
+        public Texture Texture(TextureData diffuse, TextureWrapMode wrapMode) => diffuse == null ? Texture2D.whiteTexture : assets.Texture(diffuse, wrapMode);
+
         public Material Create(Shader shader, TextureData diffuse, byte[] tint,
             float cutoff, bool vertexColors, TextureWrapMode wrapMode)
         {
             var material = new Material(shader);
-            material.SetTexture("_BaseMap", diffuse == null ? Texture2D.whiteTexture : assets.Texture(diffuse, wrapMode));
+            material.SetTexture("_BaseMap", Texture(diffuse, wrapMode));
             material.SetColor("_Tint", tint == null || tint.Length < 3 ? Color.white : new Color32(tint[0], tint[1], tint[2], 255));
             material.SetFloat("_Cutoff", cutoff);
             if (material.HasProperty("_UseVertexColor"))

@@ -6,6 +6,7 @@ namespace Swg.Client.Core.World.Terrain
     public struct TerrainSample
     {
         public float Height;
+        public bool Excluded;
         public int ShaderFamily;
         public Color32 Color;
         public int EnvironmentFamily;

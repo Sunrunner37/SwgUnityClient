@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -22,7 +23,7 @@ namespace Swg.Client.Tests.Editor
             world.Commit(3, new GameObjectUpdate());
             world.ApplyPending();
             var changes = new Dictionary<SwgId, SceneObjectChange>();
-            world.SceneObjects.ObjectChanged += (state, flags) => changes[state.SwgId] = flags;
+            world.SceneObjects.ObjectChanged += (sceneObject, flags) => changes[sceneObject.SwgId] = flags;
             world.Commit(1, new GameObjectUpdate { Position = new Vector3(10, 0, 0), MovementCounter = 42 });
             world.ApplyPending();
             Assert.That(changes.Keys, Is.EquivalentTo(new SwgId[] { 1, 2 }));
@@ -40,7 +41,7 @@ namespace Swg.Client.Tests.Editor
             registry.Add(new CreatureSceneObject { SwgId = 2 });
             registry.Add(new TangibleSceneObject { SwgId = 3, ParentSwgId = 1 });
             var changes = new Dictionary<SwgId, SceneObjectChange>();
-            registry.ObjectChanged += (state, flags) => changes[state.SwgId] = flags;
+            registry.ObjectChanged += (sceneObject, flags) => changes[sceneObject.SwgId] = flags;
             registry.Reparent(3, 2);
             Assert.That(changes[(SwgId)1], Is.EqualTo(SceneObjectChange.Appearance));
             Assert.That(changes[(SwgId)2], Is.EqualTo(SceneObjectChange.Appearance));
@@ -58,7 +59,7 @@ namespace Swg.Client.Tests.Editor
             using var services = ManagedObjectTestScope.Use(registry);
             registry.Add(new SpatialSceneObject { SwgId = 2, ParentSwgId = 1 });
             var changes = new Dictionary<SwgId, SceneObjectChange>();
-            registry.ObjectChanged += (state, flags) => changes[state.SwgId] = flags;
+            registry.ObjectChanged += (sceneObject, flags) => changes[sceneObject.SwgId] = flags;
             registry.Add(new SpatialSceneObject { SwgId = 1, Position = Vector3.right * 10 });
             Assert.That(changes[(SwgId)2] & SceneObjectChange.Containment, Is.Not.EqualTo(SceneObjectChange.None));
             Assert.That(registry.GetServerWorldPose(2).position.x, Is.EqualTo(10));
@@ -73,27 +74,27 @@ namespace Swg.Client.Tests.Editor
         {
             var registry = new SceneObjectRegistry();
             using var services = ManagedObjectTestScope.Use(registry);
-            var state = new SpatialSceneObject
+            var sceneObject = new SpatialSceneObject
             {
                 SwgId = 1,
                 Position = Vector3.right * 10,
                 Rotation = Quaternion.Euler(0, 90, 0)
             };
             GameServices.Resolve<WorldState>().BeginScene(99, Vector3.right * 2, "terrain/test.trn");
-            registry.Add(state);
+            registry.Add(sceneObject);
             var instance = new GameObject("interpolation test");
             try
             {
                 var tag = instance.AddComponent<ManagedSceneObject>();
                 tag.Bind(1);
                 var movement = instance.AddComponent<SceneObjectMovement>();
-                movement.Initialize(state);
-                registry.NotifyChanged(state, SceneObjectChange.Transform);
+                movement.Initialize(sceneObject);
+                registry.NotifyChanged(sceneObject, SceneObjectChange.Transform);
                 Assert.That(instance.transform.localPosition, Is.EqualTo(Vector3.zero));
                 movement.Advance(0.05f);
                 Assert.That(instance.transform.localPosition.x, Is.EqualTo(4).Within(.001));
                 Assert.That(Quaternion.Angle(instance.transform.localRotation, Quaternion.Euler(0, 45, 0)), Is.LessThan(.001));
-                Assert.That(state.Position.x, Is.EqualTo(10));
+                Assert.That(sceneObject.Position.x, Is.EqualTo(10));
                 movement.Advance(0.05f);
                 Assert.That(instance.transform.localPosition.x, Is.EqualTo(8).Within(.001));
                 Assert.That(movement.enabled, Is.False);

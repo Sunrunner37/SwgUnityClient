@@ -15,6 +15,8 @@ namespace Swg.Client.Core.World.Terrain
         readonly Dictionary<int, TrnShaderFamily> surfaceDefinitions = new Dictionary<int, TrnShaderFamily>();
         TreAssetLoader assets;
         TerrainAffectorFactory affectors;
+        public TerrainFloraDistribution[] FloraDistributions { get; private set; }
+        public float NativeSpacing { get; private set; }
         public TerrainFloraCatalog Flora { get; private set; }
         public TerrainEnvironmentCatalog Environments { get; private set; }
         public float Size { get; private set; }
@@ -33,6 +35,8 @@ namespace Swg.Client.Core.World.Terrain
             var definition = TrnFile.Parse(loader.Read(terrainPath));
             result.Size = definition.Size;
             result.ChunkSize = definition.ChunkSize;
+            result.NativeSpacing = definition.ChunkSize / definition.TilesPerChunk * .5f;
+            result.FloraDistributions = definition.FloraDistributions;
             result.HasGlobalWater = definition.HasGlobalWater;
             result.GlobalWaterHeight = definition.GlobalWaterHeight;
             foreach (var fractal in definition.Fractals)

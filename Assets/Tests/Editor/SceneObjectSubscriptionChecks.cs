@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Collections;
 using System.Reflection;
@@ -16,11 +17,11 @@ namespace Swg.Client.Tests.Editor
         public void DispatchCallsOnlyTheRequestedObjectListenersAndReleasesEmptyEntries()
         {
             var registry = new SceneObjectRegistry();
-            var state = new SceneObject
+            var sceneObject = new SceneObject
             {
                 SwgId = 1
             };
-            registry.Add(state);
+            registry.Add(sceneObject);
             registry.Add(new SceneObject { SwgId = 2 });
             int first = 0;
             int second = 0;
@@ -31,12 +32,12 @@ namespace Swg.Client.Tests.Editor
             registry.Subscribe(1, a);
             registry.Subscribe(1, b);
             registry.Subscribe(2, other);
-            registry.NotifyChanged(state, SceneObjectChange.Transform);
+            registry.NotifyChanged(sceneObject, SceneObjectChange.Transform);
             Assert.That(first, Is.EqualTo(1));
             Assert.That(second, Is.EqualTo(1));
             Assert.That(unrelated, Is.Zero);
             registry.Unsubscribe(1, a);
-            registry.NotifyChanged(state, SceneObjectChange.Transform);
+            registry.NotifyChanged(sceneObject, SceneObjectChange.Transform);
             Assert.That(first, Is.EqualTo(1));
             Assert.That(second, Is.EqualTo(2));
             registry.Unsubscribe(1, b);
@@ -70,17 +71,17 @@ namespace Swg.Client.Tests.Editor
         public void RemovalAndClearReleaseSubscriptionsIncludingObjectsNotYetReceived()
         {
             var registry = new SceneObjectRegistry();
-            var state = new SceneObject
+            var sceneObject = new SceneObject
             {
                 SwgId = 1
             };
-            registry.Add(state);
+            registry.Add(sceneObject);
             int calls = 0;
             registry.Subscribe(1, changes => calls++);
             registry.Subscribe(2, changes => calls++);
             registry.Remove(1);
             Assert.That(Entries(registry), Is.EqualTo(1));
-            registry.Add(state);
+            registry.Add(sceneObject);
             Assert.That(calls, Is.Zero);
             registry.Clear();
             Assert.That(Entries(registry), Is.Zero);

@@ -1,0 +1,286 @@
+using Swg.Client.Runtime.World.Streaming;
+using Swg.Client.Runtime.World.Terrain;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core;
+using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Core.World.SceneObjects;
+using Swg.Client.Core.Assets.Appearances;
+using Swg.Client.Core.Assets.Formats.Customization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Swg.Client.Core.Assets.Tre;
+using Swg.Client.Core.Characters.Appearance;
+using Swg.Client.Core.Characters.Models;
+using Swg.Client.Core.World;
+using Swg.Client.Core.World.Terrain;
+using UnityEngine;
+
+namespace Swg.Client.Runtime.World.Loading
+{
+    /// <summary>Shared native asset decoding and per-world appearance cache, serialized across entry and streaming.</summary>
+    public sealed class WorldContentLoader
+    {
+        readonly TreRuntimeAssets assets;
+        readonly WorldState state;
+        readonly AppearanceCache cache;
+        readonly string cacheDirectory;
+        readonly string cacheServer;
+        readonly string cacheUsername;
+        readonly string cacheGalaxy;
+        readonly FloraClearanceLoader clearance = new FloraClearanceLoader();
+        byte[] lastCachedAppearance;
+        readonly SemaphoreSlim reads = new SemaphoreSlim(1, 1);
+        public WorldContentLoader(TreRuntimeAssets assets, WorldState state, AppearanceCache cache, ClientSettings settings, GameConnection connection)
+        {
+            this.assets = assets;
+            this.cache = cache;
+            this.state = state;
+            cacheDirectory = settings.AppearanceCacheDirectory;
+            cacheServer = settings.LoginEndpoint;
+            cacheUsername = connection.Admission.Username;
+            cacheGalaxy = connection.Admission.Galaxy.Name;
+        }
+
+        public async Task OpenAsync(GameWorldSnapshot initial, CancellationToken token)
+        {
+            var start = initial.StartScene.Value;
+            var loaded = await assets.ReadAsync(loader =>
+            {
+                token.ThrowIfCancellationRequested();
+                var templates = new ObjectTemplateCatalog(loader);
+                var terrain = WorldTerrain.Load(loader, start.TerrainPath);
+                var snapshot = WorldSnapshot.Load(loader, Path.GetFileNameWithoutExtension(start.TerrainPath));
+                token.ThrowIfCancellationRequested();
+                return (templates, terrain, snapshot);
+            });
+            token.ThrowIfCancellationRequested();
+            this.state.Templates = loaded.templates;
+            this.state.Terrain = loaded.terrain;
+            this.state.Snapshot = loaded.snapshot;
+            foreach (var entry in this.state.Snapshot.Entries)
+                if (!this.state.SceneObjects.TryGet(entry.SwgId, out _))
+                    this.state.SceneObjects.Add(SceneObjectFactory.Create(entry));
+        }
+
+        async Task<T> ReadAsync<T>(Func<TreAssetLoader, T> read, CancellationToken token)
+        {
+            await reads.WaitAsync(token);
+            try
+            {
+                return await assets.ReadAsync(loader =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    var result = read(loader);
+                    token.ThrowIfCancellationRequested();
+                    return result;
+                });
+            }
+            finally
+            {
+                reads.Release();
+            }
+        }
+
+        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, HashSet<Vector2Int> loadedFlora = null, IReadOnlyDictionary<Vector2Int, float> terrainResolutions = null)
+        {
+            // Copy settings and caller-owned sets before entering the worker.
+            float tileSize = settings.terrainTileSize;
+            float spacing = settings.terrainSpacing;
+            float nativeSpacing = Math.Min(settings.terrainSpacing, this.state.Terrain.NativeSpacing);
+            float detailRadius = settings.terrainDetailRadius;
+            var resolutions = terrainResolutions == null ? null : new Dictionary<Vector2Int, float>(terrainResolutions);
+            float radius = settings.terrainRadius;
+            float viewRadius = settings.viewRadius;
+            float floraRadius = settings.floraRadius;
+            float floraTileSize = settings.floraTileSize;
+            var floraRanges = this.state.Terrain.FloraDistributions.Select((distribution, kind) => settings.GetFloraRange(distribution, (TerrainFloraKind)kind)).ToArray();
+            var flora = loadedFlora == null ? new HashSet<Vector2Int>() : new HashSet<Vector2Int>(loadedFlora);
+            var terrain = new HashSet<Vector2Int>(loadedTerrain);
+            var scenery = new HashSet<SwgId>(loadedScenery);
+            return ReadAsync(loader =>
+            {
+                var region = new WorldRegionData
+                {
+                    ServerCenter = serverCenter
+                };
+                region.TerrainKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, radius, tileSize));
+                int count = 0;
+                foreach (var key in region.TerrainKeys)
+                {
+                    token.ThrowIfCancellationRequested();
+                    float Resolution(Vector2Int tile)
+                    {
+                        float dx = Math.Max(tile.x * tileSize - serverCenter.x, Math.Max(0, serverCenter.x - (tile.x + 1) * tileSize));
+                        float dz = Math.Max(tile.y * tileSize - serverCenter.z, Math.Max(0, serverCenter.z - (tile.y + 1) * tileSize));
+                        return dx * dx + dz * dz <= detailRadius * detailRadius ? nativeSpacing : spacing;
+                    }
+
+                    float previous = resolutions != null && resolutions.TryGetValue(key, out var old) ? old : spacing;
+                    float OldNeighbor(Vector2Int tile) => resolutions != null && resolutions.TryGetValue(tile, out var oldSpacing) ? oldSpacing : spacing;
+                    float desired = Resolution(key);
+                    var neighbors = new[]
+                    {
+                        key + Vector2Int.left,
+                        key + Vector2Int.right,
+                        key + Vector2Int.down,
+                        key + Vector2Int.up
+                    };
+                    var neighborSpacings = new Vector4(Resolution(neighbors[0]), Resolution(neighbors[1]), Resolution(neighbors[2]), Resolution(neighbors[3]));
+                    bool edgesChanged = false;
+                    for (int i = 0; i < 4; i++)
+                        edgesChanged |= Math.Max(previous, OldNeighbor(neighbors[i])) != Math.Max(desired, neighborSpacings[i]);
+                    if (!terrain.Contains(key) || (resolutions != null && (previous != desired || edgesChanged)))
+                        region.Terrain.Add(key, WorldTerrainPatch.Build(this.state.Terrain, new Vector3((key.x + .5f) * tileSize, 0, (key.y + .5f) * tileSize), tileSize * .5f, desired, neighborSpacings));
+                    progress?.Report(new WorldPreparationProgress("Reading original terrain...", .4f * ++count / region.TerrainKeys.Count));
+                }
+
+                region.FloraKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, floraRadius, floraTileSize));
+                var floraLoader = new TerrainFloraLoader(loader, this.state.Terrain, cache, path => LoadAppearance(loader, new AppearanceRequest(path)));
+                foreach (var key in region.FloraKeys)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (!flora.Contains(key))
+                        region.Flora.Add(key, floraLoader.LoadTile(key, floraTileSize, floraRanges, token));
+                }
+
+                var entries = this.state.Snapshot.Query(serverCenter, viewRadius, 256).ToArray();
+                count = 0;
+                foreach (var entry in entries)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (++count % 100 == 0)
+                        progress?.Report(new WorldPreparationProgress("Loading scenery " + count + "/" + entries.Length, .4f + .6f * count / entries.Length));
+                    if (AppearanceRequest.IsCell(entry.TemplatePath))
+                        continue;
+                    if (scenery.Contains(entry.SwgId))
+                    {
+                        region.ScenerySwgIds.Add(entry.SwgId);
+                        continue;
+                    }
+
+                    var appearance = LoadAppearance(loader, new AppearanceRequest(entry.TemplatePath));
+                    if (appearance.Parts.Count == 0 && appearance.Particles.Count == 0)
+                        continue;
+                    region.ScenerySwgIds.Add(entry.SwgId);
+                    region.Scenery.Add(entry.SwgId, appearance);
+                }
+
+                progress?.Report(new WorldPreparationProgress("Region assets prepared", 1));
+                return region;
+            }, token);
+        }
+
+        public Task<Dictionary<SwgId, AppearanceData>> LoadAppearancesAsync(GameWorldSnapshot snapshot, IReadOnlyDictionary<SwgId, AppearanceRequest> requests, CancellationToken token)
+        {
+            return ReadAsync(loader =>
+            {
+                var appearances = new Dictionary<SwgId, AppearanceData>();
+                foreach (var pair in requests)
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        var appearance = LoadAppearance(loader, pair.Value);
+                        if (appearance.Parts.Count != 0 || appearance.Particles.Count != 0)
+                            appearances.Add(pair.Key, appearance);
+                    }
+                    catch (Exception error)
+                    {
+                        Debug.LogWarning("SceneObject " + pair.Key + ": " + error.Message);
+                    }
+                }
+
+                CachePlayerAppearance(snapshot);
+                return appearances;
+            }, token);
+        }
+
+        void CachePlayerAppearance(GameWorldSnapshot snapshot)
+        {
+            var player = snapshot.Objects.FirstOrDefault(item => item.SwgId == snapshot.PlayerSwgId);
+            if (player == null || player is not CreatureSceneObject || !snapshot.PlayerBaselinesComplete)
+                return;
+            string path = this.state.Templates.Resolve(player.TemplateCrc) ?? player.TemplatePath;
+            if (string.IsNullOrEmpty(path))
+                return;
+            try
+            {
+                var appearance = AppearanceRequest.Describe(this.state, snapshot, player)?.Character;
+                if (appearance == null)
+                    return;
+                string planet = Path.GetFileNameWithoutExtension(this.state.TerrainPath ?? "");
+                var bytes = CharacterAppearanceCache.Serialize(appearance, planet);
+                if (lastCachedAppearance != null && bytes.SequenceEqual(lastCachedAppearance))
+                    return;
+                CharacterAppearanceCache.SaveProfile(cacheDirectory, cacheServer, cacheUsername, cacheGalaxy, player.SwgId, appearance, planet);
+                lastCachedAppearance = bytes;
+            }
+            catch (Exception error)when (error is IOException || error is UnauthorizedAccessException || error is InvalidDataException || error is ArgumentException)
+            {
+                Debug.LogWarning("Character appearance cache could not be saved: " + error.Message);
+            }
+        }
+
+        public FloraClearance[] GetFloraClearance(string templatePath) => clearance.GetCached(templatePath);
+        AppearanceData LoadAppearance(TreAssetLoader loader, AppearanceRequest request)
+        {
+            string path = request.TemplatePath;
+            clearance.Load(loader, path);
+            if (cache.TryGet(request.Key, out var cached))
+                return cached;
+            var result = new AppearanceData
+            {
+                Key = request.Key
+            };
+            try
+            {
+                var characterAppearance = request.Character;
+                if (characterAppearance == null)
+                {
+                    result = AppearanceLoader.LoadDetailed(loader, path);
+                    result.Key = request.Key;
+                    foreach (var warning in result.Warnings)
+                        Debug.LogWarning(warning);
+                    if (result.Parts.Count != 0 || result.Particles.Count != 0 || !path.Contains("/creature/"))
+                    {
+                        cache.Add(request.Key, result);
+                        return result;
+                    }
+
+                    characterAppearance = new CharacterAppearance
+                    {
+                        TemplatePath = path,
+                        Customization = PackedCustomization.Decode(Array.Empty<byte>()),
+                        Wearables = Array.Empty<WearableAppearance>(),
+                    };
+                }
+
+                var character = CachedCharacterModel.LoadDetailed(loader, characterAppearance);
+                result.Parts = character.Parts;
+                for (int i = 0; i < result.Parts.Count; i++)
+                {
+                    var source = character.Sources[i];
+                    result.Parts[i].UseCharacterShader = true;
+                    result.Parts[i].AlphaCutout = (source.ObjectTemplate ?? "").Contains("/hair/") || (source.MeshPath ?? "").Contains("/hair/");
+                }
+
+                result.RecalculateBounds();
+                result.Warnings.AddRange(character.Warnings);
+                foreach (var warning in character.Warnings)
+                    Debug.LogWarning(warning);
+            }
+            catch (Exception error)
+            {
+                Debug.LogWarning(path + ": " + error.Message);
+            }
+
+            cache.Add(request.Key, result);
+            return result;
+        }
+    }
+}

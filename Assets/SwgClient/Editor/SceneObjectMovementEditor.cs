@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime.World;
 using UnityEditor;
 

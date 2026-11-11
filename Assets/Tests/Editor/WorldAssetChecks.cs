@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.World.Terrain;
 using Swg.Client.Core;
 using Swg.Client.Core.Assets;
@@ -50,7 +51,7 @@ namespace Swg.Client.Tests.Editor
             };
             foreach (string path in samples)
             {
-                var model = StaticModel.LoadDetailed(loader, path);
+                var model = AppearanceLoader.LoadDetailed(loader, path);
                 Check(model.Parts.Count > 0 && model.Parts.Count == model.Sources.Count, "Native render geometry " + path);
                 Check(model.Warnings.Count == 0, "Supported native materials " + path);
                 Check(model.Radius > 0 && Finite(model.BoundsMin) && Finite(model.BoundsMax), "Model bounds " + path);

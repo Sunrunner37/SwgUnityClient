@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.Assets.Tre;
 using System;
 using System.Collections;

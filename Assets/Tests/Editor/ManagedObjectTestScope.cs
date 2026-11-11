@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Reflection;
 using Autofac;

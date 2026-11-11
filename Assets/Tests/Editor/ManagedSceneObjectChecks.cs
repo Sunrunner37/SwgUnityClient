@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using NUnit.Framework;
 using Swg.Client.Core;
 using Swg.Client.Runtime.World;

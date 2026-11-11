@@ -40,6 +40,32 @@ namespace Swg.Client.Tests.Editor
             writer.Write(4);
             writer.Write(1);
             writer.Write(12f);
+            writer.Write(32f);
+            CString(writer, "");
+            writer.Write(10020f);
+            if (version == "0013")
+            {
+                CString(writer, "");
+                CString(writer, "");
+                writer.Write(0f);
+                for (int i = 0; i < 4; i++)
+                {
+                    CString(writer, "");
+                    writer.Write(0f);
+                }
+
+                writer.Write(0);
+                CString(writer, "");
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                writer.Write(0f);
+                writer.Write(64f);
+                writer.Write(1f);
+                writer.Write(.25f);
+                writer.Write(0);
+            }
         }), Form("TGEN", generator)));
         [TestCase("0013")]
         [TestCase("0014")]

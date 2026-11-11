@@ -1,3 +1,8 @@
+using Swg.Client.Runtime.World.Streaming;
+using Swg.Client.Runtime.World.Terrain;
+using Swg.Client.Core.World;
+using Swg.Client.Runtime.Assets.Shaders;
+using Swg.Client.Core.World.Terrain;
 using System;
 using System.Linq;
 using NUnit.Framework;
@@ -8,6 +13,42 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class WorldStreamingChecks
     {
+        [Test]
+        public void TerrainRendererOwnsReplacementRetentionAndDisposal()
+        {
+            var parent = new GameObject("Terrain ownership test");
+            var settings = new WorldRenderingContext();
+            settings.Initialize(Shader.Find("SWG/World"), null, null, null, null, null);
+            var renderer = new WorldTerrainRenderer(new SwgMaterialFactory(null), new WorldState(new SceneObjectRegistry()), settings);
+            var patch = WorldTerrainPatch.Build(new WorldTerrain(), Vector3.zero, 2, 1);
+            try
+            {
+                renderer.AddOrReplace(Vector2Int.zero, patch, parent.transform);
+                var original = parent.GetComponentInChildren<MeshFilter>();
+                var originalMesh = original.sharedMesh;
+                var originalMaterial = original.GetComponent<MeshRenderer>().sharedMaterial;
+                Assert.That(renderer.Resolutions[Vector2Int.zero], Is.EqualTo(1));
+                renderer.AddOrReplace(Vector2Int.zero, patch, parent.transform);
+                Assert.That(original == null, Is.True);
+                Assert.That(originalMesh == null, Is.True);
+                Assert.That(originalMaterial == null, Is.True);
+                Assert.That(parent.transform.childCount, Is.EqualTo(1));
+                renderer.Retain(Array.Empty<Vector2Int>());
+                Assert.That(renderer.Keys, Is.Empty);
+                Assert.That(renderer.Resolutions, Is.Empty);
+                Assert.That(parent.transform.childCount, Is.Zero);
+                renderer.AddOrReplace(Vector2Int.one, patch, parent.transform);
+                renderer.Dispose();
+                Assert.That(parent.transform.childCount, Is.Zero);
+                Assert.That(renderer.Keys, Is.Empty);
+            }
+            finally
+            {
+                renderer.Dispose();
+                UnityEngine.Object.DestroyImmediate(parent);
+            }
+        }
+
         [Test]
         public void MovingOneTileRetainsOverlapAndRequestsOnlyNewTerrain()
         {

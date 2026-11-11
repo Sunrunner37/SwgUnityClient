@@ -8,8 +8,8 @@ namespace Swg.Client.Core.World.Terrain
         int state;
         public TerrainRandom(float serverX, float serverZ)
         {
-            uint x = BitConverter.ToUInt32(BitConverter.GetBytes(serverX), 0);
-            uint z = BitConverter.ToUInt32(BitConverter.GetBytes(serverZ), 0) ^ 0xa5a5a5a5;
+            uint x = unchecked((uint)BitConverter.SingleToInt32Bits(serverX));
+            uint z = unchecked((uint)BitConverter.SingleToInt32Bits(serverZ)) ^ 0xa5a5a5a5;
             state = (int)(Hash(Hash(x) ^ Hash(z)) & 0x7fffffff);
             if (state == 0)
                 state = 123459876;

@@ -1175,6 +1175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.CharacterPreview
   previewCamera: {fileID: 5644584650312082560}
   characterShader: {fileID: 4800000, guid: 6af1ca3655ecfad45be7ea7ff2256a5b, type: 3}
+  particleShader: {fileID: 4800000, guid: 8538057b73994cc38535ae75f94a9558, type: 3}
   viewportWidth: 1
   heightFraction: 0.8
   yawDegrees: 0
