@@ -140,7 +140,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
             {
                 preview.Show(female ? entry.Female : entry.Male);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 speciesName.text = entry.Name + " - preview unavailable";
                 Debug.LogException(e);

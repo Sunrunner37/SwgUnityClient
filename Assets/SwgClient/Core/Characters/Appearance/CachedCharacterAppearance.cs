@@ -11,6 +11,5 @@ namespace Swg.Client.Core.Characters.Appearance
         public IReadOnlyList<CachedWearableAppearance> Wearables { get; internal set; }
         public bool FromCache { get; internal set; }
         public string SourcePath { get; internal set; }
-        public string Diagnostic { get; internal set; }
     }
 }

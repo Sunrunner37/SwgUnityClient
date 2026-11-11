@@ -8,6 +8,7 @@ using Swg.Client.Core.Assets.Formats.Dds;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
+using Swg.Client.Core.Characters.Materials;
 
 namespace Swg.Client.Core.Characters.Models
 {
@@ -39,6 +40,8 @@ namespace Swg.Client.Core.Characters.Models
             var positions = version.Chunk("POSN");
             var normals = version.Chunk("NORM");
             var result = new List<MeshPart>();
+            var defaults = new Dictionary<string, short>();
+            int shaderIndex = 0;
             foreach (var psdt in version.Children.Where(n => n.Kind == "PSDT"))
             {
                 string shader = new ByteReader(psdt.Chunk("NAME")).CString();
@@ -46,25 +49,14 @@ namespace Swg.Client.Core.Characters.Models
                 if (!materials.TryGetValue(shader, out var texture))
                 {
                     var textures = IffNode.References(shaderBytes, "texture/", ".dds");
-                    string diffuse = textures.FirstOrDefault(p => !p.EndsWith("_cn.dds") && !p.EndsWith("_n.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds")) ?? textures.FirstOrDefault() ?? throw new InvalidDataException("Shader has no diffuse texture");
+                    string diffuse = CharacterMaterialLoader.MainTexture(IffNode.Parse(shaderBytes)) ?? textures.FirstOrDefault(p => !p.EndsWith("_cn.dds") && !p.EndsWith("_n.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds")) ?? textures.FirstOrDefault() ?? throw new InvalidDataException("Shader has no diffuse texture");
                     texture = TextureData.Load(loader, diffuse);
                     materials.Add(shader, texture);
                 }
 
-                byte[] tint = null;
-                var pal = IffNode.References(shaderBytes, "palette/", ".pal").FirstOrDefault(p => p.Contains("pc_skin_"));
-                if (pal != null)
-                {
-                    var bytes = loader.Read(pal);
-                    if (bytes.Length < 28 || Encoding.ASCII.GetString(bytes, 0, 4) != "RIFF" || Encoding.ASCII.GetString(bytes, 8, 4) != "PAL ")
-                        throw new InvalidDataException("Invalid skin palette");
-                    tint = new[]
-                    {
-                        bytes[24],
-                        bytes[25],
-                        bytes[26]
-                    };
-                }
+                var shaderNodes = IffNode.Parse(shaderBytes);
+                byte[] tint = CharacterMaterialLoader.TextureRendererBaseTint(loader, version, shaderIndex++, defaults, defaults)
+                    ?? CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, defaults, defaults, _ => { });
 
                 var indices = new ByteReader(psdt.Chunk("PIDX"));
                 int count = checked((int)indices.U32());

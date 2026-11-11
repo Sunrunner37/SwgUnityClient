@@ -15,7 +15,7 @@ namespace Swg.Client.Runtime.Assets.Tre
         readonly Task<TreAssetLoader> mounting;
         readonly HashSet<Task> reads = new HashSet<Task>();
         readonly object readGate = new object ();
-        readonly Dictionary<TextureData, Texture2D> textures = new Dictionary<TextureData, Texture2D>();
+        readonly Dictionary<(TextureData Source, TextureWrapMode WrapMode), Texture2D> textures = new Dictionary<(TextureData Source, TextureWrapMode WrapMode), Texture2D>();
         readonly Dictionary<TreVisual, Texture2D> visuals = new Dictionary<TreVisual, Texture2D>();
         bool disposed;
         public Task Ready => mounting;
@@ -56,21 +56,21 @@ namespace Swg.Client.Runtime.Assets.Tre
             return texture;
         }
 
-        public Texture2D Texture(TextureData source)
+        public Texture2D Texture(TextureData source, TextureWrapMode wrapMode = TextureWrapMode.Clamp)
         {
-            if (textures.TryGetValue(source, out var texture))
+            if (textures.TryGetValue((source, wrapMode), out var texture))
                 return texture;
             texture = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, false)
             {
                 filterMode = FilterMode.Bilinear,
-                wrapMode = TextureWrapMode.Clamp
+                wrapMode = wrapMode
             };
             var raw = new byte[source.Pixels.Length];
             for (int y = 0; y < source.Height; y++)
                 Buffer.BlockCopy(source.Pixels, y * source.Width * 4, raw, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
             texture.LoadRawTextureData(raw);
             texture.Apply(false, true);
-            textures.Add(source, texture);
+            textures.Add((source, wrapMode), texture);
             return texture;
         }
 

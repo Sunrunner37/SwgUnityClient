@@ -204,7 +204,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
                 yield break;
             try
             {
-                preview.Show(rows[index].Character.ObjectId.ToString(), model);
+                preview.Show(rows[index].Character.SwgId.ToString(), model);
                 message.text = "Choose the Character you would like to play now.\nYou may also choose to Create a new Character, or Delete one of your existing Characters.";
                 foreach (var warning in model.Warnings)
                     Debug.LogWarning(warning);
@@ -220,7 +220,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         {
             if (!IsReady || selected < 0 || !next.interactable)
                 return;
-            connection.SelectCharacter(rows[selected].Character.ObjectId);
+            connection.SelectCharacter(rows[selected].Character.SwgId);
             next.interactable = false;
             ScreenChanger.Open(ScreenId.LoadingThematic);
         }

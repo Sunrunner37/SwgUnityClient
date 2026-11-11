@@ -1,4 +1,4 @@
-using Swg.Client.Core;
+using Debug = UnityEngine.Debug;
 using Swg.Client.Core.Assets.Formats.Customization;
 using Swg.Client.Core.Assets;
 using System;
@@ -33,29 +33,26 @@ namespace Swg.Client.Core.Characters.Appearance
                 Wearables = file.Wearables.Select(item => new CachedWearableAppearance { TemplatePath = Template(item.TemplatePath), Customization = PackedCustomization.Decode(item.Customization), ArrangementHint = item.Arrangement }).ToArray(),
                 FromCache = true,
                 SourcePath = "",
-                Diagnostic = ""
             };
         }
 
-        public static bool TryReadProfile(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId, out CachedCharacterAppearance appearance, out string diagnostic)
+        public static bool TryReadProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, out CachedCharacterAppearance appearance)
         {
             appearance = null;
-            diagnostic = "Cached appearance is unavailable for this character.";
             try
             {
-                string path = ProfilePath(cacheDirectory, server, username, galaxyName, objectId);
+                string path = ProfilePath(cacheDirectory, server, username, galaxyName, swgId);
                 if (!File.Exists(path))
                     return false;
                 if (new FileInfo(path).Length > MaxCacheBytes)
                     throw new InvalidDataException("Oversized character cache");
                 appearance = Parse(File.ReadAllBytes(path));
                 appearance.SourcePath = path;
-                diagnostic = "";
                 return true;
             }
             catch (Exception e)when (e is IOException || e is UnauthorizedAccessException || e is ArgumentException || e is InvalidDataException || e is OverflowException)
             {
-                diagnostic = "Cached appearance could not be read: " + e.Message;
+                Debug.LogWarning("Cached appearance for " + swgId + " could not be read: " + e.Message);
                 return false;
             }
         }
@@ -66,16 +63,21 @@ namespace Swg.Client.Core.Characters.Appearance
                 throw new ArgumentNullException(nameof(loader));
             if (character == null)
                 throw new ArgumentNullException(nameof(character));
-            if (TryReadProfile(cacheDirectory, server, username, galaxyName, character.ObjectId, out var cached, out var diagnostic))
+
+            if (TryReadProfile(cacheDirectory, server, username, galaxyName, character.SwgId, out var cached))
             {
                 if (ObjectTemplateNames.MatchesRace(cached.TemplatePath, character.Race))
                     return cached;
-                diagnostic = "Cached template does not match this character's server template CRC.";
+                Debug.LogWarning("Cached template for " + character.SwgId + " does not match the character's server template CRC.");
             }
 
             string template = ObjectTemplateNames.ResolvePlayerTemplate(loader, character.Race);
+
             if (template == null)
                 throw new InvalidDataException("No original player template matches the character's race CRC");
+
+            Debug.Log("Showing the TRE template's default appearance for " + character.Name + " (" + character.SwgId + ").");
+
             return new CachedCharacterAppearance
             {
                 TemplatePath = template,
@@ -84,13 +86,12 @@ namespace Swg.Client.Core.Characters.Appearance
                 Wearables = Array.Empty<CachedWearableAppearance>(),
                 FromCache = false,
                 SourcePath = "",
-                Diagnostic = diagnostic + " Showing the TRE template's default appearance."
             };
         }
 
-        public static void SaveProfile(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId, CachedCharacterAppearance appearance)
+        public static void SaveProfile(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId, CachedCharacterAppearance appearance)
         {
-            string path = ProfilePath(cacheDirectory, server, username, galaxyName, objectId);
+            string path = ProfilePath(cacheDirectory, server, username, galaxyName, swgId);
             byte[] bytes = Serialize(appearance);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
@@ -126,7 +127,7 @@ namespace Swg.Client.Core.Characters.Appearance
             return result;
         }
 
-        static string ProfilePath(string cacheDirectory, string server, string username, string galaxyName, ObjectId objectId)
+        static string ProfilePath(string cacheDirectory, string server, string username, string galaxyName, SwgId swgId)
         {
             string root = Path.GetFullPath(cacheDirectory);
             using var hash = SHA256.Create();
@@ -134,7 +135,7 @@ namespace Swg.Client.Core.Characters.Appearance
             string serverDirectory = Path.Combine(root, serverKey);
             string user = Path.Combine(serverDirectory, Segment(username));
             string galaxy = Path.Combine(user, Segment(galaxyName));
-            string path = Path.Combine(galaxy, objectId.ToString(CultureInfo.InvariantCulture) + ".ca");
+            string path = Path.Combine(galaxy, swgId.ToString(CultureInfo.InvariantCulture) + ".ca");
             return path;
         }
 

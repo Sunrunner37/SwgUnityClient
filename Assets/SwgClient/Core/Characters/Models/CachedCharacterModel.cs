@@ -34,15 +34,14 @@ namespace Swg.Client.Core.Characters.Models
             var ids = CidmFile.Parse(loader.Read("customization/customization_id_manager.iff"));
             var owner = appearance.Customization.ResolveNames(ids);
             var textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
-            if (!appearance.FromCache && !string.IsNullOrEmpty(appearance.Diagnostic))
-                Warn(result, appearance.Diagnostic);
-            if (!LoadObject(loader, appearance.TemplatePath, owner, owner, textures, result))
+            string ownerAppearance = FindSkeletalAppearance(loader, appearance.TemplatePath, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            if (!LoadObject(loader, appearance.TemplatePath, owner, owner, textures, result, ownerAppearance))
                 throw new InvalidDataException("Player template has no supported skeletal appearance");
             foreach (var item in appearance.Wearables)
             {
                 try
                 {
-                    bool loaded = LoadObject(loader, item.TemplatePath, item.Customization.ResolveNames(ids), owner, textures, result);
+                    bool loaded = LoadObject(loader, item.TemplatePath, item.Customization.ResolveNames(ids), owner, textures, result, ownerAppearance);
                     if (!loaded && IsVisibleWearable(item.TemplatePath))
                         Warn(result, "Unsupported wearable appearance: " + item.TemplatePath);
                 }
@@ -53,11 +52,12 @@ namespace Swg.Client.Core.Characters.Models
                 }
             }
 
+            CharacterMeshOcclusion.Apply(result);
             return result;
         }
 
         static bool IsVisibleWearable(string path) => path.StartsWith("object/tangible/hair/", StringComparison.Ordinal) || path.StartsWith("object/tangible/wearables/", StringComparison.Ordinal) || (path.StartsWith("object/weapon/", StringComparison.Ordinal) && !path.Contains("/unarmed/"));
-        static bool LoadObject(TreAssetLoader loader, string template, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CachedCharacterModelResult result)
+        static bool LoadObject(TreAssetLoader loader, string template, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CachedCharacterModelResult result, string ownerAppearance)
         {
             string satPath = FindSkeletalAppearance(loader, template, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             if (satPath == null)
@@ -71,7 +71,7 @@ namespace Swg.Client.Core.Characters.Models
                 string mgn = References(loader.Read(lmg), "appearance/", ".mgn").FirstOrDefault();
                 if (mgn == null)
                     throw new InvalidDataException("No skeletal mesh LOD in " + lmg);
-                LoadMesh(loader, template, satPath, mgn, own, owner, textures, result);
+                LoadMesh(loader, template, satPath, mgn, own, owner, textures, result, ownerAppearance);
             }
 
             return true;
@@ -96,7 +96,7 @@ namespace Swg.Client.Core.Characters.Models
             return null;
         }
 
-        static void LoadMesh(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CachedCharacterModelResult result)
+        static void LoadMesh(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CachedCharacterModelResult result, string ownerAppearance)
         {
             var skmg = IffNode.Form(IffNode.Parse(loader.Read(path)), "SKMG") ?? throw new InvalidDataException("Not a skeletal mesh");
             var version = skmg.Children.FirstOrDefault(n => n.Kind == "0004") ?? throw new InvalidDataException("Unsupported skeletal mesh version");
@@ -107,10 +107,11 @@ namespace Swg.Client.Core.Characters.Models
             MeshBlendTargets.Apply(version, positions, normals, own, owner);
             var pose = SkeletalPose.Load(loader, satPath, path);
             if (version.Children.Any(n => n.Kind == "TRTS"))
-                Warn(result, "Native texture-renderer compositing is not applied to " + path + "; base textures and palette colors are used.");
+                Warn(result, "Native texture-renderer compositing is not applied to " + path + "; base textures and base palette colors are used; layered facial details remain unsupported.");
+            int shaderIndex = 0;
             foreach (var psdt in version.Children.Where(n => n.Kind == "PSDT"))
             {
-                string shader = new ByteReader(psdt.Chunk("NAME")).CString();
+                string shader = CharacterMaterialLoader.ResolveOwnerShader(loader, new ByteReader(psdt.Chunk("NAME")).CString(), ownerAppearance);
                 byte[] shaderBytes = loader.Read(shader);
                 var shaderNodes = IffNode.Parse(shaderBytes);
                 string diffusePath = CharacterMaterialLoader.MainTexture(shaderNodes);
@@ -128,7 +129,8 @@ namespace Swg.Client.Core.Characters.Models
                     textures.Add(diffusePath, diffuse);
                 }
 
-                byte[] tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, own, owner, message => Warn(result, message));
+                byte[] tint = CharacterMaterialLoader.TextureRendererBaseTint(loader, version, shaderIndex++, own, owner)
+                    ?? CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, own, owner, message => Warn(result, message));
                 var pidx = new ByteReader(psdt.Chunk("PIDX"));
                 int count = checked((int)pidx.U32());
                 if (count > 100000 || pidx.Remaining != count * 4)
@@ -165,6 +167,7 @@ namespace Swg.Client.Core.Characters.Models
                 }
 
                 var triangles = new List<int>();
+                var occlusion = new List<int>();
                 var prim = IffNode.Form(psdt.Children, "PRIM") ?? throw new InvalidDataException("Missing skeletal mesh primitives");
                 foreach (var n in prim.Children)
                 {
@@ -177,8 +180,7 @@ namespace Swg.Client.Core.Characters.Models
                         throw new InvalidDataException("Invalid skeletal mesh triangles");
                     for (int i = 0; i < triangleCount; i++)
                     {
-                        if (stride == 14)
-                            r.U16();
+                        occlusion.Add(stride == 14 ? r.U16() : -1);
                         for (int v = 0; v < 3; v++)
                         {
                             int index = checked((int)r.U32());
@@ -190,7 +192,7 @@ namespace Swg.Client.Core.Characters.Models
                 }
 
                 result.Parts.Add(new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint });
-                result.Sources.Add(new CachedMeshPartSource { ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, MeshVersion = version });
+                result.Sources.Add(new CachedMeshPartSource { ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, TriangleOcclusionCombinations = occlusion.ToArray(), MeshVersion = version });
             }
         }
 

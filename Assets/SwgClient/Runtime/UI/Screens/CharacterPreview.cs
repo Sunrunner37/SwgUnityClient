@@ -7,6 +7,7 @@ using UObj = UnityEngine.Object;
 using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Geometry;
 using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Runtime.Assets.Shaders;
 
 namespace Swg.Client.Runtime.UI.Screens
 {
@@ -16,6 +17,7 @@ namespace Swg.Client.Runtime.UI.Screens
         public Camera previewCamera;
         public Shader characterShader;
         TreRuntimeAssets assets;
+        SwgMaterialFactory materials;
         readonly List<UObj> owned = new List<UObj>();
         readonly Dictionary<string, GameObject> models = new Dictionary<string, GameObject>();
         GameObject modelRoot;
@@ -51,6 +53,7 @@ namespace Swg.Client.Runtime.UI.Screens
         public void Initialize(TreRuntimeAssets source)
         {
             assets = source;
+            materials = GameServices.Resolve<SwgMaterialFactory>();
         }
 
         public void Show(string path)
@@ -96,10 +99,8 @@ namespace Swg.Client.Runtime.UI.Screens
                 var shader = characterShader;
                 if (shader == null)
                     throw new InvalidOperationException("SWG character shader is missing");
-                var material = Own(new Material(shader));
-                material.SetTexture("_BaseMap", assets.Texture(part.Diffuse));
-                material.SetFloat("_Cutoff", sources != null && sources[partIndex].ObjectTemplate.StartsWith("object/tangible/hair/", StringComparison.Ordinal) ? .35f : 0);
-                material.SetColor("_Tint", part.Tint == null ? Color.white : new Color32(part.Tint[0], part.Tint[1], part.Tint[2], 255));
+                bool cutout = sources != null && sources[partIndex].ObjectTemplate.StartsWith("object/tangible/hair/", StringComparison.Ordinal);
+                var material = Own(materials.Create(shader, part.Diffuse, part.Tint, cutout ? .35f : 0, false, TextureWrapMode.Clamp));
                 g.GetComponent<MeshRenderer>().sharedMaterial = material;
             }
 
