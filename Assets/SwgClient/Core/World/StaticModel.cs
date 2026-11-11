@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Sht;
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -249,8 +250,7 @@ namespace Swg.Client.Core.World
                 {
                     var shaderBytes = loader.Read(shader);
                     var shaderNodes = IffNode.Parse(shaderBytes);
-                    diffuse = CharacterMaterialLoader.MainTexture(shaderNodes);
-                    if (diffuse == null)
+                    if (!ShtFile.TryGetMainTexture(shaderNodes, out diffuse))
                         diffuse = References(shaderBytes, "texture/", new[] { ".dds" }).FirstOrDefault(p => !p.EndsWith("_n.dds") && !p.EndsWith("_cn.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds"));
                     if (diffuse != null)
                         texture = Texture(loader, diffuse);

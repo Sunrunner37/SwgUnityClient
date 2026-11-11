@@ -63,7 +63,7 @@ namespace Swg.Client.Runtime.World
             {
                 mesh.SetTriangles(group.Value, submesh);
                 var surface = source.Surfaces.FirstOrDefault(value => value.FamilyId == group.Key);
-                var material = Own(materialsFactory.Create(worldShader, surface?.Diffuse, null, 0, surface?.Diffuse == null, TextureWrapMode.Repeat));
+                var material = Own(materialsFactory.Create(worldShader, surface?.Diffuse, null, 0, true, TextureWrapMode.Repeat));
                 material.name = surface?.Name ?? "Terrain family " + group.Key;
                 float tileSize = surface == null || surface.TileSize <= 0 ? 8 : surface.TileSize;
                 material.SetTextureScale("_BaseMap", Vector2.one / tileSize);

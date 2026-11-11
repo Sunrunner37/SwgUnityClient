@@ -1,10 +1,10 @@
 using System;
-using Swg.Client.Core.Assets.Formats.Binary;
+using Swg.Client.Core.Assets.Formats.Trn;
 
 namespace Swg.Client.Core.World.Terrain
 {
     // Seeded noise and octave composition used by Core3's MapFractal and PerlinNoise.
-    internal sealed class NativeTerrainFractal
+    public sealed class NativeTerrainFractal
     {
         readonly int[] permutation = new int[514];
         readonly float[] gradientX = new float[514];
@@ -22,24 +22,21 @@ namespace Swg.Client.Core.World.Terrain
         readonly float zOffset;
         readonly int combination;
         readonly float normalization;
-        public NativeTerrainFractal(byte[] data)
+        public NativeTerrainFractal(TrnFractal definition)
         {
-            var r = new ByteReader(data);
-            var random = new NativeRandom(unchecked((int)r.U32()));
-            bias = r.U32() != 0;
-            biasValue = r.Float();
-            gain = r.U32() != 0;
-            gainValue = r.Float();
-            octaves = checked((int)r.U32());
-            if (octaves < 1 || octaves > 32)
-                throw new System.IO.InvalidDataException("Invalid terrain fractal octave count");
-            frequencyMultiplier = r.Float();
-            amplitude = r.Float();
-            xFrequency = r.Float();
-            zFrequency = r.Float();
-            xOffset = r.Float();
-            zOffset = r.Float();
-            combination = checked((int)r.U32());
+            var random = new NativeRandom(definition.Seed);
+            bias = definition.Bias;
+            biasValue = definition.BiasValue;
+            gain = definition.Gain;
+            gainValue = definition.GainValue;
+            octaves = definition.Octaves;
+            frequencyMultiplier = definition.FrequencyMultiplier;
+            amplitude = definition.Amplitude;
+            xFrequency = definition.XFrequency;
+            zFrequency = definition.ZFrequency;
+            xOffset = definition.XOffset;
+            zOffset = definition.ZOffset;
+            combination = definition.Combination;
             float sum = 0;
             float weight = 1;
             for (int i = 0; i < octaves; i++)

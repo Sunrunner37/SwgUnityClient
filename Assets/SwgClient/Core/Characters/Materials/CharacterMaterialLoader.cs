@@ -22,25 +22,6 @@ namespace Swg.Client.Core.Characters.Materials
             return "shader/" + Path.GetFileNameWithoutExtension(ownerAppearance.Replace('\\', '/')) + "_" + material + ".sht";
         }
 
-        internal static string MainTexture(List<IffNode> nodes)
-        {
-            var textures = IffNode.Form(nodes, "TXMS");
-            if (textures == null)
-                return null;
-            foreach (var txm in textures.Children.Where(n => n.Kind == "TXM "))
-            {
-                var version = txm.Children.FirstOrDefault(n => n.Kind == "0001" || n.Kind == "0000");
-                if (version == null)
-                    continue;
-                var data = version.Children.FirstOrDefault(n => n.Tag == "DATA")?.Data;
-                var name = version.Children.FirstOrDefault(n => n.Tag == "NAME")?.Data;
-                if (data != null && data.Length >= 4 && name != null && Tag(data, 0) == "MAIN")
-                    return TreAssetLoader.Normalize(new ByteReader(name).CString());
-            }
-
-            return null;
-        }
-
         internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Action<string> warn)
         {
             var factors = IffNode.Form(nodes, "TFAC");
@@ -72,8 +53,7 @@ namespace Swg.Client.Core.Characters.Materials
 
         // TRTS assigns texture-renderer output to specific shader slots in the skeletal mesh.
         // Until layered baking is supported, preserve the base MAIN palette color on that slot.
-        internal static byte[] TextureRendererBaseTint(TreAssetLoader loader, IffNode meshVersion, int shaderIndex,
-            IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner)
+        internal static byte[] TextureRendererBaseTint(TreAssetLoader loader, IffNode meshVersion, int shaderIndex, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner)
         {
             var bindings = IffNode.Form(meshVersion.Children, "TRTS");
             if (bindings == null)
@@ -90,6 +70,7 @@ namespace Swg.Client.Core.Characters.Materials
                     string tag = Tag(reader.Take(4), 0);
                     applies |= slot == shaderIndex && tag == "MAIN";
                 }
+
                 if (!applies)
                     continue;
                 var recipe = IffNode.Parse(loader.Read(path));
@@ -119,6 +100,7 @@ namespace Swg.Client.Core.Characters.Materials
                     }
                 }
             }
+
             return null;
         }
 

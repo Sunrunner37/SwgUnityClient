@@ -8,17 +8,19 @@ namespace Swg.Client.Runtime.World
         public Shader WorldShader { get; private set; }
         public Shader CharacterShader { get; private set; }
         public WorldStreamingSettings Streaming { get; private set; }
+        public WorldFloraRenderer FloraRenderer { get; private set; }
         public WorldSceneObjectRenderer Renderer { get; private set; }
         public MonoBehaviour Owner { get; private set; }
 
         public void Initialize(Shader worldShader, Shader characterShader,
-            WorldStreamingSettings streaming, WorldSceneObjectRenderer renderer, MonoBehaviour owner)
+            WorldStreamingSettings streaming, WorldSceneObjectRenderer renderer, MonoBehaviour owner, WorldFloraRenderer floraRenderer = null)
         {
             WorldShader = worldShader;
             CharacterShader = characterShader;
             Streaming = streaming;
             Renderer = renderer;
             Owner = owner;
+            FloraRenderer = floraRenderer;
         }
     }
 }

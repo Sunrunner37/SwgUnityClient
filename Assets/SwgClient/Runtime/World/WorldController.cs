@@ -16,6 +16,7 @@ namespace Swg.Client.Runtime.World
         public Shader worldShader;
         public Shader characterShader;
         public WorldOrbitCamera orbit;
+        public WorldEnvironment environment;
         public bool IsReady { get; private set; }
         public float Progress => IsReady ? 1 : Streaming?.Progress ?? 0;
         public WorldStreamer Streaming { get; private set; }
@@ -51,7 +52,11 @@ namespace Swg.Client.Runtime.World
                 objectRenderer = new GameObject("World Objects").AddComponent<WorldSceneObjectRenderer>();
                 objectRenderer.transform.SetParent(transform, false);
                 objectRenderer.enabled = false;
-                session.Resolve<WorldRenderingSettings>().Initialize(worldShader, characterShader, settings, objectRenderer, this);
+                var flora = new GameObject("Procedural flora").AddComponent<WorldFloraRenderer>();
+                flora.transform.SetParent(transform, false);
+                flora.Initialize(worldState, worldShader, settings);
+                environment.Initialize(worldState);
+                session.Resolve<WorldRenderingSettings>().Initialize(worldShader, characterShader, settings, objectRenderer, this, flora);
                 meshes = session.Resolve<WorldMeshLibrary>();
                 objectRenderer.Initialize(worldState, Content, loadedData, session.Resolve<GameReplication>(), meshes, settings.uploadsPerFrame);
                 Streaming = session.Resolve<WorldStreamer>();
@@ -73,6 +78,7 @@ namespace Swg.Client.Runtime.World
         {
             if (!IsReady)
                 throw new InvalidOperationException("The world is not ready.");
+            environment.enabled = true;
             revealed = true;
             objectRenderer.enabled = true;
             orbit.enabled = true;

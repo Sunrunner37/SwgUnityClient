@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Sht;
 using Swg.Client.Core.Assets.Formats.Cidm;
 using UnityEngine;
 using System;
@@ -114,8 +115,7 @@ namespace Swg.Client.Core.Characters.Models
                 string shader = CharacterMaterialLoader.ResolveOwnerShader(loader, new ByteReader(psdt.Chunk("NAME")).CString(), ownerAppearance);
                 byte[] shaderBytes = loader.Read(shader);
                 var shaderNodes = IffNode.Parse(shaderBytes);
-                string diffusePath = CharacterMaterialLoader.MainTexture(shaderNodes);
-                if (diffusePath == null)
+                if (!ShtFile.TryGetMainTexture(shaderNodes, out var diffusePath))
                 {
                     diffusePath = References(shaderBytes, "texture/", ".dds").FirstOrDefault(p => !p.EndsWith("_cn.dds") && !p.EndsWith("_n.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds") && !p.Contains("aniso_lookup"));
                     if (diffusePath == null)

@@ -1,3 +1,8 @@
+using Swg.Client.Core.Assets.Formats.Sht;
+using Swg.Client.Core.Assets.Formats.Dds;
+using Swg.Client.Core.Assets.Formats.Iff;
+using Swg.Client.Core.Assets.Formats.Eft;
+using Swg.Client.Core.Characters.Materials;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Core;
@@ -85,13 +90,17 @@ namespace Swg.Client.Runtime.World
             }
         }
 
-        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token)
+        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, HashSet<Vector2Int> loadedFlora = null)
         {
             // Copy settings and caller-owned sets before entering the worker.
             float tileSize = settings.terrainTileSize;
             float spacing = settings.terrainSpacing;
             float radius = settings.terrainRadius;
             float viewRadius = settings.viewRadius;
+            float floraRadius = settings.floraRadius;
+            float floraTileSize = settings.floraTileSize;
+            float floraSpacing = settings.floraSpacing;
+            var flora = loadedFlora == null ? new HashSet<Vector2Int>() : new HashSet<Vector2Int>(loadedFlora);
             var terrain = new HashSet<Vector2Int>(loadedTerrain);
             var scenery = new HashSet<SwgId>(loadedScenery);
             return ReadAsync(loader =>
@@ -106,10 +115,16 @@ namespace Swg.Client.Runtime.World
                 {
                     token.ThrowIfCancellationRequested();
                     if (!terrain.Contains(key))
-                        region.Terrain.Add(key, data.Terrain.BuildPatch(new Vector3((key.x + .5f) * tileSize, 0, (key.y + .5f) * tileSize), tileSize * .5f, spacing));
+                        region.Terrain.Add(key, WorldTerrainPatch.Build(data.Terrain, new Vector3((key.x + .5f) * tileSize, 0, (key.y + .5f) * tileSize), tileSize * .5f, spacing));
                     progress?.Report(new WorldPreparationProgress("Reading original terrain...", .4f * ++count / region.TerrainKeys.Count));
                 }
 
+                region.FloraKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, floraRadius, floraTileSize));
+                foreach (var key in region.FloraKeys)
+                {
+                    token.ThrowIfCancellationRequested();
+                    if (!flora.Contains(key)) region.Flora.Add(key, LoadFloraTile(loader, key, floraTileSize, floraSpacing, token));
+                }
                 var entries = data.Snapshot.Query(serverCenter, viewRadius, 256).ToArray();
                 count = 0;
                 foreach (var entry in entries)
@@ -135,6 +150,77 @@ namespace Swg.Client.Runtime.World
                 progress?.Report(new WorldPreparationProgress("Region assets prepared", 1));
                 return region;
             }, token);
+        }
+
+        TerrainFloraTile LoadFloraTile(TreAssetLoader loader, Vector2Int key, float tileSize, float spacing, CancellationToken token)
+        {
+            var tile = new TerrainFloraTile();
+            var samples = new Dictionary<(int X, int Z), TerrainSample>();
+            TerrainSample At(int x, int z)
+            {
+                if (!samples.TryGetValue((x, z), out var value))
+                {
+                    value = data.Terrain.Sample((x + .5f) * spacing, (z + .5f) * spacing);
+                    samples.Add((x, z), value);
+                }
+                return value;
+            }
+            int minimumX = (int)Math.Ceiling(key.x * tileSize / spacing);
+            int maximumX = (int)Math.Ceiling((key.x + 1) * tileSize / spacing);
+            int minimumZ = (int)Math.Ceiling(key.y * tileSize / spacing);
+            int maximumZ = (int)Math.Ceiling((key.y + 1) * tileSize / spacing);
+            for (int z = minimumZ; z < maximumZ; z++)
+                for (int x = minimumX; x < maximumX; x++)
+                {
+                    token.ThrowIfCancellationRequested();
+                    float serverX = (x + .5f) * spacing;
+                    float serverZ = (z + .5f) * spacing;
+                    var sample = At(x, z);
+                    var random = new TerrainRandom(serverX, serverZ);
+                    void Place(TerrainFloraSelection selection, TerrainFloraKind kind)
+                    {
+                        bool dynamic = kind == TerrainFloraKind.DynamicNear || kind == TerrainFloraKind.DynamicFar;
+                        var item = data.Terrain.Flora.Select(selection, dynamic);
+                        if (item == null || (!dynamic && ((x & 1) != 0 || (z & 1) != 0))) return;
+                        if (!tile.Models.TryGetValue(item.Path, out var model))
+                        {
+                            model = item.Radial ? LoadRadialModel(loader, item) : LoadModel(loader, new WorldAppearance(item.Path));
+                            tile.Models.Add(item.Path, model);
+                        }
+                        if (model.Parts.Count == 0) return;
+                        float height = item.Floats && data.Terrain.HasGlobalWater ? data.Terrain.GlobalWaterHeight : sample.Height;
+                        float scale = item.MinimumScale + (item.MaximumScale - item.MinimumScale) * random.Next();
+                        tile.Placements.Add(new TerrainFloraPlacement(item, kind, new Vector3(serverX, height, serverZ),
+                            item.AlignToTerrain ? new Vector3(At(x - 1, z).Height - At(x + 1, z).Height, spacing * 2, At(x, z - 1).Height - At(x, z + 1).Height).normalized : Vector3.up,
+                            random.Next() * 360, scale));
+                    }
+                    Place(sample.StaticCollidable, TerrainFloraKind.StaticCollidable);
+                    Place(sample.StaticNonCollidable, TerrainFloraKind.StaticNonCollidable);
+                    Place(sample.DynamicNear, TerrainFloraKind.DynamicNear);
+                    Place(sample.DynamicFar, TerrainFloraKind.DynamicFar);
+                }
+            return tile;
+        }
+
+        ModelData LoadRadialModel(TreAssetLoader loader, TerrainFloraItem item)
+        {
+            string key = "radial:" + item.Path;
+            if (models.TryGet(key, out var cached)) return cached;
+            var shader = IffNode.Parse(loader.Read(item.Path));
+            if (!ShtFile.TryGetMainTexture(shader, out var texturePath))
+                throw new InvalidDataException("Radial shader has no MAIN texture: " + item.Path);
+            var texture = TextureData.Load(loader, texturePath);
+            var part = new MeshPart
+            {
+                Vertices = new[] { new Vector3(-.5f, 0, 0), new Vector3(.5f, 0, 0), new Vector3(-.5f, 1, 0), new Vector3(.5f, 1, 0) },
+                Normals = new[] { Vector3.forward, Vector3.forward, Vector3.forward, Vector3.forward },
+                Uvs = new[] { new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, 0), new Vector2(1, 0) },
+                Triangles = new[] { 0, 2, 1, 1, 2, 3 },
+                Diffuse = texture
+            };
+            var result = new ModelData { Key = key, Parts = new List<MeshPart> { part }, AlphaCutout = new[] { true } };
+            models.Add(key, result);
+            return result;
         }
 
         public Task<Dictionary<SwgId, ModelData>> LoadModelsAsync(GameWorldSnapshot snapshot, IReadOnlyDictionary<SwgId, WorldAppearance> appearances, CancellationToken token)

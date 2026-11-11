@@ -1,3 +1,4 @@
+using Swg.Client.Core.World.Terrain;
 using Swg.Client.Core;
 using Swg.Client.Core.Assets;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace Swg.Client.Tests.Editor
             var center = new Vector3(-168.84143f, 36.617496f, -5050.737f);
             var terrain = Swg.Client.Core.World.Terrain.WorldTerrain.Load(loader, "terrain/corellia.trn");
             Check(Math.Abs(terrain.SampleHeight(center.x, center.z) - center.y) < .001f, "Native terrain matches live server spawn height");
-            var patch = terrain.BuildPatch(center, 256, 8);
+            var patch = WorldTerrainPatch.Build(terrain, center, 256, 8);
             Check(patch.Surfaces.Length > 1 && patch.Vertices.Length > 1000, "Native terrain geometry and texture families");
             var nearby = snapshot.Query(center, 500, 256).ToArray();
             Check(nearby.Length == 1205, "Native Misty nearby placements");

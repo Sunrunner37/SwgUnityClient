@@ -65,7 +65,7 @@ namespace Swg.Client.Runtime
                 {
                     var rendering = context.Resolve<WorldRenderingSettings>();
                     return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming,
-                        context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner);
+                        context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
                 }).SingleInstance();
                 builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().SingleInstance();
             });

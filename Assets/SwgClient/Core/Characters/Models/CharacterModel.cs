@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Sht;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +50,8 @@ namespace Swg.Client.Core.Characters.Models
                 if (!materials.TryGetValue(shader, out var texture))
                 {
                     var textures = IffNode.References(shaderBytes, "texture/", ".dds");
-                    string diffuse = CharacterMaterialLoader.MainTexture(IffNode.Parse(shaderBytes)) ?? textures.FirstOrDefault(p => !p.EndsWith("_cn.dds") && !p.EndsWith("_n.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds")) ?? textures.FirstOrDefault() ?? throw new InvalidDataException("Shader has no diffuse texture");
+                    if (!ShtFile.TryGetMainTexture(shaderBytes, out var diffuse))
+                        diffuse = textures.FirstOrDefault(p => !p.EndsWith("_cn.dds") && !p.EndsWith("_n.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds")) ?? textures.FirstOrDefault() ?? throw new InvalidDataException("Shader has no diffuse texture");
                     texture = TextureData.Load(loader, diffuse);
                     materials.Add(shader, texture);
                 }
