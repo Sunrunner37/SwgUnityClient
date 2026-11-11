@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
         public SceneCreateObjectPacketHandler(GameReplication replication) : base(SceneCreateObjectPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(SceneCreateObjectPacket packet)
         {
-            replication.Commit(packet.ObjectId, new GameObjectUpdate { TemplateCrc = packet.TemplateCrc, Position = packet.Position, Rotation = packet.Rotation });
+            replication.Commit(packet.SwgId, new GameObjectUpdate { TemplateCrc = packet.TemplateCrc, Position = packet.Position, Rotation = packet.Rotation });
         }
     }
 }

@@ -10,17 +10,17 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const ushort OperandCount = 2;
         public const uint Opcode = 0x2c436037;
-        public readonly ulong ObjectId;
-        public SceneEndBaselinesPacket(ulong objectId)
+        public readonly ulong SwgId;
+        public SceneEndBaselinesPacket(ulong swgId)
         {
-            ObjectId = objectId;
+            SwgId = swgId;
         }
 
         public void WriteTo(BinaryWriter writer)
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
         }
 
         public static SceneEndBaselinesPacket ReadFrom(ByteReader reader)

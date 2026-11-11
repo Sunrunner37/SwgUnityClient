@@ -25,7 +25,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<ushort, ByteReader, GameObjectUpdate, bool>>
             {
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadDeltaField,
-                [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadDeltaField
+                [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadDeltaField,
+                [(ReplicatedObjectType.Creature, 6)] = CreatureView6.ReadDeltaField
             };
         }
 
@@ -48,7 +49,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             }
 
             ReplicationReader.RequireEnd(reader);
-            replication.Commit(packet.ObjectId, update);
+            replication.Commit(packet.SwgId, update);
         }
     }
 }

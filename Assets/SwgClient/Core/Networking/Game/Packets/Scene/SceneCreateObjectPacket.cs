@@ -9,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const ushort OperandCount = 5;
         public const uint Opcode = 0xfe89ddea;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly Quaternion Rotation;
         public readonly Vector3 Position;
         public readonly uint TemplateCrc;
         public readonly byte Flags;
-        public SceneCreateObjectPacket(ulong objectId, Quaternion rotation, Vector3 position, uint templateCrc, byte flags = 0)
+        public SceneCreateObjectPacket(ulong swgId, Quaternion rotation, Vector3 position, uint templateCrc, byte flags = 0)
         {
-            ObjectId = objectId;
+            SwgId = swgId;
             Rotation = rotation;
             Position = position;
             TemplateCrc = templateCrc;
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Rotation.x);
             writer.Write(Rotation.y);
             writer.Write(Rotation.z);
@@ -43,10 +43,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             if (reader.U16() != OperandCount || reader.U32() != Opcode)
                 throw new InvalidDataException("Unexpected SceneCreateObjectPacket header");
-            ulong id = reader.U64();
+            ulong swgId = reader.U64();
             var rotation = new Quaternion(reader.Float(), reader.Float(), reader.Float(), reader.Float());
             var position = new Vector3(reader.Float(), reader.Float(), reader.Float());
-            return new SceneCreateObjectPacket(id, rotation, position, reader.U32(), reader.Byte());
+            return new SceneCreateObjectPacket(swgId, rotation, position, reader.U32(), reader.Byte());
         }
     }
 }

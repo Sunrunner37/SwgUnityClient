@@ -9,11 +9,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.ImageDesign
     {
         public const uint ControllerType = 0x238;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong DesignerId;
-        public readonly ulong ClientId;
-        public readonly ulong TentId;
+        public readonly ulong DesignerSwgId;
+        public readonly ulong ClientSwgId;
+        public readonly ulong TentSwgId;
         public readonly byte Type;
         ImageDesignChangePacket(ObjectControllerPacket envelope)
         {
@@ -21,12 +21,12 @@ namespace Swg.Client.Core.Networking.Game.Packets.ImageDesign
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected ImageDesignChangePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            DesignerId = reader.U64();
-            ClientId = reader.U64();
-            TentId = reader.U64();
+            DesignerSwgId = reader.U64();
+            ClientSwgId = reader.U64();
+            TentSwgId = reader.U64();
             Type = reader.Byte();
             PacketFieldCodec.End(reader);
         }
@@ -39,11 +39,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.ImageDesign
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(DesignerId);
-            writer.Write(ClientId);
-            writer.Write(TentId);
+            writer.Write(DesignerSwgId);
+            writer.Write(ClientSwgId);
+            writer.Write(TentSwgId);
             writer.Write(Type);
         }
     }

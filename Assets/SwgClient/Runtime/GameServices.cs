@@ -11,6 +11,7 @@ using Swg.Client.Core.Assets.Models;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Assets.Audio;
 using Swg.Client.Runtime.World;
+using Swg.Client.Runtime.Assets.Shaders;
 
 namespace Swg.Client.Runtime
 {
@@ -21,7 +22,6 @@ namespace Swg.Client.Runtime
         internal static ILifetimeScope GameScope => game;
 
         public static T Resolve<T>() => (game ?? (ILifetimeScope)global).Resolve<T>();
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Initialize()
         {
@@ -35,6 +35,7 @@ namespace Swg.Client.Runtime
             builder.RegisterInstance(ClientSettings.From(ini));
             builder.RegisterType<TreRuntimeAssets>().SingleInstance();
             builder.RegisterType<AudioClipLoader>().SingleInstance();
+            builder.RegisterType<SwgMaterialFactory>().SingleInstance();
             builder.RegisterInstance(music).ExternallyOwned();
             builder.RegisterInstance(connection).ExternallyOwned();
             global = builder.Build();
@@ -43,32 +44,44 @@ namespace Swg.Client.Runtime
 
         internal static void BeginGame()
         {
+            // These singletons are owned by the current game lifetime.
             game = global.BeginLifetimeScope(builder =>
             {
-                builder.RegisterType<SceneObjectRegistry>().InstancePerLifetimeScope().OnRelease(value => value.Clear());
-                builder.RegisterType<WorldState>().InstancePerLifetimeScope();
+                builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
+                builder.RegisterType<WorldState>().SingleInstance();
                 builder.Register(context =>
                 {
                     var replication = new GameObject("Game replication").AddComponent<GameReplication>();
                     replication.Initialize(context.Resolve<WorldState>());
                     UnityEngine.Object.DontDestroyOnLoad(replication.gameObject);
                     return replication;
-                }).AsSelf().InstancePerLifetimeScope().AutoActivate();
-                builder.RegisterType<ModelCache>().InstancePerLifetimeScope();
+                }).AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<ModelCache>().SingleInstance();
+                builder.RegisterType<WorldContentLoader>().SingleInstance();
+                builder.RegisterType<WorldRenderingSettings>().SingleInstance();
+                builder.RegisterType<WorldMeshLibrary>().SingleInstance();
+                builder.RegisterType<WorldTerrainRenderer>().SingleInstance();
                 builder.Register(context =>
                 {
-                    var settings = context.Resolve<ClientSettings>();
-                    var connection = context.Resolve<ClientConnection>();
-                    return new WorldContentLoader(context.Resolve<TreRuntimeAssets>(), context.Resolve<WorldState>(), context.Resolve<ModelCache>(), settings.AppearanceCacheDirectory, settings.LoginEndpoint, connection.Username, connection.Admission.Galaxy.Name);
-                }).InstancePerLifetimeScope();
-                builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().InstancePerLifetimeScope();
+                    var rendering = context.Resolve<WorldRenderingSettings>();
+                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming,
+                        context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner);
+                }).SingleInstance();
+                builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().SingleInstance();
             });
+        }
+
+        internal static void EndGame(ILifetimeScope session)
+        {
+            if (session != null && ReferenceEquals(game, session))
+                EndGame();
         }
 
         internal static void EndGame()
         {
             game?.Dispose();
             game = null;
+            ManagedSceneObject.ResetPlayerCache();
         }
 
         internal static void Shutdown()

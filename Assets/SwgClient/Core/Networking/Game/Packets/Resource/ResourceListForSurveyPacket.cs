@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Resource
         public readonly ushort OperandCount;
         public readonly SurveyResource[] Resources;
         public readonly string ResourceType;
-        public readonly ulong PlayerId;
+        public readonly ulong PlayerSwgId;
         ResourceListForSurveyPacket(ByteReader reader)
         {
             this = default;
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Resource
             for (int i = 0; i < Resources.Length; i++)
                 Resources[i] = SurveyResource.ReadFrom(reader);
             ResourceType = reader.Ascii();
-            PlayerId = reader.U64();
+            PlayerSwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Resource
             foreach (var item in Resources)
                 item.WriteTo(writer);
             PacketFieldCodec.Ascii(writer, ResourceType);
-            writer.Write(PlayerId);
+            writer.Write(PlayerSwgId);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
         public readonly string EffectFile;
         public readonly string Planet;
         public readonly Vector3 Position;
-        public readonly ulong CellId;
+        public readonly ulong CellSwgId;
         public readonly int TerrainDelta;
         public readonly string Label;
         PlayClientEffectLocPacket(ByteReader reader)
@@ -25,7 +25,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
             EffectFile = reader.Ascii();
             Planet = reader.Ascii();
             Position = PacketFieldCodec.Position(reader);
-            CellId = reader.U64();
+            CellSwgId = reader.U64();
             TerrainDelta = unchecked((int)reader.U32());
             Label = reader.Ascii();
             PacketFieldCodec.End(reader);
@@ -39,7 +39,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
             PacketFieldCodec.Ascii(writer, EffectFile);
             PacketFieldCodec.Ascii(writer, Planet);
             PacketFieldCodec.Position(writer, Position);
-            writer.Write(CellId);
+            writer.Write(CellSwgId);
             writer.Write(TerrainDelta);
             PacketFieldCodec.Ascii(writer, Label);
         }

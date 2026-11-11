@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             {
                 Debug.LogWarning("Unsupported baseline type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);
                 // Preserve identity even when this object's view is not implemented yet.
-                replication.Commit(packet.ObjectId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.Commit(packet.SwgId, new GameObjectUpdate { BaselineType = packet.ObjectType });
                 return;
             }
 
@@ -44,7 +44,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             var update = read(reader);
             ReplicationReader.RequireEnd(reader);
             update.BaselineType = packet.ObjectType;
-            replication.Commit(packet.ObjectId, update);
+            replication.Commit(packet.SwgId, update);
         }
     }
 }

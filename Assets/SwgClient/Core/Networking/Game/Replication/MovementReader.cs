@@ -15,7 +15,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Float();
             return new GameObjectUpdate
             {
-                ParentId = parent,
+                ParentSwgId = parent,
                 Position = position,
                 Rotation = rotation,
                 MovementCounter = movement

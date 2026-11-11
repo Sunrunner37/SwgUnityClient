@@ -9,9 +9,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
     {
         public const uint ControllerType = 0x1db;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong PlayerId;
+        public readonly ulong PlayerSwgId;
         public readonly string Biography;
         BiographyPacket(ObjectControllerPacket envelope)
         {
@@ -19,10 +19,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected BiographyPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            PlayerId = reader.U64();
+            PlayerSwgId = reader.U64();
             Biography = reader.Unicode();
             PacketFieldCodec.End(reader);
         }
@@ -35,9 +35,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(PlayerId);
+            writer.Write(PlayerSwgId);
             PacketFieldCodec.Unicode(writer, Biography);
         }
     }

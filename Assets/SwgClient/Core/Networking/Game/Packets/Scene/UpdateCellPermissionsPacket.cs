@@ -10,7 +10,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         public const uint Opcode = 0xf612499c;
         public readonly ushort OperandCount;
         public readonly byte AllowEntry;
-        public readonly ulong CellId;
+        public readonly ulong CellSwgId;
         UpdateCellPermissionsPacket(ByteReader reader)
         {
             this = default;
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected UpdateCellPermissionsPacket header");
             AllowEntry = reader.Byte();
-            CellId = reader.U64();
+            CellSwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -28,7 +28,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
             writer.Write(OperandCount);
             writer.Write(Opcode);
             writer.Write(AllowEntry);
-            writer.Write(CellId);
+            writer.Write(CellSwgId);
         }
     }
 }

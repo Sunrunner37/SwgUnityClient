@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
     {
         public const uint Opcode = 0x6d89d25b;
         public readonly ushort OperandCount;
-        public readonly ulong PlayerId;
+        public readonly ulong PlayerSwgId;
         public readonly uint ReportedCount;
         public readonly uint[] Bitmasks;
         public readonly uint[] Reserved;
@@ -19,7 +19,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected BadgesResponsePacket header");
-            PlayerId = reader.U64();
+            PlayerSwgId = reader.U64();
             ReportedCount = reader.U32();
             Bitmasks = new uint[5];
             for (int i = 0; i < Bitmasks.Length; i++)
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(PlayerId);
+            writer.Write(PlayerSwgId);
             writer.Write(ReportedCount);
             foreach (var item in Bitmasks)
                 writer.Write(item);

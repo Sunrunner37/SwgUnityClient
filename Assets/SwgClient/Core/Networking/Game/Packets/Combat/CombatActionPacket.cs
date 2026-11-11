@@ -9,11 +9,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
     {
         public const uint ControllerType = 0xcc;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly uint AnimationCrc;
-        public readonly ulong AttackerId;
-        public readonly ulong WeaponId;
+        public readonly ulong AttackerSwgId;
+        public readonly ulong WeaponSwgId;
         public readonly byte AttackerPosture;
         public readonly byte Trails;
         public readonly byte Reserved;
@@ -25,12 +25,12 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
             if (packet.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CombatActionPacket controller type");
             Flags = packet.Flags;
-            ReceiverId = packet.ObjectId;
+            ReceiverSwgId = packet.SwgId;
             EnvelopeReserved = packet.Reserved;
             var reader = new ByteReader(packet.Payload);
             AnimationCrc = reader.U32();
-            AttackerId = reader.U64();
-            WeaponId = reader.U64();
+            AttackerSwgId = reader.U64();
+            WeaponSwgId = reader.U64();
             AttackerPosture = reader.Byte();
             Trails = reader.Byte();
             Reserved = reader.Byte();
@@ -60,11 +60,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(AnimationCrc);
-            writer.Write(AttackerId);
-            writer.Write(WeaponId);
+            writer.Write(AttackerSwgId);
+            writer.Write(WeaponSwgId);
             writer.Write(AttackerPosture);
             writer.Write(Trails);
             writer.Write(Reserved);

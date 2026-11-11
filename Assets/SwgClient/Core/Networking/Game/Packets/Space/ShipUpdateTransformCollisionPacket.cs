@@ -10,7 +10,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
     {
         public const uint Opcode = 0x763648d0;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly Quaternion Rotation;
         public readonly Vector3 Position;
         public readonly Vector3 Velocity;
@@ -21,7 +21,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 8))
                 throw new InvalidDataException("Unexpected ShipUpdateTransformCollisionPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Rotation = PacketFieldCodec.Rotation(reader);
             Position = PacketFieldCodec.Position(reader);
             Velocity = PacketFieldCodec.Vector(reader);
@@ -34,7 +34,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             PacketFieldCodec.Rotation(writer, Rotation);
             PacketFieldCodec.Position(writer, Position);
             PacketFieldCodec.Vector(writer, Velocity);

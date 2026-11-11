@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public readonly ulong PointerId;
         public readonly uint PlanetCrc;
         public readonly string Name;
-        public readonly ulong CellId;
+        public readonly ulong CellSwgId;
         public readonly byte Color;
         public readonly byte Active;
         ChatWaypoint(ByteReader reader)
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
             PointerId = reader.U64();
             PlanetCrc = reader.U32();
             Name = reader.Unicode();
-            CellId = reader.U64();
+            CellSwgId = reader.U64();
             Color = reader.Byte();
             Active = reader.Byte();
         }
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
             writer.Write(PointerId);
             writer.Write(PlanetCrc);
             PacketFieldCodec.Unicode(writer, Name);
-            writer.Write(CellId);
+            writer.Write(CellSwgId);
             writer.Write(Color);
             writer.Write(Active);
         }

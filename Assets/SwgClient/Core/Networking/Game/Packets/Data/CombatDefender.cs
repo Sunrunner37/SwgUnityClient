@@ -6,7 +6,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
     public readonly struct CombatDefender
     {
         public readonly ushort Index;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly byte Posture;
         public readonly byte Hit;
         public readonly byte Reserved;
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
             this = default;
             if (extended)
                 Index = reader.U16();
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Posture = reader.Byte();
             Hit = reader.Byte();
             Reserved = reader.Byte();
@@ -32,7 +32,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         {
             if (extended)
                 writer.Write(Index);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Posture);
             writer.Write(Hit);
             writer.Write(Reserved);

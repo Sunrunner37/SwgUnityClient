@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
     {
         public const uint Opcode = 0x8fcbef4a;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly uint Result;
         BidAuctionResponsePacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected BidAuctionResponsePacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Result = reader.U32();
             PacketFieldCodec.End(reader);
         }
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Result);
         }
     }

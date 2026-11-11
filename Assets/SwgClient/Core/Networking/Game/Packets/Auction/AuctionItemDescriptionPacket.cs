@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
     {
         public const uint Opcode = 0xfe0e644b;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly string Description;
         public readonly AttributeValue[] Attributes;
         public readonly uint? Reserved;
@@ -21,7 +21,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 2))
                 throw new InvalidDataException("Unexpected AuctionItemDescriptionPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Description = reader.Unicode();
             Attributes = new AttributeValue[PacketFieldCodec.Count(reader, reader.U32(), 6)];
             for (int i = 0; i < Attributes.Length; i++)
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             PacketFieldCodec.Unicode(writer, Description);
             writer.Write(checked((uint)Attributes.Length));
             foreach (var item in Attributes)

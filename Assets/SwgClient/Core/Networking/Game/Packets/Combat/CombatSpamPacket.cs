@@ -9,11 +9,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
     {
         public const uint ControllerType = 0x134;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong AttackerId;
-        public readonly ulong DefenderId;
-        public readonly ulong ItemId;
+        public readonly ulong AttackerSwgId;
+        public readonly ulong DefenderSwgId;
+        public readonly ulong ItemSwgId;
         public readonly uint Damage;
         public readonly StringIdReference StringId;
         public readonly byte Color;
@@ -24,12 +24,12 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CombatSpamPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            AttackerId = reader.U64();
-            DefenderId = reader.U64();
-            ItemId = reader.U64();
+            AttackerSwgId = reader.U64();
+            DefenderSwgId = reader.U64();
+            ItemSwgId = reader.U64();
             Damage = reader.U32();
             StringId = StringIdReference.ReadFrom(reader);
             Color = reader.Byte();
@@ -45,11 +45,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(AttackerId);
-            writer.Write(DefenderId);
-            writer.Write(ItemId);
+            writer.Write(AttackerSwgId);
+            writer.Write(DefenderSwgId);
+            writer.Write(ItemSwgId);
             writer.Write(Damage);
             StringId.WriteTo(writer);
             writer.Write(Color);

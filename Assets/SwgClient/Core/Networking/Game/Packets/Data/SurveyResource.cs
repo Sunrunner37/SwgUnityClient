@@ -6,13 +6,13 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
     public readonly struct SurveyResource
     {
         public readonly string Name;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly string Type;
         SurveyResource(ByteReader reader)
         {
             this = default;
             Name = reader.Ascii();
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Type = reader.Ascii();
         }
 
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public void WriteTo(BinaryWriter writer)
         {
             PacketFieldCodec.Ascii(writer, Name);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             PacketFieldCodec.Ascii(writer, Type);
         }
     }

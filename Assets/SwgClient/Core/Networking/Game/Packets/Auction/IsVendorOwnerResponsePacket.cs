@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
         public readonly ushort OperandCount;
         public readonly uint Rights;
         public readonly uint ErrorCode;
-        public readonly ulong VendorId;
+        public readonly ulong VendorSwgId;
         public readonly string VendorUid;
         public readonly ushort Reserved;
         IsVendorOwnerResponsePacket(ByteReader reader)
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
                 throw new InvalidDataException("Unexpected IsVendorOwnerResponsePacket header");
             Rights = reader.U32();
             ErrorCode = reader.U32();
-            VendorId = reader.U64();
+            VendorSwgId = reader.U64();
             VendorUid = reader.Ascii();
             Reserved = reader.U16();
             PacketFieldCodec.End(reader);
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
             writer.Write(Opcode);
             writer.Write(Rights);
             writer.Write(ErrorCode);
-            writer.Write(VendorId);
+            writer.Write(VendorSwgId);
             PacketFieldCodec.Ascii(writer, VendorUid);
             writer.Write(Reserved);
         }

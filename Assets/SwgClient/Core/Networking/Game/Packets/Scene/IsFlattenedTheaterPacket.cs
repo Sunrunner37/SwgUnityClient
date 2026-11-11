@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const uint Opcode = 0x4eb0b06a;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly byte ShouldFlatten;
         IsFlattenedTheaterPacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected IsFlattenedTheaterPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             ShouldFlatten = reader.Byte();
             PacketFieldCodec.End(reader);
         }
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(ShouldFlatten);
         }
     }

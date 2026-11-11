@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
     {
         public const uint ControllerType = 0x41d;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly uint ShipCount;
         JtlShipListResponsePacket(ObjectControllerPacket envelope)
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected JtlShipListResponsePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             ShipCount = reader.U32();
@@ -33,7 +33,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(ShipCount);
         }

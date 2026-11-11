@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
         public UpdateTransformWithParentPacketHandler(GameReplication replication) : base(UpdateTransformWithParentPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(UpdateTransformWithParentPacket packet)
         {
-            replication.Commit(packet.ObjectId, new GameObjectUpdate { ParentId = packet.ParentId, Position = packet.Position, Rotation = MovementReader.Heading(packet.Direction), MovementCounter = packet.MovementCounter });
+            replication.Commit(packet.SwgId, new GameObjectUpdate { ParentSwgId = packet.ParentSwgId, Position = packet.Position, Rotation = MovementReader.Heading(packet.Direction), MovementCounter = packet.MovementCounter });
         }
     }
 }

@@ -5,15 +5,15 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
 {
     public readonly struct AuctionHeader
     {
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly byte NameIndex;
         public readonly int Price;
         public readonly uint SecondsRemaining;
         public readonly byte InstantSale;
         public readonly ushort VendorIndex;
-        public readonly ulong OwnerId;
+        public readonly ulong OwnerSwgId;
         public readonly ushort OwnerNameIndex;
-        public readonly ulong BuyerId;
+        public readonly ulong BuyerSwgId;
         public readonly ushort BuyerNameIndex;
         public readonly int ProxyPrice;
         public readonly int CurrentPrice;
@@ -23,15 +23,15 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         AuctionHeader(ByteReader reader)
         {
             this = default;
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             NameIndex = reader.Byte();
             Price = unchecked((int)reader.U32());
             SecondsRemaining = reader.U32();
             InstantSale = reader.Byte();
             VendorIndex = reader.U16();
-            OwnerId = reader.U64();
+            OwnerSwgId = reader.U64();
             OwnerNameIndex = reader.U16();
-            BuyerId = reader.U64();
+            BuyerSwgId = reader.U64();
             BuyerNameIndex = reader.U16();
             ProxyPrice = unchecked((int)reader.U32());
             CurrentPrice = unchecked((int)reader.U32());
@@ -43,15 +43,15 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public static AuctionHeader ReadFrom(ByteReader reader) => new AuctionHeader(reader);
         public void WriteTo(BinaryWriter writer)
         {
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(NameIndex);
             writer.Write(Price);
             writer.Write(SecondsRemaining);
             writer.Write(InstantSale);
             writer.Write(VendorIndex);
-            writer.Write(OwnerId);
+            writer.Write(OwnerSwgId);
             writer.Write(OwnerNameIndex);
-            writer.Write(BuyerId);
+            writer.Write(BuyerSwgId);
             writer.Write(BuyerNameIndex);
             writer.Write(ProxyPrice);
             writer.Write(CurrentPrice);

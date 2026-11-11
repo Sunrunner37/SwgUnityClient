@@ -9,10 +9,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Ui
     {
         public const uint ControllerType = 0x147;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong TargetId;
-        public readonly ulong PlayerId;
+        public readonly ulong TargetSwgId;
+        public readonly ulong PlayerSwgId;
         public readonly RadialMenuEntry[] Items;
         public readonly byte Counter;
         ObjectMenuResponsePacket(ObjectControllerPacket envelope)
@@ -21,11 +21,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Ui
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected ObjectMenuResponsePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            TargetId = reader.U64();
-            PlayerId = reader.U64();
+            TargetSwgId = reader.U64();
+            PlayerSwgId = reader.U64();
             Items = new RadialMenuEntry[PacketFieldCodec.Count(reader, reader.U32(), 8)];
             for (int i = 0; i < Items.Length; i++)
                 Items[i] = RadialMenuEntry.ReadFrom(reader);
@@ -41,10 +41,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Ui
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(TargetId);
-            writer.Write(PlayerId);
+            writer.Write(TargetSwgId);
+            writer.Write(PlayerSwgId);
             writer.Write(checked((uint)Items.Length));
             foreach (var item in Items)
                 item.WriteTo(writer);

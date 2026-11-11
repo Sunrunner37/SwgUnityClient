@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
         public readonly ushort OperandCount;
         public readonly string File;
         public readonly string Auxiliary;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         PlayClientEffectObjectPacket(ByteReader reader)
         {
             this = default;
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
                 throw new InvalidDataException("Unexpected PlayClientEffectObjectPacket header");
             File = reader.Ascii();
             Auxiliary = reader.Ascii();
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -31,7 +31,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
             writer.Write(Opcode);
             PacketFieldCodec.Ascii(writer, File);
             PacketFieldCodec.Ascii(writer, Auxiliary);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
         }
     }
 }

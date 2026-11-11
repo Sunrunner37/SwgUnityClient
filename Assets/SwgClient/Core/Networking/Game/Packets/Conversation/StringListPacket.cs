@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Conversation
     {
         public const uint ControllerType = 0xe0;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly string[] Options;
         StringListPacket(ObjectControllerPacket envelope)
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Conversation
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected StringListPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             Options = new string[PacketFieldCodec.Count(reader, reader.Byte(), 4)];
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Conversation
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(checked((byte)Options.Length));
             foreach (var item in Options)

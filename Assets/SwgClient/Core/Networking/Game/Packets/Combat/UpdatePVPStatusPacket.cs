@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
         public readonly ushort OperandCount;
         public readonly uint PvpStatus;
         public readonly uint Faction;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         UpdatePVPStatusPacket(ByteReader reader)
         {
             this = default;
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
                 throw new InvalidDataException("Unexpected UpdatePVPStatusPacket header");
             PvpStatus = reader.U32();
             Faction = reader.U32();
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -31,7 +31,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Combat
             writer.Write(Opcode);
             writer.Write(PvpStatus);
             writer.Write(Faction);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
         }
     }
 }

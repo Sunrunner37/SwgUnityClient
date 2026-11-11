@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
     {
         public const uint ControllerType = 0x1bf;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly uint ClientCrc;
         public readonly uint ServerCrc;
@@ -24,7 +24,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected DraftSchematicSlotsPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             ClientCrc = reader.U32();
@@ -47,7 +47,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(ClientCrc);
             writer.Write(ServerCrc);

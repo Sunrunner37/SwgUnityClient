@@ -9,14 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Packets.Trade
     {
         public const uint Opcode = 0x1e8d1356;
         public readonly ushort OperandCount;
-        public readonly ulong ItemId;
+        public readonly ulong ItemSwgId;
         AddItemPacket(ByteReader reader)
         {
             this = default;
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 1))
                 throw new InvalidDataException("Unexpected AddItemPacket header");
-            ItemId = reader.U64();
+            ItemSwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -25,7 +25,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Trade
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ItemId);
+            writer.Write(ItemSwgId);
         }
     }
 }

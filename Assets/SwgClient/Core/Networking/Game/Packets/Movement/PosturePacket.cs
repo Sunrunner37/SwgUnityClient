@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
     {
         public const uint ControllerType = 0x131;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly byte Posture;
         public readonly byte Reserved;
@@ -19,7 +19,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected PosturePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             Posture = reader.Byte();
@@ -35,7 +35,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(Posture);
             writer.Write(Reserved);

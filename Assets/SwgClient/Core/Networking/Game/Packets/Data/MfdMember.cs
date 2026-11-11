@@ -7,13 +7,13 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
     public readonly struct MfdMember
     {
         public readonly string Planet;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly Vector3 Position;
         MfdMember(ByteReader reader)
         {
             this = default;
             Planet = reader.Ascii();
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Position = PacketFieldCodec.Position(reader);
         }
 
@@ -21,7 +21,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public void WriteTo(BinaryWriter writer)
         {
             PacketFieldCodec.Ascii(writer, Planet);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             PacketFieldCodec.Position(writer, Position);
         }
     }

@@ -9,10 +9,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
     {
         public const uint ControllerType = 0x12e;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong SenderId;
-        public readonly ulong TargetId;
+        public readonly ulong SenderSwgId;
+        public readonly ulong TargetSwgId;
         public readonly uint EmoteId;
         public readonly byte DisplayFlags;
         EmotePacket(ObjectControllerPacket envelope)
@@ -21,11 +21,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected EmotePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            SenderId = reader.U64();
-            TargetId = reader.U64();
+            SenderSwgId = reader.U64();
+            TargetSwgId = reader.U64();
             EmoteId = reader.U32();
             DisplayFlags = reader.Byte();
             PacketFieldCodec.End(reader);
@@ -39,10 +39,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(SenderId);
-            writer.Write(TargetId);
+            writer.Write(SenderSwgId);
+            writer.Write(TargetSwgId);
             writer.Write(EmoteId);
             writer.Write(DisplayFlags);
         }

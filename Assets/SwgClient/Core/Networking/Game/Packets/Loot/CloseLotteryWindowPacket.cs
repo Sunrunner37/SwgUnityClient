@@ -9,19 +9,19 @@ namespace Swg.Client.Core.Networking.Game.Packets.Loot
     {
         public const uint ControllerType = 0x43d;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong InventoryId;
+        public readonly ulong InventorySwgId;
         CloseLotteryWindowPacket(ObjectControllerPacket envelope)
         {
             this = default;
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CloseLotteryWindowPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            InventoryId = reader.U64();
+            InventorySwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -33,9 +33,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Loot
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(InventoryId);
+            writer.Write(InventorySwgId);
         }
     }
 }

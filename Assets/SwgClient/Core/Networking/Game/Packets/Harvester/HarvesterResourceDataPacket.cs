@@ -9,9 +9,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Harvester
     {
         public const uint ControllerType = 0xea;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong HarvesterId;
+        public readonly ulong HarvesterSwgId;
         public readonly HarvesterResource[] Resources;
         HarvesterResourceDataPacket(ObjectControllerPacket envelope)
         {
@@ -19,10 +19,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Harvester
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected HarvesterResourceDataPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            HarvesterId = reader.U64();
+            HarvesterSwgId = reader.U64();
             Resources = new HarvesterResource[PacketFieldCodec.Count(reader, reader.U32(), 13)];
             for (int i = 0; i < Resources.Length; i++)
                 Resources[i] = HarvesterResource.ReadFrom(reader);
@@ -37,9 +37,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Harvester
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(HarvesterId);
+            writer.Write(HarvesterSwgId);
             writer.Write(checked((uint)Resources.Length));
             foreach (var item in Resources)
                 item.WriteTo(writer);

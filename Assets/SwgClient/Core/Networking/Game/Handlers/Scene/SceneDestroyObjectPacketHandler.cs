@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
         public SceneDestroyObjectPacketHandler(GameReplication replication) : base(SceneDestroyObjectPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(SceneDestroyObjectPacket packet)
         {
-            replication.Remove(packet.ObjectId);
+            replication.Remove(packet.SwgId);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
 {
     public readonly struct MapLocation
     {
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly string Name;
         public readonly float X;
         public readonly float Y;
@@ -15,7 +15,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         MapLocation(ByteReader reader)
         {
             this = default;
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Name = reader.Unicode();
             X = reader.Float();
             Y = reader.Float();
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public static MapLocation ReadFrom(ByteReader reader) => new MapLocation(reader);
         public void WriteTo(BinaryWriter writer)
         {
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             PacketFieldCodec.Unicode(writer, Name);
             writer.Write(X);
             writer.Write(Y);

@@ -8,7 +8,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public readonly uint Id;
         public readonly string RootPage;
         public readonly SuiCommandData[] Commands;
-        public readonly ulong TargetId;
+        public readonly ulong TargetSwgId;
         public readonly float ForceCloseDistance;
         public readonly ulong UnknownId;
         public readonly uint? ExtraFooterWord;
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
             Commands = new SuiCommandData[PacketFieldCodec.Count(reader, reader.U32(), 9)];
             for (int i = 0; i < Commands.Length; i++)
                 Commands[i] = SuiCommandData.ReadFrom(reader);
-            TargetId = reader.U64();
+            TargetSwgId = reader.U64();
             ForceCloseDistance = reader.Float();
             UnknownId = reader.U64();
             ExtraFooterWord = reader.Remaining == 0 ? (uint? )null : reader.U32();
@@ -34,7 +34,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
             writer.Write(checked((uint)Commands.Length));
             foreach (var item in Commands)
                 item.WriteTo(writer);
-            writer.Write(TargetId);
+            writer.Write(TargetSwgId);
             writer.Write(ForceCloseDistance);
             writer.Write(UnknownId);
             if (ExtraFooterWord.HasValue)

@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const uint Opcode = 0xdca57409;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly string SlotName;
         public readonly uint Reserved;
         public readonly ushort Mode;
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
             OperandCount = reader.U16();
             if (OperandCount != 4 || reader.U32() != Opcode)
                 throw new InvalidDataException("Unexpected ClientOpenContainerPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             // The object constructors append a zero uint + mode; the slot constructor appends an ASCII string.
             UsesSlotName = reader.Remaining != 6 || ByteReader.At(reader.Bytes, reader.Position) != 0;
             if (UsesSlotName)
@@ -39,7 +39,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             if (UsesSlotName)
                 PacketFieldCodec.Ascii(writer, SlotName);
             else

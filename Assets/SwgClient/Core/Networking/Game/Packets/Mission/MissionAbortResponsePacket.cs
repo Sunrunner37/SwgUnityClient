@@ -9,19 +9,19 @@ namespace Swg.Client.Core.Networking.Game.Packets.Mission
     {
         public const uint ControllerType = 0x142;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong MissionId;
+        public readonly ulong MissionSwgId;
         MissionAbortResponsePacket(ObjectControllerPacket envelope)
         {
             this = default;
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected MissionAbortResponsePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            MissionId = reader.U64();
+            MissionSwgId = reader.U64();
             PacketFieldCodec.End(reader);
         }
 
@@ -33,9 +33,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Mission
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(MissionId);
+            writer.Write(MissionSwgId);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Swg.Client.Core.Networking.Login.Packets
                 var c = Characters[i];
                 Wire.Unicode(writer, c.Name);
                 writer.Write(c.Race);
-                writer.Write(c.ObjectId);
+                writer.Write(c.SwgId);
                 writer.Write(c.GalaxyId);
                 writer.Write(c.ServerStatus);
             }

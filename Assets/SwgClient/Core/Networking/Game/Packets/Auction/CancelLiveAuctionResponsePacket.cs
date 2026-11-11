@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
     {
         public const uint Opcode = 0x7da2246c;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly uint Result;
         public readonly byte Reserved;
         CancelLiveAuctionResponsePacket(ByteReader reader)
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 4))
                 throw new InvalidDataException("Unexpected CancelLiveAuctionResponsePacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Result = reader.U32();
             Reserved = reader.Byte();
             PacketFieldCodec.End(reader);
@@ -29,7 +29,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Auction
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Result);
             writer.Write(Reserved);
         }

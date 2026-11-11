@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
     {
         public const uint ControllerType = 0xf2;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly string Animation;
         AnimationPacket(ObjectControllerPacket envelope)
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected AnimationPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             Animation = reader.Ascii();
@@ -33,7 +33,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Effects
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             PacketFieldCodec.Ascii(writer, Animation);
         }

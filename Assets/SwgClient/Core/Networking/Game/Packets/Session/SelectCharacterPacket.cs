@@ -10,17 +10,17 @@ namespace Swg.Client.Core.Networking.Game.Packets.Session
     {
         public const ushort OperandCount = 2;
         public const uint Opcode = 0xb5098d76;
-        public readonly ulong ObjectId;
-        public SelectCharacterPacket(ulong objectId)
+        public readonly ulong SwgId;
+        public SelectCharacterPacket(ulong swgId)
         {
-            ObjectId = objectId;
+            SwgId = swgId;
         }
 
         public void WriteTo(BinaryWriter writer)
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
         }
 
         public static SelectCharacterPacket ReadFrom(ByteReader reader)

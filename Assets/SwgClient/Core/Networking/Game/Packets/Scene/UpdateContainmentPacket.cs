@@ -10,13 +10,13 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const ushort OperandCount = 4;
         public const uint Opcode = 0x56cbde9e;
-        public readonly ulong ObjectId;
-        public readonly ulong ParentId;
+        public readonly ulong SwgId;
+        public readonly ulong ParentSwgId;
         public readonly uint Arrangement;
-        public UpdateContainmentPacket(ulong objectId, ulong parentId, uint arrangement)
+        public UpdateContainmentPacket(ulong swgId, ulong parentSwgId, uint arrangement)
         {
-            ObjectId = objectId;
-            ParentId = parentId;
+            SwgId = swgId;
+            ParentSwgId = parentSwgId;
             Arrangement = arrangement;
         }
 
@@ -24,8 +24,8 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
-            writer.Write(ParentId);
+            writer.Write(SwgId);
+            writer.Write(ParentSwgId);
             writer.Write(Arrangement);
         }
 

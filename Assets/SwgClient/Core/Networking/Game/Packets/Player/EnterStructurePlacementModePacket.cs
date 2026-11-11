@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
     {
         public const uint Opcode = 0xe8a54dc1;
         public readonly ushort OperandCount;
-        public readonly ulong DeedId;
+        public readonly ulong DeedSwgId;
         public readonly string TemplatePath;
         EnterStructurePlacementModePacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected EnterStructurePlacementModePacket header");
-            DeedId = reader.U64();
+            DeedSwgId = reader.U64();
             TemplatePath = reader.Ascii();
             PacketFieldCodec.End(reader);
         }
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(DeedId);
+            writer.Write(DeedSwgId);
             PacketFieldCodec.Ascii(writer, TemplatePath);
         }
     }

@@ -22,21 +22,21 @@ namespace Swg.Client.Core.Networking.Login
         int sceneReadyRequested;
         readonly struct WorldSelection
         {
-            public readonly ulong CharacterId;
+            public readonly ulong CharacterSwgId;
             public readonly ILifetimeScope Services;
-            public WorldSelection(ulong characterId, ILifetimeScope services)
+            public WorldSelection(ulong characterSwgId, ILifetimeScope services)
             {
-                CharacterId = characterId;
+                CharacterSwgId = characterSwgId;
                 Services = services;
             }
         }
 
-        public void SelectCharacter(ulong characterId, ILifetimeScope services)
+        public void SelectCharacter(ulong characterSwgId, ILifetimeScope services)
         {
-            if (characterId == 0 || services == null || stop.IsCancellationRequested)
+            if (characterSwgId == 0 || services == null || stop.IsCancellationRequested)
                 throw new InvalidOperationException("No active connection for character selection.");
             Interlocked.Exchange(ref sceneReadyRequested, 0);
-            selections.Enqueue(new WorldSelection(characterId, services));
+            selections.Enqueue(new WorldSelection(characterSwgId, services));
         }
 
         public void ConfirmSceneReady() => Interlocked.Exchange(ref sceneReadyRequested, 1);
@@ -134,7 +134,7 @@ namespace Swg.Client.Core.Networking.Login
                             {
                                 gamePackets = new GamePacketRouter(selection.Services);
                                 Progress("Loading selected character...");
-                                zone.SendData(new SelectCharacterPacket(selection.CharacterId));
+                                zone.SendData(new SelectCharacterPacket(selection.CharacterSwgId));
                             }
 
                             if (gamePackets != null && Interlocked.Exchange(ref sceneReadyRequested, 0) != 0)

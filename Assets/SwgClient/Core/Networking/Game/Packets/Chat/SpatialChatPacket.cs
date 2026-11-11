@@ -10,10 +10,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
     {
         public const uint ControllerType = 0xf4;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong SenderId;
-        public readonly ulong ChatTargetId;
+        public readonly ulong SenderSwgId;
+        public readonly ulong ChatTargetSwgId;
         public readonly string Message;
         public readonly ushort Volume;
         public readonly ushort ChatType;
@@ -28,11 +28,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected SpatialChatPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            SenderId = reader.U64();
-            ChatTargetId = reader.U64();
+            SenderSwgId = reader.U64();
+            ChatTargetSwgId = reader.U64();
             Message = reader.Unicode();
             Volume = reader.U16();
             ChatType = reader.U16();
@@ -55,10 +55,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(SenderId);
-            writer.Write(ChatTargetId);
+            writer.Write(SenderSwgId);
+            writer.Write(ChatTargetSwgId);
             PacketFieldCodec.Unicode(writer, Message);
             writer.Write(Volume);
             writer.Write(ChatType);

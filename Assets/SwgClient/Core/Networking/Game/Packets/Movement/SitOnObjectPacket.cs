@@ -10,9 +10,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
     {
         public const uint ControllerType = 0x13b;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong ParentId;
+        public readonly ulong ParentSwgId;
         public readonly Vector3 Position;
         SitOnObjectPacket(ObjectControllerPacket envelope)
         {
@@ -20,10 +20,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected SitOnObjectPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            ParentId = reader.U64();
+            ParentSwgId = reader.U64();
             Position = PacketFieldCodec.Vector(reader);
             PacketFieldCodec.End(reader);
         }
@@ -36,9 +36,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(ParentId);
+            writer.Write(ParentSwgId);
             PacketFieldCodec.Vector(writer, Position);
         }
     }

@@ -6,7 +6,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
 {
     internal sealed class GameObjectUpdate
     {
-        public ObjectId? ParentId;
+        public SwgId? ParentSwgId;
         public uint? TemplateCrc;
         public UnityEngine.Vector3? Position;
         public UnityEngine.Quaternion? Rotation;
@@ -17,10 +17,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public string Name;
         public byte[] Customization;
         public WorldEquipment[] Equipment;
+        public EquipmentDelta EquipmentDelta;
         public string AlternateAppearance;
         public float? Height;
         public byte? Posture;
-        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None);
+        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None);
 
         public GameObjectUpdate CopyForQueue()
         {
@@ -28,7 +29,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             if (Customization != null)
                 copy.Customization = (byte[])Customization.Clone();
             if (Equipment != null)
-                copy.Equipment = Equipment.Select(item => new WorldEquipment((byte[])item.Customization.Clone(), item.Arrangement, item.ObjectId, item.TemplateCrc)).ToArray();
+                copy.Equipment = Equipment.Select(item => new WorldEquipment((byte[])item.Customization.Clone(), item.Arrangement, item.SwgId, item.TemplateCrc)).ToArray();
             return copy;
         }
 
@@ -62,6 +63,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             {
                 if (Equipment != null)
                     creature.Equipment = Equipment;
+                if (EquipmentDelta != null)
+                    creature.Equipment = EquipmentDelta.Apply(creature.Equipment);
                 if (Posture.HasValue)
                     creature.Posture = Posture.Value;
             }

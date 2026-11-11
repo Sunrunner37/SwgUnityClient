@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Commands
     {
         public const uint ControllerType = 0x117;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly uint ActionCounter;
         public readonly float Timer;
@@ -21,7 +21,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Commands
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CommandQueueRemovePacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             ActionCounter = reader.U32();
@@ -39,7 +39,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Commands
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(ActionCounter);
             writer.Write(Timer);

@@ -7,6 +7,6 @@ namespace Swg.Client.Core.Networking.Login
         public string Name;
         public uint Race;
         public uint Galaxy;
-        public ObjectId ObjectId;
+        public SwgId SwgId;
     }
 }

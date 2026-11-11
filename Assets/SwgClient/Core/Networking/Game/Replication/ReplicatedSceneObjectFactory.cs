@@ -10,16 +10,16 @@ namespace Swg.Client.Core.Networking.Game.Replication
     {
         public static CreatureSceneObject Create(CmdStartScenePacket start) => new CreatureSceneObject
         {
-            ObjectId = start.PlayerId,
+            SwgId = start.PlayerSwgId,
             TemplatePath = start.TemplatePath,
             Position = start.Position
         };
-        public static SceneObject Create(ObjectId id, GameObjectUpdate update, ObjectTemplateCatalog templates)
+        public static SceneObject Create(SwgId swgId, GameObjectUpdate update, ObjectTemplateCatalog templates)
         {
             string path = templates?.Resolve(update.TemplateCrc.GetValueOrDefault());
             var result = SceneObjectFactory.CreateInstance(TypeFor(update, path) ?? typeof(SpatialSceneObject));
-            result.ObjectId = id;
-            result.ParentId = update.ParentId.GetValueOrDefault();
+            result.SwgId = swgId;
+            result.ParentSwgId = update.ParentSwgId.GetValueOrDefault();
             result.TemplatePath = path;
             update.ApplyTo(result);
             return result;
@@ -79,7 +79,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     ReplicatedObjectType.Mission => typeof(SceneObject),
                     _ => null
                 };
-            if (update.Equipment != null || update.Posture.HasValue || update.Height.HasValue)
+            if (update.Equipment != null || update.EquipmentDelta != null || update.Posture.HasValue || update.Height.HasValue)
                 return typeof(CreatureSceneObject);
             return update.Customization != null ? typeof(TangibleSceneObject) : null;
         }

@@ -10,7 +10,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Audio
         public const uint Opcode = 0x4270d8a;
         public readonly ushort OperandCount;
         public readonly string SoundFile;
-        public readonly ulong TargetId;
+        public readonly ulong TargetSwgId;
         public readonly int UnknownInt;
         public readonly byte UnknownFlag;
         PlayMusicPacket(ByteReader reader)
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Audio
             if (reader.U32() != Opcode || (OperandCount != 5))
                 throw new InvalidDataException("Unexpected PlayMusicPacket header");
             SoundFile = reader.Ascii();
-            TargetId = reader.U64();
+            TargetSwgId = reader.U64();
             UnknownInt = unchecked((int)reader.U32());
             UnknownFlag = reader.Byte();
             PacketFieldCodec.End(reader);
@@ -32,7 +32,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Audio
             writer.Write(OperandCount);
             writer.Write(Opcode);
             PacketFieldCodec.Ascii(writer, SoundFile);
-            writer.Write(TargetId);
+            writer.Write(TargetSwgId);
             writer.Write(UnknownInt);
             writer.Write(UnknownFlag);
         }

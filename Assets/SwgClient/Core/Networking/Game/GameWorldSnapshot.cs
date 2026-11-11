@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game
     public readonly struct GameWorldSnapshot
     {
         public readonly CmdStartScenePacket? StartScene;
-        public readonly ObjectId PlayerId;
+        public readonly SwgId PlayerSwgId;
         public readonly bool PlayerBaselinesComplete;
         public readonly bool SceneReadyAcknowledged;
         public readonly long Revision;
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game
         internal GameWorldSnapshot(CmdStartScenePacket? start, bool complete, bool acknowledged, long revision, SceneObject[] objects)
         {
             StartScene = start;
-            PlayerId = start?.PlayerId ?? 0;
+            PlayerSwgId = start?.PlayerSwgId ?? 0;
             PlayerBaselinesComplete = complete;
             SceneReadyAcknowledged = acknowledged;
             Revision = revision;

@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
     {
         public const uint Opcode = 0x54336726;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly ChatAvatar Friend;
         public readonly uint Reserved1;
         public readonly uint Added;
@@ -20,7 +20,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 6))
                 throw new InvalidDataException("Unexpected ChatOnChangeFriendStatusPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Friend = ChatAvatar.ReadFrom(reader);
             Reserved1 = reader.U32();
             Added = reader.U32();
@@ -33,7 +33,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             Friend.WriteTo(writer);
             writer.Write(Reserved1);
             writer.Write(Added);

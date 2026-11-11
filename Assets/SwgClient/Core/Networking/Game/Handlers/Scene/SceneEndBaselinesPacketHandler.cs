@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
         public SceneEndBaselinesPacketHandler(GameReplication replication) : base(SceneEndBaselinesPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(SceneEndBaselinesPacket packet)
         {
-            replication.Commit(packet.ObjectId, new GameObjectUpdate { BaselinesComplete = true });
+            replication.Commit(packet.SwgId, new GameObjectUpdate { BaselinesComplete = true });
         }
     }
 }

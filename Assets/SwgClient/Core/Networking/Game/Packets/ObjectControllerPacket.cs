@@ -10,14 +10,14 @@ namespace Swg.Client.Core.Networking.Game.Packets
         public const uint Opcode = 0x80ce5e46;
         public readonly uint Flags;
         public readonly uint ControllerType;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly uint Reserved;
         public readonly byte[] Payload;
-        public ObjectControllerPacket(uint flags, uint controllerType, ulong objectId, byte[] payload, uint reserved = 0)
+        public ObjectControllerPacket(uint flags, uint controllerType, ulong swgId, byte[] payload, uint reserved = 0)
         {
             Flags = flags;
             ControllerType = controllerType;
-            ObjectId = objectId;
+            SwgId = swgId;
             Payload = payload ?? throw new ArgumentNullException(nameof(payload));
             Reserved = reserved;
         }
@@ -28,7 +28,7 @@ namespace Swg.Client.Core.Networking.Game.Packets
             writer.Write(Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Reserved);
             writer.Write(Payload);
         }
@@ -39,11 +39,11 @@ namespace Swg.Client.Core.Networking.Game.Packets
                 throw new InvalidDataException("Unexpected ObjectControllerPacket header");
             uint flags = reader.U32();
             uint type = reader.U32();
-            ulong id = reader.U64();
+            ulong swgId = reader.U64();
             uint reserved = reader.U32();
             if (reader.Remaining > 1500000)
                 throw new InvalidDataException("Oversized object-controller payload");
-            return new ObjectControllerPacket(flags, type, id, reader.Take(reader.Remaining), reserved);
+            return new ObjectControllerPacket(flags, type, swgId, reader.Take(reader.Remaining), reserved);
         }
     }
 }

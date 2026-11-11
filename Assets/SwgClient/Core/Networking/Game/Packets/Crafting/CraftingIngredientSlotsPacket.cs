@@ -9,11 +9,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
     {
         public const uint ControllerType = 0x103;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong ToolId;
-        public readonly ulong ManufactureSchematicId;
-        public readonly ulong PrototypeId;
+        public readonly ulong ToolSwgId;
+        public readonly ulong ManufactureSchematicSwgId;
+        public readonly ulong PrototypeSwgId;
         public readonly uint Reserved1;
         public readonly byte AllowFactory;
         public readonly DraftSlotData[] Slots;
@@ -24,12 +24,12 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CraftingIngredientSlotsPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            ToolId = reader.U64();
-            ManufactureSchematicId = reader.U64();
-            PrototypeId = reader.U64();
+            ToolSwgId = reader.U64();
+            ManufactureSchematicSwgId = reader.U64();
+            PrototypeSwgId = reader.U64();
             Reserved1 = reader.U32();
             AllowFactory = reader.Byte();
             Slots = new DraftSlotData[PacketFieldCodec.Count(reader, reader.U32(), 30)];
@@ -47,11 +47,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(ToolId);
-            writer.Write(ManufactureSchematicId);
-            writer.Write(PrototypeId);
+            writer.Write(ToolSwgId);
+            writer.Write(ManufactureSchematicSwgId);
+            writer.Write(PrototypeSwgId);
             writer.Write(Reserved1);
             writer.Write(AllowFactory);
             writer.Write(checked((uint)Slots.Length));

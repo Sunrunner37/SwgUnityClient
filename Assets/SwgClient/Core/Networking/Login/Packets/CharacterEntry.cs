@@ -4,14 +4,14 @@ namespace Swg.Client.Core.Networking.Login.Packets
     {
         public readonly string Name;
         public readonly uint Race;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly uint GalaxyId;
         public readonly uint ServerStatus;
-        public CharacterEntry(string name, uint race, ulong objectId, uint galaxyId, uint serverStatus = 1)
+        public CharacterEntry(string name, uint race, ulong swgId, uint galaxyId, uint serverStatus = 1)
         {
             Name = name;
             Race = race;
-            ObjectId = objectId;
+            SwgId = swgId;
             GalaxyId = galaxyId;
             ServerStatus = serverStatus;
         }

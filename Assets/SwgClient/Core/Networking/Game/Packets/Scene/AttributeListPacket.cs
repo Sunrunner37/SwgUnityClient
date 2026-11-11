@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const uint Opcode = 0xf3f12f2a;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly AttributeValue[] Attributes;
         AttributeListPacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 4))
                 throw new InvalidDataException("Unexpected AttributeListPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Attributes = new AttributeValue[PacketFieldCodec.Count(reader, reader.U32(), 6)];
             for (int i = 0; i < Attributes.Length; i++)
                 Attributes[i] = AttributeValue.ReadFrom(reader);
@@ -29,7 +29,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(checked((uint)Attributes.Length));
             foreach (var item in Attributes)
                 item.WriteTo(writer);

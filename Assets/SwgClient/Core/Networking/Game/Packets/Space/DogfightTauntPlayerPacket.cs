@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
     {
         public const uint Opcode = 0xca2a548b;
         public readonly ushort OperandCount;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly uint Reserved;
         DogfightTauntPlayerPacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 9))
                 throw new InvalidDataException("Unexpected DogfightTauntPlayerPacket header");
-            ObjectId = reader.U64();
+            SwgId = reader.U64();
             Reserved = reader.U32();
             PacketFieldCodec.End(reader);
         }
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Space
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Reserved);
         }
     }

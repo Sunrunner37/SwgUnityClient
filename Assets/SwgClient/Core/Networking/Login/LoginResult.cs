@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Login
             foreach (var cluster in clusters.Clusters)
                 names[cluster.Id] = cluster.Name;
             Galaxies = status.Clusters.Select(cluster => new Galaxy { Id = cluster.Id, Name = names.TryGetValue(cluster.Id, out var name) ? name : "Galaxy " + cluster.Id, Address = cluster.Address, Port = cluster.Port, Status = cluster.Status }).ToList();
-            Characters = characters.Characters.Select(character => new CharacterInfo { Name = character.Name, Race = character.Race, ObjectId = character.ObjectId, Galaxy = character.GalaxyId }).ToList();
+            Characters = characters.Characters.Select(character => new CharacterInfo { Name = character.Name, Race = character.Race, SwgId = character.SwgId, Galaxy = character.GalaxyId }).ToList();
         }
     }
 }

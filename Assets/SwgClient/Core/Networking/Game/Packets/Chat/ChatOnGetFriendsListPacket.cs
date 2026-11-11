@@ -9,7 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
     {
         public const uint Opcode = 0xe97ab594;
         public readonly ushort OperandCount;
-        public readonly ulong PlayerId;
+        public readonly ulong PlayerSwgId;
         public readonly ChatAvatar[] Players;
         ChatOnGetFriendsListPacket(ByteReader reader)
         {
@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
             OperandCount = reader.U16();
             if (reader.U32() != Opcode || (OperandCount != 3))
                 throw new InvalidDataException("Unexpected ChatOnGetFriendsListPacket header");
-            PlayerId = reader.U64();
+            PlayerSwgId = reader.U64();
             Players = new ChatAvatar[PacketFieldCodec.Count(reader, reader.U32(), 6)];
             for (int i = 0; i < Players.Length; i++)
                 Players[i] = ChatAvatar.ReadFrom(reader);
@@ -29,7 +29,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(PlayerId);
+            writer.Write(PlayerSwgId);
             writer.Write(checked((uint)Players.Length));
             foreach (var item in Players)
                 item.WriteTo(writer);

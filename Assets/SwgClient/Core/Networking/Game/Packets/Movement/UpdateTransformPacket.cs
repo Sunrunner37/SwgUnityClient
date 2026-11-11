@@ -11,14 +11,14 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
     {
         public const ushort OperandCount = 8;
         public const uint Opcode = 0x1b24f808;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly Vector3 Position;
         public readonly uint MovementCounter;
         public readonly byte Speed;
         public readonly byte Direction;
-        public UpdateTransformPacket(ulong objectId, Vector3 position, uint movementCounter, byte speed, byte direction)
+        public UpdateTransformPacket(ulong swgId, Vector3 position, uint movementCounter, byte speed, byte direction)
         {
-            ObjectId = objectId;
+            SwgId = swgId;
             Position = position;
             MovementCounter = movementCounter;
             Speed = speed;
@@ -29,7 +29,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(checked((short)(Position.x * 4)));
             writer.Write(checked((short)(Position.y * 4)));
             writer.Write(checked((short)(Position.z * 4)));
@@ -42,9 +42,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Movement
         {
             if (reader.U16() != OperandCount || reader.U32() != Opcode)
                 throw new InvalidDataException("Unexpected UpdateTransformPacket header");
-            ulong id = reader.U64();
+            ulong swgId = reader.U64();
             var position = new Vector3(unchecked((short)reader.U16()) / 4f, unchecked((short)reader.U16()) / 4f, unchecked((short)reader.U16()) / 4f);
-            return new UpdateTransformPacket(id, position, reader.U32(), reader.Byte(), reader.Byte());
+            return new UpdateTransformPacket(swgId, position, reader.U32(), reader.Byte(), reader.Byte());
         }
     }
 }

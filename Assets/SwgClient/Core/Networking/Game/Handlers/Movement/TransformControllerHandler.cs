@@ -14,11 +14,10 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
 
         [Preserve]
         public TransformControllerHandler(GameReplication replication) => this.replication = replication;
-
         public void Handle(ObjectControllerPacket packet)
         {
             var update = MovementReader.ReadControllerTransform(new ByteReader(packet.Payload), false);
-            replication.Commit(packet.ObjectId, update);
+            replication.Commit(packet.SwgId, update);
         }
     }
 }

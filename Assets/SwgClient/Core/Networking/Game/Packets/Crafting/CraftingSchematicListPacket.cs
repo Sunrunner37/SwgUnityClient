@@ -9,9 +9,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
     {
         public const uint ControllerType = 0x102;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
-        public readonly ulong ToolId;
+        public readonly ulong ToolSwgId;
         public readonly ulong StationId;
         public readonly SchematicChoice[] Schematics;
         CraftingSchematicListPacket(ObjectControllerPacket envelope)
@@ -20,10 +20,10 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CraftingSchematicListPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
-            ToolId = reader.U64();
+            ToolSwgId = reader.U64();
             StationId = reader.U64();
             Schematics = new SchematicChoice[PacketFieldCodec.Count(reader, reader.U32(), 12)];
             for (int i = 0; i < Schematics.Length; i++)
@@ -39,9 +39,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
-            writer.Write(ToolId);
+            writer.Write(ToolSwgId);
             writer.Write(StationId);
             writer.Write(checked((uint)Schematics.Length));
             foreach (var item in Schematics)

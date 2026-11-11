@@ -10,11 +10,11 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
     {
         public const ushort OperandCount = 3;
         public const uint Opcode = 0x4d45d504;
-        public readonly ulong ObjectId;
+        public readonly ulong SwgId;
         public readonly byte Flags;
-        public SceneDestroyObjectPacket(ulong objectId, byte flags = 0)
+        public SceneDestroyObjectPacket(ulong swgId, byte flags = 0)
         {
-            ObjectId = objectId;
+            SwgId = swgId;
             Flags = flags;
         }
 
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         {
             writer.Write(OperandCount);
             writer.Write(Opcode);
-            writer.Write(ObjectId);
+            writer.Write(SwgId);
             writer.Write(Flags);
         }
 

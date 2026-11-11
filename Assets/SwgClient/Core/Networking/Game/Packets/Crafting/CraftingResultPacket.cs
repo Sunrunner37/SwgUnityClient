@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
     {
         public const uint ControllerType = 0x10c;
         public readonly uint Flags;
-        public readonly ulong ReceiverId;
+        public readonly ulong ReceiverSwgId;
         public readonly uint EnvelopeReserved;
         public readonly uint Message;
         public readonly uint Result;
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             if (envelope.ControllerType != ControllerType)
                 throw new InvalidDataException("Unexpected CraftingResultPacket controller type");
             Flags = envelope.Flags;
-            ReceiverId = envelope.ObjectId;
+            ReceiverSwgId = envelope.SwgId;
             EnvelopeReserved = envelope.Reserved;
             var reader = new ByteReader(envelope.Payload);
             Message = reader.U32();
@@ -44,7 +44,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Crafting
             writer.Write(ObjectControllerPacket.Opcode);
             writer.Write(Flags);
             writer.Write(ControllerType);
-            writer.Write(ReceiverId);
+            writer.Write(ReceiverSwgId);
             writer.Write(EnvelopeReserved);
             writer.Write(Message);
             writer.Write(Result);
