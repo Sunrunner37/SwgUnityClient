@@ -121,7 +121,7 @@ namespace Swg.Client.Runtime.UI.Screens.Loading
         {
             failed = true;
             IsReady = false;
-            entry?.Abort(error.Message);
+            entry?.Abort();
             Debug.LogException(error, this);
             if (view != null && view.status != null)
                 status.text = "Unable to load world.";

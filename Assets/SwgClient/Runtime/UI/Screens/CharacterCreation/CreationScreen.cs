@@ -1,4 +1,4 @@
-using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Networking.Game;
 using Swg.Client.Runtime.Assets.Tre;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
 {
     public sealed class CreationScreen : ClientScreen
     {
-        ClientConnection connection;
+        GameConnection connection;
         public Text account;
         public Text speciesName;
         public Text description;
@@ -37,7 +37,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
         TreRuntimeAssets assets;
         IEnumerator Start()
         {
-            connection = GameServices.Resolve<ClientConnection>();
+            connection = GameServices.Connection;
             assets = GameServices.Resolve<TreRuntimeAssets>();
             System.Threading.Tasks.Task<CharacterCreationData> task;
             try
@@ -92,7 +92,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
 
         void PopulateSpecies()
         {
-            var accepted = connection.Admission;
+            var accepted = connection?.Admission;
             account.text = accepted == null ? "Offline character preview" : accepted.Galaxy.Name + "  |  Account " + accepted.AccountId + "  |  " + accepted.Characters.Count + " character(s)";
             next.interactable = false;
             back.onClick.AddListener(Back);
@@ -149,19 +149,13 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterCreation
 
         public void Back()
         {
-            ScreenChanger.Open(connection.Admission == null ? ScreenId.Login : ScreenId.CharacterList);
+            ScreenChanger.Open(connection?.Admission == null ? ScreenId.Login : ScreenId.CharacterList);
         }
 
         void Update()
         {
             if (!IsReady)
                 return;
-            if (connection.FailureReason != null)
-            {
-                ScreenChanger.Open(ScreenId.Login);
-                return;
-            }
-
             var key = Keyboard.current;
             if (key == null)
                 return;

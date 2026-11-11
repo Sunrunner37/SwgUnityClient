@@ -4,13 +4,14 @@ using Swg.Client.Core.Networking.Game.Replication;
 using Autofac;
 using Swg.Client.Core;
 using System;
+using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Game.Packets.Scene;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Swg.Client.Core.Networking.Game;
 using Swg.Client.Runtime.UI.Screens;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,7 +21,6 @@ namespace Swg.Client.Runtime.World
     /// <summary>Unity coroutine sequence for initial world entry and scene handoff.</summary>
     public sealed class WorldEntryController : MonoBehaviour
     {
-        ClientConnection connection;
         public WorldStreamingSettings settings;
         [Min(.01f)]
         public float sceneTimeout = 45;
@@ -57,7 +57,6 @@ namespace Swg.Client.Runtime.World
         {
             try
             {
-                connection = GameServices.Resolve<ClientConnection>();
                 session = GameServices.GameScope;
                 if (session == null)
                     throw new InvalidOperationException("Select a character before entering the world.");
@@ -194,7 +193,7 @@ namespace Swg.Client.Runtime.World
             Progress = .98f;
             try
             {
-                connection.ConfirmSceneReady();
+                GameServices.Resolve<GameConnection>().Send(new CmdSceneReadyPacket());
             }
             catch (Exception error)
             {
@@ -279,10 +278,10 @@ namespace Swg.Client.Runtime.World
         void Fail(Exception error)
         {
             Failure = error;
-            Abort(error.Message);
+            Abort();
         }
 
-        public void Abort(string reason = null)
+        public void Abort()
         {
             if (stopped)
                 return;
@@ -290,7 +289,7 @@ namespace Swg.Client.Runtime.World
             cancel.Cancel();
             prepared = null;
             if (session != null && ReferenceEquals(GameServices.GameScope, session))
-                connection.Disconnect(reason);
+                GameServices.Disconnect();
             UnloadWorld();
             if (sceneLoad == null || sceneLoad.isDone)
                 SceneManager.sceneLoaded -= WorldSceneLoaded;

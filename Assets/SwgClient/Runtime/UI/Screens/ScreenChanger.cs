@@ -7,8 +7,7 @@ namespace Swg.Client.Runtime.UI.Screens
     public static class ScreenChanger
     {
         static AsyncOperation pendingLoad;
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void Reset() => pendingLoad = null;
+
         public static void Open(ScreenId screen)
         {
             var sceneName = Enum.GetName(typeof(ScreenId), screen) ?? throw new ArgumentOutOfRangeException(nameof(screen), screen, "Unknown screen.");

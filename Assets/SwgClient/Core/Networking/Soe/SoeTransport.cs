@@ -113,7 +113,7 @@ namespace Swg.Client.Core.Networking.Soe
             }
         }
 
-        void SendData(byte[] application)
+        public void SendData(byte[] application)
         {
             if (application.Length > 480)
                 throw new InvalidDataException("Outgoing message exceeds packet limit");

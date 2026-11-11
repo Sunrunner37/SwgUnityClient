@@ -1,6 +1,10 @@
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Handlers;
 using System.IO;
+using System;
+using System.Threading;
+using Swg.Client.Runtime.UI.Screens;
+using Swg.Client.Runtime.UI.Screens.Login;
 using System.Linq;
 using Autofac;
 using UnityEngine;
@@ -19,6 +23,7 @@ namespace Swg.Client.Runtime
     {
         static IContainer global;
         static ILifetimeScope game;
+        public static GameConnection Connection { get; private set; }
         internal static ILifetimeScope GameScope => game;
 
         public static T Resolve<T>() => (game ?? (ILifetimeScope)global).Resolve<T>();
@@ -29,7 +34,6 @@ namespace Swg.Client.Runtime
             var root = new GameObject("Game services");
             UnityEngine.Object.DontDestroyOnLoad(root);
             var music = root.AddComponent<ClientMusic>();
-            var connection = root.AddComponent<ClientConnection>();
             root.GetComponent<AudioSource>().playOnAwake = false;
             var builder = new ContainerBuilder();
             builder.RegisterInstance(ClientSettings.From(ini));
@@ -37,16 +41,17 @@ namespace Swg.Client.Runtime
             builder.RegisterType<AudioClipLoader>().SingleInstance();
             builder.RegisterType<SwgMaterialFactory>().SingleInstance();
             builder.RegisterInstance(music).ExternallyOwned();
-            builder.RegisterInstance(connection).ExternallyOwned();
+            builder.Register(_ => Connection ?? throw new InvalidOperationException("Log in before sending game packets.")).ExternallyOwned();
             global = builder.Build();
             Application.quitting += Shutdown;
         }
 
-        internal static void BeginGame()
+        internal static void BeginGame(GameConnection connection)
         {
             // These singletons are owned by the current game lifetime.
             game = global.BeginLifetimeScope(builder =>
             {
+                builder.RegisterInstance(connection).ExternallyOwned();
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.Register(context =>
@@ -64,11 +69,37 @@ namespace Swg.Client.Runtime
                 builder.Register(context =>
                 {
                     var rendering = context.Resolve<WorldRenderingSettings>();
-                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming,
-                        context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
+                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming, context.Resolve<WorldMeshLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
                 }).SingleInstance();
                 builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().SingleInstance();
             });
+        }
+        
+        internal static void AcceptConnection(GameConnection connection)
+        {
+            Disconnect();
+            Connection = connection;
+            connection.Disconnected += OnDisconnected;
+            connection.Start(SynchronizationContext.Current);
+        }
+
+        static void OnDisconnected(string reason)
+        {
+            Debug.LogWarning("Disconnected: " + reason);
+            Disconnect();
+            ScreenChanger.Open(ScreenId.Login);
+        }
+
+        public static void Disconnect()
+        {
+            if (Connection != null)
+            {
+                Connection.Disconnected -= OnDisconnected;
+                Connection.Dispose();
+                Connection = null;
+            }
+
+            EndGame();
         }
 
         internal static void EndGame(ILifetimeScope session)
@@ -79,7 +110,12 @@ namespace Swg.Client.Runtime
 
         internal static void EndGame()
         {
-            game?.Dispose();
+            if (game != null)
+            {
+                game.Resolve<GameConnection>().SetReceiver(null);
+                game.Dispose();
+            }
+
             game = null;
             ManagedSceneObject.ResetPlayerCache();
         }
@@ -87,8 +123,7 @@ namespace Swg.Client.Runtime
         internal static void Shutdown()
         {
             Application.quitting -= Shutdown;
-            if (global != null)
-                global.Resolve<ClientConnection>().Disconnect();
+            Disconnect();
             global?.Dispose();
             global = null;
         }

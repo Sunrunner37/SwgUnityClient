@@ -1,4 +1,5 @@
-using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Game.Packets.Session;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Runtime.Assets.Tre;
 using System;
@@ -14,7 +15,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
 {
     public sealed class CharacterListScreen : ClientScreen
     {
-        ClientConnection connection;
+        GameConnection connection;
         public Text account;
         public Text message;
         public Text characterName;
@@ -45,13 +46,13 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         TreRuntimeAssets assets;
         IEnumerator Start()
         {
-            connection = GameServices.Resolve<ClientConnection>();
+            connection = GameServices.Connection;
             assets = GameServices.Resolve<TreRuntimeAssets>();
             next.interactable = false;
             create.interactable = false;
             delete.interactable = false;
             Debug.Log("CharacterListScreen: Loading characters", this);
-            var admission = connection.Admission;
+            var admission = connection?.Admission;
             if (admission == null)
             {
                 yield return new WaitUntil(() => assets.Ready.IsCompleted);
@@ -67,7 +68,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
                 var settings = GameServices.Resolve<ClientSettings>();
                 string cacheDirectory = settings.AppearanceCacheDirectory;
                 string server = settings.LoginEndpoint;
-                string username = connection.Username;
+                string username = connection.Admission.Username;
                 var task = assets.ReadAsync(loader =>
                 {
                     var result = new List<CachedCharacterAppearance>();
@@ -137,7 +138,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             next.interactable = false;
             next.onClick.AddListener(EnterWorld);
             delete.interactable = false;
-            var admission = connection.Admission;
+            var admission = connection?.Admission;
             create.interactable = admission != null && admission.CanCreate;
             account.text = "";
             characterName.text = "";
@@ -169,7 +170,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             if (index < 0 || index >= rows.Count)
                 yield break;
             selected = index;
-            next.interactable = connection.Admission != null && rows[index].Character.Galaxy == connection.Admission.Galaxy.Id;
+            next.interactable = connection?.Admission != null && rows[index].Character.Galaxy == connection.Admission.Galaxy.Id;
             int version = ++selectionVersion;
             for (int i = 0; i < rows.Count; i++)
                 rows[i].SetSelected(i == selected);
@@ -220,21 +221,29 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         {
             if (!IsReady || selected < 0 || !next.interactable)
                 return;
-            connection.SelectCharacter(rows[selected].Character.SwgId);
+
+            var character = rows[selected].Character;
+
+            if (character.Galaxy != connection.Admission.Galaxy.Id)
+                throw new InvalidOperationException("The selected character does not belong to this admitted galaxy.");
+
+            GameServices.BeginGame(connection);
+            connection.SetReceiver(new GamePacketRouter(GameServices.GameScope).Accept);
+            connection.Send(new SelectCharacterPacket((ulong)character.SwgId));
             next.interactable = false;
             ScreenChanger.Open(ScreenId.LoadingThematic);
         }
 
         public void CreateNew()
         {
-            if (!IsReady || connection.Admission == null || !connection.Admission.CanCreate)
+            if (!IsReady || connection?.Admission == null || !connection.Admission.CanCreate)
                 return;
             ScreenChanger.Open(ScreenId.CharacterCreation);
         }
 
         public void Back()
         {
-            connection.Disconnect();
+            GameServices.Disconnect();
             ScreenChanger.Open(ScreenId.Login);
         }
 
@@ -242,12 +251,6 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         {
             if (!IsReady)
                 return;
-            if (connection.FailureReason != null)
-            {
-                ScreenChanger.Open(ScreenId.Login);
-                return;
-            }
-
             var key = Keyboard.current;
             if (key == null)
                 return;

@@ -1,4 +1,3 @@
-using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Runtime.Assets.Tre;
 using UnityEngine;
@@ -12,7 +11,6 @@ namespace Swg.Client.Runtime.UI.Screens.Login
 {
     public sealed class LoginScreen : ClientScreen
     {
-        ClientConnection connection;
         public InputField username;
         public InputField password;
         public Text status;
@@ -31,13 +29,12 @@ namespace Swg.Client.Runtime.UI.Screens.Login
         TreRuntimeAssets assets;
         IEnumerator Start()
         {
-            connection = GameServices.Resolve<ClientConnection>();
             assets = GameServices.Resolve<TreRuntimeAssets>();
             try
             {
                 server.text = "Server: " + GameServices.Resolve<ClientSettings>().LoginEndpoint;
-                username.text = connection.Username ?? "";
-                status.text = connection.ConsumeFailure() ?? "";
+                username.text = "";
+                status.text = "";
                 back.onClick.AddListener(Back);
                 next.onClick.AddListener(Submit);
                 SetInteractable(true);
@@ -84,7 +81,6 @@ namespace Swg.Client.Runtime.UI.Screens.Login
                 return;
             }
 
-            connection.Username = username.text;
             connecting = new LoginConnection(GameServices.Resolve<ClientSettings>(), username.text, password.text);
             password.text = "";
             SetInteractable(false);
@@ -131,7 +127,8 @@ namespace Swg.Client.Runtime.UI.Screens.Login
 
                     if (message.Admission != null)
                     {
-                        connection.Accept(connecting, message.Admission);
+                        GameServices.AcceptConnection(connecting.TakeGameConnection());
+                        connecting.Dispose();
                         connecting = null;
                         ScreenChanger.Open(ScreenId.CharacterList);
                         return;

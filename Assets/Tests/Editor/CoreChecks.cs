@@ -1,3 +1,6 @@
+using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Game.Packets.Session;
+using Swg.Client.Core.Networking.Game.Packets.Scene;
 using Swg.Client.Core.Assets.Audio;
 using Swg.Client.Core.Assets;
 using Swg.Client.Core.Assets.Formats.Customization;
@@ -97,7 +100,7 @@ namespace Swg.Client.Tests.Editor
                 }.Concat(Encoding.ASCII.GetBytes("20050408-18:00")).ToArray();
                 Check(actual.SequenceEqual(expected), "Credential fields differ");
                 Throws(() => Encode(new LoginCredentialsPacket("", "x", "v")));
-                Throws(() => Encode(new LoginCredentialsPacket("x", "é", "v")));
+                Throws(() => Encode(new LoginCredentialsPacket("x", "Ã©", "v")));
             });
             yield return Case("CRC and packet encoding", () =>
             {
@@ -156,6 +159,9 @@ namespace Swg.Client.Tests.Editor
             yield return Case("Rejected password never admits account", () => Handshake(true, false));
             yield return Case("Creation permission does not block character-list login", () => Handshake(false, true));
             yield return Case("Denied galaxy login never admits account", () => Handshake(false, false, true));
+            yield return Case("Disconnect event is delivered on the owning context", () => DisconnectEventCheck(false, false));
+            yield return Case("Unsubscribing suppresses a posted disconnect", () => DisconnectEventCheck(true, false));
+            yield return Case("Intentional close suppresses a posted disconnect", () => DisconnectEventCheck(false, true));
             yield return Case("Original audio and twenty character models", OriginalAssets, nativeAssets: true);
             yield return Case("Client-owned appearance cache and skeletal idle pose", OriginalCachedAppearance, nativeAssets: true);
         }
@@ -434,11 +440,69 @@ namespace Swg.Client.Tests.Editor
             s.Send(b, b.Length);
         }
 
-        static void Handshake(bool rejectPassword, bool denyCreation, bool denyLogin = false)
+        sealed class DisconnectContext : SynchronizationContext, IDisposable
+        {
+            public readonly ManualResetEventSlim Posted = new ManualResetEventSlim();
+            SendOrPostCallback callback;
+            object state;
+            public override void Post(SendOrPostCallback callback, object state)
+            {
+                this.callback = callback;
+                this.state = state;
+                Posted.Set();
+            }
+
+            public void Deliver() => callback(state);
+            public void Dispose() => Posted.Dispose();
+        }
+
+        static void DisconnectEventCheck(bool unsubscribe, bool dispose)
+        {
+            using var context = new DisconnectContext();
+            int ownerThread = Thread.CurrentThread.ManagedThreadId;
+            Handshake(false, false, notificationContext: context, afterReady: (game, disconnectServer) =>
+            {
+                int calls = 0;
+                int notificationThread = 0;
+                string reason = null;
+                Action<string> handler = message =>
+                {
+                    calls++;
+                    notificationThread = Thread.CurrentThread.ManagedThreadId;
+                    reason = message;
+                };
+                game.Disconnected += handler;
+                try
+                {
+                    disconnectServer();
+                    Check(context.Posted.Wait(3000), "Network failure was not posted to the owning context");
+                    Check(calls == 0, "Disconnect ran directly on the network thread");
+                    if (unsubscribe)
+                        game.Disconnected -= handler;
+                    if (dispose)
+                        game.Dispose();
+                    context.Deliver();
+                    Check(calls == (unsubscribe || dispose ? 0 : 1), "Unexpected disconnect notification count");
+                    if (calls == 1)
+                    {
+                        Check(notificationThread == ownerThread, "Disconnect was not delivered on the owning thread");
+                        Check(reason == "Server disconnected the session", "Disconnect reason was lost");
+                    }
+                }
+                finally
+                {
+                    game.Disconnected -= handler;
+                }
+            });
+        }
+
+        static void Handshake(bool rejectPassword, bool denyCreation, bool denyLogin = false, SynchronizationContext notificationContext = null, Action<GameConnection, Action> afterReady = null)
         {
             using (var login = Socket())
             using (var zone = Socket())
             using (var done = new ManualResetEventSlim())
+            using (var delivered = new ManualResetEventSlim())
+            using (var disconnectRequested = new ManualResetEventSlim())
             {
                 ushort zonePort = (ushort)((IPEndPoint)zone.Client.LocalEndPoint).Port;
                 string fixtureIni = Path.GetTempFileName();
@@ -470,7 +534,7 @@ namespace Swg.Client.Tests.Editor
                     var token = Encode(new LoginClientTokenPacket(Enumerable.Repeat((byte)'x', 64).ToArray(), 42, 42, "test"));
                     var names = Encode(new LoginEnumClusterPacket(new[] { new ClusterNameEntry(7, "Test Galaxy") }));
                     var status = Encode(new LoginClusterStatusPacket(new[] { new ClusterStatusEntry(7, "127.0.0.1", zonePort, 44462, population: 0, reserved1: 0, reserved2: 0, reserved3: 0) }));
-                    var characters = Encode(new EnumerateCharacterIdPacket(new[] { new CharacterEntry("Tést", 0x1234u, 0x100000001ul, 7) }));
+                    var characters = Encode(new EnumerateCharacterIdPacket(new[] { new CharacterEntry("TÃ©st", 0x1234u, 0x100000001ul, 7) }));
                     var bundle = new List<byte>
                     {
                         0,
@@ -499,6 +563,18 @@ namespace Swg.Client.Tests.Editor
                     Check(id.Take(64).All(c => c == 'x') && id.U32() == 42 && id.Ascii() == config.ClientVersion, "Zone token/version");
                     Send(zone, zoneSeed, new byte[] { 0, 21, 0, 0 });
                     Send(zone, zoneSeed, SoeCodec.Data(0, Encode(new ClientPermissionsPacket(!denyLogin, !denyCreation))));
+                    if (!denyLogin)
+                    {
+                        Check(ReceiveData(zone, zoneSeed).SequenceEqual(Encode(new SelectCharacterPacket(0x100000001ul))), "Queued character selection after login handoff");
+                        Check(ReceiveData(zone, zoneSeed).SequenceEqual(Encode(new CmdSceneReadyPacket())), "Generic queue packet ordering");
+                        delivered.Set();
+                        if (afterReady != null)
+                        {
+                            Check(disconnectRequested.Wait(3000), "Remote disconnect was not requested");
+                            Send(zone, zoneSeed, new byte[] { 0, 5 });
+                        }
+                    }
+
                     done.Wait(5000);
                 });
                 try
@@ -522,7 +598,17 @@ namespace Swg.Client.Tests.Editor
                                 {
                                     Check(!rejectPassword && !denyLogin, "Authenticated a rejected account");
                                     Check(e.Admission.CanLogin && e.Admission.CanCreate == !denyCreation, "Login and creation permissions were conflated");
-                                    Check(e.Admission.AccountId == 42 && e.Admission.Galaxy.Name == "Test Galaxy" && e.Admission.Characters[0].Name == "Tést" && e.Admission.Characters[0].SwgId == 0x100000001ul, "Admission fields");
+                                    Check(e.Admission.Username == "test" && e.Admission.AccountId == 42 && e.Admission.Galaxy.Name == "Test Galaxy" && e.Admission.Characters[0].Name == "TÃ©st" && e.Admission.Characters[0].SwgId == 0x100000001ul, "Admission fields");
+                                    using (var game = connection.TakeGameConnection())
+                                    {
+                                        connection.Dispose(); // The admitted zone connection now has its own lifetime.
+                                        game.Start(notificationContext ?? SynchronizationContext.Current ?? new SynchronizationContext());
+                                        game.Send(new SelectCharacterPacket(0x100000001ul));
+                                        game.Send(new CmdSceneReadyPacket());
+                                        Check(delivered.Wait(3000), "Game connection did not send queued packets after login disposed");
+                                        afterReady?.Invoke(game, () => disconnectRequested.Set());
+                                    }
+
                                     result = true;
                                 }
                             }
