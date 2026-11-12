@@ -454,7 +454,7 @@
       "group": "Chat",
       "packet": "ChatOnCreateRoomPacket",
       "handler": "ChatOnCreateRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnCreateRoom",
@@ -546,7 +546,7 @@
       "group": "Chat",
       "packet": "ChatInstantMessageToClientPacket",
       "handler": "ChatInstantMessageToClientPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatInstantMessageToClient",
@@ -966,7 +966,7 @@
       "group": "Chat",
       "packet": "ChatOnLeaveRoomPacket",
       "handler": "ChatOnLeaveRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnLeaveRoom",
@@ -1104,7 +1104,7 @@
       "group": "Chat",
       "packet": "ChatSystemPacket",
       "handler": "ChatSystemPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatSystemMessage",
@@ -1196,7 +1196,7 @@
       "group": "Chat",
       "packet": "ChatRoomListPacket",
       "handler": "ChatRoomListPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatRoomList",
@@ -1553,7 +1553,7 @@
       "group": "Chat",
       "packet": "ChatOnSendInstantPacket",
       "handler": "ChatOnSendInstantPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnSendInstantMessage",
@@ -2181,7 +2181,7 @@
       "group": "Chat",
       "packet": "ChatQueryRoomResultsPacket",
       "handler": "ChatQueryRoomResultsPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatQueryRoomResults",
@@ -2325,7 +2325,7 @@
       "group": "Chat",
       "packet": "ChatRoomPacket",
       "handler": "ChatRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatRoomMessage",
@@ -2578,7 +2578,7 @@
       "group": "Chat",
       "packet": "ChatOnEnteredRoomPacket",
       "handler": "ChatOnEnteredRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnEnteredRoom",
@@ -2601,7 +2601,7 @@
       "group": "Chat",
       "packet": "ChatOnSendRoomPacket",
       "handler": "ChatOnSendRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnSendRoomMessage",
@@ -2693,7 +2693,7 @@
       "group": "Chat",
       "packet": "ChatOnDestroyRoomPacket",
       "handler": "ChatOnDestroyRoomPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ChatOnDestroyRoom",
@@ -3155,7 +3155,7 @@
       "group": "Chat",
       "packet": "SpatialChatPacket",
       "handler": "SpatialChatControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "SpatialChat",
@@ -3322,7 +3322,7 @@
       "group": "Commands",
       "packet": "CommandQueueRemovePacket",
       "handler": "CommandQueueRemoveControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "CommandQueueRemove",
@@ -3520,7 +3520,7 @@
       "group": "Commands",
       "packet": "CommandQueueAddPacket",
       "handler": "CommandQueueAddControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "CommandQueueAdd",

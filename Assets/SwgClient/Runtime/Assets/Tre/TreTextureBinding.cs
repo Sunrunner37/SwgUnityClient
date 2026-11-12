@@ -29,10 +29,21 @@ namespace Swg.Client.Runtime.Assets.Tre
                     throw binding.Failure;
         }
 
+#if UNITY_EDITOR
+        public static event Action PreviewRequested;
+#endif
+
         void OnEnable()
         {
-            if (Application.IsPlaying(gameObject) && asset != null)
-                binding = StartCoroutine(BindRuntime());
+            if (Application.IsPlaying(gameObject))
+            {
+                if (asset != null)
+                    binding = StartCoroutine(BindRuntime());
+            }
+#if UNITY_EDITOR
+            else
+                PreviewRequested?.Invoke();
+#endif
         }
 
         IEnumerator BindRuntime()

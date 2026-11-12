@@ -33,6 +33,13 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
 
         protected override void Handle(DeltasPacket packet)
         {
+            if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 9)
+            {
+                if (PlayerView9.TryReadDelta(new ByteReader(packet.Payload), out var commands))
+                    replication.UpdateCommands(commands);
+                return;
+            }
+
             if (!deltaFields.TryGetValue(((ReplicatedObjectType)packet.ObjectType, packet.View), out var readField))
             {
                 Debug.LogWarning("Unsupported delta type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);

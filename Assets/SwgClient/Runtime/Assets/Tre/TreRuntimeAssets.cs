@@ -45,6 +45,19 @@ namespace Swg.Client.Runtime.Assets.Tre
             }
         }
 
+        readonly Dictionary<(string Path, TextureWrapMode WrapMode), Texture2D> pathTextures = new Dictionary<(string, TextureWrapMode), Texture2D>();
+        public Texture2D LoadTexture(string swgPath, TextureWrapMode wrapMode = TextureWrapMode.Clamp)
+        {
+            var key = (swgPath.Replace('\\', '/').ToLowerInvariant(), wrapMode);
+            if (!pathTextures.TryGetValue(key, out var texture))
+            {
+                texture = Texture(TextureData.Load(Loader, key.Item1), wrapMode);
+                pathTextures.Add(key, texture);
+            }
+
+            return texture;
+        }
+
         public Texture2D LoadVisual(TreVisual asset)
         {
             if (!visuals.TryGetValue(asset, out var texture))
@@ -97,6 +110,7 @@ namespace Swg.Client.Runtime.Assets.Tre
                 }
 
             textures.Clear();
+            pathTextures.Clear();
             visuals.Clear();
             // Reads may still be decoding while a screen is closed or Play mode exits.
             Task.WhenAll(active.Concat(new Task[] { mounting })).ContinueWith(completed =>

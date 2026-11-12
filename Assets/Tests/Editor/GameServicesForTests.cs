@@ -1,9 +1,10 @@
 using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Localization;
+using Swg.Client.Runtime.Networking.Chat;
 using Autofac;
 using UnityEngine;
 using Swg.Client.Core.World;
 using Swg.Client.Core.Networking.Game.Handlers;
-using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.Networking.Game;
 
 namespace Swg.Client.Tests.Editor
@@ -23,6 +24,11 @@ namespace Swg.Client.Tests.Editor
             var builder = new ContainerBuilder();
             builder.RegisterInstance(replication).ExternallyOwned();
             builder.RegisterInstance(replication.State);
+            // Routing tests construct every handler but do not open a network connection.
+            builder.Register(_ => new ClientCommands(null, replication.State)).SingleInstance();
+            builder.Register(_ => new StringTableLocalizer(null)).SingleInstance();
+            builder.RegisterType<ProseFormatter>().SingleInstance();
+            builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>())).SingleInstance();
             builder.RegisterInstance(replication.SceneObjects);
             builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf();
             return builder.Build();

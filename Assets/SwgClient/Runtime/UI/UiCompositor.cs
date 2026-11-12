@@ -162,19 +162,37 @@ namespace Swg.Client.Runtime.UI
             for (int y = 0; y < dh; y++)
                 for (int x = 0; x < dw; x++)
                 {
-                    int px = (int)Math.Floor(sx + (x + .5) * (ex - sx) / dw);
-                    int py = (int)Math.Floor(sy + (y + .5) * (ey - sy) / dh);
-                    if (px < 0 || py < 0 || px >= atlas.Width || py >= atlas.Height || dx + x < 0 || dy + y < 0 || dx + x >= dst.Width || dy + y >= dst.Height)
+                    if (dx + x < 0 || dy + y < 0 || dx + x >= dst.Width || dy + y >= dst.Height)
                         continue;
-                    int s = (py * atlas.Width + px) * 4;
+                    // Filter within this atlas region, using premultiplied alpha to avoid dark fringes.
+                    float px = Math.Clamp((float)(sx + (x + .5) * (ex - sx) / dw - .5), Math.Min(sx, ex), Math.Max(sx, ex) - 1);
+                    float py = Math.Clamp((float)(sy + (y + .5) * (ey - sy) / dh - .5), Math.Min(sy, ey), Math.Max(sy, ey) - 1);
+                    int x0 = (int)Math.Floor(px);
+                    int y0 = (int)Math.Floor(py);
+                    int x1 = Math.Min(x0 + 1, Math.Max(sx, ex) - 1);
+                    int y1 = Math.Min(y0 + 1, Math.Max(sy, ey) - 1);
+                    float fx = px - x0;
+                    float fy = py - y0;
+                    int p00 = (y0 * atlas.Width + x0) * 4;
+                    int p10 = (y0 * atlas.Width + x1) * 4;
+                    int p01 = (y1 * atlas.Width + x0) * 4;
+                    int p11 = (y1 * atlas.Width + x1) * 4;
+                    float a00 = atlas.Pixels[p00 + 3] / 255f * (1 - fx) * (1 - fy);
+                    float a10 = atlas.Pixels[p10 + 3] / 255f * fx * (1 - fy);
+                    float a01 = atlas.Pixels[p01 + 3] / 255f * (1 - fx) * fy;
+                    float a11 = atlas.Pixels[p11 + 3] / 255f * fx * fy;
+                    float a = (a00 + a10 + a01 + a11) * opacity;
                     int d = ((dy + y) * dst.Width + dx + x) * 4;
-                    float a = atlas.Pixels[s + 3] / 255f * opacity;
                     float oa = dst.Pixels[d + 3] / 255f;
                     float na = a + oa * (1 - a);
                     if (na == 0)
                         continue;
                     for (int c = 0; c < 3; c++)
-                        dst.Pixels[d + c] = (byte)Math.Round((atlas.Pixels[s + c] * tint[c] / 255f * a + dst.Pixels[d + c] * oa * (1 - a)) / na);
+                    {
+                        float source = atlas.Pixels[p00 + c] * a00 + atlas.Pixels[p10 + c] * a10 + atlas.Pixels[p01 + c] * a01 + atlas.Pixels[p11 + c] * a11;
+                        dst.Pixels[d + c] = (byte)Math.Round((source * tint[c] / 255f * opacity + dst.Pixels[d + c] * oa * (1 - a)) / na);
+                    }
+
                     dst.Pixels[d + 3] = (byte)Math.Round(na * 255);
                 }
         }

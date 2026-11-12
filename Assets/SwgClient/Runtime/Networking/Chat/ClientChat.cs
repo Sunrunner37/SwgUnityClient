@@ -8,7 +8,7 @@ using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Chat;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.World;
-using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Runtime.Localization;
 
 namespace Swg.Client.Runtime.Networking.Chat
 {
@@ -34,12 +34,12 @@ namespace Swg.Client.Runtime.Networking.Chat
         public IEnumerable<(string Channel, string Text)> History => history;
         public IReadOnlyDictionary<uint, ChatRoomData> Rooms => rooms;
 
-        public ClientChat(GameConnection connection, WorldState state, TreRuntimeAssets assets, ClientCommands commands)
+        public ClientChat(GameConnection connection, WorldState state, StringTableLocalizer localizer, ProseFormatter formatter, ClientCommands commands)
         {
             this.connection = connection;
             this.state = state;
             this.commands = commands;
-            text = new ChatText(assets, state);
+            text = new ChatText(localizer, formatter, state);
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create ClientChat on Unity's main thread.");
         }
 

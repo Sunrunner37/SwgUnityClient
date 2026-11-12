@@ -15,7 +15,7 @@ namespace Swg.Client.Editor
             {
                 if (state == PlayModeStateChange.EnteredEditMode)
                 {
-                    SetDefaultStartScene();
+                    EditorApplication.delayCall += SetDefaultStartScene;
                 }
             };
         }
@@ -24,14 +24,23 @@ namespace Swg.Client.Editor
         {
             if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
-            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.Scenes + "/" + ScreenId.Intro + ".unity");
+            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.UiTestingScene);
         }
 
         public static void PlayClient()
         {
             if (EditorApplication.isPlaying)
                 return;
-            SetDefaultStartScene();
+            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.Scenes + "/" + ScreenId.Intro + ".unity");
+            EditorApplication.isPlaying = true;
+        }
+
+        [MenuItem("SWG/Play UI Test Scene")]
+        public static void PlayUiTesting()
+        {
+            if (EditorApplication.isPlaying)
+                return;
+            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.UiTestingScene);
             EditorApplication.isPlaying = true;
         }
 

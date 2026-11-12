@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Swg.Client.Core.Assets.Formats.Ui;
 using Swg.Client.Core.Assets.Tre;
+using Swg.Client.Core.Assets.Formats.Dds;
+using Swg.Client.Runtime.UI;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -34,6 +36,39 @@ namespace Swg.Client.Tests.Editor
                 string markup = loader.Text(path);
                 Equal(Reference(markup), UiNode.Parse(markup));
             }
+        }
+
+        [Test, Category("NativeAssets")]
+        public void ScaledArtworkFiltersAlphaWithoutDarkFringesOrAtlasBleeding()
+        {
+            var settings = Swg.Client.Core.Configuration.ClientSettings.From(Path.Combine(Directory.GetParent(UnityEngine.Application.dataPath).FullName, "client.ini"));
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            const string path = "texture/ui_rebel_final.dds";
+            var atlas = TextureData.Load(loader, path);
+            int pixel = -1;
+            for (int i = 0; i < atlas.Width * atlas.Height - 1; i++)
+                if (i % atlas.Width != atlas.Width - 1 && atlas.Pixels[i * 4 + 3] == 255 && atlas.Pixels[(i + 1) * 4 + 3] == 0)
+                {
+                    pixel = i;
+                    break;
+                }
+
+            Assert.That(pixel, Is.GreaterThanOrEqualTo(0), "The native atlas must contain an opaque-to-transparent edge.");
+            int x = pixel % atlas.Width;
+            int y = pixel / atlas.Width;
+            var composer = new UiCompositor(loader, path, "ui/ui_styles.inc");
+            var result = new TextureData(3, 1);
+            composer.Copy(result, new[] { x, y, x + 2, y + 1 }, new[] { 0, 0, 3, 1 }, new[] { 255, 255, 255 }, 1);
+            Assert.That(result.Pixels[3], Is.EqualTo(255));
+            Assert.That(result.Pixels[7], Is.EqualTo(128));
+            Assert.That(result.Pixels[11], Is.Zero);
+            for (int c = 0; c < 3; c++)
+                Assert.That(result.Pixels[4 + c], Is.EqualTo(atlas.Pixels[pixel * 4 + c]), "Transparent texels must not darken the edge.");
+            var mirrored = new TextureData(3, 1);
+            composer.Copy(mirrored, new[] { x + 2, y, x, y + 1 }, new[] { 0, 0, 3, 1 }, new[] { 255, 255, 255 }, 1);
+            for (int i = 0; i < 3; i++)
+                for (int c = 0; c < 4; c++)
+                    Assert.That(mirrored.Pixels[i * 4 + c], Is.EqualTo(result.Pixels[(2 - i) * 4 + c]));
         }
 
         static void Equal(UiNode expected, UiNode actual)

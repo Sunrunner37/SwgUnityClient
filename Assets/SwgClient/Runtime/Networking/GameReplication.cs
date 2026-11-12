@@ -76,6 +76,12 @@ namespace Swg.Client.Runtime.Networking
             });
         }
 
+        internal void UpdateCommands(Action<List<string>> update)
+        {
+            if (!disposed)
+                pending.Enqueue(() => State.Commands.Apply(update));
+        }
+
         internal void AcknowledgeSceneReady()
         {
             if (disposed)

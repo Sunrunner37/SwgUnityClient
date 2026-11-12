@@ -1,5 +1,6 @@
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Networking.Chat;
 using Swg.Client.Core.World;
 using Autofac;
 using Swg.Client.Core;
@@ -87,6 +88,16 @@ namespace Swg.Client.Runtime.World.Loading
                 Debug.Log($"World entry � {Phase}: {timer.Elapsed.TotalSeconds:F2}s");
                 if (stopped)
                     yield break;
+            }
+
+            try
+            {
+                session.Resolve<ClientChat>().RequestRooms();
+            }
+            catch (Exception error)
+            {
+                Fail(error);
+                yield break;
             }
 
             Debug.Log($"World entry complete: {total.Elapsed.TotalSeconds:F2}s");

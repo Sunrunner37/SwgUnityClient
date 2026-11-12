@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Commands;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Commands
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Commands
     [Preserve]
     internal sealed class CommandQueueAddControllerHandler : ObjectControllerHandler<CommandQueueAddPacket>
     {
+        readonly ClientCommands commands;
         public override uint ControllerType => CommandQueueAddPacket.ControllerType;
 
         [Preserve]
-        public CommandQueueAddControllerHandler() : base(CommandQueueAddPacket.ReadFrom)
+        public CommandQueueAddControllerHandler(ClientCommands commands) : base(CommandQueueAddPacket.ReadFrom)
         {
+            this.commands = commands;
         }
 
         protected override void Handle(CommandQueueAddPacket packet)
         {
-            throw new NotImplementedException($"CommandQueueAdd (controller 0x{ControllerType:X8})");
+            commands.Receive(packet);
         }
     }
 }

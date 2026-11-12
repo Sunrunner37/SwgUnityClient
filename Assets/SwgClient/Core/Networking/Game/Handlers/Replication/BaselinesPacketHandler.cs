@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Assets.Formats.Binary;
-using Swg.Client.Core.Networking.Game.Packets;
 using Swg.Client.Core.Networking.Game.Replication;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Replication
@@ -32,6 +31,16 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
 
         protected override void Handle(BaselinesPacket packet)
         {
+            if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 9)
+            {
+                var abilitiesReader = new ByteReader(packet.Payload);
+                abilitiesReader.U16();
+                var commands = PlayerView9.ReadBaseline(abilitiesReader);
+                replication.Commit(packet.SwgId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.UpdateCommands(commands);
+                return;
+            }
+
             if (!baselines.TryGetValue(((ReplicatedObjectType)packet.ObjectType, packet.View), out var read))
             {
                 Debug.LogWarning("Unsupported baseline type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);

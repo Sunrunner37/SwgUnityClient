@@ -1,8 +1,12 @@
+using Swg.Client.Runtime.Commands;
+using Swg.Client.Runtime.Localization;
+using Swg.Client.Runtime.Assets.UI;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Networking.Chat;
 using Swg.Client.Core.Networking.Game.Handlers;
 using System.IO;
 using System;
@@ -42,6 +46,8 @@ namespace Swg.Client.Runtime
             var builder = new ContainerBuilder();
             builder.RegisterInstance(ClientSettings.From(ini));
             builder.RegisterType<TreRuntimeAssets>().SingleInstance();
+            builder.RegisterType<StringTableLocalizer>().SingleInstance();
+            builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.RegisterType<AudioClipLoader>().SingleInstance();
             builder.RegisterType<SwgMaterialFactory>().SingleInstance();
             builder.RegisterInstance(music).ExternallyOwned();
@@ -50,14 +56,26 @@ namespace Swg.Client.Runtime
             Application.quitting += Shutdown;
         }
 
+        internal static ILifetimeScope BeginLifetimeScope(Action<ContainerBuilder> register)
+        {
+            EndGame();
+            game = global.BeginLifetimeScope(register);
+            return game;
+        }
+
         internal static void BeginGame(GameConnection connection)
         {
             // These singletons are owned by the current game lifetime.
-            game = global.BeginLifetimeScope(builder =>
+            BeginLifetimeScope(builder =>
             {
                 builder.RegisterInstance(connection).ExternallyOwned();
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
                 builder.RegisterType<WorldState>().SingleInstance();
+                builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<CommandCatalog>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
+                builder.RegisterType<CommandVisuals>().SingleInstance();
                 builder.Register(context =>
                 {
                     var replication = new GameObject("Game replication").AddComponent<GameReplication>();
@@ -116,7 +134,7 @@ namespace Swg.Client.Runtime
         {
             if (game != null)
             {
-                game.Resolve<GameConnection>().SetReceiver(null);
+                Connection?.SetReceiver(null);
                 game.Dispose();
             }
 

@@ -17,7 +17,7 @@ namespace Swg.Client.Editor
     public static class TreEditorAssets
     {
         static TreAssetLoader loader;
-        static readonly Dictionary<TreVisual, TextureData> visuals = new Dictionary<TreVisual, TextureData>();
+        static readonly Dictionary<TreVisual, (string Definition, TextureData Source)> visuals = new Dictionary<TreVisual, (string, TextureData)>();
         static readonly Dictionary<TextureData, Texture2D> textures = new Dictionary<TextureData, Texture2D>();
         static readonly Dictionary<string, TextureData> decoded = new Dictionary<string, TextureData>();
         public static TreAssetLoader Loader
@@ -36,23 +36,26 @@ namespace Swg.Client.Editor
 
         public static Texture2D Load(TreVisual asset)
         {
-            if (!visuals.TryGetValue(asset, out var source))
+            // Compare the serialized inputs so imports and Undo refresh only changed definitions.
+            string definition = EditorJsonUtility.ToJson(asset);
+            if (!visuals.TryGetValue(asset, out var cached) || cached.Definition != definition)
             {
-                source = asset.Load(Loader);
-                visuals.Add(asset, source);
+                Invalidate(asset);
+                cached = (definition, asset.Load(Loader));
+                visuals[asset] = cached;
             }
 
-            return Convert(source);
+            return Convert(cached.Source);
         }
 
         public static void Invalidate(TreVisual asset)
         {
-            if (!visuals.TryGetValue(asset, out var source))
+            if (!visuals.TryGetValue(asset, out var cached))
                 return;
             visuals.Remove(asset);
-            if (textures.TryGetValue(source, out var texture))
+            if (textures.TryGetValue(cached.Source, out var texture))
             {
-                textures.Remove(source);
+                textures.Remove(cached.Source);
                 UnityEngine.Object.DestroyImmediate(texture);
             }
         }
@@ -62,16 +65,10 @@ namespace Swg.Client.Editor
             AssemblyReloadEvents.beforeAssemblyReload += Close;
             EditorApplication.quitting += Close;
             EditorApplication.projectChanged += QueueRefresh;
-            Undo.undoRedoPerformed += () =>
-            {
-                Close();
-                Refresh();
-            };
-            EditorSceneManager.sceneOpened += (_, __) =>
-            {
-                Refresh();
-                QueueRefresh();
-            };
+            EditorApplication.hierarchyChanged += QueueRefresh;
+            TreTextureBinding.PreviewRequested += QueueRefresh;
+            Undo.undoRedoPerformed += QueueRefresh;
+            EditorSceneManager.sceneOpened += (_, __) => QueueRefresh();
             PrefabStage.prefabStageOpened += _ => QueueRefresh();
             EditorApplication.playModeStateChanged += state =>
             {
@@ -81,10 +78,9 @@ namespace Swg.Client.Editor
             EditorApplication.delayCall += QueueRefresh;
         }
 
-        static int refreshFrames;
-        static void QueueRefresh()
+        [MenuItem("SWG/Refresh TRE Previews")]
+        public static void QueueRefresh()
         {
-            refreshFrames = 3;
             EditorApplication.update -= RefreshPending;
             EditorApplication.update += RefreshPending;
             EditorApplication.QueuePlayerLoopUpdate();
@@ -92,42 +88,37 @@ namespace Swg.Client.Editor
 
         static void RefreshPending()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode || --refreshFrames < 0)
-            {
-                EditorApplication.update -= RefreshPending;
+            EditorApplication.update -= RefreshPending;
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
-            }
-
-            Refresh();
-            Canvas.ForceUpdateCanvases();
+            RefreshBindings();
             foreach (var window in Resources.FindObjectsOfTypeAll<EditorWindow>())
                 if (window.GetType().Name == "GameView")
                     window.Repaint();
-            EditorApplication.QueuePlayerLoopUpdate();
         }
 
-        [MenuItem("SWG/Refresh TRE Previews")]
-        public static void Refresh()
+        static void RefreshBindings()
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-                return;
-            try
+            foreach (var binding in Resources.FindObjectsOfTypeAll<TreTextureBinding>())
             {
-                foreach (var binding in Resources.FindObjectsOfTypeAll<TreTextureBinding>())
-                    if (!EditorUtility.IsPersistent(binding) && binding.gameObject.scene.IsValid())
-                        binding.Apply(Load);
-                // Prefab/scene reloads can reset CanvasRenderer geometry without changing
-                // the RawImage's managed texture reference. Rebuild it explicitly.
-                foreach (var graphic in Resources.FindObjectsOfTypeAll<Graphic>())
-                    if (!EditorUtility.IsPersistent(graphic) && graphic.gameObject.scene.IsValid())
+                if (EditorUtility.IsPersistent(binding) || !binding.gameObject.scene.IsValid() || !binding.enabled || binding.asset == null)
+                    continue;
+                try
+                {
+                    binding.Apply(Load);
+                    // Reloading a scene can reset geometry even if its texture reference is unchanged.
+                    var graphic = binding.GetComponent<Graphic>();
+                    if (graphic != null)
                         graphic.SetAllDirty();
-                Canvas.ForceUpdateCanvases();
-                SceneView.RepaintAll();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("SWG TRE preview: " + e.Message, binding);
+                }
             }
-            catch (Exception e)
-            {
-                Debug.LogWarning("SWG TRE preview: " + e.Message);
-            }
+
+            Canvas.ForceUpdateCanvases();
+            SceneView.RepaintAll();
         }
 
         public static Texture2D Texture(string path)
@@ -143,12 +134,13 @@ namespace Swg.Client.Editor
 
         public static Texture2D Convert(TextureData source)
         {
-            if (textures.TryGetValue(source, out var tex))
+            if (textures.TryGetValue(source, out var tex) && tex != null)
                 return tex;
             tex = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, false)
             {
                 hideFlags = HideFlags.HideAndDontSave,
                 name = "TRE preview",
+                filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp
             };
             var pixels = new byte[source.Pixels.Length];
@@ -156,7 +148,7 @@ namespace Swg.Client.Editor
                 Buffer.BlockCopy(source.Pixels, y * source.Width * 4, pixels, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
             tex.LoadRawTextureData(pixels);
             tex.Apply(false, true);
-            textures.Add(source, tex);
+            textures[source] = tex;
             return tex;
         }
 
@@ -188,18 +180,7 @@ namespace Swg.Client.Editor
             if (selected != null && GUILayout.Button("Select asset definition"))
                 Selection.activeObject = selected;
             if (changed || GUILayout.Button("Load / refresh preview"))
-            {
-                try
-                {
-                    var binding = (TreTextureBinding)target;
-                    if (binding.enabled)
-                        binding.Apply(TreEditorAssets.Load);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
-            }
+                TreEditorAssets.QueueRefresh();
         }
     }
 
@@ -215,10 +196,12 @@ namespace Swg.Client.Editor
             bool changed = EditorGUI.EndChangeCheck();
             serializedObject.ApplyModifiedProperties();
             var asset = (TreVisual)target;
-            if (changed || GUILayout.Button("Reload from SWG archives"))
+            bool reload = GUILayout.Button("Reload from SWG archives");
+            if (changed || reload)
             {
-                TreEditorAssets.Invalidate(asset);
-                TreEditorAssets.Refresh();
+                if (reload)
+                    TreEditorAssets.Invalidate(asset);
+                TreEditorAssets.QueueRefresh();
                 error = null;
             }
 
@@ -316,7 +299,7 @@ namespace Swg.Client.Editor
             {
                 TreEditorAssets.Close();
                 Mount();
-                TreEditorAssets.Refresh();
+                TreEditorAssets.QueueRefresh();
             }
 
             EditorGUI.BeginChangeCheck();
@@ -358,7 +341,7 @@ namespace Swg.Client.Editor
                         Undo.RegisterCreatedObjectUndo(definition, "Create SWG texture asset");
                         Undo.RecordObject(binding, "Assign TRE texture");
                         binding.asset = definition;
-                        binding.Apply(TreEditorAssets.Load);
+                        TreEditorAssets.QueueRefresh();
                         PrefabUtility.RecordPrefabInstancePropertyModifications(binding);
                         EditorUtility.SetDirty(binding);
                     }

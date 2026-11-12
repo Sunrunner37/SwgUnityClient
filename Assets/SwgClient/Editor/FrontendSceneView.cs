@@ -45,7 +45,7 @@ namespace Swg.Client.Editor
             foreach (var root in scene.GetRootGameObjects())
             {
                 var app = root.GetComponentInChildren<ClientScreen>(true);
-                if (app == null)
+                if (app == null && scene.path != SwgProjectPaths.UiTestingScene)
                     continue;
                 var canvas = root.GetComponentInChildren<Canvas>(true);
                 if (canvas != null)
@@ -64,8 +64,7 @@ namespace Swg.Client.Editor
                 return;
             if (framedScenes.TryGetValue(view, out var framed) && framed.Equals(scene))
                 return;
-            // Refresh only once per opened scene/view. Manual panning/zooming is retained.
-            TreEditorAssets.Refresh();
+            // Frame once per opened scene/view. Manual panning/zooming is retained.
             if (Frame(view, rect))
                 framedScenes[view] = scene;
         }
@@ -79,7 +78,6 @@ namespace Swg.Client.Editor
             var view = SceneView.lastActiveSceneView;
             if (rect != null && view != null)
             {
-                TreEditorAssets.Refresh();
                 if (Frame(view, rect))
                     framedScenes[view] = scene;
             }
