@@ -1,4 +1,4 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Characters.Materials
             return "shader/" + Path.GetFileNameWithoutExtension(ownerAppearance.Replace('\\', '/')) + "_" + material + ".sht";
         }
 
-        internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Action<string> warn)
+        internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner)
         {
             var factors = IffNode.Form(nodes, "TFAC");
             if (factors == null)
@@ -44,7 +44,7 @@ namespace Swg.Client.Core.Characters.Materials
                 if (values.TryGetValue(scoped, out var actual))
                     index = actual;
                 if (scope > 1)
-                    warn("Unknown shader customization scope; default palette binding used.");
+                    Debug.LogWarning("Unknown shader customization scope " + scope + " for " + path + " (" + variable + "); default palette binding used.");
                 return PaletteColor(loader, path, index);
             }
 

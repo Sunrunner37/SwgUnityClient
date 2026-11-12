@@ -35,6 +35,7 @@ namespace Swg.Client.Tests.Editor
                 write(writer);
                 return stream.ToArray();
             }
+
             void Item(BinaryWriter writer, ulong swgId)
             {
                 writer.Write((ushort)1);
@@ -43,17 +44,26 @@ namespace Swg.Client.Tests.Editor
                 writer.Write(swgId);
                 writer.Write(200u);
             }
+
             void Send(byte[] payload)
             {
                 router.Accept(Packet(writer => new DeltasPacket(1, 0x4352454f, 6, payload).WriteTo(writer)));
             }
+
             Send(Packet(writer =>
             {
-                writer.Write((ushort)1); writer.Write((ushort)15);
-                writer.Write(3u); writer.Write(5u);
-                writer.Write((byte)1); writer.Write((ushort)1); Item(writer, 20);
-                writer.Write((byte)2); writer.Write((ushort)0); Item(writer, 30);
-                writer.Write((byte)0); writer.Write((ushort)1);
+                writer.Write((ushort)1);
+                writer.Write((ushort)15);
+                writer.Write(3u);
+                writer.Write(5u);
+                writer.Write((byte)1);
+                writer.Write((ushort)1);
+                Item(writer, 20);
+                writer.Write((byte)2);
+                writer.Write((ushort)0);
+                Item(writer, 30);
+                writer.Write((byte)0);
+                writer.Write((ushort)1);
             }));
             Assert.That(creature.Equipment.Single().SwgId.Value, Is.EqualTo(10));
             world.ApplyPending();
@@ -61,8 +71,11 @@ namespace Swg.Client.Tests.Editor
             Assert.That(changes.HasFlag(SceneObjectChange.Appearance), Is.True);
             Send(Packet(writer =>
             {
-                writer.Write((ushort)1); writer.Write((ushort)15);
-                writer.Write(1u); writer.Write(6u); writer.Write((byte)4);
+                writer.Write((ushort)1);
+                writer.Write((ushort)15);
+                writer.Write(1u);
+                writer.Write(6u);
+                writer.Write((byte)4);
             }));
             world.ApplyPending();
             Assert.That(creature.Equipment, Is.Empty);
@@ -73,9 +86,14 @@ namespace Swg.Client.Tests.Editor
         {
             IffNode Mesh(ushort layer, bool covers)
             {
-                var version = new IffNode { Kind = "0004" };
+                var version = new IffNode
+                {
+                    Kind = "0004"
+                };
                 var info = new byte[44];
-                info[36] = 1; info[38] = 1; info[40] = covers ? (byte)1 : (byte)0;
+                info[36] = 1;
+                info[38] = 1;
+                info[40] = covers ? (byte)1 : (byte)0;
                 info[42] = (byte)layer;
                 info[43] = (byte)(layer >> 8);
                 version.Children.Add(new IffNode { Tag = "INFO", Data = info });
@@ -85,12 +103,14 @@ namespace Swg.Client.Tests.Editor
                     version.Children.Add(new IffNode { Tag = "ZTO ", Data = new byte[] { 0, 0 } });
                 return version;
             }
-            var result = new CachedCharacterModelResult();
+
+            var result = new CharacterModelResult();
             void Part(IffNode mesh, int[] combinations)
             {
                 result.Parts.Add(new MeshPart { Triangles = new[] { 0, 1, 2, 2, 3, 0 } });
                 result.Sources.Add(new CachedMeshPartSource { MeshVersion = mesh, TriangleOcclusionCombinations = combinations });
             }
+
             Part(Mesh(ushort.MaxValue, false), new[] { 0, -1 });
             Part(Mesh(2, true), new[] { 0, -1 });
             CharacterMeshOcclusion.Apply(result);

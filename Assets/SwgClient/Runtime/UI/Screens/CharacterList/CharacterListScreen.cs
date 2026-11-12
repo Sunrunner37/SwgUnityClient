@@ -28,7 +28,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         public CharacterPreview preview;
         readonly List<CharacterListRow> rows = new List<CharacterListRow>();
         readonly List<CharacterAppearanceProfile> profiles = new List<CharacterAppearanceProfile>();
-        readonly Dictionary<int, CachedCharacterModelResult> models = new Dictionary<int, CachedCharacterModelResult>();
+        readonly Dictionary<int, CharacterModelResult> models = new Dictionary<int, CharacterModelResult>();
         int selected = -1;
         int selectionVersion;
         public int CharacterCount => rows.Count;
@@ -184,7 +184,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             if (!models.TryGetValue(index, out var model))
             {
                 var appearance = profiles[index].Appearance;
-                var task = assets.ReadAsync(loader => CachedCharacterModel.LoadDetailed(loader, appearance));
+                var task = assets.ReadAsync(loader => CharacterModel.LoadDetailed(loader, appearance));
                 yield return new WaitUntil(() => task.IsCompleted);
                 if (task.IsFaulted)
                 {
@@ -207,8 +207,6 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             {
                 preview.Show(rows[index].Character.SwgId.ToString(), model);
                 message.text = "Choose the Character you would like to play now.\nYou may also choose to Create a new Character, or Delete one of your existing Characters.";
-                foreach (var warning in model.Warnings)
-                    Debug.LogWarning(warning);
             }
             catch (Exception error)
             {

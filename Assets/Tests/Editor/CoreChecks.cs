@@ -222,7 +222,7 @@ namespace Swg.Client.Tests.Editor
                 Check(appearance.SourcePath.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase), "Cache escaped client directory");
                 Check(!CharacterAppearanceCache.TryReadProfile(cacheRoot, "other-server:44453", "test-user", "Core3", 42, out _), "Cache leaked between servers");
                 Check(appearance.Appearance.Wearables.Count == 1 && appearance.Appearance.Wearables[0].ArrangementHint == 4, "Cached wearable record");
-                var model = CachedCharacterModel.LoadDetailed(loader, appearance.Appearance);
+                var model = CharacterModel.LoadDetailed(loader, appearance.Appearance);
                 Check(model.Parts.Count > 0, "Cached character has no mesh");
                 var positions = model.Parts.SelectMany(p => p.Vertices).ToArray();
                 Check(positions.All(p => !float.IsNaN(p.x) && !float.IsInfinity(p.x) && !float.IsNaN(p.y) && !float.IsInfinity(p.y) && !float.IsNaN(p.z) && !float.IsInfinity(p.z)), "Nonfinite cached character");

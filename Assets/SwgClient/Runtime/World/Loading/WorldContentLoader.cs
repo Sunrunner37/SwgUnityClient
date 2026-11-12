@@ -305,19 +305,9 @@ namespace Swg.Client.Runtime.World.Loading
                     };
                 }
 
-                var character = CachedCharacterModel.LoadDetailed(loader, characterAppearance);
+                var character = CharacterModel.LoadDetailed(loader, characterAppearance);
                 result.Parts = character.Parts;
-                for (int i = 0; i < result.Parts.Count; i++)
-                {
-                    var source = character.Sources[i];
-                    result.Parts[i].UseCharacterShader = true;
-                    result.Parts[i].AlphaCutout = (source.ObjectTemplate ?? "").Contains("/hair/") || (source.MeshPath ?? "").Contains("/hair/");
-                }
-
                 result.RecalculateBounds();
-                result.Warnings.AddRange(character.Warnings);
-                foreach (var warning in character.Warnings)
-                    Debug.LogWarning(warning);
             }
             catch (Exception error)
             {

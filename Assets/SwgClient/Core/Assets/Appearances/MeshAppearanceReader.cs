@@ -125,7 +125,7 @@ namespace Swg.Client.Core.Assets.Appearances
                         diffuse = References(shaderBytes, "texture/", new[] { ".dds" }).FirstOrDefault(p => !p.EndsWith("_n.dds") && !p.EndsWith("_cn.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds"));
                     if (diffuse != null)
                         texture = Texture(loader, diffuse);
-                    tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, Defaults, Defaults, message => Warn(result, message));
+                    tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, Defaults, Defaults);
                     var effect = References(shaderBytes, "effect/", new[] { ".eft" }).FirstOrDefault();
                     cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
                 }

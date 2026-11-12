@@ -13,10 +13,10 @@ namespace Swg.Client.Runtime.Assets.Appearances
         readonly string name;
         readonly MeshPartResources[] parts;
         readonly ParticleEffectResources[] particles;
-        public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader)
+        public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
             name = appearance.Key;
-            parts = Enumerable.Range(0, appearance.Parts.Count).Select(i => MeshPartResources.FromAppearance(appearance, i, factory, appearance.Parts[i].UseCharacterShader ? characterShader : worldShader)).ToArray();
+            parts = Enumerable.Range(0, appearance.Parts.Count).Select(i => MeshPartResources.FromAppearance(appearance, i, factory, appearance.Parts[i].UseCharacterShader ? characterShader : worldShader, wrapMode)).ToArray();
             particles = appearance.Particles.Select(effect => new ParticleEffectResources(effect, factory, worldShader, characterShader, particleShader)).ToArray();
         }
 
@@ -38,12 +38,12 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 else
                 {
                     var renderer = part.AddComponent<SkinnedMeshRenderer>();
-                    renderer.sharedMesh = resource.SkinnedMesh;
+                    renderer.sharedMesh = resource.Mesh;
                     renderer.sharedMaterial = resource.Material;
                     renderer.bones = animation.GetBones(resource.Skinning.Skeleton);
                     renderer.rootBone = renderer.bones[0];
                     // Include arm swings and hip bob beyond the static bind-pose box.
-                    renderer.localBounds = new Bounds(resource.Mesh.bounds.center, resource.Mesh.bounds.size + Vector3.one);
+                    renderer.localBounds = new Bounds(resource.Bounds.center, resource.Bounds.size + Vector3.one);
                 }
             }
 

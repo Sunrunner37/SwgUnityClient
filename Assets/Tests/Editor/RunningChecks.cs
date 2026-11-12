@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using Swg.Client.Runtime.UI.Screens;
 using NUnit.Framework;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Assets.Formats.Animation;
@@ -23,6 +25,49 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class RunningChecks
     {
+        [Test]
+        public void CharacterPreviewUsesSharedSkinningAndBreathesWithoutMoving()
+        {
+            using var loader = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var source = CharacterModel.LoadDetailed(loader, "object/creature/player/shared_human_female.iff");
+            var model = new CharacterModelResult();
+            foreach (var part in source.Parts)
+                model.Parts.Add(new MeshPart { Vertices = part.Vertices, Normals = part.Normals, Uvs = part.Uvs, Triangles = part.Triangles, Skinning = part.Skinning, UseCharacterShader = true, AlphaCutout = part.AlphaCutout });
+            var root = new GameObject("preview-test");
+            var cameraRoot = new GameObject("preview-camera-test");
+            var baked = new Mesh();
+            try
+            {
+                var preview = root.AddComponent<CharacterPreview>();
+                preview.previewCamera = cameraRoot.AddComponent<Camera>();
+                preview.characterShader = Shader.Find("SWG/Character");
+                typeof(CharacterPreview).GetField("materials", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(preview, new SwgMaterialFactory(null));
+                const string key = "breathing-preview-test";
+                preview.Show(key, model);
+                var animation = root.GetComponentInChildren<CharacterAnimation>();
+                var renderers = root.GetComponentsInChildren<SkinnedMeshRenderer>();
+                Assert.That(renderers.Length, Is.EqualTo(model.Parts.Count));
+                Assert.That(root.GetComponentsInChildren<MeshFilter>(), Is.Empty);
+                Assert.That(renderers.All(renderer => renderer.gameObject.layer == 31), Is.True);
+                Assert.That(Resources.FindObjectsOfTypeAll<Mesh>().Count(mesh => mesh.name.StartsWith(key + " part ")), Is.EqualTo(model.Parts.Count), "Only one GPU mesh per part is needed");
+                renderers[0].BakeMesh(baked);
+                var before = baked.vertices;
+                animation.Advance(0, 1);
+                renderers[0].BakeMesh(baked);
+                Assert.That(baked.vertices.Select((vertex, index) => Vector3.Distance(vertex, before[index])).Max(), Is.GreaterThan(.00001f));
+                Assert.That(animation.Speed, Is.Zero);
+                Assert.That(animation.RunBlend, Is.Zero);
+                preview.Show(key, model);
+                Assert.That(root.GetComponentsInChildren<CharacterAnimation>().Single(), Is.SameAs(animation));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+                UnityEngine.Object.DestroyImmediate(cameraRoot);
+                UnityEngine.Object.DestroyImmediate(baked);
+            }
+        }
+
         [Test]
         public void CreatureMovementBaselineMatchesCore3AndUsesItsSpeedLimit()
         {
@@ -107,7 +152,7 @@ namespace Swg.Client.Tests.Editor
         public void GpuSkinMatchesTheNeutralPreviewAndKeepsTheRunCycleThroughTurns()
         {
             using var loader = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
-            var model = CachedCharacterModel.LoadDetailed(loader, new CharacterAppearance { TemplatePath = "object/creature/player/shared_human_female.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = new[] { new WearableAppearance { TemplatePath = "object/tangible/hair/human/shared_hair_human_female_s31.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()) } } });
+            var model = CharacterModel.LoadDetailed(loader, new CharacterAppearance { TemplatePath = "object/creature/player/shared_human_female.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = new[] { new WearableAppearance { TemplatePath = "object/tangible/hair/human/shared_hair_human_female_s31.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()) } } });
             var appearance = new AppearanceData
             {
                 Key = "running-test"

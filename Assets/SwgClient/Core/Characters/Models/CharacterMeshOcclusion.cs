@@ -17,7 +17,6 @@ namespace Swg.Client.Core.Characters.Models
             public string[] Occludes;
             public string[] FullyOccludedBy;
             public string[][] Combinations;
-
             public MeshZones(IffNode version)
             {
                 var info = new ByteReader(version.Chunk("INFO"));
@@ -37,6 +36,7 @@ namespace Swg.Client.Core.Characters.Models
                         zones[i] = names[reader.U16()];
                     return zones;
                 }
+
                 var zto = version.Children.FirstOrDefault(node => node.Tag == "ZTO ");
                 Occludes = zto == null ? Array.Empty<string>() : ReadZones(new ByteReader(zto.Data), occludesCount);
                 var full = version.Children.FirstOrDefault(node => node.Tag == "FOZC");
@@ -47,6 +47,7 @@ namespace Swg.Client.Core.Characters.Models
                     var reader = new ByteReader(full.Data);
                     FullyOccludedBy = ReadZones(reader, reader.U16());
                 }
+
                 Combinations = new string[combinationCount][];
                 if (combinationCount > 0)
                 {
@@ -57,7 +58,7 @@ namespace Swg.Client.Core.Characters.Models
             }
         }
 
-        public static void Apply(CachedCharacterModelResult model)
+        public static void Apply(CharacterModelResult model)
         {
             var meshes = model.Sources.Select(source => source.MeshVersion).Distinct().ToDictionary(version => version, version => new MeshZones(version));
             for (int partIndex = model.Parts.Count - 1; partIndex >= 0; partIndex--)
@@ -79,6 +80,7 @@ namespace Swg.Client.Core.Characters.Models
                                 triangles.Add(part.Triangles[triangle * 3 + vertex]);
                     }
                 }
+
                 if (triangles.Count == 0)
                 {
                     model.Parts.RemoveAt(partIndex);

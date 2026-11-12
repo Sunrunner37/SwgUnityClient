@@ -15,7 +15,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
     {
         public Mesh Mesh { get; }
         public Material Material { get; }
-        public Mesh SkinnedMesh { get; }
+        public Bounds Bounds { get; }
         public SkeletalMeshData Skinning { get; }
 
         public MeshPartResources(string name, MeshPart source, Material material, byte[] colors = null)
@@ -29,10 +29,11 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 name = name,
                 indexFormat = IndexFormat.UInt32
             };
-            Mesh.vertices = source.Vertices;
+            Skinning = source.Skinning;
+            Mesh.vertices = Skinning?.Vertices ?? source.Vertices;
             bool hasNormals = source.Normals != null && source.Normals.Length == source.Vertices.Length;
             if (hasNormals)
-                Mesh.normals = source.Normals;
+                Mesh.normals = Skinning?.Normals ?? source.Normals;
             if (source.Uvs != null && source.Uvs.Length == source.Vertices.Length)
                 Mesh.uv = source.Uvs.Select(uv => new Vector2(uv.x, 1 - uv.y)).ToArray();
             if (colors != null && colors.Length == source.Vertices.Length * 4)
@@ -47,34 +48,33 @@ namespace Swg.Client.Runtime.Assets.Appearances
             if (!hasNormals)
                 Mesh.RecalculateNormals();
             Mesh.RecalculateBounds();
-            Skinning = source.Skinning;
+            var bounds = Mesh.bounds;
             if (Skinning != null)
             {
-                SkinnedMesh = UnityEngine.Object.Instantiate(Mesh);
-                SkinnedMesh.name = name + " skinned";
-                SkinnedMesh.vertices = Skinning.Vertices;
-                SkinnedMesh.normals = Skinning.Normals;
-                SkinnedMesh.bindposes = Skinning.Skeleton.BindPoses;
+                Mesh.bindposes = Skinning.Skeleton.BindPoses;
                 using var counts = new NativeArray<byte>(Skinning.BonesPerVertex, Allocator.Temp);
                 using var weights = new NativeArray<BoneWeight1>(Skinning.Weights, Allocator.Temp);
-                SkinnedMesh.SetBoneWeights(counts, weights);
-                SkinnedMesh.RecalculateBounds();
+                Mesh.SetBoneWeights(counts, weights);
+                bounds = new Bounds(source.Vertices[0], Vector3.zero);
+                foreach (var vertex in source.Vertices)
+                    bounds.Encapsulate(vertex);
             }
+
+            Bounds = bounds;
         }
 
-        public static MeshPartResources FromAppearance(AppearanceData appearance, int index, SwgMaterialFactory factory, Shader shader)
+        public static MeshPartResources FromAppearance(AppearanceData appearance, int index, SwgMaterialFactory factory, Shader shader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
             var source = appearance.Parts[index];
             var colors = source.VertexColors;
             bool hasColors = colors != null && colors.Length == source.Vertices.Length * 4;
             bool cutout = source.AlphaCutout;
-            var material = factory.Create(shader, source.Diffuse, source.Tint, cutout ? .35f : 0, hasColors, TextureWrapMode.Repeat);
+            var material = factory.Create(shader, source.Diffuse, source.Tint, cutout ? .35f : 0, hasColors, wrapMode);
             return new MeshPartResources(appearance.Key + " part " + index, source, material, colors);
         }
 
         public void Dispose()
         {
-            Release(SkinnedMesh);
             Release(Mesh);
             Release(Material);
         }
