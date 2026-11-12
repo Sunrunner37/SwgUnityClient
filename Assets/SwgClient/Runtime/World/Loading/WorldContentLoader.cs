@@ -19,10 +19,11 @@ using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Swg.Client.Runtime.World.Loading
 {
-    /// <summary>Shared native asset decoding and per-world appearance cache, serialized across entry and streaming.</summary>
+    /// <summary>Bounded terrain preparation alongside serialized native appearance decoding, shared by entry and streaming.</summary>
     public sealed class WorldContentLoader
     {
         readonly TreRuntimeAssets assets;
@@ -35,6 +36,7 @@ namespace Swg.Client.Runtime.World.Loading
         readonly FloraClearanceLoader clearance = new FloraClearanceLoader();
         byte[] lastCachedAppearance;
         readonly SemaphoreSlim reads = new SemaphoreSlim(1, 1);
+        readonly SemaphoreSlim regions = new SemaphoreSlim(1, 1);
         public WorldContentLoader(TreRuntimeAssets assets, WorldState state, AppearanceCache cache, ClientSettings settings, GameConnection connection)
         {
             this.assets = assets;
@@ -48,6 +50,7 @@ namespace Swg.Client.Runtime.World.Loading
 
         public async Task OpenAsync(GameWorldSnapshot initial, CancellationToken token)
         {
+            var timer = Stopwatch.StartNew();
             var start = initial.StartScene.Value;
             var loaded = await assets.ReadAsync(loader =>
             {
@@ -65,6 +68,7 @@ namespace Swg.Client.Runtime.World.Loading
             foreach (var entry in this.state.Snapshot.Entries)
                 if (!this.state.SceneObjects.TryGet(entry.SwgId, out _))
                     this.state.SceneObjects.Add(SceneObjectFactory.Create(entry));
+            Debug.Log($"World metadata and snapshot: {timer.Elapsed.TotalSeconds:F2}s");
         }
 
         async Task<T> ReadAsync<T>(Func<TreAssetLoader, T> read, CancellationToken token)
@@ -86,7 +90,7 @@ namespace Swg.Client.Runtime.World.Loading
             }
         }
 
-        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, IReadOnlyDictionary<Vector2Int, float> terrainResolutions = null, IReadOnlyDictionary<Vector2Int, int> floraDetails = null)
+        public async Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, IReadOnlyDictionary<Vector2Int, float> terrainResolutions = null, IReadOnlyDictionary<Vector2Int, int> floraDetails = null)
         {
             // Copy settings and caller-owned sets before entering the worker.
             float tileSize = settings.terrainTileSize;
@@ -107,88 +111,118 @@ namespace Swg.Client.Runtime.World.Loading
             var floraRanges = this.state.Terrain.FloraDistributions.Select((distribution, kind) => settings.GetFloraRange(distribution, (TerrainFloraKind)kind)).ToArray();
             var terrain = new HashSet<Vector2Int>(loadedTerrain);
             var scenery = new HashSet<SwgId>(loadedScenery);
-            return ReadAsync(loader =>
+            await regions.WaitAsync(token);
+            try
             {
+                using var samples = state.Terrain.CacheRegionSamples();
                 var region = new WorldRegionData
                 {
                     ServerCenter = serverCenter
                 };
-                region.TerrainKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, radius, tileSize));
-                int count = 0;
-                foreach (var key in region.TerrainKeys)
+                var total = Stopwatch.StartNew();
+                int completed = 0;
+                int workItems = WorldRegionPlanner.TerrainKeys(serverCenter, radius, tileSize).Count() + WorldRegionPlanner.TerrainKeys(serverCenter, floraRadius, floraTileSize).Count();
+                double terrainSeconds = 0;
+                double floraSeconds = 0;
+                double scenerySeconds = 0;
+                // Two workers at most: terrain owns surface decoding; the asset lane owns all appearance caches.
+                var terrainTask = assets.ReadAsync(loader =>
                 {
-                    token.ThrowIfCancellationRequested();
-                    float Resolution(Vector2Int tile)
+                    var timer = Stopwatch.StartNew();
+                    region.TerrainKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, radius, tileSize));
+                    foreach (var key in region.TerrainKeys)
                     {
-                        float dx = Math.Max(tile.x * tileSize - serverCenter.x, Math.Max(0, serverCenter.x - (tile.x + 1) * tileSize));
-                        float dz = Math.Max(tile.y * tileSize - serverCenter.z, Math.Max(0, serverCenter.z - (tile.y + 1) * tileSize));
-                        float squared = dx * dx + dz * dz;
-                        return squared <= detailRadius * detailRadius ? nativeSpacing : squared <= midRadius * midRadius ? spacing : farSpacing;
+                        token.ThrowIfCancellationRequested();
+                        float Resolution(Vector2Int tile)
+                        {
+                            float dx = Math.Max(tile.x * tileSize - serverCenter.x, Math.Max(0, serverCenter.x - (tile.x + 1) * tileSize));
+                            float dz = Math.Max(tile.y * tileSize - serverCenter.z, Math.Max(0, serverCenter.z - (tile.y + 1) * tileSize));
+                            float squared = dx * dx + dz * dz;
+                            return squared <= detailRadius * detailRadius ? nativeSpacing : squared <= midRadius * midRadius ? spacing : farSpacing;
+                        }
+
+                        float previous = resolutions != null && resolutions.TryGetValue(key, out var old) ? old : spacing;
+                        float OldNeighbor(Vector2Int tile) => resolutions != null && resolutions.TryGetValue(tile, out var oldSpacing) ? oldSpacing : spacing;
+                        float desired = Resolution(key);
+                        var neighbors = new[]
+                        {
+                            key + Vector2Int.left,
+                            key + Vector2Int.right,
+                            key + Vector2Int.down,
+                            key + Vector2Int.up
+                        };
+                        var neighborSpacings = new Vector4(Resolution(neighbors[0]), Resolution(neighbors[1]), Resolution(neighbors[2]), Resolution(neighbors[3]));
+                        bool edgesChanged = false;
+                        for (int i = 0; i < 4; i++)
+                            edgesChanged |= Math.Max(previous, OldNeighbor(neighbors[i])) != Math.Max(desired, neighborSpacings[i]);
+                        if (!terrain.Contains(key) || (resolutions != null && (previous != desired || edgesChanged)))
+                            region.Terrain.Add(key, WorldTerrainPatch.Build(this.state.Terrain, new Vector3((key.x + .5f) * tileSize, 0, (key.y + .5f) * tileSize), tileSize * .5f, desired, neighborSpacings));
+                        progress?.Report(new WorldPreparationProgress("Reading original terrain...", .9f * Interlocked.Increment(ref completed) / workItems));
                     }
 
-                    float previous = resolutions != null && resolutions.TryGetValue(key, out var old) ? old : spacing;
-                    float OldNeighbor(Vector2Int tile) => resolutions != null && resolutions.TryGetValue(tile, out var oldSpacing) ? oldSpacing : spacing;
-                    float desired = Resolution(key);
-                    var neighbors = new[]
-                    {
-                        key + Vector2Int.left,
-                        key + Vector2Int.right,
-                        key + Vector2Int.down,
-                        key + Vector2Int.up
-                    };
-                    var neighborSpacings = new Vector4(Resolution(neighbors[0]), Resolution(neighbors[1]), Resolution(neighbors[2]), Resolution(neighbors[3]));
-                    bool edgesChanged = false;
-                    for (int i = 0; i < 4; i++)
-                        edgesChanged |= Math.Max(previous, OldNeighbor(neighbors[i])) != Math.Max(desired, neighborSpacings[i]);
-                    if (!terrain.Contains(key) || (resolutions != null && (previous != desired || edgesChanged)))
-                        region.Terrain.Add(key, WorldTerrainPatch.Build(this.state.Terrain, new Vector3((key.x + .5f) * tileSize, 0, (key.y + .5f) * tileSize), tileSize * .5f, desired, neighborSpacings));
-                    progress?.Report(new WorldPreparationProgress("Reading original terrain...", .4f * ++count / region.TerrainKeys.Count));
-                }
-
-                region.FloraKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, floraRadius, floraTileSize));
-                var floraLoader = new TerrainFloraLoader(loader, this.state.Terrain, cache, path => LoadAppearance(loader, new AppearanceRequest(path)));
-                foreach (var key in region.FloraKeys)
+                    terrainSeconds = timer.Elapsed.TotalSeconds;
+                    return true;
+                });
+                var assetTask = ReadAsync(loader =>
                 {
-                    token.ThrowIfCancellationRequested();
-                    float dx = Math.Max(key.x * floraTileSize - serverCenter.x, Math.Max(0, serverCenter.x - (key.x + 1) * floraTileSize));
-                    float dz = Math.Max(key.y * floraTileSize - serverCenter.z, Math.Max(0, serverCenter.z - (key.y + 1) * floraTileSize));
-                    float distance = (float)Math.Sqrt(dx * dx + dz * dz);
-                    int detail = distance <= nearFloraDistance + margin ? 0 : distance <= middleFloraDistance + margin ? 1 : 2;
-                    if (!previousDetails.TryGetValue(key, out int previousDetail) || previousDetail != detail)
-                        region.Flora.Add(key, floraLoader.LoadTile(key, floraTileSize, floraRanges, token, detail));
-                }
-
-                var entries = this.state.Snapshot.Query(serverCenter, viewRadius, 256).ToArray();
-                count = 0;
-                foreach (var entry in entries)
-                {
-                    token.ThrowIfCancellationRequested();
-                    if (++count % 100 == 0)
-                        progress?.Report(new WorldPreparationProgress("Loading scenery " + count + "/" + entries.Length, .4f + .6f * count / entries.Length));
-                    if (AppearanceRequest.IsCell(entry.TemplatePath))
-                        continue;
-                    if (scenery.Contains(entry.SwgId))
+                    var timer = Stopwatch.StartNew();
+                    region.FloraKeys.UnionWith(WorldRegionPlanner.TerrainKeys(serverCenter, floraRadius, floraTileSize));
+                    var floraLoader = new TerrainFloraLoader(loader, this.state.Terrain, cache, path => LoadAppearance(loader, new AppearanceRequest(path)));
+                    foreach (var key in region.FloraKeys)
                     {
+                        token.ThrowIfCancellationRequested();
+                        float dx = Math.Max(key.x * floraTileSize - serverCenter.x, Math.Max(0, serverCenter.x - (key.x + 1) * floraTileSize));
+                        float dz = Math.Max(key.y * floraTileSize - serverCenter.z, Math.Max(0, serverCenter.z - (key.y + 1) * floraTileSize));
+                        float distance = (float)Math.Sqrt(dx * dx + dz * dz);
+                        int detail = distance <= nearFloraDistance + margin ? 0 : distance <= middleFloraDistance + margin ? 1 : 2;
+                        if (!previousDetails.TryGetValue(key, out int previousDetail) || previousDetail != detail)
+                            region.Flora.Add(key, floraLoader.LoadTile(key, floraTileSize, floraRanges, token, detail));
+                        progress?.Report(new WorldPreparationProgress("Preparing original flora...", .9f * Interlocked.Increment(ref completed) / workItems));
+                    }
+
+                    var entries = this.state.Snapshot.Query(serverCenter, viewRadius, 256).ToArray();
+                    floraSeconds = timer.Elapsed.TotalSeconds;
+                    timer.Restart();
+                    int count = 0;
+                    foreach (var entry in entries)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        if (++count % 100 == 0)
+                            progress?.Report(new WorldPreparationProgress("Loading scenery " + count + "/" + entries.Length, .9f + .1f * count / entries.Length));
+                        if (AppearanceRequest.IsCell(entry.TemplatePath))
+                            continue;
+                        if (scenery.Contains(entry.SwgId))
+                        {
+                            region.ScenerySwgIds.Add(entry.SwgId);
+                            continue;
+                        }
+
+                        var appearance = LoadAppearance(loader, new AppearanceRequest(entry.TemplatePath));
+                        if (appearance.Parts.Count == 0 && appearance.Particles.Count == 0)
+                            continue;
                         region.ScenerySwgIds.Add(entry.SwgId);
-                        continue;
+                        region.Scenery.Add(entry.SwgId, appearance);
                     }
 
-                    var appearance = LoadAppearance(loader, new AppearanceRequest(entry.TemplatePath));
-                    if (appearance.Parts.Count == 0 && appearance.Particles.Count == 0)
-                        continue;
-                    region.ScenerySwgIds.Add(entry.SwgId);
-                    region.Scenery.Add(entry.SwgId, appearance);
-                }
-
+                    scenerySeconds = timer.Elapsed.TotalSeconds;
+                    return true;
+                }, token);
+                await Task.WhenAll(terrainTask, assetTask);
+                Debug.Log($"World region preparation: {total.Elapsed.TotalSeconds:F2}s wall; terrain {terrainSeconds:F2}s, flora {floraSeconds:F2}s, scenery {scenerySeconds:F2}s; {region.Terrain.Count} terrain / {region.Flora.Count} flora tiles");
                 progress?.Report(new WorldPreparationProgress("Region assets prepared", 1));
                 return region;
-            }, token);
+            }
+            finally
+            {
+                regions.Release();
+            }
         }
 
         public Task<Dictionary<SwgId, AppearanceData>> LoadAppearancesAsync(GameWorldSnapshot snapshot, IReadOnlyDictionary<SwgId, AppearanceRequest> requests, CancellationToken token)
         {
             return ReadAsync(loader =>
             {
+                var timer = Stopwatch.StartNew();
                 var appearances = new Dictionary<SwgId, AppearanceData>();
                 foreach (var pair in requests)
                 {
@@ -206,6 +240,7 @@ namespace Swg.Client.Runtime.World.Loading
                 }
 
                 CachePlayerAppearance(snapshot);
+                Debug.Log($"World object appearances: {timer.Elapsed.TotalSeconds:F2}s; {appearances.Count} objects");
                 return appearances;
             }, token);
         }

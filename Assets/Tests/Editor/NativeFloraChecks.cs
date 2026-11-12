@@ -3,6 +3,7 @@ using System.Text;
 using Swg.Client.Core.Assets.Formats.Iff;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Assets.Formats.Dds;
@@ -24,6 +25,48 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class NativeFloraChecks
     {
+        [TestCase("appearance/shrb_giantlickbush_ltgreen.apt")]
+        [TestCase("appearance/shrb_giantlickbush_ltgreen_a1.apt")]
+        [TestCase("appearance/shrb_giantlickbush_ltgreen_a2.apt")]
+        public void LickBushLeavesUseNativePunchoutCoverage(string path)
+        {
+            using var assets = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var appearance = AppearanceLoader.LoadDetailed(assets, path);
+            Assert.That(appearance.Warnings, Is.Empty);
+            Assert.That(appearance.Parts, Is.Not.Empty);
+            Assert.That(appearance.Parts.All(part => part.AlphaCutout), Is.True);
+            Assert.That(appearance.Parts.Any(part => part.Diffuse.Pixels.Where((value, index) => index % 4 == 3).Any(alpha => alpha == 0)), Is.True);
+        }
+
+        [Test]
+        public void RegionSampleReusePreservesAllMapsAndParallelHeightQueries()
+        {
+            using var assets = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var terrain = WorldTerrain.Load(assets, "terrain/corellia.trn");
+            var points = Enumerable.Range(0, 128).Select(i => new Vector2(-200 + i % 16 * 2, -5020 + i / 16 * 2)).Concat(new[] { new Vector2(-155.09f, -4992.06f), new Vector2(300, 400) }).ToArray();
+            var expected = points.Select(point => terrain.Sample(point.x, point.y)).ToArray();
+            var expectedHeights = points.Select(point => terrain.SampleHeight(point.x, point.y)).ToArray();
+            var actual = new TerrainSample[points.Length];
+            var heights = new float[points.Length];
+            using (terrain.CacheRegionSamples())
+            {
+                Parallel.For(0, points.Length, i =>
+                {
+                    heights[i] = terrain.SampleHeight(points[i].x, points[i].y);
+                    actual[i] = terrain.Sample(points[i].x, points[i].y);
+                    // Full-map and height-only results must remain independent in either query order.
+                    heights[i] = terrain.SampleHeight(points[i].x, points[i].y);
+                });
+                Assert.That(actual, Is.EqualTo(expected));
+                Assert.That(heights, Is.EqualTo(expectedHeights));
+                Assert.That(points.Select(point => terrain.Sample(point.x, point.y)).ToArray(), Is.EqualTo(expected));
+            }
+
+            using (terrain.CacheRegionSamples())
+                Assert.That(points.Select(point => terrain.Sample(point.x, point.y)).ToArray(), Is.EqualTo(expected));
+            Assert.That(points.Select(point => terrain.Sample(point.x, point.y)).ToArray(), Is.EqualTo(expected));
+        }
+
         [Test]
         public void RazorcoilPatchUsesNativeFiltersAndAlphaMaskedThorns()
         {

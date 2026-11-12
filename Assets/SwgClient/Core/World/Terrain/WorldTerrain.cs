@@ -3,6 +3,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Collections.Concurrent;
+using System.Threading;
 using Swg.Client.Core.Assets.Formats.Trn;
 using Swg.Client.Core.Assets.Tre;
 
@@ -24,6 +26,28 @@ namespace Swg.Client.Core.World.Terrain
         // Each synchronous Sample owns its scratch data. Worker and Unity-thread queries never share it.
         [ThreadStatic]
         static SamplingCache sampling;
+        RegionSamples regionSamples;
+        // Share exact native-pole results only while preparing a region; never retain a world's samples indefinitely.
+        sealed class RegionSamples : IDisposable
+        {
+            readonly WorldTerrain owner;
+            public readonly ConcurrentDictionary<(float X, float Z), TerrainSample> Maps = new ConcurrentDictionary<(float, float), TerrainSample>();
+            public readonly ConcurrentDictionary<(float X, float Z), float> Heights = new ConcurrentDictionary<(float, float), float>();
+            public readonly ConcurrentDictionary<(int Stage, float X, float Z), float> StageHeights = new ConcurrentDictionary<(int, float, float), float>();
+            public readonly ConcurrentDictionary<(int Stage, float X, float Z), float> Normals = new ConcurrentDictionary<(int, float, float), float>();
+            public RegionSamples(WorldTerrain owner) => this.owner = owner;
+            public void Dispose() => Interlocked.CompareExchange(ref owner.regionSamples, null, this);
+        }
+
+        public IDisposable CacheRegionSamples()
+        {
+            var cache = new RegionSamples(this);
+            if (Interlocked.CompareExchange(ref regionSamples, cache, null) != null)
+                throw new InvalidOperationException("A terrain region is already being prepared.");
+            return cache;
+        }
+
+        RegionSamples SamplesAt(float x, float z) => NativeSpacing > 0 && x % NativeSpacing == 0 && z % NativeSpacing == 0 ? Volatile.Read(ref regionSamples) : null;
         int nextHeightStage;
         int nextLayerIndex;
         TreAssetLoader assets;
@@ -68,10 +92,37 @@ namespace Swg.Client.Core.World.Terrain
         public TerrainSample Sample(float serverX, float serverZ) => SampleMaps(serverX, serverZ, surfaceOnly: false);
         TerrainSample SampleMaps(float serverX, float serverZ, bool surfaceOnly)
         {
+            var cache = SamplesAt(serverX, serverZ);
+            var key = (serverX, serverZ);
+            if (cache != null)
+            {
+                if (cache.Maps.TryGetValue(key, out var maps))
+                    return surfaceOnly ? new TerrainSample
+                    {
+                        Height = maps.Height
+                    }
+
+                    : maps;
+                if (surfaceOnly && cache.Heights.TryGetValue(key, out var height))
+                    return new TerrainSample
+                    {
+                        Height = height
+                    };
+            }
+
             sampling ??= new SamplingCache();
             sampling.Heights.Clear();
             sampling.Normals.Clear();
-            return SampleBeforeLayer(serverX, serverZ, int.MaxValue, surfaceOnly);
+            var result = SampleBeforeLayer(serverX, serverZ, int.MaxValue, surfaceOnly);
+            if (cache != null)
+            {
+                if (surfaceOnly)
+                    cache.Heights.TryAdd(key, result.Height);
+                else
+                    cache.Maps.TryAdd(key, result);
+            }
+
+            return result;
         }
 
         TerrainSample SampleBeforeLayer(float x, float z, int endLayer, bool surfaceOnly = false)
@@ -94,12 +145,24 @@ namespace Swg.Client.Core.World.Terrain
             var normalKey = (heightStage, x, z);
             if (sampling.Normals.TryGetValue(normalKey, out var normalY))
                 return normalY;
+            var cache = SamplesAt(x, z);
+            if (cache != null && cache.Normals.TryGetValue(normalKey, out normalY))
+                return normalY;
             float step = NativeSpacing;
             float Height(float dx, float dz)
             {
                 var key = (heightStage, x + dx * step, z + dz * step);
                 if (!sampling.Heights.TryGetValue(key, out var height))
-                    sampling.Heights[key] = height = SampleBeforeLayer(key.Item2, key.Item3, endLayer, surfaceOnly: true).Height;
+                {
+                    if (cache == null || !cache.StageHeights.TryGetValue(key, out height))
+                    {
+                        height = SampleBeforeLayer(key.Item2, key.Item3, endLayer, surfaceOnly: true).Height;
+                        cache?.StageHeights.TryAdd(key, height);
+                    }
+
+                    sampling.Heights[key] = height;
+                }
+
                 return height;
             }
 
@@ -111,6 +174,7 @@ namespace Swg.Client.Core.World.Terrain
             float southeast = Height(1, -1);
             normalY = new Vector3(2 * west + northwest + south - 2 * east - southeast - north, 6 * step, 2 * south + southeast + west - 2 * north - east - northwest).normalized.y;
             sampling.Normals[normalKey] = normalY;
+            cache?.Normals.TryAdd(normalKey, normalY);
             return normalY;
         }
 

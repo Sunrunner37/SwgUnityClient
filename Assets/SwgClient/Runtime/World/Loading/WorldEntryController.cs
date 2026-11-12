@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Swg.Client.Runtime.UI.Screens;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Swg.Client.Runtime.World.Loading
 {
@@ -78,13 +79,17 @@ namespace Swg.Client.Runtime.World.Loading
                 BuildWorldGeometry(),
                 AwaitServerFinalAcknowledgement()
             };
+            var total = Stopwatch.StartNew();
             foreach (var step in steps)
             {
+                var timer = Stopwatch.StartNew();
                 yield return step;
+                Debug.Log($"World entry � {Phase}: {timer.Elapsed.TotalSeconds:F2}s");
                 if (stopped)
                     yield break;
             }
 
+            Debug.Log($"World entry complete: {total.Elapsed.TotalSeconds:F2}s");
             PlayerReady = true;
             Progress = 1;
         }

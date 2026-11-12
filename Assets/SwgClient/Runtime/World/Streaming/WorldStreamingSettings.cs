@@ -37,6 +37,8 @@ namespace Swg.Client.Runtime.World.Streaming
         public int uploadsPerFrame = 8;
         [Min(.1f)]
         public float uploadBudgetMilliseconds = 2;
+        [Min(.1f)]
+        public float initialUploadBudgetMilliseconds = 8;
         [Min(1)]
         public float floraRadius = 512;
         [Min(1)]
@@ -60,7 +62,7 @@ namespace Swg.Client.Runtime.World.Streaming
         public float GrassDistance(int detail) => detail == 0 ? nearFloraDistance : detail == 1 ? middleFloraDistance : farFloraDistance;
         public void Validate()
         {
-            if (!Positive(viewRadius) || !Positive(terrainRadius) || !Positive(terrainTileSize) || !Positive(terrainSpacing) || !Positive(terrainDetailRadius) || !Positive(refreshDistance) || uploadsPerFrame < 1 || !Positive(uploadBudgetMilliseconds))
+            if (!Positive(viewRadius) || !Positive(terrainRadius) || !Positive(terrainTileSize) || !Positive(terrainSpacing) || !Positive(terrainDetailRadius) || !Positive(refreshDistance) || uploadsPerFrame < 1 || !Positive(uploadBudgetMilliseconds) || !Positive(initialUploadBudgetMilliseconds))
                 throw new InvalidOperationException("World streaming settings must be positive finite values.");
             if (!Positive(floraRadius) || !Positive(floraTileSize) || !Positive(nearFloraDistance) || !Positive(particleFloraDistance))
                 throw new InvalidOperationException("Flora streaming distances must be positive finite values.");

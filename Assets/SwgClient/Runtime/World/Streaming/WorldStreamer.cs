@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Swg.Client.Runtime.World.Streaming
 {
@@ -41,7 +42,7 @@ namespace Swg.Client.Runtime.World.Streaming
 
         public IEnumerator LoadInitial(WorldRegionData initialRegion)
         {
-            yield return Apply(initialRegion, lifetime.Token);
+            yield return Apply(initialRegion, lifetime.Token, true);
         }
 
         public void Update(Vector3 serverCenter)
@@ -78,12 +79,17 @@ namespace Swg.Client.Runtime.World.Streaming
             }
         }
 
-        IEnumerator Apply(WorldRegionData region, CancellationToken token)
+        IEnumerator Apply(WorldRegionData region, CancellationToken token, bool initial = false)
         {
+            var timer = Stopwatch.StartNew();
+            double activeMilliseconds = 0;
+            double sliceStart = Time.realtimeSinceStartupAsDouble;
+            float budget = initial ? settings.initialUploadBudgetMilliseconds : settings.uploadBudgetMilliseconds;
+            int uploadLimit = initial ? 32 : settings.uploadsPerFrame;
             int count = 0;
             int uploads = 0;
-            double deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
-            int total = Math.Max(1, region.Terrain.Count + region.Scenery.Count);
+            double deadline = Time.realtimeSinceStartupAsDouble + budget * .001;
+            int total = Math.Max(1, region.Terrain.Count + region.Flora.Count + region.Scenery.Count);
             foreach (var tile in region.Terrain)
             {
                 try
@@ -97,11 +103,13 @@ namespace Swg.Client.Runtime.World.Streaming
                     Debug.LogError(error.Message);
                 }
 
-                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                if (++uploads >= uploadLimit || Time.realtimeSinceStartupAsDouble >= deadline)
                 {
+                    activeMilliseconds += (Time.realtimeSinceStartupAsDouble - sliceStart) * 1000;
                     yield return null;
                     uploads = 0;
-                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                    sliceStart = Time.realtimeSinceStartupAsDouble;
+                    deadline = sliceStart + budget * .001;
                 }
             }
 
@@ -109,11 +117,14 @@ namespace Swg.Client.Runtime.World.Streaming
             {
                 token.ThrowIfCancellationRequested();
                 flora.AddOrReplace(tile.Key, tile.Value);
-                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                Progress = ++count / (float)total;
+                if (++uploads >= uploadLimit || Time.realtimeSinceStartupAsDouble >= deadline)
                 {
+                    activeMilliseconds += (Time.realtimeSinceStartupAsDouble - sliceStart) * 1000;
                     yield return null;
                     uploads = 0;
-                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                    sliceStart = Time.realtimeSinceStartupAsDouble;
+                    deadline = sliceStart + budget * .001;
                 }
             }
 
@@ -132,11 +143,13 @@ namespace Swg.Client.Runtime.World.Streaming
                     Debug.LogError(error.Message);
                 }
 
-                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                if (++uploads >= uploadLimit || Time.realtimeSinceStartupAsDouble >= deadline)
                 {
+                    activeMilliseconds += (Time.realtimeSinceStartupAsDouble - sliceStart) * 1000;
                     yield return null;
                     uploads = 0;
-                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                    sliceStart = Time.realtimeSinceStartupAsDouble;
+                    deadline = sliceStart + budget * .001;
                 }
             }
 
@@ -154,6 +167,8 @@ namespace Swg.Client.Runtime.World.Streaming
                 ServerCenter = region.ServerCenter;
                 Progress = 1;
                 CompletedRegions++;
+                activeMilliseconds += (Time.realtimeSinceStartupAsDouble - sliceStart) * 1000;
+                Debug.Log($"World {(initial ? "initial" : "streamed")} uploads: {timer.Elapsed.TotalSeconds:F2}s wall, {activeMilliseconds:F0}ms active; {region.Terrain.Count} terrain / {region.Flora.Count} flora / {region.Scenery.Count} scenery");
             }
             catch (Exception error)
             {

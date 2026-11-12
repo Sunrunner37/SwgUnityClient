@@ -15,6 +15,37 @@ namespace Swg.Client.Tests.Editor
             Assert.That(EftFile.Parse(bytes).AlphaTestEnabled, Is.EqualTo(expected));
         }
 
+        [Test]
+        public void CutoutFallbackPreservesCoverageWhenTheProgrammableVariantClipsInItsShader()
+        {
+            var opaque = Pass(false);
+            var cutout = Pass(true);
+            var implementations = Join(Form("IMPL", Form("0005", opaque)), Form("IMPL", Form("0005", cutout)));
+            Assert.That(EftFile.Parse(Form("EFCT", Form("0001", implementations))).AlphaTestEnabled, Is.True);
+        }
+
+        [Test]
+        public void CutoutOverlayDoesNotTurnAnOpaqueBasePassIntoFoliage()
+        {
+            var passes = Join(Pass(false), Pass(true));
+            Assert.That(EftFile.Parse(Form("EFCT", Form("0001", Form("IMPL", Form("0005", passes))))).AlphaTestEnabled, Is.False);
+        }
+
+        static byte[] Pass(bool alphaTest)
+        {
+            var data = TestHex.Decode("00010000010103000004050000000000040F000000000000000000000000000000000000040000000400000000000000000000004E49414D");
+            data[11] = alphaTest ? (byte)1 : (byte)0;
+            return Form("PASS", Form("0009", Chunk("DATA", data)));
+        }
+
+        static byte[] Join(byte[] first, byte[] second)
+        {
+            using var stream = new MemoryStream();
+            stream.Write(first, 0, first.Length);
+            stream.Write(second, 0, second.Length);
+            return stream.ToArray();
+        }
+
         static byte[] Form(string kind, byte[] children)
         {
             using var stream = new MemoryStream();
