@@ -1,4 +1,5 @@
 using UnityEngine;
+using Swg.Client.Core.Characters.Animation;
 using Swg.Client.Core.Assets.Formats.Dds;
 
 namespace Swg.Client.Core.Geometry
@@ -14,5 +15,6 @@ namespace Swg.Client.Core.Geometry
         public bool AlphaCutout;
         public byte[] VertexColors;
         public bool UseCharacterShader;
+        public SkeletalMeshData Skinning;
     }
 }

@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Swg.Client.Core.Assets.Formats.Animation;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
 
 namespace Swg.Client.Core.Characters.Animation
 {
-    /// <summary>Samples the original neutral breathing animation and skins MGN source vertices.
-    /// This preview currently samples one pose, rather than running SWG's mood/state controller.</summary>
+    /// <summary>Builds the neutral preview pose and retains bind-space influences for animated world characters.</summary>
     public sealed class SkeletalPose
     {
         public const string NeutralIdleAnimation = "appearance/animation/all_b_idl_breathe_normally.ans";
         readonly List<Influence>[] weights;
         readonly RigidTransform[] skin;
+        readonly int[] jointMap;
+        readonly SkeletonData skeleton;
         public string AnimationPath { get; private set; }
 
         public int PositionCount
@@ -34,83 +34,46 @@ namespace Swg.Client.Core.Characters.Animation
             public float Weight;
         }
 
-        SkeletalPose(List<Influence>[] weights, RigidTransform[] skin, string animation)
+        SkeletalPose(List<Influence>[] weights, RigidTransform[] skin, string animation, SkeletonData skeleton, int[] jointMap)
         {
             this.weights = weights;
             this.skin = skin;
             AnimationPath = animation;
+            this.skeleton = skeleton;
+            this.jointMap = jointMap;
         }
 
-        public static SkeletalPose Load(TreAssetLoader loader, string satPath, string mgnPath)
+        public static SkeletalPose Load(TreAssetLoader loader, string satPath, string mgnPath, string animationAppearance = null)
         {
             var mgn = IffNode.Form(IffNode.Parse(loader.Read(mgnPath)), "SKMG");
             if (mgn == null)
                 throw new InvalidDataException("Expected SKMG: " + mgnPath);
             var version = mgn.Children.First(n => n.Tag == "FORM");
             var transformNames = Strings(version.Chunk("XFNM"));
+            var skeleton = SkeletonData.Load(loader, satPath, animationAppearance);
+            var posed = new RigidTransform[skeleton.Joints.Length];
             var names = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            var bind = new List<RigidTransform>();
-            var posed = new List<RigidTransform>();
-            var samples = CompressedAnimationReader.ReadFirstFrame(loader.Read(NeutralIdleAnimation));
-            var sat = IffNode.Form(IffNode.Parse(loader.Read(satPath)), "SMAT");
-            if (sat == null)
-                throw new InvalidDataException("Expected skeletal appearance: " + satPath);
-            var satVersion = sat.Children.First(n => n.Tag == "FORM");
-            var skeletons = Strings(satVersion.Chunk("SKTI"));
-            for (int s = 0; s + 1 < skeletons.Length; s += 2)
+            for (int j = 0; j < skeleton.Joints.Length; j++)
             {
-                var skt = IffNode.Form(IffNode.Parse(loader.Read(skeletons[s])), "SKTM");
-                if (skt == null)
-                    throw new InvalidDataException("Expected SKTM: " + skeletons[s]);
-                var sktVersion = skt.Children.First(n => n.Tag == "FORM");
-                if (sktVersion.Kind != "0002")
-                    throw new NotSupportedException("Skeleton version " + sktVersion.Kind);
-                var jointNames = Strings(sktVersion.Chunk("NAME"));
-                var parents = sktVersion.Chunk("PRNT");
-                var translations = sktVersion.Chunk("BPTR");
-                var rotations = sktVersion.Chunk("BPRO");
-                var pre = sktVersion.Chunk("RPRE");
-                var post = sktVersion.Chunk("RPST");
-                int offset = bind.Count;
-                int attachment = -1;
-                if (skeletons[s + 1].Length > 0 && !names.TryGetValue(skeletons[s + 1], out attachment))
-                    throw new InvalidDataException("Unknown skeleton attachment " + skeletons[s + 1]);
-                for (int j = 0; j < jointNames.Length; j++)
+                var joint = skeleton.Joints[j];
+                var pose = joint.Sample(skeleton.Idle.Sample(joint.Name, 0));
+                var local = new RigidTransform
                 {
-                    int localParent = BitConverter.ToInt32(parents, j * 4);
-                    int parent = localParent < 0 ? attachment : offset + localParent;
-                    if (parent >= bind.Count)
-                        throw new InvalidDataException("Skeleton parent order");
-                    var t = Vector(translations, j * 12);
-                    var r = ReadQuaternion(rotations, j * 16);
-                    var before = ReadQuaternion(pre, j * 16);
-                    var after = ReadQuaternion(post, j * 16);
-                    var b = new RigidTransform
-                    {
-                        Rotation = after * (r * before),
-                        Translation = t
-                    };
-                    JointSample sample;
-                    var p = b;
-                    if (samples.TryGetValue(jointNames[j], out sample))
-                        p = new RigidTransform
-                        {
-                            Rotation = after * ((sample.Rotation * r) * before),
-                            Translation = t + sample.Translation
-                        };
-                    bind.Add(parent < 0 ? b : bind[parent] * b);
-                    posed.Add(parent < 0 ? p : posed[parent] * p);
-                    names[jointNames[j]] = offset + j;
-                }
+                    Rotation = pose.rotation,
+                    Translation = pose.position
+                };
+                posed[j] = joint.Parent < 0 ? local : posed[joint.Parent] * local;
+                names[joint.Name] = j;
             }
 
             var skin = new RigidTransform[transformNames.Length];
+            var jointMap = new int[transformNames.Length];
             for (int i = 0; i < skin.Length; i++)
             {
-                int j;
-                if (!names.TryGetValue(transformNames[i], out j))
+                if (!names.TryGetValue(transformNames[i], out int j))
                     throw new InvalidDataException("Missing skeleton joint " + transformNames[i]);
-                skin[i] = posed[j] * bind[j].Inverse();
+                skin[i] = posed[j] * skeleton.BindGlobals[j].Inverse();
+                jointMap[i] = j;
             }
 
             var counts = version.Chunk("TWHD");
@@ -135,7 +98,32 @@ namespace Swg.Client.Core.Characters.Animation
 
             if (at != data.Length)
                 throw new InvalidDataException("MGN skin weight count mismatch");
-            return new SkeletalPose(weights, skin, NeutralIdleAnimation);
+            return new SkeletalPose(weights, skin, NeutralIdleAnimation, skeleton, jointMap);
+        }
+
+        public SkeletalMeshData CreateSkin(Vector3[] vertices, Vector3[] normals, int[] sourceIndices)
+        {
+            var counts = new byte[vertices.Length];
+            var mapped = new List<BoneWeight1>();
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var influences = weights[sourceIndices[i]].Where(w => w.Weight > 0).OrderByDescending(w => w.Weight).ToArray();
+                if (influences.Length == 0)
+                    throw new InvalidDataException("Unweighted skeletal vertex");
+                counts[i] = checked((byte)influences.Length);
+                float total = influences.Sum(w => w.Weight);
+                foreach (var w in influences)
+                    mapped.Add(new BoneWeight1 { boneIndex = jointMap[w.Joint], weight = w.Weight / total });
+            }
+
+            return new SkeletalMeshData
+            {
+                Skeleton = skeleton,
+                Vertices = vertices,
+                Normals = normals,
+                BonesPerVertex = counts,
+                Weights = mapped.ToArray()
+            };
         }
 
         public Vector3 TransformPosition(int sourcePositionIndex, Vector3 value)
@@ -190,17 +178,6 @@ namespace Swg.Client.Core.Characters.Animation
                 }
 
             return values.ToArray();
-        }
-
-        static Vector3 Vector(byte[] b, int p)
-        {
-            return new Vector3(BitConverter.ToSingle(b, p), BitConverter.ToSingle(b, p + 4), BitConverter.ToSingle(b, p + 8));
-        }
-
-        static Quaternion ReadQuaternion(byte[] b, int p)
-        {
-            // Native skeleton rotations are stored W, X, Y, Z.
-            return new Quaternion(x: BitConverter.ToSingle(b, p + 4), y: BitConverter.ToSingle(b, p + 8), z: BitConverter.ToSingle(b, p + 12), w: BitConverter.ToSingle(b, p));
         }
     }
 }

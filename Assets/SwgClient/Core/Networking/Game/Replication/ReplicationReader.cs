@@ -18,5 +18,22 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.U32(); // Delta-vector update counter.
             reader.Skip(checked(count * elementBytes));
         }
+
+        public static void SkipVectorDelta(ByteReader reader, int elementSize)
+        {
+            int count = reader.Count();
+            reader.U32();
+            for (int i = 0; i < count; i++)
+            {
+                byte operation = reader.Byte();
+                if (operation == 4)
+                    continue;
+                reader.U16();
+                if (operation == 1 || operation == 2)
+                    reader.Skip(elementSize);
+                else if (operation != 0)
+                    throw new InvalidDataException("Unsupported creature vector operation " + operation);
+            }
+        }
     }
 }

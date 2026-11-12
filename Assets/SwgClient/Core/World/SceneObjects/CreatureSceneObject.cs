@@ -6,6 +6,12 @@ namespace Swg.Client.Core.World.SceneObjects
     {
         public WorldEquipment[] Equipment = Array.Empty<WorldEquipment>();
         public byte Posture;
+        public float RunSpeed;
+        public float SpeedMultiplier = 1;
+        public float TurnScale = 1;
+        // Matches Core3 PlayerManager's allowed speed: getRunSpeed() * getSpeedMultiplierMod().
+        public float RunningSpeed => Math.Max(0, RunSpeed * SpeedMultiplier);
+
         internal override SceneObject Copy()
         {
             var copy = (CreatureSceneObject)base.Copy();

@@ -9,49 +9,85 @@ using Swg.Client.Core.Characters.Animation;
 
 namespace Swg.Client.Core.Assets.Formats.Animation
 {
-    internal static class CompressedAnimationReader
+    public static class CompressedAnimationReader
     {
-        internal static Dictionary<string, JointSample> ReadFirstFrame(byte[] bytes)
+        public static SkeletalAnimation Read(byte[] bytes)
         {
-            var root = IffNode.Form(IffNode.Parse(bytes), "CKAT");
-            if (root == null)
-                throw new NotSupportedException("Expected compressed keyframe animation");
+            var root = IffNode.Form(IffNode.Parse(bytes), "CKAT") ?? throw new NotSupportedException("Expected compressed keyframe animation");
             var version = root.Children.First(n => n.Tag == "FORM");
             if (version.Kind != "0001")
                 throw new NotSupportedException("Animation version " + version.Kind);
-            var animatedRotations = new List<Quaternion>();
+            var info = version.Chunk("INFO");
+            float frameRate = BitConverter.ToSingle(info, 0);
+            int lastFrame = BitConverter.ToUInt16(info, 4);
+            if (frameRate <= 0 || float.IsNaN(frameRate) || float.IsInfinity(frameRate))
+                throw new InvalidDataException("Invalid animation frame rate");
+            var rotations = new List<Quaternion[]>();
             var ar = IffNode.Form(version.Children, "AROT");
             if (ar != null)
                 foreach (var channel in ar.Children.Where(n => n.Tag == "QCHN"))
                 {
                     var b = channel.Data;
-                    // QCHN: uint16 count, 3 format bytes, then uint16 frame / uint32 packed quaternion.
-                    if (b.Length < 11 || BitConverter.ToUInt16(b, 0) == 0)
-                        throw new InvalidDataException("Empty rotation track");
-                    animatedRotations.Add(Expand(BitConverter.ToUInt32(b, 7), b[2], b[3], b[4]));
+                    int count = BitConverter.ToUInt16(b, 0);
+                    if (count == 0 || b.Length != 5 + count * 6)
+                        throw new InvalidDataException("Invalid rotation track");
+                    var times = new int[count];
+                    var values = new Quaternion[count];
+                    for (int i = 0; i < count; i++)
+                    {
+                        times[i] = BitConverter.ToUInt16(b, 5 + i * 6);
+                        values[i] = Expand(BitConverter.ToUInt32(b, 7 + i * 6), b[2], b[3], b[4]);
+                    }
+
+                    var frames = new Quaternion[lastFrame + 1];
+                    int key = 0;
+                    for (int frame = 0; frame <= lastFrame; frame++)
+                    {
+                        while (key + 1 < count && times[key + 1] <= frame)
+                            key++;
+                        int next = Math.Min(key + 1, count - 1);
+                        float blend = times[next] == times[key] ? 0 : Mathf.InverseLerp(times[key], times[next], frame);
+                        frames[frame] = Quaternion.Slerp(values[key], values[next], blend);
+                    }
+
+                    rotations.Add(frames);
                 }
 
             var staticRotations = new List<Quaternion>();
             var sr = version.Chunk("SROT");
-            if (sr != null)
-                for (int i = 0; i + 7 <= sr.Length; i += 7)
-                    staticRotations.Add(Expand(BitConverter.ToUInt32(sr, i + 3), sr[i], sr[i + 1], sr[i + 2]));
-            var translations = new List<float>();
+            for (int i = 0; i + 7 <= sr.Length; i += 7)
+                staticRotations.Add(Expand(BitConverter.ToUInt32(sr, i + 3), sr[i], sr[i + 1], sr[i + 2]));
+            var translations = new List<float[]>();
             var at = IffNode.Form(version.Children, "ATRN");
             if (at != null)
-                foreach (var ch in at.Children.Where(n => n.Tag == "CHNL"))
+                foreach (var channel in at.Children.Where(n => n.Tag == "CHNL"))
                 {
-                    if (ch.Data.Length < 8)
-                        throw new InvalidDataException("Empty translation track");
-                    translations.Add(BitConverter.ToSingle(ch.Data, 4));
+                    var b = channel.Data;
+                    int count = BitConverter.ToUInt16(b, 0);
+                    if (count == 0 || b.Length != 2 + count * 6)
+                        throw new InvalidDataException("Invalid translation track");
+                    var frames = new float[lastFrame + 1];
+                    int key = 0;
+                    for (int frame = 0; frame <= lastFrame; frame++)
+                    {
+                        while (key + 1 < count && BitConverter.ToUInt16(b, 2 + (key + 1) * 6) <= frame)
+                            key++;
+                        int next = Math.Min(key + 1, count - 1);
+                        int firstTime = BitConverter.ToUInt16(b, 2 + key * 6);
+                        int nextTime = BitConverter.ToUInt16(b, 2 + next * 6);
+                        float blend = nextTime == firstTime ? 0 : Mathf.InverseLerp(firstTime, nextTime, frame);
+                        frames[frame] = Mathf.Lerp(BitConverter.ToSingle(b, 4 + key * 6), BitConverter.ToSingle(b, 4 + next * 6), blend);
+                    }
+
+                    translations.Add(frames);
                 }
 
-            var st = version.Chunk("STRN") ?? new byte[0];
-            var result = new Dictionary<string, JointSample>(StringComparer.OrdinalIgnoreCase);
+            var st = version.Chunk("STRN");
+            var joints = new Dictionary<string, JointSample[]>(StringComparer.OrdinalIgnoreCase);
             var xf = IffNode.Form(version.Children, "XFRM");
-            foreach (var ch in xf.Children.Where(n => n.Tag == "XFIN"))
+            foreach (var channel in xf.Children.Where(n => n.Tag == "XFIN"))
             {
-                var b = ch.Data;
+                var b = channel.Data;
                 int end = Array.IndexOf(b, (byte)0);
                 int p = end + 1;
                 if (end < 0 || p + 10 > b.Length)
@@ -60,22 +96,26 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                 int rotation = BitConverter.ToUInt16(b, p);
                 p += 2;
                 int mask = b[p++];
-                var v = new float[3];
+                var axes = new float[3][];
                 for (int axis = 0; axis < 3; axis++, p += 2)
                 {
-                    int channel = BitConverter.ToUInt16(b, p);
-                    // SWG channel flags are bits 3,4,5 for translation X,Y,Z.
-                    v[axis] = (mask & (8 << axis)) != 0 ? translations[channel] : BitConverter.ToSingle(st, channel * 4);
+                    int index = BitConverter.ToUInt16(b, p);
+                    axes[axis] = (mask & (8 << axis)) != 0 ? translations[index] : Enumerable.Repeat(BitConverter.ToSingle(st, index * 4), lastFrame + 1).ToArray();
                 }
 
-                result[Encoding.ASCII.GetString(b, 0, end)] = new JointSample
-                {
-                    Rotation = animated ? animatedRotations[rotation] : staticRotations[rotation],
-                    Translation = new Vector3(v[0], v[1], v[2])
-                };
+                var frames = new JointSample[lastFrame + 1];
+                for (int frame = 0; frame <= lastFrame; frame++)
+                    frames[frame] = new JointSample
+                    {
+                        Rotation = animated ? rotations[rotation][frame] : staticRotations[rotation],
+                        Translation = new Vector3(axes[0][frame], axes[1][frame], axes[2][frame])
+                    };
+                joints.Add(Encoding.ASCII.GetString(b, 0, end), frames);
             }
 
-            return result;
+            var locomotion = version.Children.FirstOrDefault(n => n.Tag == "LOCT");
+            float speed = locomotion == null ? 0 : BitConverter.ToSingle(locomotion.Data, 0);
+            return new SkeletalAnimation(frameRate, lastFrame, speed, joints);
         }
 
         // The packed quaternion stores sign/magnitude X11,Y11,Z10. Format bytes describe

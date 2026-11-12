@@ -8,26 +8,28 @@ using UnityEngine.InputSystem;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
-    /// <summary>Camera-relative walking with local prediction. SOE sends are queued to the connection thread.</summary>
+    /// <summary>Camera-relative running with local prediction. SOE sends are queued to the connection thread.</summary>
     [DisallowMultipleComponent]
     public sealed class PlayerMovement : MonoBehaviour
     {
         [Min(0)]
-        public float walkSpeed = 2.5f;
+        public float turnDegreesPerSecond = 540;
+        public float CurrentSpeed { get; private set; }
+
         [Min(.2f)]
         public float sendInterval = .25f;
         WorldState state;
         GameConnection connection;
         GameReplication replication;
-        SpatialSceneObject player;
+        CreatureSceneObject player;
         SceneObjectMovement movement;
         Camera worldCamera;
         float nextSend;
         bool pendingMovement;
-        bool wasWalking;
+        bool wasRunning;
         public void Initialize(SpatialSceneObject player)
         {
-            this.player = player;
+            this.player = (CreatureSceneObject)player;
             this.state = GameServices.Resolve<WorldState>();
             connection = GameServices.Resolve<GameConnection>();
             replication = GameServices.Resolve<GameReplication>();
@@ -46,23 +48,29 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 input.y = (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0);
             }
 
-            Walk(input, Time.deltaTime);
+            Run(input, Time.deltaTime);
         }
 
-        internal void Walk(Vector2 input, float seconds)
+        internal void Run(Vector2 input, float seconds)
         {
-            bool walking = input.sqrMagnitude > .001f;
-            if (walking)
+            bool running = input.sqrMagnitude > .001f && player.RunningSpeed > 0;
+            CurrentSpeed = 0;
+            if (running && seconds > 0)
             {
                 input = Vector2.ClampMagnitude(input, 1);
                 var forward = Vector3.ProjectOnPlane(worldCamera.transform.forward, Vector3.up).normalized;
                 var right = Vector3.Cross(Vector3.up, forward);
                 var direction = forward * input.y + right * input.x;
                 var serverPose = this.state.SceneObjects.GetServerWorldPose(player.SwgId);
-                var serverPosition = serverPose.position + direction * (walkSpeed * seconds);
+                var desiredRotation = Quaternion.LookRotation(direction);
+                var serverRotation = Quaternion.RotateTowards(serverPose.rotation, desiredRotation, turnDegreesPerSecond * player.TurnScale * seconds);
+                var heading = serverRotation * Vector3.forward;
+                // Run along the facing direction through turns; don't slide sideways or run backwards.
+                float alignment = Mathf.Clamp01(Vector3.Dot(heading, direction.normalized));
+                CurrentSpeed = player.RunningSpeed * input.magnitude * alignment;
+                var serverPosition = serverPose.position + heading * (CurrentSpeed * seconds);
                 // Terrain samples and network positions are absolute SWG world coordinates.
                 serverPosition.y = this.state.Terrain.SampleHeight(serverPosition.x, serverPosition.z);
-                var serverRotation = Quaternion.LookRotation(direction);
                 if (!player.ParentSwgId.IsNone)
                 {
                     var parent = this.state.SceneObjects.GetServerWorldPose(player.ParentSwgId);
@@ -81,16 +89,17 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 pendingMovement = true;
             }
 
-            if (!walking && wasWalking)
+            bool stopped = !running && wasRunning;
+            if (stopped)
                 pendingMovement = true;
-            if (pendingMovement && Time.unscaledTime >= nextSend)
+            if (pendingMovement && (stopped || Time.unscaledTime >= nextSend))
             {
-                connection.Send(new DataTransformPacket(player.SwgId, player.ParentSwgId, (uint)(Time.realtimeSinceStartupAsDouble * 1000), replication.NextPlayerMovementCounter(), player.Position, player.Rotation, walking ? walkSpeed : 0));
+                connection.Send(new DataTransformPacket(player.SwgId, player.ParentSwgId, (uint)(Time.realtimeSinceStartupAsDouble * 1000), replication.NextPlayerMovementCounter(), player.Position, player.Rotation, CurrentSpeed));
                 pendingMovement = false;
                 nextSend = Time.unscaledTime + sendInterval;
             }
 
-            wasWalking = walking;
+            wasRunning = running;
         }
     }
 }

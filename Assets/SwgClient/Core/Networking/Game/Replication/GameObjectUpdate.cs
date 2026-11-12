@@ -21,6 +21,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public string AlternateAppearance;
         public float? Height;
         public byte? Posture;
+        public float? RunSpeed;
+        public float? SpeedMultiplier;
+        public float? TurnScale;
         public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None);
 
         public GameObjectUpdate CopyForQueue()
@@ -61,6 +64,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
 
             if (target is CreatureSceneObject creature)
             {
+                if (RunSpeed.HasValue)
+                    creature.RunSpeed = RunSpeed.Value;
+                if (SpeedMultiplier.HasValue)
+                    creature.SpeedMultiplier = SpeedMultiplier.Value;
+                if (TurnScale.HasValue)
+                    creature.TurnScale = TurnScale.Value;
                 if (Equipment != null)
                     creature.Equipment = Equipment;
                 if (EquipmentDelta != null)

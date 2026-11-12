@@ -26,6 +26,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             {
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadDeltaField,
                 [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadDeltaField,
+                [(ReplicatedObjectType.Creature, 4)] = CreatureView4.ReadDeltaField,
                 [(ReplicatedObjectType.Creature, 6)] = CreatureView6.ReadDeltaField
             };
         }

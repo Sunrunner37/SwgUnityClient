@@ -4,6 +4,8 @@ using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Geometry;
 using Swg.Client.Runtime.Assets.Shaders;
 using UnityEngine;
+using Unity.Collections;
+using Swg.Client.Core.Characters.Animation;
 using UnityEngine.Rendering;
 
 namespace Swg.Client.Runtime.Assets.Appearances
@@ -13,6 +15,8 @@ namespace Swg.Client.Runtime.Assets.Appearances
     {
         public Mesh Mesh { get; }
         public Material Material { get; }
+        public Mesh SkinnedMesh { get; }
+        public SkeletalMeshData Skinning { get; }
 
         public MeshPartResources(string name, MeshPart source, Material material, byte[] colors = null)
         {
@@ -43,6 +47,19 @@ namespace Swg.Client.Runtime.Assets.Appearances
             if (!hasNormals)
                 Mesh.RecalculateNormals();
             Mesh.RecalculateBounds();
+            Skinning = source.Skinning;
+            if (Skinning != null)
+            {
+                SkinnedMesh = UnityEngine.Object.Instantiate(Mesh);
+                SkinnedMesh.name = name + " skinned";
+                SkinnedMesh.vertices = Skinning.Vertices;
+                SkinnedMesh.normals = Skinning.Normals;
+                SkinnedMesh.bindposes = Skinning.Skeleton.BindPoses;
+                using var counts = new NativeArray<byte>(Skinning.BonesPerVertex, Allocator.Temp);
+                using var weights = new NativeArray<BoneWeight1>(Skinning.Weights, Allocator.Temp);
+                SkinnedMesh.SetBoneWeights(counts, weights);
+                SkinnedMesh.RecalculateBounds();
+            }
         }
 
         public static MeshPartResources FromAppearance(AppearanceData appearance, int index, SwgMaterialFactory factory, Shader shader)
@@ -57,6 +74,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
 
         public void Dispose()
         {
+            Release(SkinnedMesh);
             Release(Mesh);
             Release(Material);
         }

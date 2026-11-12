@@ -106,7 +106,7 @@ namespace Swg.Client.Core.Characters.Models
             if (positions.Length % 12 != 0 || normals.Length % 12 != 0)
                 throw new InvalidDataException("Invalid skeletal geometry arrays");
             MeshBlendTargets.Apply(version, positions, normals, own, owner);
-            var pose = SkeletalPose.Load(loader, satPath, path);
+            var pose = SkeletalPose.Load(loader, satPath, path, ownerAppearance);
             if (version.Children.Any(n => n.Kind == "TRTS"))
                 Warn(result, "Native texture-renderer compositing is not applied to " + path + "; base textures and base palette colors are used; layered facial details remain unsupported.");
             int shaderIndex = 0;
@@ -143,6 +143,8 @@ namespace Swg.Client.Core.Characters.Models
                 var uv = new ByteReader(texcoords);
                 var vertices = new Vector3[count];
                 var ns = new Vector3[count];
+                var bindVertices = new Vector3[count];
+                var bindNormals = new Vector3[count];
                 var uvs = new Vector2[count];
                 var sourceIndices = new int[count];
                 for (int i = 0; i < count; i++)
@@ -159,8 +161,10 @@ namespace Swg.Client.Core.Characters.Models
                     {
                         Position = ni * 12
                     };
-                    vertices[i] = pose.TransformPosition(pi, new Vector3(rp.Float(), rp.Float(), rp.Float()));
-                    ns[i] = pose.TransformNormal(pi, new Vector3(rn.Float(), rn.Float(), rn.Float())).normalized;
+                    bindVertices[i] = new Vector3(rp.Float(), rp.Float(), rp.Float());
+                    bindNormals[i] = new Vector3(rn.Float(), rn.Float(), rn.Float());
+                    vertices[i] = pose.TransformPosition(pi, bindVertices[i]);
+                    ns[i] = pose.TransformNormal(pi, bindNormals[i]).normalized;
                     uvs[i] = new Vector2(uv.Float(), uv.Float());
                     sourceIndices[i] = pi;
                 }
@@ -190,7 +194,7 @@ namespace Swg.Client.Core.Characters.Models
                     }
                 }
 
-                result.Parts.Add(new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint });
+                result.Parts.Add(new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint, Skinning = pose.CreateSkin(bindVertices, bindNormals, sourceIndices) });
                 result.Sources.Add(new CachedMeshPartSource { ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, TriangleOcclusionCombinations = occlusion.ToArray(), MeshVersion = version });
             }
         }

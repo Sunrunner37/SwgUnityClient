@@ -24,12 +24,27 @@ namespace Swg.Client.Runtime.Assets.Appearances
         {
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
+            CharacterAnimation animation = parts.Any(part => part.Skinning != null) ? root.AddComponent<CharacterAnimation>() : null;
             for (int i = 0; i < parts.Length; i++)
             {
                 var part = new GameObject("Mesh " + i);
                 part.transform.SetParent(root.transform, false);
-                part.AddComponent<MeshFilter>().sharedMesh = parts[i].Mesh;
-                part.AddComponent<MeshRenderer>().sharedMaterial = parts[i].Material;
+                var resource = parts[i];
+                if (resource.Skinning == null)
+                {
+                    part.AddComponent<MeshFilter>().sharedMesh = resource.Mesh;
+                    part.AddComponent<MeshRenderer>().sharedMaterial = resource.Material;
+                }
+                else
+                {
+                    var renderer = part.AddComponent<SkinnedMeshRenderer>();
+                    renderer.sharedMesh = resource.SkinnedMesh;
+                    renderer.sharedMaterial = resource.Material;
+                    renderer.bones = animation.GetBones(resource.Skinning.Skeleton);
+                    renderer.rootBone = renderer.bones[0];
+                    // Include arm swings and hip bob beyond the static bind-pose box.
+                    renderer.localBounds = new Bounds(resource.Mesh.bounds.center, resource.Mesh.bounds.size + Vector3.one);
+                }
             }
 
             foreach (var effect in particles)
