@@ -1,4 +1,4 @@
-using System;
+using Swg.Client.Runtime.Networking.Chat;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Chat;
 
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Chat
     [Preserve]
     internal sealed class ChatInstantMessageToClientPacketHandler : GamePacketHandler<ChatInstantMessageToClientPacket>
     {
+        readonly ClientChat chat;
         public override uint Opcode => ChatInstantMessageToClientPacket.Opcode;
 
         [Preserve]
-        public ChatInstantMessageToClientPacketHandler() : base(ChatInstantMessageToClientPacket.ReadFrom)
+        public ChatInstantMessageToClientPacketHandler(ClientChat chat) : base(ChatInstantMessageToClientPacket.ReadFrom)
         {
+            this.chat = chat;
         }
 
         protected override void Handle(ChatInstantMessageToClientPacket packet)
         {
-            throw new NotImplementedException($"ChatInstantMessageToClient (opcode 0x{Opcode:X8})");
+            chat.Receive(packet);
         }
     }
 }

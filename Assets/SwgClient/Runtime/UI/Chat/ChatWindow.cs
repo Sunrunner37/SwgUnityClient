@@ -117,6 +117,13 @@ namespace Swg.Client.Runtime.UI.Chat
                 messages.verticalNormalizedPosition = Mathf.Clamp01(messages.verticalNormalizedPosition + direction * output.fontSize * 3 / overflow);
         }
 
+        public void ClearHistory()
+        {
+            history.Clear();
+            dirty = true;
+            followBottom = true;
+        }
+
         public void AppendMessage(string tabId, string text)
         {
             if (!history.TryGetValue(tabId, out var lines))
@@ -124,7 +131,7 @@ namespace Swg.Client.Runtime.UI.Chat
             lines.Enqueue(text);
             while (lines.Count > historyLimit)
                 lines.Dequeue();
-            if (!string.Equals(selectedTab.id, tabId, StringComparison.OrdinalIgnoreCase))
+            if (selectedTab == null || !string.Equals(selectedTab.id, tabId, StringComparison.OrdinalIgnoreCase))
                 return;
             followBottom |= messages.content.rect.height <= messages.viewport.rect.height || messages.verticalNormalizedPosition <= .02f;
             dirty = true;

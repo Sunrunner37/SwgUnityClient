@@ -1,4 +1,4 @@
-using System;
+using Swg.Client.Runtime.Networking.Chat;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Chat;
 
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Chat
     [Preserve]
     internal sealed class ChatOnCreateRoomPacketHandler : GamePacketHandler<ChatOnCreateRoomPacket>
     {
+        readonly ClientChat chat;
         public override uint Opcode => ChatOnCreateRoomPacket.Opcode;
 
         [Preserve]
-        public ChatOnCreateRoomPacketHandler() : base(ChatOnCreateRoomPacket.ReadFrom)
+        public ChatOnCreateRoomPacketHandler(ClientChat chat) : base(ChatOnCreateRoomPacket.ReadFrom)
         {
+            this.chat = chat;
         }
 
         protected override void Handle(ChatOnCreateRoomPacket packet)
         {
-            throw new NotImplementedException($"ChatOnCreateRoom (opcode 0x{Opcode:X8})");
+            chat.Receive(packet);
         }
     }
 }

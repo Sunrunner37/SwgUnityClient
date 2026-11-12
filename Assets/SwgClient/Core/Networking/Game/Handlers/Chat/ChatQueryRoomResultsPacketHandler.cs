@@ -1,4 +1,4 @@
-using System;
+using Swg.Client.Runtime.Networking.Chat;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Chat;
 
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Chat
     [Preserve]
     internal sealed class ChatQueryRoomResultsPacketHandler : GamePacketHandler<ChatQueryRoomResultsPacket>
     {
+        readonly ClientChat chat;
         public override uint Opcode => ChatQueryRoomResultsPacket.Opcode;
 
         [Preserve]
-        public ChatQueryRoomResultsPacketHandler() : base(ChatQueryRoomResultsPacket.ReadFrom)
+        public ChatQueryRoomResultsPacketHandler(ClientChat chat) : base(ChatQueryRoomResultsPacket.ReadFrom)
         {
+            this.chat = chat;
         }
 
         protected override void Handle(ChatQueryRoomResultsPacket packet)
         {
-            throw new NotImplementedException($"ChatQueryRoomResults (opcode 0x{Opcode:X8})");
+            chat.Receive(packet);
         }
     }
 }

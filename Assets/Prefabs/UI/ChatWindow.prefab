@@ -1496,31 +1496,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Chat.ChatWindow
   tabs:
   - id: Spatial
-    label: 
     sendChannel: Spatial
     toggle: {fileID: 1561726388811878809}
   - id: Combat
-    label: 
     sendChannel: Spatial
     toggle: {fileID: 8575002535657834930}
   - id: Planet
-    label: 
     sendChannel: Planet
     toggle: {fileID: 3603058305839612246}
   - id: Quest
-    label: 
     sendChannel: Spatial
     toggle: {fileID: 6521697778920846022}
   - id: Auction
-    label: 
-    sendChannel: Spatial
+    sendChannel: Auction
     toggle: {fileID: 1255547338927392505}
   - id: Instant Messages
-    label: 
-    sendChannel: Spatial
+    sendChannel: Instant Messages
     toggle: {fileID: 2475923796020751415}
   - id: Guildchat
-    label: 
     sendChannel: Guildchat
     toggle: {fileID: 4830669544223334164}
   openChat: {fileID: -6246496435502416265, guid: 052faaac586de48259a63d0c4782560b, type: 3}
