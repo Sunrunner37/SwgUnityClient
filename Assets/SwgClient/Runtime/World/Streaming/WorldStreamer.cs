@@ -58,7 +58,7 @@ namespace Swg.Client.Runtime.World.Streaming
         {
             try
             {
-                var task = content.LoadRegionAsync(serverCenter, settings, new HashSet<Vector2Int>(terrainRenderer.Keys), new HashSet<SwgId>(scenery), null, token, new HashSet<Vector2Int>(flora.Keys), terrainRenderer.Resolutions);
+                var task = content.LoadRegionAsync(serverCenter, settings, new HashSet<Vector2Int>(terrainRenderer.Keys), new HashSet<SwgId>(scenery), null, token, terrainRenderer.Resolutions, flora.Details);
                 _ = task.ContinueWith(completed =>
                 {
                     _ = completed.Exception;
@@ -81,6 +81,8 @@ namespace Swg.Client.Runtime.World.Streaming
         IEnumerator Apply(WorldRegionData region, CancellationToken token)
         {
             int count = 0;
+            int uploads = 0;
+            double deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
             int total = Math.Max(1, region.Terrain.Count + region.Scenery.Count);
             foreach (var tile in region.Terrain)
             {
@@ -95,14 +97,24 @@ namespace Swg.Client.Runtime.World.Streaming
                     Debug.LogError(error.Message);
                 }
 
-                yield return null;
+                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                {
+                    yield return null;
+                    uploads = 0;
+                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                }
             }
 
             foreach (var tile in region.Flora)
             {
                 token.ThrowIfCancellationRequested();
-                flora.Add(tile.Key, tile.Value);
-                yield return null;
+                flora.AddOrReplace(tile.Key, tile.Value);
+                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                {
+                    yield return null;
+                    uploads = 0;
+                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                }
             }
 
             flora.Retain(region.FloraKeys);
@@ -120,8 +132,12 @@ namespace Swg.Client.Runtime.World.Streaming
                     Debug.LogError(error.Message);
                 }
 
-                if (count % settings.uploadsPerFrame == 0)
+                if (++uploads >= settings.uploadsPerFrame || Time.realtimeSinceStartupAsDouble >= deadline)
+                {
                     yield return null;
+                    uploads = 0;
+                    deadline = Time.realtimeSinceStartupAsDouble + settings.uploadBudgetMilliseconds * .001;
+                }
             }
 
             try

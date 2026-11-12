@@ -32,6 +32,7 @@ namespace Swg.Client.Runtime.World
         WorldStreamingSettings settings;
         WorldAppearanceLibrary appearanceLibrary;
         WorldSceneObjectRenderer objectRenderer;
+        WorldFloraRenderer flora;
         bool revealed;
         public void Initialize(ILifetimeScope session, WorldLoadingData sceneData, WorldStreamingSettings streamingSettings)
         {
@@ -53,9 +54,11 @@ namespace Swg.Client.Runtime.World
                 objectRenderer = new GameObject("World Objects").AddComponent<WorldSceneObjectRenderer>();
                 objectRenderer.transform.SetParent(transform, false);
                 objectRenderer.enabled = false;
-                var flora = new GameObject("Procedural flora").AddComponent<WorldFloraRenderer>();
+                flora = new GameObject("Procedural flora").AddComponent<WorldFloraRenderer>();
                 flora.transform.SetParent(transform, false);
-                flora.Initialize(this.state, worldShader, particleShader, settings);
+                flora.Initialize(this.state, worldShader, particleShader, settings, orbit.worldCamera);
+                flora.enabled = false;
+                orbit.worldCamera.farClipPlane = settings.terrainViewDistance;
                 environment.Initialize(this.state);
                 session.Resolve<WorldRenderingContext>().Initialize(worldShader, characterShader, particleShader, settings, objectRenderer, this, flora);
                 session.Resolve<WorldRenderingContext>().WorldCamera = orbit.worldCamera;
@@ -80,6 +83,7 @@ namespace Swg.Client.Runtime.World
             if (!IsReady)
                 throw new InvalidOperationException("The world is not ready.");
             environment.enabled = true;
+            flora.enabled = true;
             revealed = true;
             objectRenderer.enabled = true;
             orbit.enabled = true;

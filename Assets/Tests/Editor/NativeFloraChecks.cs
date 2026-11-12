@@ -1,6 +1,11 @@
+using Swg.Client.Runtime.World.Terrain;
 using System.Text;
 using Swg.Client.Core.Assets.Formats.Iff;
 using System.Linq;
+using System.Threading;
+using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Core.Assets.Formats.Dds;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Core.Assets.Appearances;
@@ -39,8 +44,67 @@ namespace Swg.Client.Tests.Editor
         public void NativeReferencesNormalizeSeparatorsAndCaseBeforeMatching()
         {
             var bytes = Encoding.ASCII.GetBytes("effect\\a_alpha.eft\0EFFECT/A_ALPHA.EFT\0texture/unrelated.dds\0");
-            Assert.That(IffNode.References(bytes, "effect/", ".eft"),
-                Is.EqualTo(new[] { "effect/a_alpha.eft" }));
+            Assert.That(IffNode.References(bytes, "effect/", ".eft"), Is.EqualTo(new[] { "effect/a_alpha.eft" }));
+        }
+
+        [Test]
+        public void NativePlantLodsUseCheaperMeshesWithoutChangingTheHighDetailDefault()
+        {
+            using var assets = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var high = AppearanceLoader.LoadDetailed(assets, "appearance/decd_windswept.apt");
+            var low = AppearanceLoader.LoadDetailed(assets, "appearance/decd_windswept.apt", AppearanceLoader.LowestDetail);
+            Assert.That(high.Sources.Any(source => source.AppearancePath.EndsWith("_l0.msh")), Is.True);
+            Assert.That(low.Sources.Any(source => source.AppearancePath.EndsWith("_l3.msh")), Is.True);
+            Assert.That(low.Parts.Sum(part => part.Vertices.Length), Is.LessThan(high.Parts.Sum(part => part.Vertices.Length)));
+        }
+
+        [Test]
+        public void StreamedGrassDetailsAreStableNestedSubsetsOfTheNativePlacements()
+        {
+            using var assets = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var terrain = WorldTerrain.Load(assets, "terrain/corellia.trn");
+            var settings = ScriptableObject.CreateInstance<WorldStreamingSettings>();
+            try
+            {
+                var loader = new TerrainFloraLoader(assets, terrain, new AppearanceCache(), path => AppearanceLoader.LoadDetailed(assets, path));
+                var ranges = terrain.FloraDistributions.Select((distribution, kind) => settings.GetFloraRange(distribution, (TerrainFloraKind)kind)).ToArray();
+                var key = new Vector2Int(-23, -626);
+                var full = loader.LoadTile(key, 8, ranges, CancellationToken.None);
+                for (int detail = 1; detail <= 2; detail++)
+                {
+                    var sparse = loader.LoadTile(key, 8, ranges, CancellationToken.None, detail);
+                    var expected = full.Placements.Where(p => p.Kind == TerrainFloraKind.DynamicNear && p.Detail >= detail).Select(p => p.ServerPosition).ToArray();
+                    Assert.That(sparse.Placements.Where(p => p.Kind == TerrainFloraKind.DynamicNear).Select(p => p.ServerPosition), Is.EqualTo(expected));
+                    Assert.That(expected.Length, Is.LessThan(full.Placements.Count(p => p.Kind == TerrainFloraKind.DynamicNear)));
+                }
+
+                foreach (var point in new[]
+                {
+                    new Vector2(-156, -5006),
+                    new Vector2(-183, -5002),
+                    new Vector2(300, 400)
+                }
+
+                )
+                    Assert.That(terrain.SampleHeight(point.x, point.y), Is.EqualTo(terrain.Sample(point.x, point.y).Height).Within(.0001f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(settings);
+            }
+        }
+
+        [Test]
+        public void RepeatingWorldTexturesHaveMipsWhileUiTexturesKeepTheirOriginalUpload()
+        {
+            using var assets = new TreRuntimeAssets(ClientSettings.From(Path.Combine(Application.dataPath, "../client.ini")));
+            var source = new TextureData(4, 4);
+            var world = assets.Texture(source, TextureWrapMode.Repeat);
+            var ui = assets.Texture(source, TextureWrapMode.Clamp);
+            Assert.That(world.mipmapCount, Is.EqualTo(3));
+            Assert.That(world.filterMode, Is.EqualTo(FilterMode.Trilinear));
+            Assert.That(ui.mipmapCount, Is.EqualTo(1));
+            Assert.That(assets.Texture(source, TextureWrapMode.Repeat), Is.SameAs(world));
         }
 
         [Test]
@@ -104,13 +168,13 @@ namespace Swg.Client.Tests.Editor
                     MinimumDistance = 0,
                     MaximumDistance = 24
                 };
-                Assert.That(settings.GetFloraRange(near, TerrainFloraKind.DynamicNear), Is.EqualTo((0f, 32f)));
+                Assert.That(settings.GetFloraRange(near, TerrainFloraKind.DynamicNear), Is.EqualTo((0f, 320f)));
                 var distant = new TerrainFloraDistribution
                 {
                     MinimumDistance = 105,
                     MaximumDistance = 650
                 };
-                Assert.That(settings.GetFloraRange(distant, TerrainFloraKind.DynamicFar), Is.EqualTo((105f, 128f)));
+                Assert.That(settings.GetFloraRange(distant, TerrainFloraKind.DynamicFar), Is.EqualTo((105f, 320f)));
                 var scenery = new TerrainFloraDistribution
                 {
                     MinimumDistance = 2,
@@ -153,8 +217,25 @@ namespace Swg.Client.Tests.Editor
                 }
             };
             source.AlphaCutout = true;
-            source.VertexColors = new byte[] { 255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255 };
-            var appearance = new AppearanceData { Key = "test" };
+            source.VertexColors = new byte[]
+            {
+                255,
+                0,
+                0,
+                255,
+                0,
+                255,
+                0,
+                255,
+                0,
+                0,
+                255,
+                255
+            };
+            var appearance = new AppearanceData
+            {
+                Key = "test"
+            };
             appearance.Parts.Add(source);
             var resources = MeshPartResources.FromAppearance(appearance, 0, new SwgMaterialFactory(null), Shader.Find("SWG/World"));
             var material = resources.Material;

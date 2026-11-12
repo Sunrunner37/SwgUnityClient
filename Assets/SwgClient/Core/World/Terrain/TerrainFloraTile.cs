@@ -5,6 +5,7 @@ namespace Swg.Client.Core.World.Terrain
 {
     public sealed class TerrainFloraTile
     {
+        public int Detail;
         public readonly List<TerrainFloraPlacement> Placements = new List<TerrainFloraPlacement>();
         public readonly Dictionary<string, AppearanceData> Appearances = new Dictionary<string, AppearanceData>();
     }

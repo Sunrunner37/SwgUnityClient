@@ -60,16 +60,18 @@ namespace Swg.Client.Runtime.Assets.Tre
         {
             if (textures.TryGetValue((source, wrapMode), out var texture))
                 return texture;
-            texture = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, false)
+            bool mipmaps = wrapMode == TextureWrapMode.Repeat;
+            texture = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, mipmaps)
             {
-                filterMode = FilterMode.Bilinear,
+                filterMode = mipmaps ? FilterMode.Trilinear : FilterMode.Bilinear,
+                anisoLevel = mipmaps ? 4 : 1,
                 wrapMode = wrapMode
             };
             var raw = new byte[source.Pixels.Length];
             for (int y = 0; y < source.Height; y++)
                 Buffer.BlockCopy(source.Pixels, y * source.Width * 4, raw, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
-            texture.LoadRawTextureData(raw);
-            texture.Apply(false, true);
+            texture.SetPixelData(raw, 0);
+            texture.Apply(mipmaps, true);
             textures.Add((source, wrapMode), texture);
             return texture;
         }

@@ -13,13 +13,23 @@ MonoBehaviour:
   m_Name: WorldStreamingSettings
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.Streaming.WorldStreamingSettings
   viewRadius: 512
-  terrainRadius: 768
+  terrainRadius: 2048
   terrainTileSize: 256
   terrainSpacing: 8
   terrainDetailRadius: 128
-  refreshDistance: 64
+  refreshDistance: 32
   uploadsPerFrame: 8
-  floraRadius: 128
+  floraRadius: 512
   floraTileSize: 64
-  nearFloraDistance: 32
+  nearFloraDistance: 80
   particleFloraDistance: 64
+
+  terrainViewDistance: 1800
+  terrainMidRadius: 512
+  terrainFarSpacing: 32
+  middleFloraDistance: 160
+  farFloraDistance: 320
+  staticFloraDistance: 384
+  floraFadeDistance: 24
+
+  uploadBudgetMilliseconds: 2

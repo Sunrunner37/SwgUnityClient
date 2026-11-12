@@ -64,13 +64,14 @@ namespace Swg.Client.Core.World.Terrain
             return result;
         }
 
-        public float SampleHeight(float x, float z) => Sample(x, z).Height;
-        public TerrainSample Sample(float serverX, float serverZ)
+        public float SampleHeight(float x, float z) => SampleMaps(x, z, surfaceOnly: true).Height;
+        public TerrainSample Sample(float serverX, float serverZ) => SampleMaps(serverX, serverZ, surfaceOnly: false);
+        TerrainSample SampleMaps(float serverX, float serverZ, bool surfaceOnly)
         {
             sampling ??= new SamplingCache();
             sampling.Heights.Clear();
             sampling.Normals.Clear();
-            return SampleBeforeLayer(serverX, serverZ, int.MaxValue);
+            return SampleBeforeLayer(serverX, serverZ, int.MaxValue, surfaceOnly);
         }
 
         TerrainSample SampleBeforeLayer(float x, float z, int endLayer, bool surfaceOnly = false)
@@ -82,6 +83,7 @@ namespace Swg.Client.Core.World.Terrain
                     break;
                 layer.Apply(x, z, 1, ref sample, endLayer, surfaceOnly);
             }
+
             return sample;
         }
 
@@ -100,14 +102,14 @@ namespace Swg.Client.Core.World.Terrain
                     sampling.Heights[key] = height = SampleBeforeLayer(key.Item2, key.Item3, endLayer, surfaceOnly: true).Height;
                 return height;
             }
+
             float west = Height(-1, 0);
             float east = Height(1, 0);
             float north = Height(0, 1);
             float south = Height(0, -1);
             float northwest = Height(-1, 1);
             float southeast = Height(1, -1);
-            normalY = new Vector3(2 * west + northwest + south - 2 * east - southeast - north,
-                6 * step, 2 * south + southeast + west - 2 * north - east - northwest).normalized.y;
+            normalY = new Vector3(2 * west + northwest + south - 2 * east - southeast - north, 6 * step, 2 * south + southeast + west - 2 * north - east - northwest).normalized.y;
             sampling.Normals[normalKey] = normalY;
             return normalY;
         }
@@ -146,6 +148,7 @@ namespace Swg.Client.Core.World.Terrain
                 if (affector is TrnHeightRule or TrnTerraceRule or TrnRoadRule)
                     nextHeightStage++;
             }
+
             foreach (var child in definition.Children)
                 layer.Children.Add(CreateLayer(child));
             layer.HasSurfaceChanges = layer.SurfaceAffectors.Count > 0 || layer.Children.Any(child => child.HasSurfaceChanges);

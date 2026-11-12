@@ -28,9 +28,12 @@ namespace Swg.Client.Runtime.World.Terrain
             this.loadAppearance = loadAppearance;
         }
 
-        public TerrainFloraTile LoadTile(Vector2Int key, float tileSize, (float Minimum, float Maximum)[] ranges, CancellationToken token)
+        public TerrainFloraTile LoadTile(Vector2Int key, float tileSize, (float Minimum, float Maximum)[] ranges, CancellationToken token, int detail = 0)
         {
-            var tile = new TerrainFloraTile();
+            var tile = new TerrainFloraTile
+            {
+                Detail = detail
+            };
             var heights = new Dictionary<(int X, int Z), float>();
             var floraMap = new Dictionary<(int X, int Z), TerrainSample>();
             float poleSpacing = terrain.NativeSpacing;
@@ -59,6 +62,9 @@ namespace Swg.Client.Runtime.World.Terrain
                     for (int x = minimumX; x < maximumX; x++)
                     {
                         token.ThrowIfCancellationRequested();
+                        int densityDetail = distribution.DetailAt(x, z);
+                        if (kind == TerrainFloraKind.DynamicNear ? densityDetail < detail : detail == 2 && densityDetail == 0)
+                            continue;
                         var point = distribution.PositionAt(x, z);
                         if (point.x < tileMinimumX || point.x >= tileMinimumX + tileSize || point.y < tileMinimumZ || point.y >= tileMinimumZ + tileSize)
                             continue;
@@ -78,13 +84,28 @@ namespace Swg.Client.Runtime.World.Terrain
                         var item = terrain.Flora.Select(selection, dynamic);
                         if (item == null)
                             continue;
-                        if (!tile.Appearances.TryGetValue(item.Path, out var appearance))
+                        if (detail > 0 && item.Path.EndsWith(".prt", StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        int placementDetail = kind == TerrainFloraKind.DynamicNear ? densityDetail : detail;
+                        string appearanceKey = item.Radial || detail == 0 ? item.Path : item.Path + "#lod" + detail;
+                        if (!tile.Appearances.TryGetValue(appearanceKey, out var appearance))
                         {
-                            appearance = item.Radial ? LoadRadialAppearance(item) : loadAppearance(item.Path);
-                            tile.Appearances.Add(item.Path, appearance);
+                            if (item.Radial)
+                                appearance = LoadRadialAppearance(item);
+                            else if (detail == 0)
+                                appearance = loadAppearance(item.Path);
+                            else if (!cache.TryGet(appearanceKey, out appearance))
+                            {
+                                appearance = AppearanceLoader.LoadDetailed(loader, item.Path, detail == 2 ? AppearanceLoader.LowestDetail : detail);
+                                cache.Add(appearanceKey, appearance);
+                                foreach (var warning in appearance.Warnings)
+                                    Debug.LogWarning(warning);
+                            }
+
+                            tile.Appearances.Add(appearanceKey, appearance);
                         }
 
-                        if (appearance.Parts.Count == 0 && appearance.Particles.Count == 0)
+                        if (appearance.Parts.Count == 0 && (appearance.Particles.Count == 0 || detail > 0))
                             continue;
                         var random = new TerrainRandom(point.x, point.y);
                         float height = item.Floats && terrain.HasGlobalWater ? terrain.GlobalWaterHeight : terrain.SampleHeight(point.x, point.y);
@@ -101,7 +122,7 @@ namespace Swg.Client.Runtime.World.Terrain
                         // Near grass uses the terrain color map; far radial silhouettes stay untinted.
                         var color = kind == TerrainFloraKind.DynamicNear ? (Color)sample.Color : Color.white;
                         float yaw = (point.x + point.y) * Mathf.Rad2Deg;
-                        tile.Placements.Add(new TerrainFloraPlacement(item, kind, new Vector3(point.x, height, point.y), normal, yaw, scale, size, color));
+                        tile.Placements.Add(new TerrainFloraPlacement(item, kind, new Vector3(point.x, height, point.y), normal, yaw, scale, size, color, placementDetail, appearanceKey));
                     }
             }
 

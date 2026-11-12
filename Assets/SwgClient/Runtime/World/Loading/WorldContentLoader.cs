@@ -86,20 +86,25 @@ namespace Swg.Client.Runtime.World.Loading
             }
         }
 
-        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, HashSet<Vector2Int> loadedFlora = null, IReadOnlyDictionary<Vector2Int, float> terrainResolutions = null)
+        public Task<WorldRegionData> LoadRegionAsync(Vector3 serverCenter, WorldStreamingSettings settings, HashSet<Vector2Int> loadedTerrain, HashSet<SwgId> loadedScenery, IProgress<WorldPreparationProgress> progress, CancellationToken token, IReadOnlyDictionary<Vector2Int, float> terrainResolutions = null, IReadOnlyDictionary<Vector2Int, int> floraDetails = null)
         {
             // Copy settings and caller-owned sets before entering the worker.
             float tileSize = settings.terrainTileSize;
             float spacing = settings.terrainSpacing;
             float nativeSpacing = Math.Min(settings.terrainSpacing, this.state.Terrain.NativeSpacing);
             float detailRadius = settings.terrainDetailRadius;
+            float midRadius = settings.terrainMidRadius;
+            float farSpacing = settings.terrainFarSpacing;
+            float nearFloraDistance = settings.nearFloraDistance;
+            float middleFloraDistance = settings.middleFloraDistance;
+            float margin = settings.refreshDistance + 64;
+            var previousDetails = floraDetails == null ? new Dictionary<Vector2Int, int>() : new Dictionary<Vector2Int, int>(floraDetails);
             var resolutions = terrainResolutions == null ? null : new Dictionary<Vector2Int, float>(terrainResolutions);
             float radius = settings.terrainRadius;
             float viewRadius = settings.viewRadius;
             float floraRadius = settings.floraRadius;
             float floraTileSize = settings.floraTileSize;
             var floraRanges = this.state.Terrain.FloraDistributions.Select((distribution, kind) => settings.GetFloraRange(distribution, (TerrainFloraKind)kind)).ToArray();
-            var flora = loadedFlora == null ? new HashSet<Vector2Int>() : new HashSet<Vector2Int>(loadedFlora);
             var terrain = new HashSet<Vector2Int>(loadedTerrain);
             var scenery = new HashSet<SwgId>(loadedScenery);
             return ReadAsync(loader =>
@@ -117,7 +122,8 @@ namespace Swg.Client.Runtime.World.Loading
                     {
                         float dx = Math.Max(tile.x * tileSize - serverCenter.x, Math.Max(0, serverCenter.x - (tile.x + 1) * tileSize));
                         float dz = Math.Max(tile.y * tileSize - serverCenter.z, Math.Max(0, serverCenter.z - (tile.y + 1) * tileSize));
-                        return dx * dx + dz * dz <= detailRadius * detailRadius ? nativeSpacing : spacing;
+                        float squared = dx * dx + dz * dz;
+                        return squared <= detailRadius * detailRadius ? nativeSpacing : squared <= midRadius * midRadius ? spacing : farSpacing;
                     }
 
                     float previous = resolutions != null && resolutions.TryGetValue(key, out var old) ? old : spacing;
@@ -144,8 +150,12 @@ namespace Swg.Client.Runtime.World.Loading
                 foreach (var key in region.FloraKeys)
                 {
                     token.ThrowIfCancellationRequested();
-                    if (!flora.Contains(key))
-                        region.Flora.Add(key, floraLoader.LoadTile(key, floraTileSize, floraRanges, token));
+                    float dx = Math.Max(key.x * floraTileSize - serverCenter.x, Math.Max(0, serverCenter.x - (key.x + 1) * floraTileSize));
+                    float dz = Math.Max(key.y * floraTileSize - serverCenter.z, Math.Max(0, serverCenter.z - (key.y + 1) * floraTileSize));
+                    float distance = (float)Math.Sqrt(dx * dx + dz * dz);
+                    int detail = distance <= nearFloraDistance + margin ? 0 : distance <= middleFloraDistance + margin ? 1 : 2;
+                    if (!previousDetails.TryGetValue(key, out int previousDetail) || previousDetail != detail)
+                        region.Flora.Add(key, floraLoader.LoadTile(key, floraTileSize, floraRanges, token, detail));
                 }
 
                 var entries = this.state.Snapshot.Query(serverCenter, viewRadius, 256).ToArray();

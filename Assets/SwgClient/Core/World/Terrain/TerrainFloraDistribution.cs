@@ -11,6 +11,14 @@ namespace Swg.Client.Core.World.Terrain
         public float Spacing;
         public float Border;
         public uint Seed;
+        // Nested random subsets avoid distant rows while keeping positions stable when tiles refine.
+        public int DetailAt(int x, int z)
+        {
+            var random = new TerrainRandom(x + (Seed & 0xffff) + 173, z + (Seed >> 16) + 947);
+            float rank = random.Next();
+            return rank < .0625f ? 2 : rank < .25f ? 1 : 0;
+        }
+
         public Vector2 PositionAt(int x, int z)
         {
             float border = Spacing - 2 * Border > 0 ? Border : 0;
