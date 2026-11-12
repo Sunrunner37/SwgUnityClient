@@ -21,6 +21,6 @@ namespace Swg.Client.Core.World.Terrain.Filters
             Multiplier = multiplier;
         }
 
-        public override float Sample(float x, float z, float height) => TerrainFilterRange.Sample(Fractal.Sample(x, z) * Multiplier, Minimum, Maximum, Feather, FeatherType);
+        public override float Sample(float x, float z, in TerrainSample sample, float normalY = 1) => TerrainFilterRange.Sample(Fractal.Sample(x, z) * Multiplier, Minimum, Maximum, Feather, FeatherType);
     }
 }

@@ -9,7 +9,6 @@ namespace Swg.Client.Core.World.Terrain.Filters
             FamilyId = familyId;
         }
 
-        // Preserve the existing Core3 height-evaluation fallback until shader sampling is supported.
-        public override float Sample(float x, float z, float height) => 0;
+        public override float Sample(float x, float z, in TerrainSample sample, float normalY = 1) => sample.ShaderFamily == FamilyId ? 1 : 0;
     }
 }

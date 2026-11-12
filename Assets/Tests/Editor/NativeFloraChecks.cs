@@ -1,3 +1,6 @@
+using System.Text;
+using Swg.Client.Core.Assets.Formats.Iff;
+using System.Linq;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Core.Assets.Appearances;
@@ -16,6 +19,30 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class NativeFloraChecks
     {
+        [Test]
+        public void RazorcoilPatchUsesNativeFiltersAndAlphaMaskedThorns()
+        {
+            using var assets = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var terrain = WorldTerrain.Load(assets, "terrain/corellia.trn");
+            var sample = terrain.Sample(-156, -5006);
+            var plant = terrain.Flora.Select(sample.StaticNonCollidable, false);
+            Assert.That(plant, Is.Not.Null);
+            Assert.That(plant.Path, Does.StartWith("appearance/leaf_tals_razorcoil"));
+            var appearance = AppearanceLoader.LoadDetailed(assets, plant.Path);
+            Assert.That(appearance.Warnings, Is.Empty);
+            Assert.That(appearance.Parts.Count, Is.EqualTo(2));
+            Assert.That(appearance.Parts.Any(part => part.AlphaCutout), Is.True);
+            Assert.That(appearance.Parts.Any(part => !part.AlphaCutout), Is.True, "The opaque spine must remain opaque");
+        }
+
+        [Test]
+        public void NativeReferencesNormalizeSeparatorsAndCaseBeforeMatching()
+        {
+            var bytes = Encoding.ASCII.GetBytes("effect\\a_alpha.eft\0EFFECT/A_ALPHA.EFT\0texture/unrelated.dds\0");
+            Assert.That(IffNode.References(bytes, "effect/", ".eft"),
+                Is.EqualTo(new[] { "effect/a_alpha.eft" }));
+        }
+
         [Test]
         public void NativeCorelliaDefinesOneMeterGrassAndSeparateStaticDistributions()
         {
@@ -173,7 +200,7 @@ namespace Swg.Client.Tests.Editor
         {
             using var stream = new MemoryStream();
             using var writer = new BinaryWriter(stream);
-            writer.Write(System.Text.Encoding.ASCII.GetBytes("CNCF"));
+            writer.Write(Encoding.ASCII.GetBytes("CNCF"));
             writer.Write(new byte[] { 0, 0, 0, 16 });
             writer.Write(12f);
             writer.Write(3f);

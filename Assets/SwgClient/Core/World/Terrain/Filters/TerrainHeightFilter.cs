@@ -15,6 +15,6 @@ namespace Swg.Client.Core.World.Terrain.Filters
             Feather = feather;
         }
 
-        public override float Sample(float x, float z, float height) => TerrainFilterRange.Sample(height, Minimum, Maximum, Feather, FeatherType);
+        public override float Sample(float x, float z, in TerrainSample sample, float normalY = 1) => TerrainFilterRange.Sample(sample.Height, Minimum, Maximum, Feather, FeatherType);
     }
 }

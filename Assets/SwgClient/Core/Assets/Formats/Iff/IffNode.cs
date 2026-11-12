@@ -65,21 +65,28 @@ namespace Swg.Client.Core.Assets.Formats.Iff
         }
 
         public byte[] Chunk(string tag) => Children.FirstOrDefault(n => n.Tag == tag)?.Data ?? throw new InvalidDataException("Missing IFF chunk " + tag);
+        static byte PathByte(byte value)
+        {
+            if (value == (byte)'\\')
+                return (byte)'/';
+            return value >= (byte)'A' && value <= (byte)'Z' ? (byte)(value + ('a' - 'A')) : value;
+        }
+
         public static List<string> References(byte[] bytes, string prefix, string suffix)
         {
             var result = new List<string>();
-            var p = Encoding.ASCII.GetBytes(prefix);
+            var p = Encoding.ASCII.GetBytes(prefix.Replace('\\', '/').ToLowerInvariant());
             for (int i = 0; i <= bytes.Length - p.Length; i++)
             {
                 int j = 0;
-                while (j < p.Length && bytes[i + j] == p[j])
+                while (j < p.Length && PathByte(bytes[i + j]) == p[j])
                     j++;
                 if (j != p.Length)
                     continue;
                 int end = Array.IndexOf(bytes, (byte)0, i);
                 if (end < 0)
                     continue;
-                string path = Encoding.ASCII.GetString(bytes, i, end - i);
+                string path = Encoding.ASCII.GetString(bytes, i, end - i).Replace('\\', '/').ToLowerInvariant();
                 if (path.EndsWith(suffix, StringComparison.OrdinalIgnoreCase) && !result.Contains(path))
                     result.Add(path);
             }
