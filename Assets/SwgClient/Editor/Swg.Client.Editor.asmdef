@@ -1,7 +1,7 @@
 {
  "name":"Swg.Client.Editor",
  "rootNamespace":"Swg.Client.Editor",
- "references":["Swg.Client","Unity.Timeline.Editor","Unity.Timeline"],
+ "references":["Swg.Client","Unity.Timeline.Editor","Unity.Timeline","UnityEngine.UI"],
  "includePlatforms":["Editor"],
  "autoReferenced":true
 }

@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &114634940 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3835399749626775641, guid: 629ce4f504a947247b8a9e8a0f0b88fa, type: 3}
+  m_PrefabInstance: {fileID: 1918360917}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1918360917
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -174,13 +179,45 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3835399749626775641, guid: 629ce4f504a947247b8a9e8a0f0b88fa, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1918360919}
   m_SourcePrefab: {fileID: 100100000, guid: 629ce4f504a947247b8a9e8a0f0b88fa, type: 3}
 --- !u!108 &1918360918 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 2602753223389229086, guid: 629ce4f504a947247b8a9e8a0f0b88fa, type: 3}
   m_PrefabInstance: {fileID: 1918360917}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1918360919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114634940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

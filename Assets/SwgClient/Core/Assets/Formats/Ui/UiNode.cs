@@ -25,6 +25,21 @@ namespace Swg.Client.Core.Assets.Formats.Ui
             return null;
         }
 
+        public UiNode FindPath(string path)
+        {
+            var parts = path.Trim('/').Split(new[] { '.', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0)
+                return null;
+            var node = Find(parts[0]);
+            for (int i = 1; node != null && i < parts.Length; i++)
+            {
+                string name = parts[i];
+                node = node.Children.Find(child => string.Equals(child.Get("Name"), name, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return node;
+        }
+
         public static UiNode Parse(string text)
         {
             text = Regex.Replace(text, @"<!--.*?-->", "", RegexOptions.Singleline);

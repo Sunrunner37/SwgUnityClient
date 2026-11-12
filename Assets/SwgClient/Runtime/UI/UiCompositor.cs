@@ -44,7 +44,7 @@ namespace Swg.Client.Runtime.UI
 
         public void Nine(TextureData dst, string name, int x, int y, int w, int h, int[] tint = null, float opacity = 1, string state = "default")
         {
-            var style = styles.Find(name) ?? throw new InvalidDataException("Missing UI style " + name);
+            var style = styles.FindPath(name) ?? throw new InvalidDataException("Missing UI style " + name);
             var node = string.IsNullOrEmpty(state) ? style : style.Children.FirstOrDefault(c => c.Get("Name") == state) ?? throw new InvalidDataException("Missing UI state " + name + "/" + state);
             var p = node.Children.Where(c => c.Get("SourceRect") != "").ToDictionary(c => c.Get("Name"), c => c.Get("SourceRect").Split(',').Select(int.Parse).ToArray());
             int Width(string k) => p.TryGetValue(k, out var v) ? Math.Abs(v[2] - v[0]) : 0;

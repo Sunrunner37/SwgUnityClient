@@ -1,4 +1,5 @@
 using UnityEngine;
+using Swg.Client.Runtime.UI;
 using UnityEngine.InputSystem;
 
 namespace Swg.Client.Runtime.World
@@ -16,7 +17,7 @@ namespace Swg.Client.Runtime.World
             if (target == null || worldCamera == null)
                 return;
             var mouse = Mouse.current;
-            if (mouse != null)
+            if (!UiInput.PointerOverUi)
             {
                 if (mouse.rightButton.isPressed)
                 {

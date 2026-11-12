@@ -4,6 +4,7 @@ using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.Networking;
 using UnityEngine;
+using Swg.Client.Runtime.UI;
 using UnityEngine.InputSystem;
 
 namespace Swg.Client.Runtime.World.SceneObjects
@@ -42,7 +43,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         {
             var keyboard = Keyboard.current;
             var input = Vector2.zero;
-            if (keyboard != null && Application.isFocused)
+            if (keyboard != null && Application.isFocused && !UiInput.TextInputFocused)
             {
                 input.x = (keyboard.dKey.isPressed ? 1 : 0) - (keyboard.aKey.isPressed ? 1 : 0);
                 input.y = (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0);

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5a5fc69d70ff646aa66ec1d8412e1f, type: 3}
+  m_Name: DefaultTheme
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Theming.UiTheme
+  font: {fileID: 11400000, guid: 956163989e74b6a419e1081d29c090db, type: 2}
+  fontSize: 12
+  accent: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  text: {r: 0.5882353, g: 0.95686275, b: 0.9882353, a: 1}
+  surface: {r: 0, g: 0.13725491, b: 0.1764706, a: 0.88235295}
+  input: {r: 0, g: 0.1764706, b: 0.22352941, a: 0.9019608}
+  tab: {r: 0, g: 0.18431373, b: 0.23529412, a: 1}
+  onAccent: {r: 0, g: 0.1764706, b: 0.21568628, a: 1}
+  highlight: {r: 0.5882353, g: 0.9607843, b: 0, a: 1}

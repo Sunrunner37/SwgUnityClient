@@ -15,6 +15,7 @@ namespace Swg.Client.Runtime.World
 {
     public sealed class WorldController : MonoBehaviour
     {
+        public GameObject hud;
         public Shader worldShader;
         public Shader characterShader;
         public Shader particleShader;
@@ -49,6 +50,8 @@ namespace Swg.Client.Runtime.World
         {
             try
             {
+                if (hud != null)
+                    hud.SetActive(false);
                 orbit.worldCamera.enabled = false;
                 orbit.enabled = false;
                 objectRenderer = new GameObject("World Objects").AddComponent<WorldSceneObjectRenderer>();
@@ -91,6 +94,8 @@ namespace Swg.Client.Runtime.World
             ManagedSceneObject.CurrentPlayer.GetComponent<PlayerMovement>().enabled = true;
             foreach (var listener in GetComponentsInChildren<AudioListener>(true))
                 listener.enabled = true;
+            if (hud != null)
+                hud.SetActive(true);
             GameServices.Resolve<ClientMusic>().Stop();
         }
 
