@@ -19,10 +19,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
             string key = reader.Ascii();
             string custom = reader.Unicode();
             update.Name = custom.Length > 0 ? custom : (file.Length > 0 ? "@" + file + ":" + key : key);
-            reader.U32(); // Volume.
+            update.Volume = unchecked((int)reader.U32());
             update.Customization = ReplicationReader.Customization(reader);
             ReplicationReader.SkipVector(reader, sizeof(uint)); // Visible components.
-            reader.Skip(4 * sizeof(uint)); // Options, use count, damage, maximum condition.
+            reader.U32(); // Options.
+            update.Quantity = unchecked((int)reader.U32());
+            reader.Skip(2 * sizeof(uint)); // Damage and maximum condition.
             reader.Byte(); // Visibility.
         }
 
@@ -42,16 +44,18 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     update.Name = reader.Unicode();
                     break;
                 case 3:
-                    reader.U32();
+                    update.Volume = unchecked((int)reader.U32());
                     break;
                 case 4:
                     update.Customization = ReplicationReader.Customization(reader);
                     break;
                 case 6:
-                case 7:
                 case 8:
                 case 9:
                     reader.U32();
+                    break;
+                case 7:
+                    update.Quantity = unchecked((int)reader.U32());
                     break;
                 case 10:
                     reader.Byte();

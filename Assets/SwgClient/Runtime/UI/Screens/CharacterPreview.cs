@@ -78,7 +78,7 @@ namespace Swg.Client.Runtime.UI.Screens
             };
             appearance.RecalculateBounds();
             var resources = new AppearanceResources(appearance, materials, characterShader, characterShader, null, TextureWrapMode.Clamp);
-            var root = resources.Create(transform);
+            var root = resources.Create(transform, detectMovement: false);
             root.SetActive(false);
             root.transform.SetPositionAndRotation(new Vector3(1000, 0, 0), Quaternion.Euler(0, yawDegrees, 0));
             foreach (var child in root.GetComponentsInChildren<Transform>(true))

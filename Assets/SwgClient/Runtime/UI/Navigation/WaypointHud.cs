@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Swg.Client.Runtime.UI.Navigation
 {
     [DefaultExecutionOrder(200)]
-    public sealed class WaypointHud : MonoBehaviour
+    public sealed class WaypointHud : MonoBehaviour, IUiPrefabSource
     {
         sealed class Display
         {
@@ -23,6 +23,14 @@ namespace Swg.Client.Runtime.UI.Navigation
         public RectTransform arrows;
         public WaypointTrackerRow rowPrefab;
         public NavigationArrow arrowPrefab;
+        public IEnumerable<GameObject> UiPrefabs
+        {
+            get
+            {
+                yield return rowPrefab.gameObject;
+                yield return arrowPrefab.gameObject;
+            }
+        }
         readonly List<Display> displays = new List<Display>();
         WorldState state;
         StringTableLocalizer localizer;

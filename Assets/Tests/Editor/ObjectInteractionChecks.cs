@@ -77,7 +77,31 @@ namespace Swg.Client.Tests.Editor
                 interactions.Receive(new AttributeListPacket(100, new[] { new AttributeValue("owner", "Wrong") }));
                 interactions.Receive(new AttributeListPacket(200, new[] { new AttributeValue("owner", "Trixie") }));
                 main.Drain();
-                Assert.That(interactions.Attributes[0].Value, Is.EqualTo("Trixie"));
+                Assert.That(interactions.GetAttributes(200)[0].Value, Is.EqualTo("Trixie"));
+            }
+            finally { SynchronizationContext.SetSynchronizationContext(previous); }
+        }
+        [Test]
+        public void ConcurrentExamineRequestsKeepTheirOwnResultsAndNotifications()
+        {
+            var previous = SynchronizationContext.Current;
+            var main = new MainThread();
+            SynchronizationContext.SetSynchronizationContext(main);
+            try
+            {
+                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), packet => { }, swgId => { });
+                var notifications = new List<SwgId>();
+                interactions.AttributesChanged += notifications.Add;
+                interactions.RequestExamine(100);
+                interactions.RequestExamine(200);
+                interactions.Receive(new AttributeListPacket(200, new[] { new AttributeValue("owner", "Trixie") }));
+                interactions.Receive(new AttributeListPacket(100, new[] { new AttributeValue("owner", "Misty") }));
+                main.Drain();
+                Assert.That(interactions.GetAttributes(100)[0].Value, Is.EqualTo("Misty"));
+                Assert.That(interactions.GetAttributes(200)[0].Value, Is.EqualTo("Trixie"));
+                Assert.That(notifications, Is.EqualTo(new SwgId[] { 200, 100 }));
+                interactions.RequestExamine(100);
+                Assert.That(interactions.GetAttributes(100)[0].Value, Is.EqualTo("Misty"), "Keep cached details visible while refreshing.");
             }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
         }
@@ -95,13 +119,13 @@ namespace Swg.Client.Tests.Editor
                 interactions.RequestExamine(200);
                 int notifications = 0;
                 interactions.MenuChanged += () => notifications++;
-                interactions.AttributesChanged += () => notifications++;
+                interactions.AttributesChanged += swgId => notifications++;
                 interactions.Receive(new ObjectMenuResponsePacket(0, 200, new[] { new RadialMenuEntry(1, 0, 7, 3, "Examine") }, request.Counter));
                 interactions.Receive(new AttributeListPacket(200, new[] { new AttributeValue("owner", "Trixie") }));
                 interactions.Dispose();
                 main.Drain();
                 Assert.That(notifications, Is.Zero);
-                Assert.That(interactions.Attributes, Is.Empty);
+                Assert.That(interactions.GetAttributes(200), Is.Empty);
             }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
         }

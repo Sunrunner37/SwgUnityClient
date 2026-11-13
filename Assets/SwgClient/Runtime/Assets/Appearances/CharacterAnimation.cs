@@ -19,6 +19,8 @@ namespace Swg.Client.Runtime.Assets.Appearances
         bool positioned;
         float idleTime;
         float runTime;
+        [Tooltip("Infer locomotion from world movement. Disable for UI previews, which always idle.")]
+        public bool detectMovement = true;
         public float Speed { get; private set; }
         public float RunBlend { get; private set; }
         public float RunTime => runTime;
@@ -46,7 +48,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         {
             var position = transform.position;
             var delta = Vector3.ProjectOnPlane(position - previousPosition, Vector3.up);
-            float speed = positioned && Time.deltaTime > 0 && delta.sqrMagnitude < 32 * 32 ? delta.magnitude / Time.deltaTime : 0;
+            float speed = detectMovement && positioned && Time.deltaTime > 0 && delta.sqrMagnitude < 32 * 32 ? delta.magnitude / Time.deltaTime : 0;
             previousPosition = position;
             positioned = true;
             Advance(speed, Time.deltaTime);

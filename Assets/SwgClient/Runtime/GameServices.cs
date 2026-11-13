@@ -1,4 +1,5 @@
 using Swg.Client.Core;
+using Swg.Client.Runtime.UI.Inventory;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
 using Swg.Client.Core.Networking.Game.Packets.Targeting;
 using Swg.Client.Runtime.Commands;
@@ -86,6 +87,11 @@ namespace Swg.Client.Runtime
                     return new Action<SwgId>(swgId => commands.Enqueue("getAttributesBatch", swgId.ToString()));
                 }).SingleInstance();
                 builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
+                builder.Register(context =>
+                {
+                    var commands = context.Resolve<ClientCommands>();
+                    return new ClientInventory(context.Resolve<WorldState>(), swgId => commands.Enqueue("openContainer", "", swgId));
+                }).SingleInstance();
                 builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandCatalog>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
@@ -100,6 +106,13 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<AppearanceCache>().SingleInstance();
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
                 builder.RegisterType<WorldRenderingContext>().SingleInstance();
+                builder.Register(context =>
+                {
+                    var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();
+                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<SwgMaterialFactory>(), context.Resolve<WorldRenderingContext>());
+                    UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
+                    return previews;
+                }).SingleInstance();
                 builder.RegisterType<WorldAppearanceLibrary>().SingleInstance();
                 builder.RegisterType<WorldTerrainRenderer>().SingleInstance();
                 builder.Register(context =>

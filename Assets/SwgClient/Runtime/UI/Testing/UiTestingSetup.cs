@@ -1,4 +1,7 @@
 using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Runtime.World;
+using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.Assets.Shaders;
 using Swg.Client.Core.Networking.Login;
 using Swg.Client.Runtime.UI.Interactions;
 using Swg.Client.Core;
@@ -48,12 +51,21 @@ namespace Swg.Client.Runtime.UI.Testing
                         new RadialMenuEntry(2, 0, 118, 3, "@player_structure:management"),
                         new RadialMenuEntry(3, 0, 117, 3, "@player_structure:permissions"),
                         new RadialMenuEntry(4, 2, 124, 3, "@player_structure:management_status")
-                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, new[] { new AttributeValue("owner", "Trixie") })));
+                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })));
                     return interactions;
                 }).SingleInstance();
                 builder.RegisterInstance(new Admission { Username = "ui-testing", Galaxy = new Galaxy { Name = "Offline" } });
                 builder.RegisterType<AppearanceCache>().SingleInstance();
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
+                builder.RegisterType<WorldRenderingContext>().SingleInstance();
+                builder.Register(context =>
+                {
+                    var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();
+                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<SwgMaterialFactory>(), context.Resolve<WorldRenderingContext>());
+                    UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
+                    return previews;
+                }).SingleInstance();
+                builder.Register(context => new ClientInventory(context.Resolve<WorldState>(), swgId => Debug.Log("Offline inventory opened: " + swgId))).SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
                 builder.RegisterType<OfflineCommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
@@ -71,6 +83,9 @@ namespace Swg.Client.Runtime.UI.Testing
             {
                 SwgId = 9000,
                 Name = "Misty",
+                TemplatePath = "object/creature/player/shared_human_female.iff",
+                CashCredits = 125,
+                BankCredits = 11410,
                 Ham = new HamPool
                 {
                     Health = new HamElement(current: 650, maximum: 900, wounds: 100),
@@ -95,9 +110,29 @@ namespace Swg.Client.Runtime.UI.Testing
                 Name = "Mineral Mining Installation",
                 TemplatePath = "object/installation/mining_ore/shared_mining_ore_harvester_style_2.iff"
             });
+            state.SceneObjects.Add(new TangibleSceneObject { SwgId = 9200, ParentSwgId = 9000, TemplatePath = "object/tangible/inventory/shared_character_inventory.iff", Name = "Inventory" });
+            string[] templates = {
+                "object/resource_container/shared_resource_container_inorganic_minerals.iff",
+                "object/resource_container/shared_resource_container_inorganic_chemicals.iff",
+                "object/tangible/survey_tool/shared_survey_tool_mineral.iff",
+                "object/tangible/crafting/station/shared_structure_tool.iff",
+                "object/tangible/wearables/armor/composite/shared_armor_composite_boots.iff",
+                "object/tangible/wearables/armor/composite/shared_armor_composite_chest_plate.iff"
+            };
+            string[] itemNames = { "Aluminum", "Copper", "Chemical Survey Device", "Structure and Furniture Crafting Tool", "Composite Armor Boots", "Composite Armor Chest Plate" };
+            for (int i = 0; i < 24; i++)
+                state.SceneObjects.Add(new TangibleSceneObject { SwgId = (ulong)(9300 + i), ParentSwgId = 9200, TemplatePath = templates[i % templates.Length], Name = itemNames[i % templates.Length], Quantity = i % templates.Length < 2 ? 41000 + i * 1000 : 1 });
+            var preview = FindAnyObjectByType<InventoryWindow>(FindObjectsInactive.Include).characterPreview;
+            scope.Resolve<WorldRenderingContext>().Initialize(preview.worldShader, preview.characterShader, preview.particleShader, null, null, this);
+            scope.Resolve<InventoryPreviewCache>();
             scope.Resolve<ClientTargeting>().Select(9001);
             player = state.Commands;
             RefreshAbilities();
+        }
+
+        System.Collections.IEnumerator Start()
+        {
+            yield return FindAnyObjectByType<UiAssetPreloader>().Prewarm();
         }
 
         public void ShowSampleMenu() => FindAnyObjectByType<RadialContextMenu>().Open(9002, new Vector2(Screen.width * .5f, Screen.height * .5f));

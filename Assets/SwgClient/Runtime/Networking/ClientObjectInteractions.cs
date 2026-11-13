@@ -20,11 +20,11 @@ namespace Swg.Client.Runtime.Networking
         byte counter;
         bool disposed; // Posted main-thread replies can outlive the game scope.
         public SwgId MenuTargetSwgId { get; private set; }
-        public SwgId ExaminedSwgId { get; private set; }
         public IReadOnlyList<RadialMenuEntry> Menu { get; private set; } = Array.Empty<RadialMenuEntry>();
-        public IReadOnlyList<AttributeValue> Attributes { get; private set; } = Array.Empty<AttributeValue>();
+        readonly Dictionary<SwgId, IReadOnlyList<AttributeValue>> attributes = new Dictionary<SwgId, IReadOnlyList<AttributeValue>>();
+        public IReadOnlyList<AttributeValue> GetAttributes(SwgId swgId) => attributes.TryGetValue(swgId, out var values) ? values : Array.Empty<AttributeValue>();
         public event Action MenuChanged;
-        public event Action AttributesChanged;
+        public event Action<SwgId> AttributesChanged;
 
         public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes)
         {
@@ -43,13 +43,7 @@ namespace Swg.Client.Runtime.Networking
             sendMenu(new ObjectMenuRequestPacket(state.PlayerSwgId, swgId, defaults, unchecked(++counter)));
         }
 
-        public void RequestExamine(SwgId swgId)
-        {
-            ExaminedSwgId = swgId;
-            Attributes = Array.Empty<AttributeValue>();
-            AttributesChanged?.Invoke();
-            requestAttributes(swgId);
-        }
+        public void RequestExamine(SwgId swgId) => requestAttributes(swgId);
 
         public void Receive(ObjectMenuResponsePacket packet) => context.Post(_ =>
         {
@@ -61,10 +55,10 @@ namespace Swg.Client.Runtime.Networking
 
         public void Receive(AttributeListPacket packet) => context.Post(_ =>
         {
-            if (disposed || packet.SwgId != ExaminedSwgId.Value)
+            if (disposed)
                 return;
-            Attributes = packet.Attributes;
-            AttributesChanged?.Invoke();
+            attributes[packet.SwgId] = packet.Attributes;
+            AttributesChanged?.Invoke(packet.SwgId);
         }, null);
 
         public void Dispose() => disposed = true;

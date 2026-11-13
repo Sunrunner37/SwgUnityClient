@@ -1,7 +1,5 @@
 using Swg.Client.Runtime.World.Loading;
-using System;
 using System.Collections;
-using System.Text;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -15,20 +13,11 @@ namespace Swg.Client.Runtime.UI.Interactions
     public sealed class ExamineWindow : MonoBehaviour
     {
         public TMP_Text title;
-        public TMP_Text attributes;
+        public ExamineAttributes details;
         public ExaminePreview preview;
-        ClientObjectInteractions interactions;
-        StringTableLocalizer localizer;
         Coroutine loading;
-        void Awake()
-        {
-            interactions = GameServices.Resolve<ClientObjectInteractions>();
-            localizer = GameServices.Resolve<StringTableLocalizer>();
-        }
-        void OnEnable() => interactions.AttributesChanged += RefreshAttributes;
         void OnDisable()
         {
-            interactions.AttributesChanged -= RefreshAttributes;
             if (loading != null)
                 StopCoroutine(loading);
             loading = null;
@@ -45,7 +34,7 @@ namespace Swg.Client.Runtime.UI.Interactions
                 StopCoroutine(loading);
             preview.Clear();
             loading = StartCoroutine(LoadPreview(sceneObject));
-            interactions.RequestExamine(swgId);
+            details.Show(swgId);
         }
         IEnumerator LoadPreview(SceneObject sceneObject)
         {
@@ -56,18 +45,6 @@ namespace Swg.Client.Runtime.UI.Interactions
             else if (!read.IsCanceled)
                 preview.Show(read.Result);
             loading = null;
-        }
-        void RefreshAttributes()
-        {
-            var text = new StringBuilder();
-            foreach (var attribute in interactions.Attributes)
-            {
-                string name = localizer.Lookup("obj_attr_n", attribute.Name);
-                if (name.StartsWith("@", StringComparison.Ordinal))
-                    name = attribute.Name.Replace('_', ' ');
-                text.Append(name).Append(":    ").AppendLine(localizer.Localize(attribute.Value));
-            }
-            attributes.text = text.ToString();
         }
         public void Close() => gameObject.SetActive(false);
     }

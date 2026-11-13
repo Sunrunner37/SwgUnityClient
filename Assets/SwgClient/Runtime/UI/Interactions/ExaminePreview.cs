@@ -9,6 +9,7 @@ namespace Swg.Client.Runtime.UI.Interactions
 {
     public sealed class ExaminePreview : MonoBehaviour, IDragHandler
     {
+        public Vector3 stagePosition = new Vector3(10000, 0, 0);
         public RawImage image;
         public Camera previewCamera;
         public Transform stage;
@@ -16,6 +17,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         public Shader characterShader;
         public Shader particleShader;
         AppearanceResources resources;
+        bool ownsResources;
         GameObject model;
         RenderTexture texture;
         void Awake()
@@ -25,15 +27,29 @@ namespace Swg.Client.Runtime.UI.Interactions
             image.texture = texture;
             previewCamera.targetTexture = texture;
             previewCamera.enabled = false;
-            stage.position = new Vector3(10000, 0, 0);
-            var scale = stage.parent.lossyScale;
-            stage.localScale = new Vector3(1 / scale.x, 1 / scale.y, 1 / scale.z);
+            // Keep the 3D stage out of the scaled UI hierarchy.
+            stage.SetParent(null, false);
+            stage.localScale = Vector3.one;
+            stage.position = stagePosition;
         }
-        public void Show(AppearanceData appearance)
+        void OnEnable()
+        {
+            stage.gameObject.SetActive(true);
+            previewCamera.enabled = model != null;
+        }
+        void OnDisable()
+        {
+            if (previewCamera != null)
+                previewCamera.enabled = false;
+            if (stage != null)
+                stage.gameObject.SetActive(false);
+        }
+        public void Show(AppearanceData appearance, AppearanceResources sharedResources = null)
         {
             Clear();
-            resources = new AppearanceResources(appearance, GameServices.Resolve<SwgMaterialFactory>(), worldShader, characterShader, particleShader);
-            model = resources.Create(stage);
+            ownsResources = sharedResources == null;
+            resources = sharedResources ?? new AppearanceResources(appearance, GameServices.Resolve<SwgMaterialFactory>(), worldShader, characterShader, particleShader);
+            model = resources.Create(stage, detectMovement: false);
             foreach (var child in model.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = 31;
             var bounds = new Bounds((appearance.BoundsMin + appearance.BoundsMax) * .5f, appearance.BoundsMax - appearance.BoundsMin);
@@ -52,18 +68,22 @@ namespace Swg.Client.Runtime.UI.Interactions
         }
         public void Clear()
         {
-            previewCamera.enabled = false;
+            if (previewCamera != null)
+                previewCamera.enabled = false;
             if (model != null)
             {
                 model.SetActive(false);
                 Destroy(model);
             }
-            resources?.Dispose();
+            if (ownsResources)
+                resources?.Dispose();
             resources = null;
         }
         void OnDestroy()
         {
             Clear();
+            if (stage != null)
+                Destroy(stage.gameObject);
             if (texture != null)
             {
                 texture.Release();

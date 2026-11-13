@@ -15,7 +15,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ChatIdentityAndSendDestinationDoNotDependOnHierarchyNames()
         {
-            const string path = "Assets/Prefabs/UI/ChatWindow.prefab";
+            const string path = "Assets/Prefabs/UI/Chat/ChatWindow.prefab";
             var root = PrefabUtility.LoadPrefabContents(path);
             try
             {
@@ -39,7 +39,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ChatPrefabHasExplicitStylingAndPersistentShortcutActions()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/ChatWindow.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Chat/ChatWindow.prefab");
             var chat = prefab.GetComponent<ChatWindow>();
             Assert.That(AssetDatabase.Contains(chat.openChat), Is.True);
             Assert.That(AssetDatabase.Contains(chat.releaseChat), Is.True);
@@ -98,7 +98,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void HudInputActionsAreSavedAssetReferences()
         {
-            var hud = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/WorldHud.prefab");
+            var hud = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Hud/WorldHud.prefab");
             var module = System.Array.Find(hud.GetComponentsInChildren<MonoBehaviour>(true), component => component.GetType().Name == "InputSystemUIInputModule");
             var serialized = new SerializedObject(module);
             foreach (string field in new[]

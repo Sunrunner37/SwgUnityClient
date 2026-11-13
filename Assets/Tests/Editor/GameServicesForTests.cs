@@ -30,6 +30,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>())).SingleInstance();
             builder.RegisterInstance(replication.SceneObjects);
+            builder.Register(_ => new ClientInventory(replication.State, swgId => { })).SingleInstance();
             builder.Register(_ => new ClientObjectInteractions(replication.State, packet => { }, swgId => { })).SingleInstance();
             builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf();
             return builder.Build();

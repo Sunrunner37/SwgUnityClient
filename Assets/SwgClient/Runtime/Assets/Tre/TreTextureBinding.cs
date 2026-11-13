@@ -61,7 +61,8 @@ namespace Swg.Client.Runtime.Assets.Tre
             try
             {
                 var assets = GameServices.Resolve<TreRuntimeAssets>();
-                yield return new WaitUntil(() => assets.Ready.IsCompleted);
+                if (!assets.Ready.IsCompleted)
+                    yield return new WaitUntil(() => assets.Ready.IsCompleted);
                 if (assets.Ready.IsFaulted)
                 {
                     Failure = assets.Ready.Exception.GetBaseException();

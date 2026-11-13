@@ -14,7 +14,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void WorldHudIncludesAnEditablePlayerPanel()
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/WorldHud.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Hud/WorldHud.prefab");
             var player = prefab.GetComponentInChildren<PlayerHud>(true);
             Assert.That(player, Is.Not.Null);
             Assert.That(player.playerName, Is.Not.Null);
@@ -26,7 +26,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void PlayerBarsReflectReplicatedHamAndWoundChanges()
         {
-            var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/PlayerHud.prefab");
+            var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/Hud/PlayerHud.prefab");
             try
             {
                 var bars = root.GetComponent<PlayerHud>().ham;

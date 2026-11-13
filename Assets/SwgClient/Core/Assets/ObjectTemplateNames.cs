@@ -17,7 +17,9 @@ namespace Swg.Client.Core.Assets
         }
 
         /// <summary>Reads the shared template's localized objectName, following native template inheritance.</summary>
-        public static string DisplayName(TreAssetLoader loader, string templatePath)
+        public static string DisplayName(TreAssetLoader loader, string templatePath) => StringId(loader, templatePath, "objectName");
+        public static string Description(TreAssetLoader loader, string templatePath) => StringId(loader, templatePath, "detailedDescription");
+        static string StringId(TreAssetLoader loader, string templatePath, string fieldName)
         {
             var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             while (!string.IsNullOrEmpty(templatePath) && visited.Add(templatePath))
@@ -28,7 +30,7 @@ namespace Swg.Client.Core.Assets
                 foreach (var field in shot.Children.SelectMany(node => node.Children).Where(node => node.Tag == "XXXX"))
                 {
                     var reader = new ByteReader(field.Data);
-                    if (reader.CString() != "objectName" || reader.Byte() != 1)
+                    if (reader.CString() != fieldName || reader.Byte() != 1)
                         continue;
                     // StringIdParam stores a single string parameter for each of file and key.
                     if (reader.Byte() != 1)

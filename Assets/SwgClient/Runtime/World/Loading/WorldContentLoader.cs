@@ -220,12 +220,23 @@ namespace Swg.Client.Runtime.World.Loading
             }
         }
 
-        public Task<AppearanceData> LoadAppearanceAsync(SceneObject sceneObject)
+        public Task<AppearanceData> LoadAppearanceAsync(SceneObject sceneObject) => LoadAppearanceAsync(DescribeAppearance(sceneObject));
+
+        public AppearanceRequest DescribeAppearance(SceneObject sceneObject)
         {
             // Capture live object inputs on the main thread before decoding assets on a worker.
-            var request = AppearanceRequest.Describe(state, sceneObject) ?? new AppearanceRequest(sceneObject.TemplatePath);
-            return ReadAsync(loader => LoadAppearance(loader, request), CancellationToken.None);
+            var request = AppearanceRequest.Describe(state, sceneObject);
+            if (request == null)
+            {
+                CharacterAppearance character = null;
+                if (sceneObject is TangibleSceneObject tangible && sceneObject.TemplatePath.Contains("/wearables/"))
+                    character = new CharacterAppearance { TemplatePath = sceneObject.TemplatePath, Customization = PackedCustomization.Decode(tangible.Customization), Wearables = Array.Empty<WearableAppearance>() };
+                request = new AppearanceRequest(sceneObject.TemplatePath, character);
+            }
+            return request;
         }
+
+        public Task<AppearanceData> LoadAppearanceAsync(AppearanceRequest request) => ReadAsync(loader => LoadAppearance(loader, request), CancellationToken.None);
 
         public Task<Dictionary<SwgId, AppearanceData>> LoadAppearancesAsync(GameWorldSnapshot snapshot, IReadOnlyDictionary<SwgId, AppearanceRequest> requests, CancellationToken token)
         {
@@ -300,7 +311,7 @@ namespace Swg.Client.Runtime.World.Loading
                     result.Key = request.Key;
                     foreach (var warning in result.Warnings)
                         Debug.LogWarning(warning);
-                    if (result.Parts.Count != 0 || result.Particles.Count != 0 || !path.Contains("/creature/"))
+                    if (result.Parts.Count != 0 || result.Particles.Count != 0 || !(path.Contains("/creature/") || path.Contains("/wearables/")))
                     {
                         cache.Add(request.Key, result);
                         return result;

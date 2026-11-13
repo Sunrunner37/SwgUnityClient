@@ -38,6 +38,20 @@ namespace Swg.Client.Core.World
             return value;
         }
 
+        readonly Dictionary<string, int> capacities = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        public int ContainerCapacity(string templatePath)
+        {
+            if (string.IsNullOrEmpty(templatePath))
+                return 0;
+            if (!capacities.TryGetValue(templatePath, out int capacity))
+            {
+                var template = SharedTangibleTemplate.Parse(loader.Read(templatePath));
+                capacity = template.ContainerCapacity ?? ContainerCapacity(template.BaseTemplate);
+                capacities.Add(templatePath, capacity);
+            }
+            return capacity;
+        }
+
         public string Resolve(uint crc) => names.TryGetValue(crc, out var path) ? path : null;
     }
 }

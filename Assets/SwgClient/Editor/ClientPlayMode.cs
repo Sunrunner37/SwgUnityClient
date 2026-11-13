@@ -24,7 +24,7 @@ namespace Swg.Client.Editor
         {
             if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
-            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.UiTestingScene);
+            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.Scenes + "/" + ScreenId.Intro + ".unity");
         }
 
         public static void PlayClient()

@@ -20,11 +20,13 @@ namespace Swg.Client.Runtime.Assets.Appearances
             particles = appearance.Particles.Select(effect => new ParticleEffectResources(effect, factory, worldShader, characterShader, particleShader)).ToArray();
         }
 
-        public GameObject Create(Transform parent)
+        public GameObject Create(Transform parent, bool detectMovement = true)
         {
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             CharacterAnimation animation = parts.Any(part => part.Skinning != null) ? root.AddComponent<CharacterAnimation>() : null;
+            if (animation != null)
+                animation.detectMovement = detectMovement;
             for (int i = 0; i < parts.Length; i++)
             {
                 var part = new GameObject("Mesh " + i);

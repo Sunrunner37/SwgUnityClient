@@ -21,3 +21,14 @@ MonoBehaviour:
   tab: {r: 0, g: 0.18431373, b: 0.23529412, a: 1}
   onAccent: {r: 0, g: 0.1764706, b: 0.21568628, a: 1}
   highlight: {r: 0.5882353, g: 0.9607843, b: 0, a: 1}
+  attributeText: {r: 0.7529412, g: 1, b: 0, a: 1}
+  bodyText: {r: 1, g: 1, b: 1, a: 1}
+  headerTitle: {r: 0, g: 0.11764706, b: 0.12941177, a: 1}
+  headerStrip: {r: 0, g: 0.8, b: 0.9, a: 0.12}
+  headerDivider: {r: 0, g: 0.75, b: 0.85, a: 0.8}
+  closeIcon: {r: 0, g: 0.24313726, b: 0.30980393, a: 1}
+  closeGlow: {r: 0, g: 0.9, b: 1, a: 0.7}
+  capacityFill: {r: 0.4, g: 1, b: 0, a: 1}
+  itemPanel: {fileID: 2100000, guid: 5082931f283e20e42aaab6d2e8714bb1, type: 2}
+  characterPanel: {fileID: 2100000, guid: 75ab6b7daf6079e48b15eff2f2cbdab8, type: 2}
+  currencyPanel: {fileID: 2100000, guid: 83c69b251164ff2488ee0f2559abf458, type: 2}

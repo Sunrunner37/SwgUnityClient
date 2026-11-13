@@ -10,7 +10,7 @@ using UnityEngine.Events;
 
 namespace Swg.Client.Runtime.UI.Commands
 {
-    public sealed class CommandBrowser : MonoBehaviour
+    public sealed class CommandBrowser : MonoBehaviour, IUiPrefabSource
     {
         [Serializable]
         public sealed class Category
@@ -22,6 +22,13 @@ namespace Swg.Client.Runtime.UI.Commands
         public CommandDrag drag;
         public Transform content;
         public CommandButton rowPrefab;
+        public IEnumerable<GameObject> UiPrefabs
+        {
+            get
+            {
+                yield return rowPrefab.gameObject;
+            }
+        }
         public List<Category> categories = new List<Category>();
         readonly List<CommandButton> rows = new List<CommandButton>();
         readonly List<UnityAction<bool>> listeners = new List<UnityAction<bool>>();

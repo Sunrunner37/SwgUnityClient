@@ -1,4 +1,6 @@
 using Swg.Client.Runtime.World.Streaming;
+using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.Networking.Chat;
 using Swg.Client.Core.World;
@@ -41,6 +43,7 @@ namespace Swg.Client.Runtime.World.Loading
         GameReplication replication;
         WorldLoadingData prepared;
         WorldController world;
+        InventoryPreviewCache inventoryPreviews;
         Scene worldScene;
         AsyncOperation sceneLoad;
         Coroutine preparation;
@@ -77,8 +80,11 @@ namespace Swg.Client.Runtime.World.Loading
                 AwaitPlayerBaselines(),
                 LoadWorldAssets(),
                 LoadUnityWorldScene(),
+                BeginInventoryPreviews(),
+                PrewarmInterface(),
                 BuildWorldGeometry(),
-                AwaitServerFinalAcknowledgement()
+                AwaitServerFinalAcknowledgement(),
+                AwaitInventoryPreviews()
             };
             var total = Stopwatch.StartNew();
             foreach (var step in steps)
@@ -191,6 +197,33 @@ namespace Swg.Client.Runtime.World.Loading
             yield return sceneLoad;
             if (sceneFailure != null)
                 Fail(sceneFailure);
+        }
+
+        IEnumerator BeginInventoryPreviews()
+        {
+            try
+            {
+                // Start alongside geometry preparation, once world shaders and inventory metadata exist.
+                session.Resolve<ClientInventory>().Open();
+                inventoryPreviews = session.Resolve<InventoryPreviewCache>();
+            }
+            catch (Exception error)
+            {
+                Fail(error);
+            }
+            yield break;
+        }
+
+        IEnumerator PrewarmInterface()
+        {
+            Phase = "Preparing interface";
+            yield return world.hud.GetComponent<UiAssetPreloader>().Prewarm();
+        }
+
+        IEnumerator AwaitInventoryPreviews()
+        {
+            Phase = "Preparing inventory previews";
+            yield return WaitFor(() => inventoryPreviews.IsReady, worldBuildTimeout, "Inventory preview preparation timed out.");
         }
 
         IEnumerator BuildWorldGeometry()

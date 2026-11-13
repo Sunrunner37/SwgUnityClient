@@ -12,12 +12,19 @@ using UnityEngine.InputSystem;
 
 namespace Swg.Client.Runtime.UI.Interactions
 {
-    public sealed class RadialContextMenu : MonoBehaviour
+    public sealed class RadialContextMenu : MonoBehaviour, IUiPrefabSource
     {
         public GameObject overlay;
         public RectTransform menu;
         public Transform options;
         public RadialMenuOption optionPrefab;
+        public IEnumerable<GameObject> UiPrefabs
+        {
+            get
+            {
+                yield return optionPrefab.gameObject;
+            }
+        }
         public GameObject back;
         public ExamineWindow examineWindow;
         public float radius = 70;

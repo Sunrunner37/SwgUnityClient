@@ -24,6 +24,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             this.replication = replication;
             deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<ushort, ByteReader, GameObjectUpdate, bool>>
             {
+                [(ReplicatedObjectType.Creature, 1)] = CreatureView1.ReadDeltaField,
+                [(ReplicatedObjectType.ResourceContainer, 3)] = ResourceContainerView.ReadDelta3,
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadDeltaField,
                 [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadDeltaField,
                 [(ReplicatedObjectType.Creature, 4)] = CreatureView4.ReadDeltaField,

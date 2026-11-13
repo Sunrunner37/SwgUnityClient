@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
@@ -8,16 +9,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class ClientOpenContainerPacketHandler : GamePacketHandler<ClientOpenContainerPacket>
     {
+        readonly ClientInventory inventory;
         public override uint Opcode => ClientOpenContainerPacket.Opcode;
 
         [Preserve]
-        public ClientOpenContainerPacketHandler() : base(ClientOpenContainerPacket.ReadFrom)
+        public ClientOpenContainerPacketHandler(ClientInventory inventory) : base(ClientOpenContainerPacket.ReadFrom)
         {
+            this.inventory = inventory;
         }
 
         protected override void Handle(ClientOpenContainerPacket packet)
         {
-            throw new NotImplementedException($"ClientOpenContainerMessage (opcode 0x{Opcode:X8})");
+            inventory.Receive(packet);
         }
     }
 }

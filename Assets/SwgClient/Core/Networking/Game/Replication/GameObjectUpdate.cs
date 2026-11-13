@@ -15,6 +15,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public uint? MovementCounter;
         public uint? BaselineType;
         public bool? BaselinesComplete;
+        public string ResourceType;
+        public int? Volume;
+        public int? Quantity;
+        public int? CashCredits;
+        public int? BankCredits;
         public string Name;
         public byte[] Customization;
         public WorldEquipment[] Equipment;
@@ -32,8 +37,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public IntVectorDelta HamDelta;
         public IntVectorDelta MaxHamDelta;
         public IntVectorDelta WoundsDelta;
-        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None)
+        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || ResourceType != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None)
             | (Ham != null || MaxHam != null || Wounds != null || HamDelta != null || MaxHamDelta != null || WoundsDelta != null ? SceneObjectChange.Vitals : SceneObjectChange.None)
+            | (Volume.HasValue || Quantity.HasValue || CashCredits.HasValue || BankCredits.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None)
             | (TargetSwgId.HasValue ? SceneObjectChange.Target : SceneObjectChange.None);
 
         public GameObjectUpdate CopyForQueue()
@@ -69,6 +75,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
 
             if (target is TangibleSceneObject tangible)
             {
+                if (ResourceType != null)
+                    tangible.ResourceType = ResourceType;
+                if (Volume.HasValue)
+                    tangible.Volume = Volume.Value;
+                if (Quantity.HasValue)
+                    tangible.Quantity = Quantity.Value;
                 if (Customization != null)
                     tangible.Customization = Customization;
                 if (AlternateAppearance != null)
@@ -77,6 +89,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
 
             if (target is CreatureSceneObject creature)
             {
+                if (CashCredits.HasValue)
+                    creature.CashCredits = CashCredits.Value;
+                if (BankCredits.HasValue)
+                    creature.BankCredits = BankCredits.Value;
                 if (TargetSwgId.HasValue)
                     creature.TargetSwgId = TargetSwgId.Value;
                 HamPoolReplication.Apply(this, ref creature.Ham);

@@ -7,6 +7,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
 {
     public sealed class CreatureSceneObject : TangibleSceneObject
     {
+        public int CashCredits;
+        public int BankCredits;
         public WorldEquipment[] Equipment = Array.Empty<WorldEquipment>();
         public CreaturePosture Posture;
         public SwgId TargetSwgId;

@@ -7,11 +7,13 @@ namespace Swg.Client.Core.Assets.Formats.ObjectTemplates
     /// <summary>STOT shared tangible template metadata. An unset BoolParam inherits from the DERV template.</summary>
     public readonly struct SharedTangibleTemplate
     {
+        public readonly int? ContainerCapacity;
         public readonly bool? Targetable;
         public readonly string BaseTemplate;
 
-        SharedTangibleTemplate(bool? targetable, string baseTemplate)
+        SharedTangibleTemplate(bool? targetable, string baseTemplate, int? capacity)
         {
+            ContainerCapacity = capacity;
             Targetable = targetable;
             BaseTemplate = baseTemplate;
         }
@@ -30,7 +32,16 @@ namespace Swg.Client.Core.Assets.Formats.ObjectTemplates
             }
             var inherited = tangible.Children.FirstOrDefault(node => node.Kind == "DERV");
             string path = inherited == null ? null : IffNode.References(inherited.Data, "object/", ".iff").FirstOrDefault();
-            return new SharedTangibleTemplate(targetable, path);
+            int? capacity = null;
+            var shot = IffNode.Form(tangible.Children, "SHOT");
+            if (shot != null)
+                foreach (var field in shot.Children.SelectMany(node => node.Children).Where(node => node.Tag == "XXXX"))
+                {
+                    var reader = new ByteReader(field.Data);
+                    if (reader.CString() == "containerVolumeLimit" && reader.Byte() == 1 && reader.Byte() == 0x20)
+                        capacity = unchecked((int)reader.U32());
+                }
+            return new SharedTangibleTemplate(targetable, path, capacity);
         }
     }
 }
