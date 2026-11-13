@@ -104,7 +104,7 @@ namespace Swg.Client.Tests.Editor
             var update = CreatureView4.ReadBaseline(reader);
             Assert.That(reader.Remaining, Is.Zero);
             var creature = new CreatureSceneObject();
-            update.ApplyTo(creature);
+            creature.Apply(update);
             Assert.That(creature.MovementSpeed, Is.EqualTo(8.76f).Within(.00001f));
             Assert.That(creature.TurnScale, Is.EqualTo(.75f));
         }
@@ -120,7 +120,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(CreatureView4.ReadDeltaField(5, new ByteReader(BitConverter.GetBytes(.5f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(7, new ByteReader(BitConverter.GetBytes(8f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(10, new ByteReader(BitConverter.GetBytes(.8f)), update), Is.True);
-            update.ApplyTo(creature);
+            creature.Apply(update);
             Assert.That(creature.MovementSpeed, Is.EqualTo(4));
             Assert.That(creature.TurnScale, Is.EqualTo(.8f));
             Assert.That(update.Changes, Is.EqualTo(SceneObjectChange.None));

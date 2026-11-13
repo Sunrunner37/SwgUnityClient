@@ -25,7 +25,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterInstance(replication).ExternallyOwned();
             builder.RegisterInstance(replication.State);
             // Routing tests construct every handler but do not open a network connection.
-            builder.Register(_ => new ClientCommands(null, replication.State)).SingleInstance();
+            builder.Register(_ => new ClientCommands(_ => { }, _ => { }, replication.State)).SingleInstance();
             builder.Register(_ => new StringTableLocalizer(null)).SingleInstance();
             builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.RegisterType<ClientFlyText>().SingleInstance();

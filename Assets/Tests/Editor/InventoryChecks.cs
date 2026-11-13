@@ -45,17 +45,17 @@ namespace Swg.Client.Tests.Editor
             var reader = new ByteReader(bytes);
             var update = ResourceContainerView.ReadBaseline3(reader);
             ReplicationReader.RequireEnd(reader);
-            var item = new TangibleSceneObject(); update.ApplyTo(item);
+            var item = new TangibleSceneObject(); item.Apply(update);
             Assert.That(item.Volume, Is.EqualTo(2));
             Assert.That(item.Quantity, Is.EqualTo(41800));
             ResourceContainerView.ReadDelta3(11, new ByteReader(BitConverter.GetBytes(41000u)), update);
-            update.ApplyTo(item);
+            item.Apply(update);
             Assert.That(item.Quantity, Is.EqualTo(41000));
             bytes = Bytes(writer => { writer.Write(11410u); writer.Write(125u); writer.Write(0u); writer.Write(0u); writer.Write(0u); writer.Write(0u); });
             reader = new ByteReader(bytes);update = CreatureView1.ReadBaseline(reader);ReplicationReader.RequireEnd(reader);
-            var player = new CreatureSceneObject();update.ApplyTo(player);
+            var player = new CreatureSceneObject();player.Apply(update);
             Assert.That(player.BankCredits, Is.EqualTo(11410));Assert.That(player.CashCredits, Is.EqualTo(125));
-            CreatureView1.ReadDeltaField(1, new ByteReader(BitConverter.GetBytes(250u)), update);update.ApplyTo(player);
+            CreatureView1.ReadDeltaField(1, new ByteReader(BitConverter.GetBytes(250u)), update);player.Apply(update);
             Assert.That(player.CashCredits, Is.EqualTo(250));
         }
         [Test]

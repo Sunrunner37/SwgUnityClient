@@ -31,12 +31,12 @@ namespace Swg.Client.Tests.Editor
             {
                 var bars = root.GetComponent<PlayerHud>().ham;
                 var creature = new CreatureSceneObject();
-                new GameObjectUpdate
+                creature.Apply(new GameObjectUpdate
                 {
                     Ham = new[] { 800, 0, 0, 450, 0, 0, 900, 0, 0 },
                     MaxHam = new[] { 1000, 0, 0, 750, 0, 0, 1000, 0, 0 },
                     Wounds = new[] { 100, 0, 0, 0, 0, 0, 0, 0, 0 }
-                }.ApplyTo(creature);
+                });
                 bars.Show(creature.Ham);
                 Assert.That(bars.currentBars[0].fillAmount, Is.EqualTo(.8f));
                 Assert.That(bars.woundBars[0].fillAmount, Is.EqualTo(.1f));
@@ -53,7 +53,7 @@ namespace Swg.Client.Tests.Editor
                 writer.Write(500);
                 var update = new GameObjectUpdate();
                 Assert.That(CreatureView6.ReadDeltaField(13, new ByteReader(bytes.ToArray()), update), Is.True);
-                update.ApplyTo(creature);
+                creature.Apply(update);
                 bars.Show(creature.Ham);
                 Assert.That(bars.currentBars[0].fillAmount, Is.EqualTo(.5f));
                 Assert.That(bars.woundBars[0].fillAmount, Is.EqualTo(.1f));

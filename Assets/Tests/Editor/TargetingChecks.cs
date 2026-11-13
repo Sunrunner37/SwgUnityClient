@@ -127,12 +127,12 @@ namespace Swg.Client.Tests.Editor
         public void ReplicationMapsAllNineAttributesWithoutExposingWireVectors()
         {
             var creature = new CreatureSceneObject();
-            new GameObjectUpdate
+            creature.Apply(new GameObjectUpdate
             {
                 Ham = new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18 },
                 MaxHam = new[] { 100, 101, 102, 103, 104, 105, 106, 107, 108 },
                 Wounds = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }
-            }.ApplyTo(creature);
+            });
             var ham = creature.Ham;
             var named = new[] { ham.Health, ham.Strength, ham.Constitution, ham.Action, ham.Quickness, ham.Stamina, ham.Mind, ham.Focus, ham.Willpower };
             for (int i = 0; i < named.Length; i++)
@@ -141,7 +141,7 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(named[i].Maximum, Is.EqualTo(100 + i));
                 Assert.That(named[i].Wounds, Is.EqualTo(i));
             }
-            new GameObjectUpdate { Ham = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } }.ApplyTo(creature);
+            creature.Apply(new GameObjectUpdate { Ham = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } });
             Assert.That(creature.Ham.Constitution.Current, Is.EqualTo(22));
             Assert.That(creature.Ham.Constitution.Maximum, Is.EqualTo(102));
             Assert.That(creature.Ham.Constitution.Wounds, Is.EqualTo(2));
@@ -230,7 +230,7 @@ namespace Swg.Client.Tests.Editor
             var update = CreatureView6.ReadBaseline(reader);
             ReplicationReader.RequireEnd(reader);
             var creature = new CreatureSceneObject();
-            update.ApplyTo(creature);
+            creature.Apply(update);
             Assert.That(creature.Ham.Action.Current, Is.EqualTo(503));
             Assert.That(creature.Ham.Mind.Maximum, Is.EqualTo(1006));
             Assert.That(creature.TargetSwgId.Value, Is.EqualTo(42));
@@ -257,7 +257,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(handled, Is.True);
             ReplicationReader.RequireEnd(reader);
             var creature = new CreatureSceneObject();
-            update.ApplyTo(creature);
+            creature.Apply(update);
             var pool = attributeIndex == 3 ? creature.Ham.Action : creature.Ham.Constitution;
             Assert.That(field == 13 ? pool.Current : field == 14 ? pool.Maximum : pool.Wounds, Is.EqualTo(123));
             Assert.That(update.Changes, Is.EqualTo(SceneObjectChange.Vitals));

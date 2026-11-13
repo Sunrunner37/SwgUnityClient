@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Replication;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -21,6 +22,16 @@ namespace Swg.Client.Core.World.SceneObjects
         internal void AttachChild(SceneObject child) => children.Add(child);
         internal void DetachChild(SceneObject child) => children.Remove(child);
         internal void ClearChildren() => children.Clear();
+        internal virtual void Apply(GameObjectUpdate update)
+        {
+            if (update.TemplateCrc.HasValue)
+                TemplateCrc = update.TemplateCrc.Value;
+            if (update.Arrangement.HasValue)
+                Arrangement = update.Arrangement.Value;
+            if (update.Name != null)
+                Name = update.Name;
+        }
+
         internal virtual void CopyTo(SceneObject target)
         {
             target.SwgId = SwgId;

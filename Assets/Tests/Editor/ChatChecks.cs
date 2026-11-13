@@ -104,9 +104,9 @@ namespace Swg.Client.Tests.Editor
             {
                 new CommandCatalog.Command { Name = "flourish", Label = "Flourish", Ability = "flourish" }
             }, state.Commands);
-            using var commands = new ClientCommands(null, state);
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit("Spatial", "/tell Misty", out string error);
             Assert.That(error, Is.EqualTo("Usage: /tell name message"));
             dispatcher.Submit("Spatial", "/t Misty", out error);
@@ -139,9 +139,9 @@ namespace Swg.Client.Tests.Editor
         {
             var state = new WorldState(new SceneObjectRegistry());
             using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), state.Commands);
-            using var commands = new ClientCommands(null, state);
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit("Spatial", "/unknown", out string error);
             Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Submit("Spatial", "/tell Misty", out error);
@@ -161,9 +161,9 @@ namespace Swg.Client.Tests.Editor
             {
                 new CommandCatalog.Command { Name = "local", Label = "Local", ClientHook = hook }
             }, state.Commands);
-            using var commands = new ClientCommands(null, state);
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
             Assert.That(catalog.Find("local+1").ClientHook, Is.EqualTo(hook));
             dispatcher.Execute("local", "1", out string error);
             Assert.That(error, Does.Contain("not supported yet"));
@@ -212,11 +212,11 @@ namespace Swg.Client.Tests.Editor
         {
             var state = new WorldState(new SceneObjectRegistry());
             using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), state.Commands);
-            using var commands = new ClientCommands(null, state);
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
             int notifications = 0;
             chat.MessageReceived += (receivedChannel, text) => notifications++;
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit(channel, message, out string error);
             Assert.That(error, Does.Contain(expected));
             Assert.That(chat.History, Is.Empty);

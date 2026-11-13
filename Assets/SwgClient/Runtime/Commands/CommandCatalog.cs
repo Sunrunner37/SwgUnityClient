@@ -23,11 +23,14 @@ namespace Swg.Client.Runtime.Commands
             public string Category;
             public bool BrowserVisible;
             public string ClientHook = "";
+            public bool AddToCombatQueue;
+            public int Priority = 2;
             internal string Ability;
             internal bool AlwaysAvailable;
         }
 
         readonly List<Command> definitions = new List<Command>();
+        readonly Dictionary<uint, Command> byCrc = new Dictionary<uint, Command>();
         readonly List<Command> available = new List<Command>();
         readonly PlayerCommands player;
         public event Action Changed;
@@ -46,6 +49,7 @@ namespace Swg.Client.Runtime.Commands
         {
             this.player = player;
             this.definitions.AddRange(definitions);
+            IndexCommands();
             player.Changed += Refresh;
             Loading = Task.CompletedTask;
             Refresh();
@@ -89,7 +93,9 @@ namespace Swg.Client.Runtime.Commands
                             AlwaysAvailable = row.Get<int>("visible") > 2,
                             BrowserVisible = row.Get<int>("visible") >= 2,
                             Category = combatGroups.Contains(row.Get<uint>("commandGroup")) ? "combat" : "other",
-                            ClientHook = clientTable ? row.Get<string>("cppHook") : ""
+                            ClientHook = clientTable ? row.Get<string>("cppHook") : "",
+                            AddToCombatQueue = !clientTable && row.Get<bool>("addToCombatQueue"),
+                            Priority = clientTable ? int.MaxValue : row.Get<int>("defaultPriority")
                         });
                     }
                 }
@@ -100,11 +106,27 @@ namespace Swg.Client.Runtime.Commands
             {
                 var command = group.OrderByDescending(c => c.AlwaysAvailable).ThenByDescending(c => c.BrowserVisible).First();
                 command.ClientHook = group.Select(c => c.ClientHook).FirstOrDefault(hook => hook.Length > 0) ?? "";
+                command.AddToCombatQueue = group.Any(c => c.AddToCombatQueue);
+                command.Priority = group.Min(c => c.Priority);
                 string readable = Regex.Replace(command.Name, "([a-z])([A-Z])", "$1 $2");
                 command.Label = metadata.Names.TryGetValue(command.Name, out var label) ? label : char.ToUpperInvariant(readable[0]) + readable.Substring(1);
                 definitions.Add(command);
             }
+            IndexCommands();
             Refresh();
+        }
+
+        void IndexCommands()
+        {
+            foreach (var command in definitions)
+                byCrc[ObjectTemplateNames.TemplateCrc(command.Name.ToLowerInvariant())] = command;
+        }
+
+        public Command FindByCrc(uint crc, string arguments = "")
+        {
+            if (!byCrc.TryGetValue(crc, out var command))
+                return null;
+            return Find(command.Name + "+" + arguments) ?? command;
         }
 
         void Refresh()
@@ -122,7 +144,7 @@ namespace Swg.Client.Runtime.Commands
                 if (template == null)
                     continue;
                 string arguments = ability.Substring(separator + 1);
-                available.Add(new Command { Name = template.Name, Arguments = arguments, Label = template.Label + " (" + arguments + ")", Category = template.Category, BrowserVisible = template.BrowserVisible, ClientHook = template.ClientHook, Ability = ability });
+                available.Add(new Command { Name = template.Name, Arguments = arguments, Label = template.Label + " (" + arguments + ")", Category = template.Category, BrowserVisible = template.BrowserVisible, ClientHook = template.ClientHook, AddToCombatQueue = template.AddToCombatQueue, Priority = template.Priority, Ability = ability });
             }
 
             available.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Label, b.Label));

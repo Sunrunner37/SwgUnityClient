@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Replication;
 using System;
 
 namespace Swg.Client.Core.World.SceneObjects
@@ -9,6 +10,21 @@ namespace Swg.Client.Core.World.SceneObjects
         public int Quantity = 1;
         public byte[] Customization = Array.Empty<byte>();
         public string AlternateAppearance = "";
+        internal override void Apply(GameObjectUpdate update)
+        {
+            base.Apply(update);
+            if (update.ResourceType != null)
+                ResourceType = update.ResourceType;
+            if (update.Volume.HasValue)
+                Volume = update.Volume.Value;
+            if (update.Quantity.HasValue)
+                Quantity = update.Quantity.Value;
+            if (update.Customization != null)
+                Customization = update.Customization;
+            if (update.AlternateAppearance != null)
+                AlternateAppearance = update.AlternateAppearance;
+        }
+
         internal override void CopyTo(SceneObject target)
         {
             base.CopyTo(target);

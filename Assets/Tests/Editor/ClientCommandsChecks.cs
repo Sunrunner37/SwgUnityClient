@@ -32,7 +32,7 @@ namespace Swg.Client.Tests.Editor
         {
             var previous = SynchronizationContext.Current;
             SynchronizationContext.SetSynchronizationContext(owner);
-            try { return new ClientCommands(null, new WorldState(new SceneObjectRegistry())); }
+            try { return new ClientCommands(_ => { }, _ => { }, new WorldState(new SceneObjectRegistry())); }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
         }
 

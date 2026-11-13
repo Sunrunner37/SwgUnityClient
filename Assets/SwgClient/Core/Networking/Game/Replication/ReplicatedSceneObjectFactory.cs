@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             result.SwgId = swgId;
             result.ParentSwgId = update.ParentSwgId.GetValueOrDefault();
             result.TemplatePath = path;
-            update.ApplyTo(result);
+            result.Apply(update);
             return result;
         }
 
@@ -30,7 +30,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         {
             string path = templates?.Resolve(update.TemplateCrc ?? current.TemplateCrc) ?? current.TemplatePath;
             var result = Refine(current, path, TypeFor(update, path));
-            update.ApplyTo(result);
+            result.Apply(update);
             return result;
         }
 

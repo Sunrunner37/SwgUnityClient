@@ -14,6 +14,7 @@ namespace Swg.Client.Runtime.Commands
         readonly ClientChat chat;
         readonly ClientCommands commands;
         readonly ClientTargeting targeting;
+        readonly ClientCombatQueue combat;
         static readonly Dictionary<string, string> aliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["t"] = "tell",
@@ -27,12 +28,13 @@ namespace Swg.Client.Runtime.Commands
 
         public static string CanonicalName(string name) => aliases.TryGetValue(name, out var canonical) ? canonical : name;
 
-        public CommandDispatcher(CommandCatalog catalog, ClientChat chat, ClientCommands commands, ClientTargeting targeting)
+        public CommandDispatcher(CommandCatalog catalog, ClientChat chat, ClientCommands commands, ClientTargeting targeting, ClientCombatQueue combat)
         {
             this.catalog = catalog;
             this.chat = chat;
             this.commands = commands;
             this.targeting = targeting;
+            this.combat = combat;
         }
 
         public void Submit(string channel, string text, out string error)
@@ -91,6 +93,8 @@ namespace Swg.Client.Runtime.Commands
                 case "stand": serverCommand = "stand"; break;
                 case "kneel": serverCommand = "kneel"; break;
                 case "prone": serverCommand = "prone"; break;
+                case "attack": serverCommand = "attack"; break;
+                case "peace": combat.Peace(); return;
                 case "sitClient":
                     serverCommand = "sitServer";
                     break;

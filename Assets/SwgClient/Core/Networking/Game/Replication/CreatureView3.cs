@@ -13,7 +13,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.U64(); // Creature link.
             update.Height = reader.Float();
             reader.U32(); // Shock wounds.
-            reader.U64(); // State bitmask.
+            update.States = reader.U64();
             update.Wounds = ReplicationReader.ReadIntVector(reader);
             return update;
         }
@@ -30,8 +30,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 case 12:
                     reader.Byte();
                     break;
-                case 13:
                 case 16:
+                    update.States = reader.U64();
+                    break;
+                case 13:
                     reader.U64();
                     break;
                 case 14:

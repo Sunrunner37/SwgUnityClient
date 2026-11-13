@@ -1,6 +1,7 @@
 using Swg.Client.Core;
 using Swg.Client.Runtime.UI.Inventory;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
+using Swg.Client.Core.Networking.Game.Packets.Commands;
 using Swg.Client.Core.Networking.Game.Packets.Targeting;
 using Swg.Client.Runtime.Commands;
 using Swg.Client.Runtime.Localization;
@@ -79,6 +80,9 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => connection.Send(packet)));
+                builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => connection.Send(packet)));
+                builder.RegisterType<ClientCombatQueue>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<ObjectMenuRequestPacket>(packet => connection.Send(packet)));
                 builder.Register(context =>

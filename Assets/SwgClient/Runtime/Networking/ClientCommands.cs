@@ -4,6 +4,7 @@ using System.Threading;
 using Swg.Client.Core;
 using Swg.Client.Core.Assets;
 using Swg.Client.Core.Networking.Game;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Networking.Game.Packets.Commands;
 using Swg.Client.Core.World;
 
@@ -11,28 +12,39 @@ namespace Swg.Client.Runtime.Networking
 {
     public sealed class ClientCommands : IDisposable
     {
-        readonly GameConnection connection;
+        readonly Action<CommandQueueEnqueuePacket> send;
+        readonly Action<CommandQueueDequeuePacket> dequeue;
         readonly WorldState state;
         readonly SynchronizationContext context;
         public readonly struct QueuedCommand
         {
             public readonly uint CommandCrc;
+            public readonly SwgId TargetSwgId;
+            public readonly string Arguments;
+            public readonly long Order;
             internal readonly Action<CommandQueueRemovePacket> Completed;
 
-            internal QueuedCommand(uint commandCrc, Action<CommandQueueRemovePacket> completed = null)
+            internal QueuedCommand(uint commandCrc, Action<CommandQueueRemovePacket> completed = null, SwgId targetSwgId = default, string arguments = "", long order = 0)
             {
                 CommandCrc = commandCrc;
                 Completed = completed;
+                TargetSwgId = targetSwgId;
+                Arguments = arguments;
+                Order = order;
             }
         }
 
         readonly Dictionary<uint, QueuedCommand> queued = new Dictionary<uint, QueuedCommand>();
         public IReadOnlyDictionary<uint, QueuedCommand> QueuedCommands => queued;
+        public event Action Changed;
+        public event Action<uint, QueuedCommand, CommandQueueRemovePacket> Completed;
         uint sequence;
+        long order;
         bool disposed;
-        public ClientCommands(GameConnection connection, WorldState state)
+        public ClientCommands(Action<CommandQueueEnqueuePacket> send, Action<CommandQueueDequeuePacket> dequeue, WorldState state)
         {
-            this.connection = connection;
+            this.send = send;
+            this.dequeue = dequeue;
             this.state = state;
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create ClientCommands on Unity's main thread.");
         }
@@ -41,8 +53,9 @@ namespace Swg.Client.Runtime.Networking
         {
             uint id = ++sequence;
             uint crc = ObjectTemplateNames.TemplateCrc(command.ToLowerInvariant());
-            queued.Add(id, new QueuedCommand(crc, completed));
-            connection.Send(new CommandQueueEnqueuePacket(state.PlayerSwgId.Value, id, crc, arguments, targetSwgId.Value));
+            queued.Add(id, new QueuedCommand(crc, completed, targetSwgId, arguments, ++order));
+            send(new CommandQueueEnqueuePacket(state.PlayerSwgId.Value, id, crc, arguments, targetSwgId.Value));
+            Changed?.Invoke();
             return id;
         }
 
@@ -50,8 +63,12 @@ namespace Swg.Client.Runtime.Networking
         {
             if (disposed)
                 return;
-            queued.TryGetValue(packet.ActionCounter, out var existing);
-            queued[packet.ActionCounter] = new QueuedCommand(packet.ActionCrc, existing.Completed);
+            bool known = queued.TryGetValue(packet.ActionCounter, out var existing);
+            var target = existing.TargetSwgId;
+            if (!known && state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player))
+                target = player.TargetSwgId;
+            queued[packet.ActionCounter] = new QueuedCommand(packet.ActionCrc, existing.Completed, target, existing.Arguments ?? "", known ? existing.Order : ++order);
+            Changed?.Invoke();
         }, null);
 
         public void Receive(CommandQueueRemovePacket packet) => context.Post(_ =>
@@ -61,14 +78,27 @@ namespace Swg.Client.Runtime.Networking
             if (queued.TryGetValue(packet.ActionCounter, out var command))
             {
                 queued.Remove(packet.ActionCounter);
+                Completed?.Invoke(packet.ActionCounter, command, packet);
                 command.Completed?.Invoke(packet);
+                Changed?.Invoke();
             }
         }, null);
+
+        public void Cancel(uint actionCounter)
+        {
+            if (!queued.TryGetValue(actionCounter, out var command))
+                return;
+            dequeue(new CommandQueueDequeuePacket(state.PlayerSwgId.Value, actionCounter, command.CommandCrc));
+            queued.Remove(actionCounter);
+            Changed?.Invoke();
+        }
 
         public void Dispose()
         {
             disposed = true;
             queued.Clear();
+            Changed = null;
+            Completed = null;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World;
 using Swg.Client.Runtime.UI.Inventory;
@@ -8,6 +9,7 @@ using Swg.Client.Core;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
+using Swg.Client.Core.Networking.Game.Packets.Commands;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Tre;
@@ -28,6 +30,7 @@ namespace Swg.Client.Runtime.UI.Testing
     [DefaultExecutionOrder(-1000)]
     public sealed class UiTestingSetup : MonoBehaviour
     {
+        public bool previewCombatQueue = true;
         public string[] sampleAbilities = Array.Empty<string>();
         PlayerCommands player;
         ILifetimeScope scope;
@@ -66,6 +69,10 @@ namespace Swg.Client.Runtime.UI.Testing
                     return previews;
                 }).SingleInstance();
                 builder.Register(context => new ClientInventory(context.Resolve<WorldState>(), swgId => Debug.Log("Offline inventory opened: " + swgId))).SingleInstance();
+                builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => Debug.Log("Offline queue enqueue: " + packet.CommandCrc)));
+                builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => Debug.Log("Offline queue cancel: " + packet.ActionCounter)));
+                builder.RegisterType<ClientCommands>().SingleInstance();
+                builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
                 builder.RegisterType<ClientFlyText>().SingleInstance();
@@ -131,12 +138,31 @@ namespace Swg.Client.Runtime.UI.Testing
             RefreshAbilities();
         }
 
-        System.Collections.IEnumerator Start()
-        {
-            yield return FindAnyObjectByType<UiAssetPreloader>().Prewarm();
-        }
 
         public void ShowSampleMenu() => FindAnyObjectByType<RadialContextMenu>().Open(9002, new Vector2(Screen.width * .5f, Screen.height * .5f));
+
+        IEnumerator Start()
+        {
+            yield return FindAnyObjectByType<UiAssetPreloader>().Prewarm();
+            if (!previewCombatQueue)
+                yield break;
+            var catalog = scope.Resolve<CommandCatalog>();
+            if (!catalog.Loading.IsCompleted)
+                yield return new WaitUntil(() => catalog.Loading.IsCompleted);
+            if (catalog.Loading.IsFaulted)
+            {
+                Debug.LogException(catalog.Loading.Exception.GetBaseException(), this);
+                yield break;
+            }
+            var state = scope.Resolve<WorldState>();
+            state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var creature);
+            creature.States |= CreatureState.Combat;
+            state.SceneObjects.NotifyChanged(creature, SceneObjectChange.State);
+            var commands = scope.Resolve<ClientCommands>();
+            commands.Enqueue("intimidate1", targetSwgId: 9001);
+            commands.Enqueue("attack", targetSwgId: 9001);
+            commands.Enqueue("attack", targetSwgId: 9001);
+        }
 
         public void RefreshAbilities() => player.Apply(list =>
         {
