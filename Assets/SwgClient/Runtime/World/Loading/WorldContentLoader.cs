@@ -4,7 +4,6 @@ using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core;
 using Swg.Client.Runtime.Assets.Tre;
-using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Assets.Formats.Customization;
 using System;
@@ -20,6 +19,7 @@ using Swg.Client.Core.World;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
 using Stopwatch = System.Diagnostics.Stopwatch;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Runtime.World.Loading
 {

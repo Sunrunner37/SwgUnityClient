@@ -14,12 +14,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Ascii(); // Mood.
             reader.Skip(4 * sizeof(ulong)); // Weapon, group, inviter, invite counter.
             reader.U32(); // Guild.
-            reader.U64(); // Target.
+            SwgId targetSwgId = reader.U64();
             reader.Byte(); // Mood ID.
             reader.U32(); // Performance start time.
             reader.U32(); // Performance type.
-            ReplicationReader.SkipVector(reader, sizeof(uint)); // HAM.
-            ReplicationReader.SkipVector(reader, sizeof(uint)); // Maximum HAM.
+            var ham = ReplicationReader.ReadIntVector(reader);
+            var maxHam = ReplicationReader.ReadIntVector(reader);
             int count = reader.Count();
             reader.U32(); // Equipment update counter.
             var equipment = new WorldEquipment[count];
@@ -29,6 +29,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Byte(); // Frozen.
             return new GameObjectUpdate
             {
+                TargetSwgId = targetSwgId,
+                Ham = ham,
+                MaxHam = maxHam,
                 Equipment = equipment,
                 AlternateAppearance = appearance
             };
@@ -54,9 +57,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     break; // Performance and mood.
                 case 5:
                 case 6:
-                case 9:
                     reader.U64();
-                    break; // Weapon, group, target.
+                    break; // Weapon, group.
+                case 9:
+                    update.TargetSwgId = reader.U64();
+                    break;
                 case 7:
                     reader.Skip(2 * sizeof(ulong));
                     break; // Group invitation.
@@ -70,9 +75,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     reader.Byte();
                     break;
                 case 13:
+                    update.HamDelta = IntVectorDelta.ReadFrom(reader);
+                    break;
                 case 14:
-                    ReplicationReader.SkipVectorDelta(reader, sizeof(uint));
-                    break; // HAM.
+                    update.MaxHamDelta = IntVectorDelta.ReadFrom(reader);
+                    break;
                 case 15:
                     update.EquipmentDelta = EquipmentDelta.ReadFrom(reader);
                     break;

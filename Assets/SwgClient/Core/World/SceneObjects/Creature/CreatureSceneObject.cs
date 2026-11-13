@@ -1,11 +1,16 @@
+using Swg.Client.Core;
+using Swg.Client.Core.World;
+using Swg.Client.Core.World.SceneObjects;
 using System;
 
-namespace Swg.Client.Core.World.SceneObjects
+namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
 {
     public sealed class CreatureSceneObject : TangibleSceneObject
     {
         public WorldEquipment[] Equipment = Array.Empty<WorldEquipment>();
-        public byte Posture;
+        public CreaturePosture Posture;
+        public SwgId TargetSwgId;
+        public HamPool Ham;
         public float RunSpeed;
         public float SpeedMultiplier = 1;
         public float TurnScale = 1;

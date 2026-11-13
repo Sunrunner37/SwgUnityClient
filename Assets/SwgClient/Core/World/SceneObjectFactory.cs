@@ -1,4 +1,5 @@
 using System;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.World.SceneObjects;
 
 namespace Swg.Client.Core.World

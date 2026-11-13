@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Packets.Targeting;
 using Swg.Client.Runtime.Commands;
 using Swg.Client.Runtime.Localization;
 using Swg.Client.Runtime.Assets.UI;
@@ -47,6 +48,7 @@ namespace Swg.Client.Runtime
             builder.RegisterInstance(ClientSettings.From(ini));
             builder.RegisterType<TreRuntimeAssets>().SingleInstance();
             builder.RegisterType<StringTableLocalizer>().SingleInstance();
+            builder.RegisterType<SceneObjectNameResolver>().SingleInstance();
             builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.RegisterType<AudioClipLoader>().SingleInstance();
             builder.RegisterType<SwgMaterialFactory>().SingleInstance();
@@ -71,6 +73,8 @@ namespace Swg.Client.Runtime
                 builder.RegisterInstance(connection).ExternallyOwned();
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
                 builder.RegisterType<WorldState>().SingleInstance();
+                builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => connection.Send(packet)));
+                builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandCatalog>().AsSelf().SingleInstance().AutoActivate();

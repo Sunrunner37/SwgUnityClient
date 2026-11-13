@@ -91,6 +91,7 @@ namespace Swg.Client.Runtime.World
             objectRenderer.enabled = true;
             orbit.enabled = true;
             orbit.worldCamera.enabled = true;
+            orbit.worldCamera.GetComponent<WorldTargeting>().enabled = true;
             ManagedSceneObject.CurrentPlayer.GetComponent<PlayerMovement>().enabled = true;
             foreach (var listener in GetComponentsInChildren<AudioListener>(true))
                 listener.enabled = true;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Characters.Models;
@@ -11,7 +12,6 @@ using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Replication;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.World;
-using Swg.Client.Core.World.SceneObjects;
 
 namespace Swg.Client.Tests.Editor
 {

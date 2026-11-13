@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Swg.Client.Runtime.Commands
         readonly CommandCatalog catalog;
         readonly ClientChat chat;
         readonly ClientCommands commands;
+        readonly ClientTargeting targeting;
         static readonly Dictionary<string, string> aliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["t"] = "tell",
@@ -25,11 +27,12 @@ namespace Swg.Client.Runtime.Commands
 
         public static string CanonicalName(string name) => aliases.TryGetValue(name, out var canonical) ? canonical : name;
 
-        public CommandDispatcher(CommandCatalog catalog, ClientChat chat, ClientCommands commands)
+        public CommandDispatcher(CommandCatalog catalog, ClientChat chat, ClientCommands commands, ClientTargeting targeting)
         {
             this.catalog = catalog;
             this.chat = chat;
             this.commands = commands;
+            this.targeting = targeting;
         }
 
         public void Submit(string channel, string text, out string error)
@@ -91,7 +94,7 @@ namespace Swg.Client.Runtime.Commands
                     error = "Command is not supported yet: /" + command.Name;
                     return;
             }
-            commands.Enqueue(command.Name, arguments, completed: result =>
+            commands.Enqueue(command.Name, arguments, targetSwgId: targeting.SelectedSwgId, completed: result =>
             {
                 if (result.ErrorType != 0)
                     Debug.LogWarning(command.Label + " failed (server error " + result.ErrorType + ":" + result.ErrorCode + ").");

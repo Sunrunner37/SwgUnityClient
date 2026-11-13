@@ -19,6 +19,7 @@ using Swg.Client.Core.Networking;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Handlers;
 using Swg.Client.Core.Networking.Game.Packets;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -107,7 +108,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(snapshot.Revision, Is.EqualTo(revision + 1));
             var item = snapshot.Objects.Single();
             Assert.That(item.Name, Is.EqualTo("Changed"));
-            Assert.That(((CreatureSceneObject)item).Posture, Is.EqualTo(4));
+            Assert.That(((CreatureSceneObject)item).Posture, Is.EqualTo(CreaturePosture.Blocking));
             Assert.That(((SpatialSceneObject)item).Scale, Is.EqualTo(1.2f));
         }
 

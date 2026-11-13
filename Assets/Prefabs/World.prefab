@@ -178,6 +178,7 @@ GameObject:
   - component: {fileID: 6689891359604919237}
   - component: {fileID: 520726860193751740}
   - component: {fileID: 6939532888089667915}
+  - component: {fileID: 9074781212750336243}
   m_Layer: 0
   m_Name: World Camera
   m_TagString: MainCamera
@@ -277,6 +278,22 @@ MonoBehaviour:
   pitch: 18
   yaw: 180
   sensitivity: 0.18
+--- !u!114 &9074781212750336243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5316295696511864944}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05adc6383a65d0548b88f5bbf190fd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.SceneObjects.WorldTargeting
+  worldCamera: {fileID: 6689891359604919237}
+  hoverCursor: {fileID: 11400000, guid: 99d3ef579d7dd1f43a68bec58d466584, type: 2}
+  cursorHotspot: {x: 16, y: 16}
+  maximumDistance: 256
 --- !u!1001 &5463728766109037699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -285,6 +302,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8639308293780189589}
     m_Modifications:
+    - target: {fileID: 4611607876015312350, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
+      propertyPath: worldCamera
+      value: 
+      objectReference: {fileID: 6689891359604919237}
     - target: {fileID: 5760797637019755830, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1

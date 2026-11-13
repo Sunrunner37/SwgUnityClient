@@ -11,6 +11,7 @@ using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using UnityEngine;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
@@ -178,6 +179,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
             RemoveInstance(sceneObject.SwgId);
             var managed = instance.AddComponent<ManagedSceneObject>();
             managed.Bind(sceneObject.SwgId);
+            if (this.state.Templates.IsTargetable(sceneObject.TemplatePath))
+                instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
             if (sceneObject.SwgId == this.state.PlayerSwgId)
             {

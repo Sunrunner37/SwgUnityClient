@@ -14,7 +14,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             update.Height = reader.Float();
             reader.U32(); // Shock wounds.
             reader.U64(); // State bitmask.
-            ReplicationReader.SkipVector(reader, sizeof(uint)); // Wounds.
+            update.Wounds = ReplicationReader.ReadIntVector(reader);
             return update;
         }
 
@@ -39,6 +39,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     break;
                 case 15:
                     reader.U32();
+                    break;
+                case 17:
+                    update.WoundsDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 default:
                     return false;

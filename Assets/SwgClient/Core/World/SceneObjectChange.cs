@@ -10,6 +10,8 @@ namespace Swg.Client.Core.World
         Appearance = 2,
         Containment = 4,
         Replaced = 8,
-        All = Transform | Appearance | Containment
+        Vitals = 16,
+        Target = 32,
+        All = Transform | Appearance | Containment | Vitals | Target
     }
 }

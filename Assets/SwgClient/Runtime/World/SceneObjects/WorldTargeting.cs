@@ -1,0 +1,110 @@
+using System;
+using System.Collections;
+using Swg.Client.Core;
+using Swg.Client.Core.World;
+using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Runtime.UI;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Swg.Client.Runtime.World.SceneObjects
+{
+    /// <summary>World mouse input. UI and camera drag retain priority over targeting.</summary>
+    [DefaultExecutionOrder(100)]
+    public sealed class WorldTargeting : MonoBehaviour
+    {
+        public Camera worldCamera;
+        public TreTexture hoverCursor;
+        public Vector2 cursorHotspot = new Vector2(16, 16);
+        public float maximumDistance = 256;
+        readonly RaycastHit[] hits = new RaycastHit[64];
+        ClientTargeting targeting;
+        WorldState state;
+        Texture2D cursor;
+        bool cursorShown;
+        int targetMask;
+
+        void Awake()
+        {
+            targeting = GameServices.Resolve<ClientTargeting>();
+            state = GameServices.Resolve<WorldState>();
+            targetMask = LayerMask.GetMask(TargetableSceneObject.LayerName);
+        }
+
+        void OnEnable()
+        {
+            if (hoverCursor != null && cursor == null)
+                StartCoroutine(LoadCursor());
+        }
+
+        IEnumerator LoadCursor()
+        {
+            var read = GameServices.Resolve<TreRuntimeAssets>().ReadAsync(loader => hoverCursor.Load(loader));
+            yield return new WaitUntil(() => read.IsCompleted);
+            if (read.IsFaulted)
+            {
+                Debug.LogException(read.Exception, this);
+                yield break;
+            }
+            var source = read.Result;
+            cursor = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, false);
+            var pixels = new byte[source.Pixels.Length];
+            for (int y = 0; y < source.Height; y++)
+                Buffer.BlockCopy(source.Pixels, y * source.Width * 4, pixels, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
+            cursor.SetPixelData(pixels, 0);
+            cursor.Apply(false, false); // OS cursors require a readable texture.
+        }
+
+        void LateUpdate()
+        {
+            var mouse = Mouse.current;
+            bool overUi = UiInput.PointerOverUi || UiInput.TextInputFocused || !Application.isFocused;
+            SwgId hovered = default;
+            if (mouse != null && !overUi && !mouse.rightButton.isPressed)
+            {
+                var ray = worldCamera.ScreenPointToRay(mouse.position.ReadValue());
+                Physics.SyncTransforms();
+                int count = Physics.RaycastNonAlloc(ray, hits, maximumDistance, targetMask, QueryTriggerInteraction.Collide);
+                float closest = maximumDistance;
+                for (int i = 0; i < count; i++)
+                {
+                    var hit = hits[i];
+                    var candidate = hit.collider.GetComponentInParent<TargetableSceneObject>();
+                    if (candidate != null && candidate.SwgId != state.PlayerSwgId && hit.distance < closest)
+                    {
+                        closest = hit.distance;
+                        hovered = candidate.SwgId;
+                    }
+                }
+                // Terrain hides targets behind a hill. Pick volumes themselves are on a separate layer.
+                if (!hovered.IsNone && Physics.Raycast(ray, closest, ~targetMask, QueryTriggerInteraction.Ignore))
+                    hovered = default;
+                if (mouse.leftButton.wasPressedThisFrame)
+                    targeting.Select(hovered);
+            }
+            targeting.Hover(hovered);
+            bool showCursor = !hovered.IsNone && cursor != null;
+            if (showCursor != cursorShown)
+            {
+                cursorShown = showCursor;
+                Cursor.SetCursor(showCursor ? cursor : null, showCursor ? cursorHotspot : Vector2.zero, CursorMode.Auto);
+            }
+            if (!UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+                targeting.Select(default);
+        }
+
+        void OnDisable()
+        {
+            targeting.Hover(default);
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            cursorShown = false;
+            StopAllCoroutines();
+        }
+
+        void OnDestroy()
+        {
+            if (cursor != null)
+                Destroy(cursor);
+        }
+    }
+}

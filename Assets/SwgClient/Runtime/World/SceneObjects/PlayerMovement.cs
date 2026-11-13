@@ -6,6 +6,7 @@ using Swg.Client.Runtime.Networking;
 using UnityEngine;
 using Swg.Client.Runtime.UI;
 using UnityEngine.InputSystem;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {

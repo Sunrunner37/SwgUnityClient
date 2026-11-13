@@ -12,6 +12,16 @@ namespace Swg.Client.Core.Networking.Game.Replication
         }
 
         public static byte[] Customization(ByteReader reader) => reader.Take(reader.U16());
+        public static int[] ReadIntVector(ByteReader reader)
+        {
+            int count = reader.Count();
+            reader.U32();
+            var values = new int[count];
+            for (int i = 0; i < count; i++)
+                values[i] = unchecked((int)reader.U32());
+            return values;
+        }
+
         public static void SkipVector(ByteReader reader, int elementBytes)
         {
             int count = reader.Count();

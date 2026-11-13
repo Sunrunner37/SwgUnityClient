@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System.IO;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.World.SceneObjects;
@@ -105,7 +106,7 @@ namespace Swg.Client.Tests.Editor
             }, state.Commands);
             using var commands = new ClientCommands(null, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
             dispatcher.Submit("Spatial", "/tell Misty", out string error);
             Assert.That(error, Is.EqualTo("Usage: /tell name message"));
             dispatcher.Submit("Spatial", "/t Misty", out error);
@@ -140,7 +141,7 @@ namespace Swg.Client.Tests.Editor
             using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), state.Commands);
             using var commands = new ClientCommands(null, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
             dispatcher.Submit("Spatial", "/unknown", out string error);
             Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Submit("Spatial", "/tell Misty", out error);
@@ -163,7 +164,7 @@ namespace Swg.Client.Tests.Editor
             }, state.Commands);
             using var commands = new ClientCommands(null, state);
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
             Assert.That(catalog.Find("local+1").ClientHook, Is.EqualTo(hook));
             dispatcher.Execute("local", "1", out string error);
             Assert.That(error, Does.Contain("not supported yet"));
@@ -216,7 +217,7 @@ namespace Swg.Client.Tests.Editor
             using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
             int notifications = 0;
             chat.MessageReceived += (receivedChannel, text) => notifications++;
-            var dispatcher = new CommandDispatcher(catalog, chat, commands);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }));
             dispatcher.Submit(channel, message, out string error);
             Assert.That(error, Does.Contain(expected));
             Assert.That(chat.History, Is.Empty);
@@ -238,7 +239,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void SpatialCommandMatchesCore3EnqueueCallback()
         {
-            var packet = ObjectControllerPacket.ReadFrom(Encode(new CommandQueueEnqueuePacket(42, 7, 0x12345678, "0 0 0 0 0 Hello 🌌")));
+            var packet = ObjectControllerPacket.ReadFrom(Encode(new CommandQueueEnqueuePacket(42, 7, 0x12345678, "0 0 0 0 0 Hello ðŸŒŒ")));
             Assert.That(packet.Flags, Is.EqualTo(0x23));
             Assert.That(packet.ControllerType, Is.EqualTo(0x116));
             Assert.That(packet.SwgId, Is.EqualTo(42));
@@ -247,17 +248,17 @@ namespace Swg.Client.Tests.Editor
             Assert.That(r.U32(), Is.EqualTo(7));
             Assert.That(r.U32(), Is.EqualTo(0x12345678));
             Assert.That(r.U64(), Is.Zero);
-            Assert.That(r.Unicode(), Is.EqualTo("0 0 0 0 0 Hello 🌌"));
+            Assert.That(r.Unicode(), Is.EqualTo("0 0 0 0 0 Hello ðŸŒŒ"));
             Assert.That(r.Remaining, Is.Zero);
         }
 
         [Test]
         public void RoomSendMatchesCore3ChatSendToRoomCallback()
         {
-            var r = Encode(new ChatSendToRoomPacket("Hello 🌌", 44, 8));
+            var r = Encode(new ChatSendToRoomPacket("Hello ðŸŒŒ", 44, 8));
             r.U16();
             Assert.That(r.U32(), Is.EqualTo(0x20e4dbe3));
-            Assert.That(r.Unicode(), Is.EqualTo("Hello 🌌"));
+            Assert.That(r.Unicode(), Is.EqualTo("Hello ðŸŒŒ"));
             Assert.That(r.U32(), Is.Zero);
             Assert.That(r.U32(), Is.EqualTo(44));
             Assert.That(r.U32(), Is.EqualTo(8));
@@ -267,13 +268,13 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void TellMatchesCore3InstantMessageCallback()
         {
-            var r = Encode(new ChatInstantMessageToCharacterPacket("Test", "Misty", "héllo", 9));
+            var r = Encode(new ChatInstantMessageToCharacterPacket("Test", "Misty", "hÃ©llo", 9));
             r.U16();
             Assert.That(r.U32(), Is.EqualTo(0x84bb21f7));
             Assert.That(r.Ascii(), Is.EqualTo("SWG"));
             Assert.That(r.Ascii(), Is.EqualTo("Test"));
             Assert.That(r.Ascii(), Is.EqualTo("Misty"));
-            Assert.That(r.Unicode(), Is.EqualTo("héllo"));
+            Assert.That(r.Unicode(), Is.EqualTo("hÃ©llo"));
             Assert.That(r.U32(), Is.Zero);
             Assert.That(r.U32(), Is.EqualTo(9));
             Assert.That(r.Remaining, Is.Zero);

@@ -7,6 +7,7 @@ using System.Text;
 using Swg.Client.Core.Assets.Formats.Customization;
 using Swg.Client.Core.Characters.Appearance;
 using Swg.Client.Core.Networking.Game;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Core.World
 {

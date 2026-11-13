@@ -10,6 +10,7 @@ using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using UnityEngine;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Tests.Editor
 {

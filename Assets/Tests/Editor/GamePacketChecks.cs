@@ -1,6 +1,5 @@
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core;
-using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.World;
 using Swg.Client.Core.Networking.Game.Packets.Session;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
@@ -17,6 +16,7 @@ using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Networking;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Tests.Editor
 {

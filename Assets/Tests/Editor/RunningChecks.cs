@@ -16,10 +16,10 @@ using Swg.Client.Core.Geometry;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.Networking;
 using Swg.Client.Core.World;
-using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Shaders;
 using UnityEngine;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Tests.Editor
 {

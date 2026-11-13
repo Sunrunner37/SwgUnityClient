@@ -1,3 +1,4 @@
+using System;
 using Swg.Client.Core.Commands;
 using UnityEngine;
 using Swg.Client.Core.World.Terrain;
@@ -10,6 +11,7 @@ namespace Swg.Client.Core.World
         public SceneObjectRegistry SceneObjects { get; }
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId PlayerSwgId { get; private set; }
+        public event Action SceneStarted;
         /// <summary>SWG world position mapped to the Unity render origin.</summary>
         public Vector3 RenderOrigin { get; private set; }
         public string TerrainPath { get; private set; }
@@ -28,6 +30,7 @@ namespace Swg.Client.Core.World
             Snapshot = null;
             Terrain = null;
             Templates = null;
+            SceneStarted?.Invoke();
         }
     }
 }

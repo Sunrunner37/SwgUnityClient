@@ -1,4 +1,5 @@
 using System.Linq;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 
@@ -24,7 +25,16 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public float? RunSpeed;
         public float? SpeedMultiplier;
         public float? TurnScale;
-        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None);
+        public SwgId? TargetSwgId;
+        public int[] Ham;
+        public int[] MaxHam;
+        public int[] Wounds;
+        public IntVectorDelta HamDelta;
+        public IntVectorDelta MaxHamDelta;
+        public IntVectorDelta WoundsDelta;
+        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None)
+            | (Ham != null || MaxHam != null || Wounds != null || HamDelta != null || MaxHamDelta != null || WoundsDelta != null ? SceneObjectChange.Vitals : SceneObjectChange.None)
+            | (TargetSwgId.HasValue ? SceneObjectChange.Target : SceneObjectChange.None);
 
         public GameObjectUpdate CopyForQueue()
         {
@@ -33,6 +43,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 copy.Customization = (byte[])Customization.Clone();
             if (Equipment != null)
                 copy.Equipment = Equipment.Select(item => new WorldEquipment((byte[])item.Customization.Clone(), item.Arrangement, item.SwgId, item.TemplateCrc)).ToArray();
+            copy.Ham = Ham == null ? null : (int[])Ham.Clone();
+            copy.MaxHam = MaxHam == null ? null : (int[])MaxHam.Clone();
+            copy.Wounds = Wounds == null ? null : (int[])Wounds.Clone();
             return copy;
         }
 
@@ -64,6 +77,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
 
             if (target is CreatureSceneObject creature)
             {
+                if (TargetSwgId.HasValue)
+                    creature.TargetSwgId = TargetSwgId.Value;
+                HamPoolReplication.Apply(this, ref creature.Ham);
                 if (RunSpeed.HasValue)
                     creature.RunSpeed = RunSpeed.Value;
                 if (SpeedMultiplier.HasValue)
@@ -75,7 +91,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 if (EquipmentDelta != null)
                     creature.Equipment = EquipmentDelta.Apply(creature.Equipment);
                 if (Posture.HasValue)
-                    creature.Posture = Posture.Value;
+                    creature.Posture = (CreaturePosture)Posture.Value;
             }
         }
     }

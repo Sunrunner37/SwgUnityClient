@@ -3,12 +3,11 @@ using Swg.Client.Runtime;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Swg.Client.Core;
-using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
-using Swg.Client.Runtime.World;
 using UnityEngine;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Tests.Editor
 {

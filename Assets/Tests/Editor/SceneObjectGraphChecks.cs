@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;

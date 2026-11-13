@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Replication;
@@ -51,7 +52,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(published.Customization, Is.EqualTo(new byte[] { 1, 2 }));
             Assert.That(published.Equipment[0].SwgId, Is.EqualTo(new SwgId(99)));
             Assert.That(published.AlternateAppearance, Is.EqualTo("appearance/test.iff"));
-            Assert.That(published.Posture, Is.EqualTo(7));
+            Assert.That(published.Posture, Is.EqualTo(CreaturePosture.LyingDown));
         }
 
         [Test]
