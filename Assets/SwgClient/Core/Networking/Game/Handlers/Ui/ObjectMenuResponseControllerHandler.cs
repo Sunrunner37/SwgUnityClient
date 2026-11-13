@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
 using System;
 using UnityEngine.Scripting;
@@ -8,16 +9,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Ui
     [Preserve]
     internal sealed class ObjectMenuResponseControllerHandler : ObjectControllerHandler<ObjectMenuResponsePacket>
     {
+        readonly ClientObjectInteractions interactions;
         public override uint ControllerType => ObjectMenuResponsePacket.ControllerType;
 
         [Preserve]
-        public ObjectMenuResponseControllerHandler() : base(ObjectMenuResponsePacket.ReadFrom)
+        public ObjectMenuResponseControllerHandler(ClientObjectInteractions interactions) : base(ObjectMenuResponsePacket.ReadFrom)
         {
+            this.interactions = interactions;
         }
 
         protected override void Handle(ObjectMenuResponsePacket packet)
         {
-            throw new NotImplementedException($"ObjectMenuResponse (controller 0x{ControllerType:X8})");
+            interactions.Receive(packet);
         }
     }
 }

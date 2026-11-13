@@ -1,7 +1,9 @@
+using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Login;
 using Swg.Client.Core;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.Assets.Appearances;
@@ -37,15 +39,15 @@ namespace Swg.Client.Runtime.World.Loading
         byte[] lastCachedAppearance;
         readonly SemaphoreSlim reads = new SemaphoreSlim(1, 1);
         readonly SemaphoreSlim regions = new SemaphoreSlim(1, 1);
-        public WorldContentLoader(TreRuntimeAssets assets, WorldState state, AppearanceCache cache, ClientSettings settings, GameConnection connection)
+        public WorldContentLoader(TreRuntimeAssets assets, WorldState state, AppearanceCache cache, ClientSettings settings, Admission admission)
         {
             this.assets = assets;
             this.cache = cache;
             this.state = state;
             cacheDirectory = settings.AppearanceCacheDirectory;
             cacheServer = settings.LoginEndpoint;
-            cacheUsername = connection.Admission.Username;
-            cacheGalaxy = connection.Admission.Galaxy.Name;
+            cacheUsername = admission.Username;
+            cacheGalaxy = admission.Galaxy.Name;
         }
 
         public async Task OpenAsync(GameWorldSnapshot initial, CancellationToken token)
@@ -216,6 +218,13 @@ namespace Swg.Client.Runtime.World.Loading
             {
                 regions.Release();
             }
+        }
+
+        public Task<AppearanceData> LoadAppearanceAsync(SceneObject sceneObject)
+        {
+            // Capture live object inputs on the main thread before decoding assets on a worker.
+            var request = AppearanceRequest.Describe(state, sceneObject) ?? new AppearanceRequest(sceneObject.TemplatePath);
+            return ReadAsync(loader => LoadAppearance(loader, request), CancellationToken.None);
         }
 
         public Task<Dictionary<SwgId, AppearanceData>> LoadAppearancesAsync(GameWorldSnapshot snapshot, IReadOnlyDictionary<SwgId, AppearanceRequest> requests, CancellationToken token)

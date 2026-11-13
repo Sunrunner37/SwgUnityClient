@@ -11,6 +11,13 @@ namespace Swg.Client.Core.Networking.Game.Packets.Scene
         public readonly ushort OperandCount;
         public readonly ulong SwgId;
         public readonly AttributeValue[] Attributes;
+        public AttributeListPacket(ulong swgId, AttributeValue[] attributes)
+        {
+            OperandCount = 4;
+            SwgId = swgId;
+            Attributes = attributes;
+        }
+
         AttributeListPacket(ByteReader reader)
         {
             this = default;

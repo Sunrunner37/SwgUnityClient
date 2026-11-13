@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.UI.Interactions;
 using System;
 using System.Collections;
 using Swg.Client.Core;
@@ -13,6 +14,12 @@ namespace Swg.Client.Runtime.World.SceneObjects
     [DefaultExecutionOrder(100)]
     public sealed class WorldTargeting : MonoBehaviour
     {
+        public RadialContextMenu contextMenu;
+        public float holdSeconds = .35f;
+        public float holdMovementTolerance = 8;
+        SwgId heldSwgId;
+        Vector2 holdPosition;
+        float holdStart;
         public Camera worldCamera;
         public TreTexture hoverCursor;
         public Vector2 cursorHotspot = new Vector2(16, 16);
@@ -80,8 +87,20 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 if (!hovered.IsNone && Physics.Raycast(ray, closest, ~targetMask, QueryTriggerInteraction.Ignore))
                     hovered = default;
                 if (mouse.leftButton.wasPressedThisFrame)
+                {
                     targeting.Select(hovered);
+                    heldSwgId = hovered;
+                    holdPosition = mouse.position.ReadValue();
+                    holdStart = Time.unscaledTime;
+                }
+                if (!heldSwgId.IsNone && mouse.leftButton.isPressed && hovered == heldSwgId && Vector2.Distance(holdPosition, mouse.position.ReadValue()) <= holdMovementTolerance && Time.unscaledTime - holdStart >= holdSeconds)
+                {
+                    contextMenu.Open(heldSwgId, holdPosition);
+                    heldSwgId = default;
+                }
             }
+            if (mouse == null || !mouse.leftButton.isPressed || overUi || hovered != heldSwgId || Vector2.Distance(holdPosition, mouse.position.ReadValue()) > holdMovementTolerance)
+                heldSwgId = default;
             targeting.Hover(hovered);
             bool showCursor = !hovered.IsNone && cursor != null;
             if (showCursor != cursorShown)
@@ -89,7 +108,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 cursorShown = showCursor;
                 Cursor.SetCursor(showCursor ? cursor : null, showCursor ? cursorHotspot : Vector2.zero, CursorMode.Auto);
             }
-            if (!UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+            if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 targeting.Select(default);
         }
 

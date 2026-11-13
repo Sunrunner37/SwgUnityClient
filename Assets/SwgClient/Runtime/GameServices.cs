@@ -1,3 +1,5 @@
+using Swg.Client.Core;
+using Swg.Client.Core.Networking.Game.Packets.Ui;
 using Swg.Client.Core.Networking.Game.Packets.Targeting;
 using Swg.Client.Runtime.Commands;
 using Swg.Client.Runtime.Localization;
@@ -71,11 +73,19 @@ namespace Swg.Client.Runtime
             BeginLifetimeScope(builder =>
             {
                 builder.RegisterInstance(connection).ExternallyOwned();
+                builder.RegisterInstance(connection.Admission);
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterInstance(new Action<ObjectMenuRequestPacket>(packet => connection.Send(packet)));
+                builder.Register(context =>
+                {
+                    var commands = context.Resolve<ClientCommands>();
+                    return new Action<SwgId>(swgId => commands.Enqueue("getAttributesBatch", swgId.ToString()));
+                }).SingleInstance();
+                builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandCatalog>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();

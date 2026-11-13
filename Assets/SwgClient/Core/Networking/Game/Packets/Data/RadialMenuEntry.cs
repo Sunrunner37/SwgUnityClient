@@ -10,6 +10,15 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
         public readonly byte RadialId;
         public readonly byte Callback;
         public readonly string Text;
+        public RadialMenuEntry(byte index, byte parentIndex, byte radialId, byte callback, string text)
+        {
+            Index = index;
+            ParentIndex = parentIndex;
+            RadialId = radialId;
+            Callback = callback;
+            Text = text;
+        }
+
         RadialMenuEntry(ByteReader reader)
         {
             this = default;

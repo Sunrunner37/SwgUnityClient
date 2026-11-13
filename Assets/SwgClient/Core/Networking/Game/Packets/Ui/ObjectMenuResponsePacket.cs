@@ -15,6 +15,17 @@ namespace Swg.Client.Core.Networking.Game.Packets.Ui
         public readonly ulong PlayerSwgId;
         public readonly RadialMenuEntry[] Items;
         public readonly byte Counter;
+        public ObjectMenuResponsePacket(ulong playerSwgId, ulong targetSwgId, RadialMenuEntry[] items, byte counter)
+        {
+            Flags = 0x0b;
+            ReceiverSwgId = playerSwgId;
+            EnvelopeReserved = 0;
+            PlayerSwgId = playerSwgId;
+            TargetSwgId = targetSwgId;
+            Items = items;
+            Counter = counter;
+        }
+
         ObjectMenuResponsePacket(ObjectControllerPacket envelope)
         {
             this = default;

@@ -7,6 +7,12 @@ namespace Swg.Client.Core.Networking.Game.Packets.Data
     {
         public readonly string Name;
         public readonly string Value;
+        public AttributeValue(string name, string value)
+        {
+            Name = name;
+            Value = value;
+        }
+
         AttributeValue(ByteReader reader)
         {
             this = default;

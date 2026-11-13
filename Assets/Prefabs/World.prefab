@@ -242,7 +242,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2147483647
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -292,6 +292,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05adc6383a65d0548b88f5bbf190fd35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.SceneObjects.WorldTargeting
+  contextMenu: {fileID: 177071501526108686}
+  holdSeconds: 0.35
+  holdMovementTolerance: 8
   worldCamera: {fileID: 6689891359604919237}
   hoverCursor: {fileID: 11400000, guid: 99d3ef579d7dd1f43a68bec58d466584, type: 2}
   cursorHotspot: {x: 16, y: 16}
@@ -459,6 +462,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
+--- !u!114 &177071501526108686 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5306935580092546701, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
+  m_PrefabInstance: {fileID: 5463728766109037699}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86974d6ce861b2e47b3bebc16fd8de51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Interactions.RadialContextMenu
 --- !u!224 &1172216569351888312 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6599915985732954427, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}

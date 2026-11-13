@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
@@ -8,16 +9,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class AttributeListPacketHandler : GamePacketHandler<AttributeListPacket>
     {
+        readonly ClientObjectInteractions interactions;
         public override uint Opcode => AttributeListPacket.Opcode;
 
         [Preserve]
-        public AttributeListPacketHandler() : base(AttributeListPacket.ReadFrom)
+        public AttributeListPacketHandler(ClientObjectInteractions interactions) : base(AttributeListPacket.ReadFrom)
         {
+            this.interactions = interactions;
         }
 
         protected override void Handle(AttributeListPacket packet)
         {
-            throw new NotImplementedException($"AttributeListMessage (opcode 0x{Opcode:X8})");
+            interactions.Receive(packet);
         }
     }
 }
