@@ -11,15 +11,11 @@ namespace Swg.Client.Runtime.UI.Commands
         public bool Ready { get; private set; }
         CommandCatalog catalog;
         CommandVisuals visuals;
-        ICommandDispatcher dispatcher;
 
         void Awake()
         {
             catalog = GameServices.Resolve<CommandCatalog>();
             visuals = GameServices.Resolve<CommandVisuals>();
-            dispatcher = GameServices.Resolve<ICommandDispatcher>();
-            foreach (var slot in slots)
-                slot.Initialize(catalog, visuals, dispatcher);
         }
 
         void OnEnable()

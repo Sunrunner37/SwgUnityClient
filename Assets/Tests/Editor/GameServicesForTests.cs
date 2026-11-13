@@ -28,6 +28,7 @@ namespace Swg.Client.Tests.Editor
             builder.Register(_ => new ClientCommands(null, replication.State)).SingleInstance();
             builder.Register(_ => new StringTableLocalizer(null)).SingleInstance();
             builder.RegisterType<ProseFormatter>().SingleInstance();
+            builder.RegisterType<ClientFlyText>().SingleInstance();
             builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>())).SingleInstance();
             builder.RegisterInstance(replication.SceneObjects);
             builder.Register(_ => new ClientInventory(replication.State, swgId => { })).SingleInstance();

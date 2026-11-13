@@ -37,9 +37,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public IntVectorDelta HamDelta;
         public IntVectorDelta MaxHamDelta;
         public IntVectorDelta WoundsDelta;
-        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || ResourceType != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null || Posture.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None)
+        public SceneObjectChange Changes => (Position.HasValue || Rotation.HasValue || Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None) | (TemplateCrc.HasValue || BaselineType.HasValue || BaselinesComplete.HasValue || Name != null || ResourceType != null || Arrangement.HasValue || Customization != null || Equipment != null || EquipmentDelta != null || AlternateAppearance != null ? SceneObjectChange.Appearance : SceneObjectChange.None)
             | (Ham != null || MaxHam != null || Wounds != null || HamDelta != null || MaxHamDelta != null || WoundsDelta != null ? SceneObjectChange.Vitals : SceneObjectChange.None)
             | (Volume.HasValue || Quantity.HasValue || CashCredits.HasValue || BankCredits.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None)
+            | (Posture.HasValue ? SceneObjectChange.Posture : SceneObjectChange.None)
             | (TargetSwgId.HasValue ? SceneObjectChange.Target : SceneObjectChange.None);
 
         public GameObjectUpdate CopyForQueue()

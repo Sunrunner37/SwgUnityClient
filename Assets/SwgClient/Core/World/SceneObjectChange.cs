@@ -13,6 +13,7 @@ namespace Swg.Client.Core.World
         Vitals = 16,
         Target = 32,
         Inventory = 64,
-        All = Transform | Appearance | Containment | Vitals | Target | Inventory
+        Posture = 128,
+        All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture
     }
 }

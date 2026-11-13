@@ -10,10 +10,11 @@ using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
 using UnityEngine;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Core.Characters.Animation
 {
-    /// <summary>Native skeleton hierarchy and its standing locomotion clips, shared by body and equipment meshes.</summary>
+    /// <summary>Native skeleton hierarchy, locomotion, and posture clips shared by body and equipment meshes.</summary>
     public sealed class SkeletonData
     {
         public struct Joint
@@ -31,6 +32,7 @@ namespace Swg.Client.Core.Characters.Animation
         {
             public readonly Dictionary<string, SkeletonData> Skeletons = new Dictionary<string, SkeletonData>();
             public readonly Dictionary<string, SkeletalAnimation> Animations = new Dictionary<string, SkeletalAnimation>();
+            public readonly Dictionary<string, Dictionary<string, string[]>> AnimationStates = new Dictionary<string, Dictionary<string, string[]>>();
         }
 
         static readonly ConditionalWeakTable<TreAssetLoader, AssetCache> caches = new ConditionalWeakTable<TreAssetLoader, AssetCache>();
@@ -38,6 +40,10 @@ namespace Swg.Client.Core.Characters.Animation
         public Matrix4x4[] BindPoses { get; private set; }
         public SkeletalAnimation Idle { get; private set; }
         public SkeletalAnimation Run { get; private set; }
+        public SkeletalAnimation Crawl { get; private set; }
+        public string CrawlAnimationPath { get; private set; }
+        public readonly Dictionary<CreaturePosture, SkeletalAnimation> Postures = new Dictionary<CreaturePosture, SkeletalAnimation>();
+        internal readonly Dictionary<(CreaturePosture From, CreaturePosture To), SkeletalAnimation> Transitions = new Dictionary<(CreaturePosture, CreaturePosture), SkeletalAnimation>();
         public string IdleAnimationPath { get; private set; }
         public string RunAnimationPath { get; private set; }
         internal RigidTransform[] BindGlobals { get; private set; }
@@ -106,59 +112,65 @@ namespace Swg.Client.Core.Characters.Animation
                     }
                 }
 
-                string idlePath = IdlePath(loader, animationAppearance ?? satPath);
-                string runPath = RunPath(loader, animationAppearance ?? satPath, idlePath);
                 var result = new SkeletonData
                 {
                     Joints = joints.ToArray(),
                     BindGlobals = bind.ToArray(),
-                    BindPoses = bind.Select(b => Matrix4x4.TRS(b.Translation, b.Rotation, Vector3.one).inverse).ToArray(),
-                    Idle = Animation(idlePath),
-                    IdleAnimationPath = idlePath,
-                    Run = Animation(runPath),
-                    RunAnimationPath = runPath
+                    BindPoses = bind.Select(b => Matrix4x4.TRS(b.Translation, b.Rotation, Vector3.one).inverse).ToArray()
                 };
+                LoadAnimations(loader, animationAppearance ?? satPath, Animation, result, cache);
                 cache.Skeletons.Add(key, result);
                 return result;
             }
         }
 
-        static string IdlePath(TreAssetLoader loader, string satPath)
+        static void LoadAnimations(TreAssetLoader loader, string satPath, Func<string, SkeletalAnimation> load, SkeletonData skeleton, AssetCache cache)
         {
-            // Non-humanoid appearances define their neutral state in the logical animation table.
-            foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
+            if (!cache.AnimationStates.TryGetValue(satPath, out var states))
             {
-                var root = IffNode.Parse(loader.Read(table)).Single(n => n.Kind == "LATT");
-                var version = root.Children.First(n => n.Tag == "FORM");
-                foreach (string state in new[] { "loop_ground", "loop_stand" })
+                states = new Dictionary<string, string[]>(StringComparer.Ordinal);
+                foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
                 {
-                    var animation = version.Children.FirstOrDefault(n => n.Kind == "ANIM" && new ByteReader(n.Chunk("INFO")).CString() == state);
-                    if (animation == null)
-                        continue;
-                    string path = IffNode.References(animation.Data, "appearance/animation/", ".ans").FirstOrDefault();
-                    if (path != null)
-                        return path;
+                    var root = IffNode.Parse(loader.Read(table)).Single(n => n.Kind == "LATT");
+                    foreach (var state in root.Children.First(n => n.Tag == "FORM").Children.Where(n => n.Kind == "ANIM"))
+                    {
+                        string name = new ByteReader(state.Chunk("INFO")).CString();
+                        if (!states.ContainsKey(name))
+                            states.Add(name, IffNode.References(state.Data, "appearance/animation/", ".ans").ToArray());
+                    }
+                }
+                cache.AnimationStates.Add(satPath, states);
+            }
+            string Clip(string state) => states.TryGetValue(state, out var clips) ? clips.FirstOrDefault() : null;
+            skeleton.IdleAnimationPath = Clip("loop_ground") ?? Clip("loop_stand") ?? SkeletalPose.NeutralIdleAnimation;
+            skeleton.RunAnimationPath = states.TryGetValue("loop_standing", out var standing)
+                ? standing.FirstOrDefault(path => path.Contains("_loc_run")) : null;
+            skeleton.RunAnimationPath ??= skeleton.IdleAnimationPath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : skeleton.IdleAnimationPath;
+            skeleton.Idle = load(skeleton.IdleAnimationPath);
+            skeleton.Run = load(skeleton.RunAnimationPath);
+            skeleton.CrawlAnimationPath = states.TryGetValue("loop_prone", out var prone)
+                ? prone.FirstOrDefault(path => path.Contains("_crawl")) : null;
+            skeleton.Crawl = skeleton.CrawlAnimationPath == null ? null : load(skeleton.CrawlAnimationPath);
+            var postures = new[]
+            {
+                (Posture: CreaturePosture.Upright, State: "standing"),
+                (Posture: CreaturePosture.Crouched, State: "kneeling"),
+                (Posture: CreaturePosture.Prone, State: "prone"),
+                (Posture: CreaturePosture.Sitting, State: "sitting_ground")
+            };
+            skeleton.Postures.Add(CreaturePosture.Upright, skeleton.Idle);
+            foreach (var posture in postures)
+            {
+                string idle = Clip("loop_" + posture.State);
+                if (posture.Posture != CreaturePosture.Upright && idle != null)
+                    skeleton.Postures.Add(posture.Posture, load(idle));
+                foreach (var next in postures)
+                {
+                    string transition = Clip("trn_" + posture.State + "_to_" + next.State);
+                    if (transition != null)
+                        skeleton.Transitions.Add((posture.Posture, next.Posture), load(transition));
                 }
             }
-            return SkeletalPose.NeutralIdleAnimation;
-        }
-
-        static string RunPath(TreAssetLoader loader, string satPath, string idlePath)
-        {
-            // Use the native standing locomotion mapping; the filename's gender is not a reliable selector.
-            foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
-            {
-                var root = IffNode.Parse(loader.Read(table)).Single(n => n.Kind == "LATT");
-                var version = root.Children.First(n => n.Tag == "FORM");
-                var standing = version.Children.FirstOrDefault(n => n.Kind == "ANIM" && new ByteReader(n.Chunk("INFO")).CString() == "loop_standing");
-                if (standing == null)
-                    continue;
-                var run = IffNode.References(standing.Data, "appearance/animation/", ".ans").FirstOrDefault(path => path.Contains("_loc_run"));
-                if (run != null)
-                    return run;
-            }
-
-            return idlePath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : idlePath;
         }
 
         static Quaternion Rotation(byte[] bytes, int at) => new Quaternion(BitConverter.ToSingle(bytes, at + 4), BitConverter.ToSingle(bytes, at + 8), BitConverter.ToSingle(bytes, at + 12), BitConverter.ToSingle(bytes, at));

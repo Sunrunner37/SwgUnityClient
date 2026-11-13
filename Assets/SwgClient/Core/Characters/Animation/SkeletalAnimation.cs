@@ -20,14 +20,14 @@ namespace Swg.Client.Core.Characters.Animation
             this.joints = joints;
         }
 
-        public JointSample Sample(string joint, float seconds)
+        public JointSample Sample(string joint, float seconds, bool loop = true)
         {
             if (!joints.TryGetValue(joint, out var frames))
                 return new JointSample
                 {
                     Rotation = Quaternion.identity
                 };
-            float frame = Duration > 0 ? Mathf.Repeat(seconds, Duration) * FrameRate : 0;
+            float frame = Duration > 0 ? (loop ? Mathf.Repeat(seconds, Duration) : Mathf.Clamp(seconds, 0, Duration)) * FrameRate : 0;
             int first = Mathf.Min((int)frame, LastFrame);
             int second = Mathf.Min(first + 1, LastFrame);
             return new JointSample

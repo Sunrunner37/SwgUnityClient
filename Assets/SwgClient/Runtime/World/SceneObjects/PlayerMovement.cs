@@ -3,6 +3,7 @@ using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Assets.Appearances;
 using UnityEngine;
 using Swg.Client.Runtime.UI;
 using UnityEngine.InputSystem;
@@ -10,7 +11,7 @@ using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
-    /// <summary>Camera-relative running with local prediction. SOE sends are queued to the connection thread.</summary>
+    /// <summary>Camera-relative running and prone crawling with local prediction. SOE sends are queued to the connection thread.</summary>
     [DisallowMultipleComponent]
     public sealed class PlayerMovement : MonoBehaviour
     {
@@ -23,20 +24,25 @@ namespace Swg.Client.Runtime.World.SceneObjects
         WorldState state;
         GameConnection connection;
         GameReplication replication;
+        ClientCommands commands;
+        bool standRequested;
         CreatureSceneObject player;
         SceneObjectMovement movement;
+        CharacterAnimation animation;
         Camera worldCamera;
         float nextSend;
         bool pendingMovement;
-        bool wasRunning;
+        bool wasMoving;
         public void Initialize(SpatialSceneObject player)
         {
             this.player = (CreatureSceneObject)player;
             this.state = GameServices.Resolve<WorldState>();
             connection = GameServices.Resolve<GameConnection>();
             replication = GameServices.Resolve<GameReplication>();
+            commands = GameServices.Resolve<ClientCommands>();
             worldCamera = GameServices.Resolve<WorldRenderingContext>().WorldCamera;
             movement = GetComponent<SceneObjectMovement>();
+            animation = GetComponent<CharacterAnimation>();
             worldCamera.GetComponent<WorldOrbitCamera>().target = transform;
         }
 
@@ -50,14 +56,22 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 input.y = (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0);
             }
 
-            Run(input, Time.deltaTime);
+            Move(input, Time.deltaTime);
         }
 
-        internal void Run(Vector2 input, float seconds)
+        internal void Move(Vector2 input, float seconds)
         {
-            bool running = input.sqrMagnitude > .001f && player.RunningSpeed > 0;
+            bool wantsMovement = input.sqrMagnitude > .001f;
+            if (!wantsMovement || player.Posture == CreaturePosture.Upright)
+                standRequested = false;
+            else if (wantsMovement && !standRequested && (player.Posture == CreaturePosture.Sitting || player.Posture == CreaturePosture.Crouched))
+            {
+                standRequested = true;
+                commands.Enqueue("stand");
+            }
+            bool moving = wantsMovement && player.MovementSpeed > 0 && (player.Posture == CreaturePosture.Upright || player.Posture == CreaturePosture.Prone) && (animation == null || !animation.IsChangingPosture);
             CurrentSpeed = 0;
-            if (running && seconds > 0)
+            if (moving && seconds > 0)
             {
                 input = Vector2.ClampMagnitude(input, 1);
                 var forward = Vector3.ProjectOnPlane(worldCamera.transform.forward, Vector3.up).normalized;
@@ -67,9 +81,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 var desiredRotation = Quaternion.LookRotation(direction);
                 var serverRotation = Quaternion.RotateTowards(serverPose.rotation, desiredRotation, turnDegreesPerSecond * player.TurnScale * seconds);
                 var heading = serverRotation * Vector3.forward;
-                // Run along the facing direction through turns; don't slide sideways or run backwards.
+                // Move along the facing direction through turns instead of sliding sideways.
                 float alignment = Mathf.Clamp01(Vector3.Dot(heading, direction.normalized));
-                CurrentSpeed = player.RunningSpeed * input.magnitude * alignment;
+                CurrentSpeed = player.MovementSpeed * input.magnitude * alignment;
                 var serverPosition = serverPose.position + heading * (CurrentSpeed * seconds);
                 // Terrain samples and network positions are absolute SWG world coordinates.
                 serverPosition.y = this.state.Terrain.SampleHeight(serverPosition.x, serverPosition.z);
@@ -91,7 +105,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 pendingMovement = true;
             }
 
-            bool stopped = !running && wasRunning;
+            bool stopped = !moving && wasMoving;
             if (stopped)
                 pendingMovement = true;
             if (pendingMovement && (stopped || Time.unscaledTime >= nextSend))
@@ -101,7 +115,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 nextSend = Time.unscaledTime + sendInterval;
             }
 
-            wasRunning = running;
+            wasMoving = moving;
         }
     }
 }

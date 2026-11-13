@@ -17,7 +17,7 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public float SpeedMultiplier = 1;
         public float TurnScale = 1;
         // Matches Core3 PlayerManager's allowed speed: getRunSpeed() * getSpeedMultiplierMod().
-        public float RunningSpeed => Math.Max(0, RunSpeed * SpeedMultiplier);
+        public float MovementSpeed => Math.Max(0, RunSpeed * SpeedMultiplier);
 
         internal override SceneObject Copy()
         {

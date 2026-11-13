@@ -1,23 +1,16 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Effects;
-using System;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Effects
 {
-    // Core3/MMOCoreORB/src/server/zone/packets/object/ShowFlyText.h:11 (ShowFlyText).
     [Preserve]
     internal sealed class ShowFlyTextControllerHandler : ObjectControllerHandler<ShowFlyTextPacket>
     {
+        readonly ClientFlyText flyText;
         public override uint ControllerType => ShowFlyTextPacket.ControllerType;
-
         [Preserve]
-        public ShowFlyTextControllerHandler() : base(ShowFlyTextPacket.ReadFrom)
-        {
-        }
-
-        protected override void Handle(ShowFlyTextPacket packet)
-        {
-            throw new NotImplementedException($"ShowFlyText (controller 0x{ControllerType:X8})");
-        }
+        public ShowFlyTextControllerHandler(ClientFlyText flyText) : base(ShowFlyTextPacket.ReadFrom) => this.flyText = flyText;
+        protected override void Handle(ShowFlyTextPacket packet) => flyText.Receive(packet);
     }
 }

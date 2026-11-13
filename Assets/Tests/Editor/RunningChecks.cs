@@ -56,7 +56,7 @@ namespace Swg.Client.Tests.Editor
                 renderers[0].BakeMesh(baked);
                 Assert.That(baked.vertices.Select((vertex, index) => Vector3.Distance(vertex, before[index])).Max(), Is.GreaterThan(.00001f));
                 Assert.That(animation.Speed, Is.Zero);
-                Assert.That(animation.RunBlend, Is.Zero);
+                Assert.That(animation.LocomotionBlend, Is.Zero);
                 preview.Show(key, model);
                 Assert.That(root.GetComponentsInChildren<CharacterAnimation>().Single(), Is.SameAs(animation));
             }
@@ -105,7 +105,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(reader.Remaining, Is.Zero);
             var creature = new CreatureSceneObject();
             update.ApplyTo(creature);
-            Assert.That(creature.RunningSpeed, Is.EqualTo(8.76f).Within(.00001f));
+            Assert.That(creature.MovementSpeed, Is.EqualTo(8.76f).Within(.00001f));
             Assert.That(creature.TurnScale, Is.EqualTo(.75f));
         }
 
@@ -121,7 +121,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(CreatureView4.ReadDeltaField(7, new ByteReader(BitConverter.GetBytes(8f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(10, new ByteReader(BitConverter.GetBytes(.8f)), update), Is.True);
             update.ApplyTo(creature);
-            Assert.That(creature.RunningSpeed, Is.EqualTo(4));
+            Assert.That(creature.MovementSpeed, Is.EqualTo(4));
             Assert.That(creature.TurnScale, Is.EqualTo(.8f));
             Assert.That(update.Changes, Is.EqualTo(SceneObjectChange.None));
         }
@@ -175,16 +175,16 @@ namespace Swg.Client.Tests.Editor
 
                 var animation = root.GetComponent<CharacterAnimation>();
                 animation.Advance(7.3f, .2f);
-                Assert.That(animation.RunBlend, Is.EqualTo(1));
-                float time = animation.RunTime;
+                Assert.That(animation.LocomotionBlend, Is.EqualTo(1));
+                float time = animation.LocomotionTime;
                 renderers[0].BakeMesh(baked);
                 Assert.That(baked.vertices.Select((v, i) => Vector3.Distance(v, model.Parts[0].Vertices[i])).Max(), Is.GreaterThan(.05f));
                 root.transform.rotation = Quaternion.Euler(0, 90, 0);
                 animation.Advance(7.3f, .2f);
-                Assert.That(animation.RunTime, Is.GreaterThan(time), "Turning must not restart the run cycle");
-                Assert.That(animation.RunBlend, Is.EqualTo(1));
+                Assert.That(animation.LocomotionTime, Is.GreaterThan(time), "Turning must not restart the run cycle");
+                Assert.That(animation.LocomotionBlend, Is.EqualTo(1));
                 animation.Advance(0, .2f);
-                Assert.That(animation.RunBlend, Is.Zero);
+                Assert.That(animation.LocomotionBlend, Is.Zero);
             }
             finally
             {

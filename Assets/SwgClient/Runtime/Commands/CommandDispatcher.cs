@@ -83,18 +83,22 @@ namespace Swg.Client.Runtime.Commands
             }
             // These posture hooks use the corresponding Core3 queue commands.
             // Other client hooks need their local behavior implemented before dispatch.
+            string serverCommand = command.Name;
             switch (command.ClientHook)
             {
                 case "":
-                case "stand":
-                case "kneel":
-                case "prone":
+                    break;
+                case "stand": serverCommand = "stand"; break;
+                case "kneel": serverCommand = "kneel"; break;
+                case "prone": serverCommand = "prone"; break;
+                case "sitClient":
+                    serverCommand = "sitServer";
                     break;
                 default:
                     error = "Command is not supported yet: /" + command.Name;
                     return;
             }
-            commands.Enqueue(command.Name, arguments, targetSwgId: targeting.SelectedSwgId, completed: result =>
+            commands.Enqueue(serverCommand, arguments, targetSwgId: targeting.SelectedSwgId, completed: result =>
             {
                 if (result.ErrorType != 0)
                     Debug.LogWarning(command.Label + " failed (server error " + result.ErrorType + ":" + result.ErrorCode + ").");

@@ -153,7 +153,6 @@ namespace Swg.Client.Tests.Editor
 
         [TestCase("follow")]
         [TestCase("consider")]
-        [TestCase("sitClient")]
         public void UnimplementedClientHooksReturnUnsupportedWithoutEnqueueing(string hook)
         {
             var state = new WorldState(new SceneObjectRegistry());

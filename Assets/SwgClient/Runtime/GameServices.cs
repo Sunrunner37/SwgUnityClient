@@ -93,6 +93,7 @@ namespace Swg.Client.Runtime
                     return new ClientInventory(context.Resolve<WorldState>(), swgId => commands.Enqueue("openContainer", "", swgId));
                 }).SingleInstance();
                 builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<ClientFlyText>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<CommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();

@@ -34,7 +34,6 @@ namespace Swg.Client.Runtime.UI.Commands
         readonly List<UnityAction<bool>> listeners = new List<UnityAction<bool>>();
         CommandCatalog catalog;
         CommandVisuals visuals;
-        ICommandDispatcher dispatcher;
         public bool Ready { get; private set; }
         internal IEnumerable<CommandCatalog.Command> BrowserCommands => catalog.Commands.Where(command => command.BrowserVisible);
 
@@ -42,7 +41,6 @@ namespace Swg.Client.Runtime.UI.Commands
         {
             catalog = GameServices.Resolve<CommandCatalog>();
             visuals = GameServices.Resolve<CommandVisuals>();
-            dispatcher = GameServices.Resolve<ICommandDispatcher>();
         }
 
         void OnEnable()
@@ -99,7 +97,6 @@ namespace Swg.Client.Runtime.UI.Commands
                 if (visuals.GetCategory(command) != category)
                     continue;
                 var row = Instantiate(rowPrefab, content);
-                row.Initialize(catalog, visuals, dispatcher);
                 row.drag = drag;
                 row.Bind(command);
                 rows.Add(row);

@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Runtime.Networking;
@@ -182,6 +183,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (this.state.Templates.IsTargetable(sceneObject.TemplatePath))
                 instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
+            if (sceneObject is CreatureSceneObject creature && instance.TryGetComponent<CharacterAnimation>(out var animation))
+                instance.AddComponent<SceneObjectAnimation>().Initialize(creature, animation);
             if (sceneObject.SwgId == this.state.PlayerSwgId)
             {
                 var movement = instance.AddComponent<PlayerMovement>();

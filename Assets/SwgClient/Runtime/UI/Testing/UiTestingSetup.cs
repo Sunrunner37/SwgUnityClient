@@ -68,6 +68,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.Register(context => new ClientInventory(context.Resolve<WorldState>(), swgId => Debug.Log("Offline inventory opened: " + swgId))).SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
+                builder.RegisterType<ClientFlyText>().SingleInstance();
                 builder.RegisterType<OfflineCommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
             });
             var state = scope.Resolve<WorldState>();

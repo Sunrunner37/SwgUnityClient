@@ -13,11 +13,11 @@ namespace Swg.Client.Runtime.UI.Commands
         CommandVisuals visuals;
         ICommandDispatcher dispatcher;
 
-        public void Initialize(CommandCatalog catalog, CommandVisuals visuals, ICommandDispatcher dispatcher)
+        void Awake()
         {
-            this.catalog = catalog;
-            this.visuals = visuals;
-            this.dispatcher = dispatcher;
+            catalog = GameServices.Resolve<CommandCatalog>();
+            visuals = GameServices.Resolve<CommandVisuals>();
+            dispatcher = GameServices.Resolve<ICommandDispatcher>();
         }
 
         public CommandDrag drag;

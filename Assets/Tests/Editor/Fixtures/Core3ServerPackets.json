@@ -2509,7 +2509,7 @@
       "group": "Scene",
       "packet": "ClientOpenContainerPacket",
       "handler": "ClientOpenContainerPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ClientOpenContainerMessage",
@@ -2762,7 +2762,7 @@
       "group": "Scene",
       "packet": "AttributeListPacket",
       "handler": "AttributeListPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "AttributeListMessage",
@@ -3366,7 +3366,7 @@
       "group": "Movement",
       "packet": "PosturePacket",
       "handler": "PostureControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "PostureMessage",
@@ -3476,7 +3476,7 @@
       "group": "Ui",
       "packet": "ObjectMenuResponsePacket",
       "handler": "ObjectMenuResponseControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ObjectMenuResponse",
@@ -3542,7 +3542,7 @@
       "group": "Effects",
       "packet": "ShowFlyTextPacket",
       "handler": "ShowFlyTextControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "ShowFlyText",
