@@ -4,6 +4,8 @@
   "references": [
     "Swg.Client",
     "UnityEngine.UI",
+    "Unity.RenderPipelines.Universal.Runtime",
+    "Unity.RenderPipelines.Core.Runtime",
     "Unity.TextMeshPro",
     "Unity.InputSystem",
     "UnityEngine.TestRunner",

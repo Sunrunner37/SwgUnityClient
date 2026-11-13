@@ -20,6 +20,9 @@ using Swg.Client.Core.Assets.Formats.Trn;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEditor;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -134,6 +137,85 @@ namespace Swg.Client.Tests.Editor
             finally
             {
                 UnityEngine.Object.DestroyImmediate(settings);
+            }
+        }
+
+        [TestCase(4, 20)]
+        [TestCase(4, 200)]
+        [TestCase(1, 200)]
+        public void FoliageCoverageHasNoPixelNoiseOutsideItsFadeBand(int samples, float distance)
+        {
+            var cameraObject = new GameObject("Foliage coverage test camera");
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 2;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
+            camera.cullingMask = 1 << 30;
+            camera.allowMSAA = true;
+            camera.allowHDR = false;
+            camera.transform.position = new Vector3(0, 0, 190);
+            camera.GetUniversalAdditionalCameraData().renderPostProcessing = false;
+            var target = new RenderTexture(64, 64, 24) { antiAliasing = samples };
+            camera.targetTexture = target;
+            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            quad.layer = 30;
+            quad.transform.position = new Vector3(0, 0, 200);
+            quad.transform.localScale = Vector3.one * 4;
+            var texture = new Texture2D(4, 4, TextureFormat.RGBA32, false);
+            texture.SetPixels(Enumerable.Repeat(new Color(1, 1, 1, .5f), 16).ToArray());
+            texture.Apply();
+            var material = new Material(AssetDatabase.LoadAssetAtPath<Shader>("Assets/SwgClient/Runtime/Assets/Shaders/SwgWorld.shader"));
+            material.SetTexture("_BaseMap", texture);
+            material.SetFloat("_Cutoff", .35f);
+            material.SetFloat("_FloraMaximumDistance", 500);
+            material.SetFloat("_FloraFadeDistance", 24);
+            material.SetFloat("_FloraWidthStart", 20);
+            material.SetFloat("_FloraWidthEnd", 40);
+            quad.GetComponent<Renderer>().sharedMaterial = material;
+            var pixels = new Texture2D(64, 64, TextureFormat.RGBA32, false);
+            var previousTarget = RenderTexture.active;
+            var previousCamera = Shader.GetGlobalVector("_SwgFloraCamera");
+            var ambientMode = RenderSettings.ambientMode;
+            var ambientLight = RenderSettings.ambientLight;
+            var pipeline = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
+            int msaa = pipeline.msaaSampleCount;
+            try
+            {
+                pipeline.msaaSampleCount = 4;
+                RenderSettings.ambientMode = AmbientMode.Flat;
+                RenderSettings.ambientLight = Color.white;
+                Shader.SetGlobalVector("_SwgFloraCamera", new Vector4(0, 0, 200 - distance, 0));
+                float[] Render()
+                {
+                    camera.Render();
+                    RenderTexture.active = target;
+                    pixels.ReadPixels(new Rect(0, 0, 64, 64), 0, 0);
+                    pixels.Apply();
+                    var colors = pixels.GetPixels();
+                    return Enumerable.Range(16, 32).SelectMany(y => Enumerable.Range(16, 32).Select(x => colors[y * 64 + x].r)).ToArray();
+                }
+                var coverage = Render();
+                Assert.That(coverage.Min(), Is.GreaterThan(.05f), "Uniform alpha should not punch random holes in foliage");
+                Assert.That(coverage.Max() - coverage.Min(), Is.LessThan(.01f));
+                material.SetFloat("_FloraMaximumDistance", 1);
+                Assert.That(Render().Max(), Is.LessThan(.01f), "Flora must still disappear beyond its range");
+                Assert.That(ShaderUtil.ShaderHasError(material.shader), Is.False);
+            }
+            finally
+            {
+                pipeline.msaaSampleCount = msaa;
+                RenderSettings.ambientMode = ambientMode;
+                RenderSettings.ambientLight = ambientLight;
+                Shader.SetGlobalVector("_SwgFloraCamera", previousCamera);
+                RenderTexture.active = previousTarget;
+                camera.targetTexture = null;
+                UnityEngine.Object.DestroyImmediate(cameraObject);
+                UnityEngine.Object.DestroyImmediate(quad);
+                UnityEngine.Object.DestroyImmediate(material);
+                UnityEngine.Object.DestroyImmediate(texture);
+                UnityEngine.Object.DestroyImmediate(pixels);
+                UnityEngine.Object.DestroyImmediate(target);
             }
         }
 

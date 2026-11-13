@@ -72,7 +72,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 {
                     var joint = rig.Skeleton.Joints[i];
                     var idle = rig.Skeleton.Idle.Sample(joint.Name, idleTime);
-                    var run = rig.Skeleton.Run.Sample(joint.Name, runTime);
+                    var run = ReferenceEquals(rig.Skeleton.Run, rig.Skeleton.Idle) ? idle : rig.Skeleton.Run.Sample(joint.Name, runTime);
                     var sample = new JointSample
                     {
                         Rotation = Quaternion.Slerp(idle.Rotation, run.Rotation, RunBlend),

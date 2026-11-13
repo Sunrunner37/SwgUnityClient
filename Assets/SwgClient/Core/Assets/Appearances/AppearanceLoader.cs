@@ -9,6 +9,7 @@ using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Particles;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
+using Swg.Client.Core.Characters.Models;
 using UnityEngine;
 
 namespace Swg.Client.Core.Assets.Appearances
@@ -40,7 +41,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 var root = roots.SingleOrDefault(n => n.Tag == "FORM") ?? throw new InvalidDataException("Expected appearance form: " + path);
                 if (path.StartsWith("object/", StringComparison.Ordinal))
                 {
-                    var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt" });
+                    var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt", ".sat" });
                     if (appearances.Count > 0)
                     {
                         LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel);
@@ -77,6 +78,22 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
                 else if (root.Kind == "MESH")
                     MeshAppearanceReader.Load(loader, path, root, transform, result);
+                else if (root.Kind == "SMAT")
+                {
+                    var skeletal = CharacterModel.LoadDetailed(loader, path);
+                    foreach (var part in skeletal.Parts)
+                    {
+                        if (transform != Matrix4x4.identity)
+                        {
+                            // Compound appearances flatten their child transform into the neutral mesh.
+                            part.Vertices = part.Vertices.Select(transform.MultiplyPoint3x4).ToArray();
+                            var normalTransform = transform.inverse.transpose;
+                            part.Normals = part.Normals.Select(normal => normalTransform.MultiplyVector(normal).normalized).ToArray();
+                            part.Skinning = null;
+                        }
+                        result.Parts.Add(part);
+                    }
+                }
                 else if (root.Kind == "PEFT")
                     result.Particles.Add(new ParticleAppearance(loader, path, transform, root, child =>
                     {

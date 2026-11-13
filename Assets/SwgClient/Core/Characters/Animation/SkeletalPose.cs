@@ -98,7 +98,7 @@ namespace Swg.Client.Core.Characters.Animation
 
             if (at != data.Length)
                 throw new InvalidDataException("MGN skin weight count mismatch");
-            return new SkeletalPose(weights, skin, NeutralIdleAnimation, skeleton, jointMap);
+            return new SkeletalPose(weights, skin, skeleton.IdleAnimationPath, skeleton, jointMap);
         }
 
         public SkeletalMeshData CreateSkin(Vector3[] vertices, Vector3[] normals, int[] sourceIndices)

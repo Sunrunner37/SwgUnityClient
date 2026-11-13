@@ -26,6 +26,7 @@ Shader "SWG/World"
     {
         Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" }
         HLSLINCLUDE
+            #define _ALPHATEST_ON 1
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "SwgShadows.hlsl"
@@ -90,29 +91,40 @@ Shader "SWG/World"
                 output.fog = ComputeFogFactor(output.positionCS.z);
                 return output;
             }
-            void ClipFloraSurface(float alpha, float3 worldPosition, float2 pixel, float2 seed, bool shadow)
+            half SurfaceCoverage(half alpha, float3 worldPosition)
+            {
+                if (_Cutoff <= 0)
+                    return 1;
+                if (_FloraMaximumDistance > 0 && IsAlphaToMaskAvailable())
+                {
+                    // Resolve mip coverage through MSAA samples instead of random whole-pixel holes.
+                    float filtered = smoothstep(_FloraWidthStart, _FloraWidthEnd, distance(_SwgFloraCamera.xyz, worldPosition));
+                    half coverage = lerp(SharpenAlphaStrict(alpha, _Cutoff), alpha, filtered);
+                    clip(coverage - .0001);
+                    return coverage;
+                }
+                half coverage = AlphaClip(alpha, _Cutoff);
+                return IsAlphaToMaskAvailable() ? coverage : 1;
+            }
+            void ClipFloraFade(float3 worldPosition, float2 pixel, float2 seed, bool shadow)
             {
                 if (_FloraMaximumDistance <= 0)
-                {
-                    clip(alpha - _Cutoff);
                     return;
-                }
                 float distanceToCamera = distance(_SwgFloraCamera.xyz, worldPosition);
                 float fade = saturate((_FloraMaximumDistance - distanceToCamera) / max(.001, _FloraFadeDistance));
                 if (_FloraMinimumDistance > 0)
                     fade *= saturate((distanceToCamera - _FloraMinimumDistance) / max(.001, _FloraFadeDistance));
                 if (shadow && _FloraShadowDistance > 0)
                     fade *= saturate((_FloraShadowDistance - distanceToCamera) / max(.001, _FloraFadeDistance));
-                // Mip alpha represents coverage. Preserve it at long range instead of losing thin leaves
-                // to a fixed cutoff; keep native cutouts close up. Instance seeds decorrelate overlapping cards.
-                float filtered = smoothstep(_FloraWidthStart, _FloraWidthEnd, distanceToCamera);
-                float coverage = _Cutoff > 0 ? lerp(step(_Cutoff, alpha), alpha, filtered) : 1;
-                clip(coverage * fade - max(.0001, InterleavedGradientNoise(pixel + seed, 0)));
+                // Only the actual distance-transition bands use screen-door fading.
+                if (fade < 1)
+                    clip(fade - max(.0001, InterleavedGradientNoise(pixel + seed, 0)));
             }
         ENDHLSL
         Pass
         {
             Tags { "LightMode"="UniversalForward" }
+            AlphaToMask On
             Cull Off
             HLSLPROGRAM
             #pragma vertex Vert
@@ -130,12 +142,13 @@ Shader "SWG/World"
                     half4 layer2 = SAMPLE_TEXTURE2D(_TerrainMap2, sampler_TerrainMap2, input.terrainUv * _TerrainMap2_ST.xy + _TerrainMap2_ST.zw);
                     surface = surface * input.blend.x + layer1 * input.blend.y + layer2 * input.blend.z;
                 }
-                ClipFloraSurface(surface.a, input.worldPosition, input.positionCS.xy, input.floraSeed, false);
+                half coverage = SurfaceCoverage(surface.a, input.worldPosition);
+                ClipFloraFade(input.worldPosition, input.positionCS.xy, input.floraSeed, false);
                 Light sun = SwgMainLight(input.worldPosition);
                 half3 normal = normalize(input.normalWS);
                 half3 lighting = max(SampleSH(normal), half3(0,0,0)) + sun.color * saturate(dot(normal, sun.direction)) * sun.shadowAttenuation * .75;
                 half3 color = surface.rgb * _Tint.rgb * input.floraTint * lerp(half3(1,1,1), input.color.rgb, _UseVertexColor) * lighting;
-                return half4(MixFog(color, input.fog), 1);
+                return half4(MixFog(color, input.fog), coverage);
             }
             ENDHLSL
         }
@@ -165,7 +178,8 @@ Shader "SWG/World"
             }
             half4 ShadowFrag(ShadowVaryings input) : SV_Target
             {
-                ClipFloraSurface(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a, input.worldPosition, input.positionCS.xy, input.floraSeed, true);
+                clip(SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).a - _Cutoff);
+                ClipFloraFade(input.worldPosition, input.positionCS.xy, input.floraSeed, true);
                 return 0;
             }
             ENDHLSL

@@ -52,7 +52,7 @@ namespace Swg.Client.Core.Characters.Materials
         }
 
         // TRTS assigns texture-renderer output to specific shader slots in the skeletal mesh.
-        // Until layered baking is supported, preserve the base MAIN palette color on that slot.
+        // Fallback for recipes not handled by CharacterTextureRenderer: preserve the base MAIN palette color.
         internal static byte[] TextureRendererBaseTint(TreAssetLoader loader, IffNode meshVersion, int shaderIndex, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner)
         {
             var bindings = IffNode.Form(meshVersion.Children, "TRTS");
@@ -104,14 +104,17 @@ namespace Swg.Client.Core.Characters.Materials
             return null;
         }
 
-        static byte[] PaletteColor(TreAssetLoader loader, string path, int index)
+        internal static byte[] PaletteColor(TreAssetLoader loader, string path, int index)
         {
             var bytes = loader.Read(path);
             if (bytes.Length < 24 || Encoding.ASCII.GetString(bytes, 0, 4) != "RIFF" || Encoding.ASCII.GetString(bytes, 8, 4) != "PAL " || Encoding.ASCII.GetString(bytes, 12, 4) != "data")
                 throw new InvalidDataException("Unsupported character palette");
             int count = bytes[22] | bytes[23] << 8;
-            if (count == 0 || bytes.Length < 24 + count * 4 || index < 0 || index >= count)
-                throw new InvalidDataException("Character palette index out of bounds");
+            if (count == 0 || bytes.Length < 24 + count * 4)
+                throw new InvalidDataException("Invalid character palette: " + path);
+            // Native palettes use their final entry for customization values outside the available range.
+            if (index < 0 || index >= count)
+                index = count - 1;
             int p = 24 + index * 4;
             return new[]
             {

@@ -38,6 +38,7 @@ namespace Swg.Client.Core.Characters.Animation
         public Matrix4x4[] BindPoses { get; private set; }
         public SkeletalAnimation Idle { get; private set; }
         public SkeletalAnimation Run { get; private set; }
+        public string IdleAnimationPath { get; private set; }
         public string RunAnimationPath { get; private set; }
         internal RigidTransform[] BindGlobals { get; private set; }
 
@@ -105,13 +106,15 @@ namespace Swg.Client.Core.Characters.Animation
                     }
                 }
 
-                string runPath = RunPath(loader, animationAppearance ?? satPath);
+                string idlePath = IdlePath(loader, animationAppearance ?? satPath);
+                string runPath = RunPath(loader, animationAppearance ?? satPath, idlePath);
                 var result = new SkeletonData
                 {
                     Joints = joints.ToArray(),
                     BindGlobals = bind.ToArray(),
                     BindPoses = bind.Select(b => Matrix4x4.TRS(b.Translation, b.Rotation, Vector3.one).inverse).ToArray(),
-                    Idle = Animation(SkeletalPose.NeutralIdleAnimation),
+                    Idle = Animation(idlePath),
+                    IdleAnimationPath = idlePath,
                     Run = Animation(runPath),
                     RunAnimationPath = runPath
                 };
@@ -120,7 +123,27 @@ namespace Swg.Client.Core.Characters.Animation
             }
         }
 
-        static string RunPath(TreAssetLoader loader, string satPath)
+        static string IdlePath(TreAssetLoader loader, string satPath)
+        {
+            // Non-humanoid appearances define their neutral state in the logical animation table.
+            foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
+            {
+                var root = IffNode.Parse(loader.Read(table)).Single(n => n.Kind == "LATT");
+                var version = root.Children.First(n => n.Tag == "FORM");
+                foreach (string state in new[] { "loop_ground", "loop_stand" })
+                {
+                    var animation = version.Children.FirstOrDefault(n => n.Kind == "ANIM" && new ByteReader(n.Chunk("INFO")).CString() == state);
+                    if (animation == null)
+                        continue;
+                    string path = IffNode.References(animation.Data, "appearance/animation/", ".ans").FirstOrDefault();
+                    if (path != null)
+                        return path;
+                }
+            }
+            return SkeletalPose.NeutralIdleAnimation;
+        }
+
+        static string RunPath(TreAssetLoader loader, string satPath, string idlePath)
         {
             // Use the native standing locomotion mapping; the filename's gender is not a reliable selector.
             foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
@@ -135,7 +158,7 @@ namespace Swg.Client.Core.Characters.Animation
                     return run;
             }
 
-            return "appearance/animation/all_b_loc_run.ans";
+            return idlePath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : idlePath;
         }
 
         static Quaternion Rotation(byte[] bytes, int at) => new Quaternion(BitConverter.ToSingle(bytes, at + 4), BitConverter.ToSingle(bytes, at + 8), BitConverter.ToSingle(bytes, at + 12), BitConverter.ToSingle(bytes, at));
