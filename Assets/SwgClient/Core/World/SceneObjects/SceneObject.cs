@@ -22,14 +22,15 @@ namespace Swg.Client.Core.World.SceneObjects
         internal void AttachChild(SceneObject child) => children.Add(child);
         internal void DetachChild(SceneObject child) => children.Remove(child);
         internal void ClearChildren() => children.Clear();
-        internal virtual void Apply(GameObjectUpdate update)
+        internal void Apply(SceneObjectUpdate update)
         {
-            if (update.TemplateCrc.HasValue)
-                TemplateCrc = update.TemplateCrc.Value;
-            if (update.Arrangement.HasValue)
-                Arrangement = update.Arrangement.Value;
             if (update.Name != null)
                 Name = update.Name;
+        }
+        internal void Apply(ContainmentUpdate update)
+        {
+            if (update.Arrangement.HasValue)
+                Arrangement = update.Arrangement.Value;
         }
 
         internal virtual void CopyTo(SceneObject target)

@@ -72,7 +72,7 @@ namespace Swg.Client.Tests.Editor
         public void ReplicatedCombatStatePreservesOtherFlagsAndNotifiesWithoutAppearanceWork()
         {
             const ulong mask = 0x100000002;
-            var update = new GameObjectUpdate();
+            var update = new CreatureSceneObjectUpdate();
             Assert.That(CreatureView3.ReadDeltaField(16, new ByteReader(BitConverter.GetBytes(mask)), update), Is.True);
             var creature = new CreatureSceneObject();
             creature.Apply(update);

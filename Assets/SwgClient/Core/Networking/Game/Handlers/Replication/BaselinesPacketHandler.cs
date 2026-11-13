@@ -13,14 +13,14 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
     internal sealed class BaselinesPacketHandler : GamePacketHandler<BaselinesPacket>
     {
         readonly GameReplication replication;
-        readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<ByteReader, GameObjectUpdate>> baselines;
+        readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<ByteReader, SceneObjectUpdate>> baselines;
         public override uint Opcode => BaselinesPacket.Opcode;
 
         [Preserve]
         public BaselinesPacketHandler(GameReplication replication) : base(BaselinesPacket.ReadFrom)
         {
             this.replication = replication;
-            baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, GameObjectUpdate>>
+            baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, SceneObjectUpdate>>
             {
                 [(ReplicatedObjectType.Creature, 1)] = CreatureView1.ReadBaseline,
                 [(ReplicatedObjectType.ResourceContainer, 3)] = ResourceContainerView.ReadBaseline3,
@@ -39,7 +39,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 var waypointReader = new ByteReader(packet.Payload);
                 waypointReader.U16();
                 var waypoints = PlayerView8.ReadBaseline(waypointReader);
-                replication.Commit(packet.SwgId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
                 replication.UpdateWaypoints(waypoints);
                 return;
             }
@@ -49,7 +49,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 var abilitiesReader = new ByteReader(packet.Payload);
                 abilitiesReader.U16();
                 var commands = PlayerView9.ReadBaseline(abilitiesReader);
-                replication.Commit(packet.SwgId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
                 replication.UpdateCommands(commands);
                 return;
             }
@@ -58,7 +58,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             {
                 Debug.LogWarning("Unsupported baseline type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);
                 // Preserve identity even when this object's view is not implemented yet.
-                replication.Commit(packet.SwgId, new GameObjectUpdate { BaselineType = packet.ObjectType });
+                replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
                 return;
             }
 
@@ -66,8 +66,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             reader.U16(); // Baseline operand count.
             var update = read(reader);
             ReplicationReader.RequireEnd(reader);
-            update.BaselineType = packet.ObjectType;
-            replication.Commit(packet.SwgId, update);
+            replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType), update);
         }
     }
 }

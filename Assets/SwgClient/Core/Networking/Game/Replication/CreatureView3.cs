@@ -4,9 +4,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
 {
     internal static class CreatureView3
     {
-        public static GameObjectUpdate ReadBaseline(ByteReader reader)
+        public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
-            var update = new GameObjectUpdate();
+            var update = new CreatureSceneObjectUpdate();
             TangibleView3.ReadBaseline(reader, update);
             update.Posture = reader.Byte();
             reader.Byte(); // Faction rank.
@@ -18,7 +18,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return update;
         }
 
-        public static bool ReadDeltaField(ushort field, ByteReader reader, GameObjectUpdate update)
+        public static bool ReadDeltaField(ushort field, ByteReader reader, CreatureSceneObjectUpdate update)
         {
             if (TangibleView3.ReadDeltaField(field, reader, update))
                 return true;

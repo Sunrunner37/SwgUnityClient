@@ -4,14 +4,14 @@ namespace Swg.Client.Core.Networking.Game.Replication
 {
     internal static class TangibleView3
     {
-        public static GameObjectUpdate ReadBaseline(ByteReader reader)
+        public static TangibleSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
-            var update = new GameObjectUpdate();
+            var update = new TangibleSceneObjectUpdate();
             ReadBaseline(reader, update);
             return update;
         }
 
-        public static void ReadBaseline(ByteReader reader, GameObjectUpdate update)
+        public static void ReadBaseline(ByteReader reader, TangibleSceneObjectUpdate update)
         {
             reader.Float(); // Complexity.
             string file = reader.Ascii();
@@ -28,7 +28,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Byte(); // Visibility.
         }
 
-        public static bool ReadDeltaField(ushort field, ByteReader reader, GameObjectUpdate update)
+        public static bool ReadDeltaField(ushort field, ByteReader reader, TangibleSceneObjectUpdate update)
         {
             switch (field)
             {

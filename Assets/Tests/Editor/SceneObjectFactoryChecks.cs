@@ -28,19 +28,20 @@ namespace Swg.Client.Tests.Editor
         }
 
         [Test]
-        public void NetworkFactoryInitializesAllFieldsBeforeTheRegistryPublishesTheObject()
+        public void QueuedPacketsApplyAllFieldsBeforePublishingTheRefinedCreature()
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
             CreatureSceneObject published = null;
             world.SceneObjects.ObjectChanged += (sceneObject, changes) =>
             {
-                if (published == null)
+                if (published == null && sceneObject is CreatureSceneObject)
                 {
                     published = (CreatureSceneObject)sceneObject.Copy();
                     Assert.That(sceneObject.ParentSwgId, Is.EqualTo(new SwgId(20)));
                 }
             };
-            world.Commit(10, new GameObjectUpdate { BaselineType = 0x4352454f, ParentSwgId = 20, TemplateCrc = 123, Position = new Vector3(1, 2, 3), Rotation = Quaternion.Euler(0, 90, 0), Name = "Creature", Height = 1.25f, Arrangement = 4, Customization = new byte[] { 1, 2 }, Equipment = new[] { new WorldEquipment(new byte[] { 3 }, 4, 99, 5) }, AlternateAppearance = "appearance/test.iff", Posture = 7 });
+            world.Commit(10, new ContainmentUpdate(parentSwgId: 20, arrangement: 4));
+            world.Commit(10, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f), templateCrc: 123), objectUpdate: new CreatureSceneObjectUpdate { Name = "Creature", Height = 1.25f, Customization = new byte[] { 1, 2 }, Equipment = new[] { new WorldEquipment(new byte[] { 3 }, 4, 99, 5) }, AlternateAppearance = "appearance/test.iff", Posture = 7 }, initialMovement: new MovementUpdate(position: new Vector3(1, 2, 3), rotation: Quaternion.Euler(0, 90, 0)));
             world.ApplyPending();
             Assert.That(published, Is.Not.Null);
             Assert.That(published.TemplateCrc, Is.EqualTo(123));
@@ -78,7 +79,7 @@ namespace Swg.Client.Tests.Editor
         public void UnknownMetadataKeepsExistingIntangibleAndExistingReferences()
         {
             var current = SceneObjectFactory.Create(10, "object/mission/shared_mission.iff");
-            var updated = ReplicatedSceneObjectFactory.Apply(current, new GameObjectUpdate { TemplateCrc = 123 }, null);
+            var updated = ReplicatedSceneObjectFactory.Refine(current, null, templateCrc: 123);
             Assert.That(updated, Is.SameAs(current));
         }
 
@@ -116,16 +117,16 @@ namespace Swg.Client.Tests.Editor
         public void NonspatialBaselineReplacesAnUnknownSpatialPlaceholder()
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            world.Commit(1, new GameObjectUpdate { Position = Vector3.one });
+            world.Commit(1, new MovementUpdate(position: Vector3.one));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject1), Is.True);
             Assert.That(foundObject1, Is.TypeOf<SpatialSceneObject>());
-            world.Commit(1, new GameObjectUpdate { BaselineType = 0x4d49534f });
+            world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4d49534f)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject2), Is.True);
             Assert.That(foundObject2, Is.TypeOf<SceneObject>());
             Assert.That(world.SceneObjects.TryGet(1, out var mission), Is.True);
-            world.Commit(1, new GameObjectUpdate { BaselineType = 0x4d49534f });
+            world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4d49534f)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject3), Is.True);
             Assert.That(foundObject3, Is.SameAs(mission));
@@ -135,15 +136,16 @@ namespace Swg.Client.Tests.Editor
         public void LateTypeMetadataPreservesCreateFieldsAndSubsequentReferences()
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            world.Commit(10, new GameObjectUpdate { Position = new Vector3(1, 2, 3), TemplateCrc = 123 });
+            world.Commit(10, new ReplicationLifecycleUpdate(templateCrc: 123), initialMovement: new MovementUpdate(position: new Vector3(1, 2, 3)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(10, out var foundObject4), Is.True);
             Assert.That(foundObject4.GetType(), Is.EqualTo(typeof(SpatialSceneObject)));
-            world.Commit(10, new GameObjectUpdate { BaselineType = 0x4352454f, Name = "Creature" });
+            world.Commit(10, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f)), objectUpdate: new SceneObjectUpdate { Name = "Creature" });
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<CreatureSceneObject>(10, out var creature), Is.True);
             Assert.That(creature.Position, Is.EqualTo(new Vector3(1, 2, 3)));
-            world.Commit(10, new GameObjectUpdate { BaselineType = 0x54414e4f, ParentSwgId = 20 });
+            world.Commit(10, new ContainmentUpdate(parentSwgId: 20));
+            world.Commit(10, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x54414e4f)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(10, out var foundObject5), Is.True);
             Assert.That(foundObject5, Is.SameAs(creature), "A generic tangible view must not downgrade a creature");

@@ -12,6 +12,6 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
         public override uint ControllerType => PosturePacket.ControllerType;
         [Preserve]
         public PostureControllerHandler(GameReplication replication) : base(PosturePacket.ReadFrom) => this.replication = replication;
-        protected override void Handle(PosturePacket packet) => replication.Commit(packet.ReceiverSwgId, new GameObjectUpdate { Posture = packet.Posture });
+        protected override void Handle(PosturePacket packet) => replication.Commit(packet.ReceiverSwgId, new CreatureSceneObjectUpdate { Posture = packet.Posture });
     }
 }

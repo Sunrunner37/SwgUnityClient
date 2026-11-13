@@ -22,9 +22,11 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         // Matches Core3 PlayerManager's allowed speed: getRunSpeed() * getSpeedMultiplierMod().
         public float MovementSpeed => Math.Max(0, RunSpeed * SpeedMultiplier);
 
-        internal override void Apply(GameObjectUpdate update)
+        internal void Apply(CreatureSceneObjectUpdate update)
         {
             base.Apply(update);
+            if (update.Height.HasValue)
+                Scale = update.Height.Value;
             if (update.CashCredits.HasValue)
                 CashCredits = update.CashCredits.Value;
             if (update.BankCredits.HasValue)

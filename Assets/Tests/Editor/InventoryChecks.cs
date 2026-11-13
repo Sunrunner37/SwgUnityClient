@@ -52,10 +52,12 @@ namespace Swg.Client.Tests.Editor
             item.Apply(update);
             Assert.That(item.Quantity, Is.EqualTo(41000));
             bytes = Bytes(writer => { writer.Write(11410u); writer.Write(125u); writer.Write(0u); writer.Write(0u); writer.Write(0u); writer.Write(0u); });
-            reader = new ByteReader(bytes);update = CreatureView1.ReadBaseline(reader);ReplicationReader.RequireEnd(reader);
-            var player = new CreatureSceneObject();player.Apply(update);
+            reader = new ByteReader(bytes);
+            var currency = CreatureView1.ReadBaseline(reader);
+            ReplicationReader.RequireEnd(reader);
+            var player = new CreatureSceneObject();player.Apply(currency);
             Assert.That(player.BankCredits, Is.EqualTo(11410));Assert.That(player.CashCredits, Is.EqualTo(125));
-            CreatureView1.ReadDeltaField(1, new ByteReader(BitConverter.GetBytes(250u)), update);player.Apply(update);
+            CreatureView1.ReadDeltaField(1, new ByteReader(BitConverter.GetBytes(250u)), currency);player.Apply(currency);
             Assert.That(player.CashCredits, Is.EqualTo(250));
         }
         [Test]

@@ -127,12 +127,7 @@ namespace Swg.Client.Tests.Editor
         public void ReplicationMapsAllNineAttributesWithoutExposingWireVectors()
         {
             var creature = new CreatureSceneObject();
-            creature.Apply(new GameObjectUpdate
-            {
-                Ham = new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18 },
-                MaxHam = new[] { 100, 101, 102, 103, 104, 105, 106, 107, 108 },
-                Wounds = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }
-            });
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18 }, MaxHam = new[] { 100, 101, 102, 103, 104, 105, 106, 107, 108 }, Wounds = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 } });
             var ham = creature.Ham;
             var named = new[] { ham.Health, ham.Strength, ham.Constitution, ham.Action, ham.Quickness, ham.Stamina, ham.Mind, ham.Focus, ham.Willpower };
             for (int i = 0; i < named.Length; i++)
@@ -141,7 +136,7 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(named[i].Maximum, Is.EqualTo(100 + i));
                 Assert.That(named[i].Wounds, Is.EqualTo(i));
             }
-            creature.Apply(new GameObjectUpdate { Ham = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } });
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } });
             Assert.That(creature.Ham.Constitution.Current, Is.EqualTo(22));
             Assert.That(creature.Ham.Constitution.Maximum, Is.EqualTo(102));
             Assert.That(creature.Ham.Constitution.Wounds, Is.EqualTo(2));
@@ -234,7 +229,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(creature.Ham.Action.Current, Is.EqualTo(503));
             Assert.That(creature.Ham.Mind.Maximum, Is.EqualTo(1006));
             Assert.That(creature.TargetSwgId.Value, Is.EqualTo(42));
-            var copy = update.CopyForQueue();
+            var copy = (CreatureSceneObjectUpdate)update.CopyForQueue();
             update.Ham[0] = 0;
             Assert.That(copy.Ham[0], Is.EqualTo(500));
         }
@@ -251,7 +246,7 @@ namespace Swg.Client.Tests.Editor
             using var writer = new BinaryWriter(bytes);
             writer.Write(1u); writer.Write(2u);
             writer.Write((byte)2); writer.Write((ushort)attributeIndex); writer.Write(123);
-            var update = new GameObjectUpdate();
+            var update = new CreatureSceneObjectUpdate();
             var reader = new ByteReader(bytes.ToArray());
             bool handled = field == 17 ? CreatureView3.ReadDeltaField((ushort)field, reader, update) : CreatureView6.ReadDeltaField((ushort)field, reader, update);
             Assert.That(handled, Is.True);

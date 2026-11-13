@@ -15,22 +15,22 @@ namespace Swg.Client.Core.Networking.Game.Replication
             TemplatePath = start.TemplatePath,
             Position = start.Position
         };
-        public static SceneObject Create(SwgId swgId, GameObjectUpdate update, ObjectTemplateCatalog templates)
+        public static SceneObject Create(SwgId swgId, ObjectTemplateCatalog templates, Type requiredType = null, uint? templateCrc = null)
         {
-            string path = templates?.Resolve(update.TemplateCrc.GetValueOrDefault());
-            var result = SceneObjectFactory.CreateInstance(TypeFor(update, path) ?? typeof(SpatialSceneObject));
+            string path = templates?.Resolve(templateCrc.GetValueOrDefault());
+            var result = SceneObjectFactory.CreateInstance(ChooseType(path, requiredType) ?? typeof(SpatialSceneObject));
             result.SwgId = swgId;
-            result.ParentSwgId = update.ParentSwgId.GetValueOrDefault();
+            result.TemplateCrc = templateCrc.GetValueOrDefault();
             result.TemplatePath = path;
-            result.Apply(update);
             return result;
         }
 
-        public static SceneObject Apply(SceneObject current, GameObjectUpdate update, ObjectTemplateCatalog templates)
+        public static SceneObject Refine(SceneObject current, ObjectTemplateCatalog templates, Type requiredType = null, uint? templateCrc = null)
         {
-            string path = templates?.Resolve(update.TemplateCrc ?? current.TemplateCrc) ?? current.TemplatePath;
-            var result = Refine(current, path, TypeFor(update, path));
-            result.Apply(update);
+            string path = templates?.Resolve(templateCrc ?? current.TemplateCrc) ?? current.TemplatePath;
+            var result = Refine(current, path, ChooseType(path, requiredType));
+            if (templateCrc.HasValue)
+                result.TemplateCrc = templateCrc.Value;
             return result;
         }
 
@@ -55,34 +55,26 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return result;
         }
 
-        static Type TypeFor(GameObjectUpdate update, string path)
+        static Type ChooseType(string path, Type requiredType)
         {
-            var packetType = TypeForPacket(update);
             var templateType = SceneObjectFactory.TypeForTemplate(path);
-            if (templateType == typeof(TangibleSceneObject) && packetType == typeof(CreatureSceneObject))
-                return packetType;
-            return templateType ?? packetType;
+            if (templateType == typeof(TangibleSceneObject) && requiredType == typeof(CreatureSceneObject))
+                return requiredType;
+            return templateType ?? requiredType;
         }
 
-        static Type TypeForPacket(GameObjectUpdate update)
+        internal static Type TypeFor(ReplicatedObjectType objectType) => objectType switch
         {
-            if (update.BaselineType.HasValue)
-                return ((ReplicatedObjectType)update.BaselineType.Value) switch
-                {
-                    ReplicatedObjectType.Tangible => typeof(TangibleSceneObject),
-                    ReplicatedObjectType.Creature => typeof(CreatureSceneObject),
-                    ReplicatedObjectType.Building => typeof(TangibleSceneObject),
-                    ReplicatedObjectType.Cell => typeof(SpatialSceneObject),
-                    ReplicatedObjectType.Player => typeof(SceneObject),
-                    ReplicatedObjectType.Guild => typeof(SceneObject),
-                    ReplicatedObjectType.ResourceContainer => typeof(TangibleSceneObject),
-                    ReplicatedObjectType.Intangible => typeof(SceneObject),
-                    ReplicatedObjectType.Mission => typeof(SceneObject),
-                    _ => null
-                };
-            if (update.Equipment != null || update.EquipmentDelta != null || update.Posture.HasValue || update.Height.HasValue)
-                return typeof(CreatureSceneObject);
-            return update.Customization != null ? typeof(TangibleSceneObject) : null;
-        }
+            ReplicatedObjectType.Tangible => typeof(TangibleSceneObject),
+            ReplicatedObjectType.Creature => typeof(CreatureSceneObject),
+            ReplicatedObjectType.Building => typeof(TangibleSceneObject),
+            ReplicatedObjectType.Cell => typeof(SpatialSceneObject),
+            ReplicatedObjectType.Player => typeof(SceneObject),
+            ReplicatedObjectType.Guild => typeof(SceneObject),
+            ReplicatedObjectType.ResourceContainer => typeof(TangibleSceneObject),
+            ReplicatedObjectType.Intangible => typeof(SceneObject),
+            ReplicatedObjectType.Mission => typeof(SceneObject),
+            _ => null
+        };
     }
 }

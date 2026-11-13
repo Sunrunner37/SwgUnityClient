@@ -10,7 +10,7 @@ namespace Swg.Client.Core.World.SceneObjects
         public int Quantity = 1;
         public byte[] Customization = Array.Empty<byte>();
         public string AlternateAppearance = "";
-        internal override void Apply(GameObjectUpdate update)
+        internal void Apply(TangibleSceneObjectUpdate update)
         {
             base.Apply(update);
             if (update.ResourceType != null)

@@ -23,7 +23,7 @@ namespace Swg.Client.Tests.Editor
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
             using var services = GameServicesForTests.Create(world);
             var router = new GamePacketRouter(services);
-            world.Commit(1, new GameObjectUpdate { Equipment = new[] { new WorldEquipment(new byte[] { 1 }, 4, 10, 100) } });
+            world.Commit(1, new CreatureSceneObjectUpdate { Equipment = new[] { new WorldEquipment(new byte[] { 1 }, 4, 10, 100) } });
             world.ApplyPending();
             world.SceneObjects.TryGet<CreatureSceneObject>(1, out var creature);
             SceneObjectChange changes = SceneObjectChange.None;

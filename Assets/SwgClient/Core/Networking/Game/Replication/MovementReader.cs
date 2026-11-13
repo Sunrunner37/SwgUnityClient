@@ -6,20 +6,14 @@ namespace Swg.Client.Core.Networking.Game.Replication
 {
     internal static class MovementReader
     {
-        public static GameObjectUpdate ReadControllerTransform(ByteReader reader, bool withParent)
+        public static MovementUpdate ReadControllerTransform(ByteReader reader, bool withParent)
         {
             uint movement = reader.U32();
             ulong parent = withParent ? reader.U64() : 0;
             var rotation = new Quaternion(reader.Float(), reader.Float(), reader.Float(), reader.Float());
             var position = new Vector3(reader.Float(), reader.Float(), reader.Float());
             reader.Float();
-            return new GameObjectUpdate
-            {
-                ParentSwgId = parent,
-                Position = position,
-                Rotation = rotation,
-                MovementCounter = movement
-            };
+            return new MovementUpdate(position, rotation, parent, movement);
         }
 
         // Compressed game transforms encode a full turn as 100 heading units.

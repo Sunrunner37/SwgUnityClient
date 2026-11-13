@@ -6,13 +6,13 @@ namespace Swg.Client.Core.Networking.Game.Replication
     // Core3 CreatureObjectMessage4 / CreatureObjectDeltaMessage4: movement parameters sent to the owner.
     internal static class CreatureView4
     {
-        public static GameObjectUpdate ReadBaseline(ByteReader reader)
+        public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
             reader.Skip(8); // Acceleration multipliers.
             ReplicationReader.SkipVector(reader, sizeof(uint)); // Encumbrances.
             SkipSkillMods(reader, false);
             reader.Float(); // Speed multiplier base (Core3 validates run speed against its mod value).
-            var update = new GameObjectUpdate
+            var update = new CreatureSceneObjectUpdate
             {
                 SpeedMultiplier = reader.Float()
             };
@@ -25,7 +25,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return update;
         }
 
-        public static bool ReadDeltaField(ushort field, ByteReader reader, GameObjectUpdate update)
+        public static bool ReadDeltaField(ushort field, ByteReader reader, CreatureSceneObjectUpdate update)
         {
             switch (field)
             {

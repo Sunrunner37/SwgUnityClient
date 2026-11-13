@@ -17,13 +17,13 @@ namespace Swg.Client.Tests.Editor
         public void MovementNotifiesOnlyTheObjectAndItsDescendantsWithoutAppearanceWork()
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            world.Commit(1, new GameObjectUpdate { BaselineType = 0x4352454f });
-            world.Commit(2, new GameObjectUpdate { ParentSwgId = 1 });
-            world.Commit(3, new GameObjectUpdate());
+            world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f)));
+            world.Commit(2, new ContainmentUpdate(parentSwgId: 1));
+            world.Commit(3, new SceneObjectUpdate());
             world.ApplyPending();
             var changes = new Dictionary<SwgId, SceneObjectChange>();
             world.SceneObjects.ObjectChanged += (sceneObject, flags) => changes[sceneObject.SwgId] = flags;
-            world.Commit(1, new GameObjectUpdate { Position = new Vector3(10, 0, 0), MovementCounter = 42 });
+            world.Commit(1, new MovementUpdate(position: new Vector3(10, 0, 0), movementCounter: 42));
             world.ApplyPending();
             Assert.That(changes.Keys, Is.EquivalentTo(new SwgId[] { 1, 2 }));
             Assert.That(changes[(SwgId)1], Is.EqualTo(SceneObjectChange.Transform));

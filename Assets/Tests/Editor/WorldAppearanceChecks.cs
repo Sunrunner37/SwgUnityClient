@@ -38,7 +38,7 @@ namespace Swg.Client.Tests.Editor
         public void LateTemplateCatalogRefinesTheModelOutsideTheRegistryAndPreservesGraphState()
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            world.Commit(1, new GameObjectUpdate { TemplateCrc = ObjectTemplateNames.TemplateCrc(Human), Position = new Vector3(1, 2, 3), Customization = new byte[] { 1, 0, 255, 3 }, Name = "Player" });
+            world.Commit(1, new ReplicationLifecycleUpdate(templateCrc: ObjectTemplateNames.TemplateCrc(Human)), objectUpdate: new TangibleSceneObjectUpdate { Customization = new byte[] { 1, 0, 255, 3 }, Name = "Player" }, initialMovement: new MovementUpdate(position: new Vector3(1, 2, 3)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var previous), Is.True);
             Assert.That(previous, Is.TypeOf<TangibleSceneObject>());
@@ -60,7 +60,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(creature.Children, Does.Contain(child));
             Assert.That(previous.Children, Is.Empty);
             Assert.That(notifications, Is.GreaterThan(0));
-            world.Commit(3, new GameObjectUpdate { TemplateCrc = ObjectTemplateNames.TemplateCrc(Human), Position = Vector3.one });
+            world.Commit(3, new ReplicationLifecycleUpdate(templateCrc: ObjectTemplateNames.TemplateCrc(Human)), initialMovement: new MovementUpdate(position: Vector3.one));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<CreatureSceneObject>(3, out var createdWithCatalog), Is.True);
             Assert.That(createdWithCatalog.Position, Is.EqualTo(Vector3.one));

@@ -15,21 +15,21 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
     internal sealed class DeltasPacketHandler : GamePacketHandler<DeltasPacket>
     {
         readonly GameReplication replication;
-        readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<ushort, ByteReader, GameObjectUpdate, bool>> deltaFields;
+        readonly Dictionary<(ReplicatedObjectType Type, byte View), Func<DeltasPacket, SceneObjectUpdate>> deltaFields;
         public override uint Opcode => DeltasPacket.Opcode;
 
         [Preserve]
         public DeltasPacketHandler(GameReplication replication) : base(DeltasPacket.ReadFrom)
         {
             this.replication = replication;
-            deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<ushort, ByteReader, GameObjectUpdate, bool>>
+            deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<DeltasPacket, SceneObjectUpdate>>
             {
-                [(ReplicatedObjectType.Creature, 1)] = CreatureView1.ReadDeltaField,
-                [(ReplicatedObjectType.ResourceContainer, 3)] = ResourceContainerView.ReadDelta3,
-                [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadDeltaField,
-                [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadDeltaField,
-                [(ReplicatedObjectType.Creature, 4)] = CreatureView4.ReadDeltaField,
-                [(ReplicatedObjectType.Creature, 6)] = CreatureView6.ReadDeltaField
+                [(ReplicatedObjectType.Creature, 1)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView1.ReadDeltaField),
+                [(ReplicatedObjectType.ResourceContainer, 3)] = packet => ReadDelta<TangibleSceneObjectUpdate>(packet, ResourceContainerView.ReadDelta3),
+                [(ReplicatedObjectType.Tangible, 3)] = packet => ReadDelta<TangibleSceneObjectUpdate>(packet, TangibleView3.ReadDeltaField),
+                [(ReplicatedObjectType.Creature, 3)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView3.ReadDeltaField),
+                [(ReplicatedObjectType.Creature, 4)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView4.ReadDeltaField),
+                [(ReplicatedObjectType.Creature, 6)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView6.ReadDeltaField)
             };
         }
 
@@ -48,24 +48,28 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 return;
             }
 
-            if (!deltaFields.TryGetValue(((ReplicatedObjectType)packet.ObjectType, packet.View), out var readField))
+            if (!deltaFields.TryGetValue(((ReplicatedObjectType)packet.ObjectType, packet.View), out var read))
             {
                 Debug.LogWarning("Unsupported delta type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);
                 return;
             }
 
+            replication.Commit(packet.SwgId, read(packet));
+        }
+
+        static SceneObjectUpdate ReadDelta<T>(DeltasPacket packet, Func<ushort, ByteReader, T, bool> readField) where T : SceneObjectUpdate, new()
+        {
             var reader = new ByteReader(packet.Payload);
             int count = reader.U16();
-            var update = new GameObjectUpdate();
+            var update = new T();
             for (int i = 0; i < count; i++)
             {
                 ushort field = reader.U16();
                 if (!readField(field, reader, update))
                     throw new InvalidDataException("Unsupported delta field " + field + " for type 0x" + packet.ObjectType.ToString("X8") + " view " + packet.View);
             }
-
             ReplicationReader.RequireEnd(reader);
-            replication.Commit(packet.SwgId, update);
+            return update;
         }
     }
 }

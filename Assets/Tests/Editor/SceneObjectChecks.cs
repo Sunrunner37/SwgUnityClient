@@ -55,11 +55,11 @@ namespace Swg.Client.Tests.Editor
         public void NetworkingConstructsConcreteApplicationTypes(uint wireType, Type expected)
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            world.Commit(1, new GameObjectUpdate { BaselineType = wireType, Height = 1.25f });
+            world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(wireType)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<SpatialSceneObject>(1, out var sceneObject), Is.True);
             Assert.That(sceneObject.GetType(), Is.EqualTo(expected));
-            Assert.That(sceneObject.Scale, Is.EqualTo(1.25f));
+            Assert.That(sceneObject.Scale, Is.EqualTo(1));
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace Swg.Client.Tests.Editor
         {
             using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
             world.StartScene(new CmdStartScenePacket(1, "terrain/corellia.trn", Vector3.zero, "player.iff", 0));
-            world.Commit(1, new GameObjectUpdate { BaselineType = 0x4352454f, BaselinesComplete = true, Customization = new byte[] { 1, 0, 255, 3 }, Equipment = new[] { new WorldEquipment(new byte[] { 1, 0, 255, 3 }, 4, 2, 5) } });
+            world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f), baselinesComplete: true), objectUpdate: new CreatureSceneObjectUpdate { Customization = new byte[] { 1, 0, 255, 3 }, Equipment = new[] { new WorldEquipment(new byte[] { 1, 0, 255, 3 }, 4, 2, 5) } });
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<CreatureSceneObject>(1, out var live), Is.True);
             world.SceneObjects.Add(new SceneObject { SwgId = 2, ParentSwgId = live.SwgId });
@@ -95,13 +95,13 @@ namespace Swg.Client.Tests.Editor
                 255,
                 3
             };
-            Task.Run(() => world.Commit(1, new GameObjectUpdate { BaselineType = 0x4352454f, Customization = bytes })).GetAwaiter().GetResult();
+            Task.Run(() => world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f)), objectUpdate: new TangibleSceneObjectUpdate { Customization = bytes })).GetAwaiter().GetResult();
             bytes[0] = 99;
             Assert.That(world.SceneObjects.TryGet(1, out _), Is.False);
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<CreatureSceneObject>(1, out var live), Is.True);
             Assert.That(live.Customization[0], Is.EqualTo(1), "Queued changes must own their arrays");
-            Task.Run(() => world.Commit(1, new GameObjectUpdate { Position = new Vector3(3, 4, 5) })).GetAwaiter().GetResult();
+            Task.Run(() => world.Commit(1, new MovementUpdate(position: new Vector3(3, 4, 5)))).GetAwaiter().GetResult();
             Assert.That(live.Position, Is.EqualTo(Vector3.zero));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject1), Is.True);
@@ -150,7 +150,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(world.SceneObjects.Count, Is.EqualTo(1));
             Assert.That(world.SceneObjects, Is.EquivalentTo(new[] { building }));
             Assert.That(world.CaptureSnapshot().Objects, Is.Empty);
-            world.Commit(1, new GameObjectUpdate { Position = new Vector3(1, 2, 3) });
+            world.Commit(1, new MovementUpdate(position: new Vector3(1, 2, 3)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject3), Is.True);
             Assert.That(foundObject3, Is.SameAs(building));

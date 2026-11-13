@@ -16,7 +16,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
         public UpdateContainmentPacketHandler(GameReplication replication) : base(UpdateContainmentPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(UpdateContainmentPacket packet)
         {
-            replication.Commit(packet.SwgId, new GameObjectUpdate { ParentSwgId = packet.ParentSwgId, Arrangement = packet.Arrangement });
+            replication.Commit(packet.SwgId, new ContainmentUpdate(packet.ParentSwgId, packet.Arrangement));
         }
     }
 }

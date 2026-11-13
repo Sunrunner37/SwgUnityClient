@@ -5,7 +5,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
 {
     internal static class CreatureView6
     {
-        public static GameObjectUpdate ReadBaseline(ByteReader reader)
+        public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
             reader.U32();
             ReplicationReader.SkipVector(reader, sizeof(ulong)); // Tangible defenders.
@@ -27,7 +27,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 equipment[i] = ReadEquipment(reader);
             string appearance = reader.Ascii();
             reader.Byte(); // Frozen.
-            return new GameObjectUpdate
+            return new CreatureSceneObjectUpdate
             {
                 TargetSwgId = targetSwgId,
                 Ham = ham,
@@ -38,7 +38,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         }
 
         internal static WorldEquipment ReadEquipment(ByteReader reader) => new WorldEquipment(ReplicationReader.Customization(reader), reader.U32(), reader.U64(), reader.U32());
-        public static bool ReadDeltaField(ushort field, ByteReader reader, GameObjectUpdate update)
+        public static bool ReadDeltaField(ushort field, ByteReader reader, CreatureSceneObjectUpdate update)
         {
             switch (field)
             {

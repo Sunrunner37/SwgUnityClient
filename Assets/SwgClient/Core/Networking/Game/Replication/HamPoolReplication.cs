@@ -13,7 +13,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             Wounds
         }
 
-        public static void Apply(GameObjectUpdate update, ref HamPool ham)
+        public static void Apply(CreatureSceneObjectUpdate update, ref HamPool ham)
         {
             ApplyVector(ref ham, update.Ham, update.HamDelta, ValueKind.Current);
             ApplyVector(ref ham, update.MaxHam, update.MaxHamDelta, ValueKind.Maximum);

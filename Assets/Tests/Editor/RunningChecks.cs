@@ -116,7 +116,7 @@ namespace Swg.Client.Tests.Editor
             {
                 RunSpeed = 7.3f
             };
-            var update = new GameObjectUpdate();
+            var update = new CreatureSceneObjectUpdate();
             Assert.That(CreatureView4.ReadDeltaField(5, new ByteReader(BitConverter.GetBytes(.5f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(7, new ByteReader(BitConverter.GetBytes(8f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(10, new ByteReader(BitConverter.GetBytes(.8f)), update), Is.True);

@@ -111,41 +111,84 @@ namespace Swg.Client.Runtime.Networking
             });
         }
 
-        internal void Commit(SwgId swgId, GameObjectUpdate update)
+        void Enqueue(SwgId swgId, Action apply)
         {
             if (swgId == 0)
                 throw new InvalidDataException("Zero replicated object ID");
-            if (disposed)
-                return;
-            var owned = update.CopyForQueue();
-            pending.Enqueue(() =>
-            {
-                if (!SceneObjects.TryGet(swgId, out var sceneObject))
-                {
-                    sceneObject = ReplicatedSceneObjectFactory.Create(swgId, owned, State.Templates);
-                    SceneObjects.Add(sceneObject);
-                }
-                else
-                {
-                    var updated = ReplicatedSceneObjectFactory.Apply(sceneObject, owned, State.Templates);
-                    if (!ReferenceEquals(sceneObject, updated))
-                    {
-                        SceneObjects.Replace(updated);
-                        sceneObject = updated;
-                    }
-                }
+            if (!disposed)
+                pending.Enqueue(apply);
+        }
 
-                if (owned.ParentSwgId.HasValue)
-                    SceneObjects.Reparent(swgId, owned.ParentSwgId.Value);
-                SceneObjects.NotifyChanged(sceneObject, owned.Changes);
-                revision++;
-                if (!replication.TryGetValue(swgId, out var state))
-                    replication.Add(swgId, state = new ReplicationState());
-                if (owned.BaselinesComplete.HasValue)
-                    state.BaselinesComplete = owned.BaselinesComplete.Value;
-                if (owned.MovementCounter.HasValue)
-                    state.MovementCounter = owned.MovementCounter.Value;
+        internal void Commit(SwgId swgId, SceneObjectUpdate update)
+        {
+            var owned = update.CopyForQueue();
+            Enqueue(swgId, () => ApplyObject(swgId, owned.RequiredType, owned.ApplyTo, owned.Changes));
+        }
+
+        internal void Commit(SwgId swgId, MovementUpdate update)
+        {
+            Enqueue(swgId, () =>
+            {
+                var state = ApplyObject(swgId, typeof(SpatialSceneObject), sceneObject => ((SpatialSceneObject)sceneObject).Apply(update),
+                    SceneObjectChange.Transform, parentSwgId: update.ParentSwgId);
+                if (update.MovementCounter.HasValue)
+                    state.MovementCounter = update.MovementCounter.Value;
             });
+        }
+
+        internal void Commit(SwgId swgId, ContainmentUpdate update)
+        {
+            Enqueue(swgId, () => ApplyObject(swgId, null, sceneObject => sceneObject.Apply(update),
+                update.Arrangement.HasValue ? SceneObjectChange.Appearance : SceneObjectChange.None, parentSwgId: update.ParentSwgId));
+        }
+
+        // Baselines carry type metadata and object fields; creation carries template metadata and an initial pose.
+        // Keep each packet atomic when it crosses to the main thread.
+        internal void Commit(SwgId swgId, ReplicationLifecycleUpdate update, SceneObjectUpdate objectUpdate = null, MovementUpdate? initialMovement = null)
+        {
+            var owned = objectUpdate?.CopyForQueue();
+            Enqueue(swgId, () =>
+            {
+                var requiredType = update.ObjectType.HasValue ? ReplicatedSceneObjectFactory.TypeFor(update.ObjectType.Value) : owned?.RequiredType;
+                var changes = owned?.Changes ?? SceneObjectChange.None;
+                if (update.TemplateCrc.HasValue || update.ObjectType.HasValue || update.BaselinesComplete)
+                    changes |= SceneObjectChange.Appearance;
+                if (initialMovement.HasValue)
+                    changes |= SceneObjectChange.Transform;
+                var state = ApplyObject(swgId, requiredType, sceneObject =>
+                {
+                    owned?.ApplyTo(sceneObject);
+                    if (initialMovement.HasValue)
+                        ((SpatialSceneObject)sceneObject).Apply(initialMovement.Value);
+                }, changes, update.TemplateCrc, initialMovement?.ParentSwgId);
+                if (update.BaselinesComplete)
+                    state.BaselinesComplete = true;
+                if (initialMovement?.MovementCounter != null)
+                    state.MovementCounter = initialMovement.Value.MovementCounter.Value;
+            });
+        }
+
+        ReplicationState ApplyObject(SwgId swgId, Type requiredType, Action<SceneObject> apply, SceneObjectChange changes,
+            uint? templateCrc = null, SwgId? parentSwgId = null)
+        {
+            bool exists = SceneObjects.TryGet(swgId, out var current);
+            var sceneObject = exists
+                ? ReplicatedSceneObjectFactory.Refine(current, State.Templates, requiredType, templateCrc)
+                : ReplicatedSceneObjectFactory.Create(swgId, State.Templates, requiredType, templateCrc);
+            if (!exists && parentSwgId.HasValue)
+                sceneObject.ParentSwgId = parentSwgId.Value;
+            apply(sceneObject);
+            if (!exists)
+                SceneObjects.Add(sceneObject);
+            else if (!ReferenceEquals(current, sceneObject))
+                SceneObjects.Replace(sceneObject);
+            if (parentSwgId.HasValue)
+                SceneObjects.Reparent(swgId, parentSwgId.Value);
+            SceneObjects.NotifyChanged(sceneObject, changes);
+            revision++;
+            if (!replication.TryGetValue(swgId, out var state))
+                replication.Add(swgId, state = new ReplicationState());
+            return state;
         }
 
         // Main-thread local prediction shares the registry and targeted pose notifications with replication.

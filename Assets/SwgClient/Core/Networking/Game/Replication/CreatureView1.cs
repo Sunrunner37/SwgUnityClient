@@ -5,9 +5,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
     // Core3 CreatureObjectMessage1: owner-only currency, base HAM and skills.
     internal static class CreatureView1
     {
-        public static GameObjectUpdate ReadBaseline(ByteReader reader)
+        public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
-            var update = new GameObjectUpdate { BankCredits = unchecked((int)reader.U32()), CashCredits = unchecked((int)reader.U32()) };
+            var update = new CreatureSceneObjectUpdate { BankCredits = unchecked((int)reader.U32()), CashCredits = unchecked((int)reader.U32()) };
             ReplicationReader.SkipVector(reader, sizeof(int));
             int count = reader.Count();
             reader.U32();
@@ -15,7 +15,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 reader.Ascii();
             return update;
         }
-        public static bool ReadDeltaField(ushort field, ByteReader reader, GameObjectUpdate update)
+        public static bool ReadDeltaField(ushort field, ByteReader reader, CreatureSceneObjectUpdate update)
         {
             if (field == 0)
                 update.BankCredits = unchecked((int)reader.U32());
