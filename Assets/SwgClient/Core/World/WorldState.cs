@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using Swg.Client.Core.Assets;
 using Swg.Client.Core.Commands;
 using UnityEngine;
 using Swg.Client.Core.World.Terrain;
@@ -12,6 +15,16 @@ namespace Swg.Client.Core.World
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId PlayerSwgId { get; private set; }
         public event Action SceneStarted;
+        readonly Dictionary<SwgId, Waypoint> waypoints = new Dictionary<SwgId, Waypoint>();
+        public IReadOnlyDictionary<SwgId, Waypoint> Waypoints => waypoints;
+        public event Action WaypointsChanged;
+        public uint PlanetCrc => ObjectTemplateNames.TemplateCrc(Path.GetFileNameWithoutExtension(TerrainPath ?? ""));
+
+        internal void UpdateWaypoints(Action<Dictionary<SwgId, Waypoint>> update)
+        {
+            update(waypoints);
+            WaypointsChanged?.Invoke();
+        }
         /// <summary>SWG world position mapped to the Unity render origin.</summary>
         public Vector3 RenderOrigin { get; private set; }
         public string TerrainPath { get; private set; }

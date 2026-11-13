@@ -21,6 +21,7 @@ namespace Swg.Client.Runtime.World
         public Shader particleShader;
         public WorldOrbitCamera orbit;
         public WorldEnvironment environment;
+        public WorldWaypointRenderer waypoints;
         public bool IsReady { get; private set; }
         public float Progress => IsReady ? 1 : Streaming?.Progress ?? 0;
         public WorldStreamer Streaming { get; private set; }
@@ -87,6 +88,7 @@ namespace Swg.Client.Runtime.World
                 throw new InvalidOperationException("The world is not ready.");
             environment.enabled = true;
             flora.enabled = true;
+            waypoints.enabled = true;
             revealed = true;
             objectRenderer.enabled = true;
             orbit.enabled = true;

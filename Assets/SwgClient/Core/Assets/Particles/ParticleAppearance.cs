@@ -31,7 +31,7 @@ namespace Swg.Client.Core.Assets.Particles
                     mesh = loadChild(emitter.MeshPath);
                 else if (!string.IsNullOrEmpty(emitter.ShaderPath) && ShtFile.TryGetMainTexture(assets.Read(emitter.ShaderPath), out string diffuse))
                     texture = TextureData.Load(assets, diffuse);
-                Emitters.Add(new ParticleEmitterAppearance { Definition = emitter, Texture = texture, Mesh = mesh, Attachments = emitter.Attachments.Select(attachment => loadChild(attachment.Path)).ToArray() });
+                Emitters.Add(new ParticleEmitterAppearance { Definition = emitter, Texture = texture, Additive = !string.IsNullOrEmpty(emitter.ShaderPath) && ShtFile.UsesAdditiveBlending(assets, emitter.ShaderPath), Mesh = mesh, Attachments = emitter.Attachments.Select(attachment => loadChild(attachment.Path)).ToArray() });
             }
         }
     }

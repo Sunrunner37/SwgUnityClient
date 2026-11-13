@@ -2,6 +2,7 @@ using Swg.Client.Runtime.Assets.Appearances;
 using System;
 using System.Linq;
 using Swg.Client.Core.Assets.Formats.Peft;
+using Swg.Client.Core.Assets.Formats.Dds;
 using Swg.Client.Core.Assets.Particles;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Shaders;
@@ -33,7 +34,11 @@ namespace Swg.Client.Runtime.Assets.Particles
                 {
                     var part = parts == null ? null : parts[i];
                     var material = new Material(shader);
-                    material.SetTexture("_BaseMap", factory.Texture(part == null ? emitter.Texture : part.Diffuse, TextureWrapMode.Clamp));
+                    material.SetFloat("_DstBlend", emitter.Additive ? (float)BlendMode.One : (float)BlendMode.OneMinusSrcAlpha);
+                    var texture = part == null ? emitter.Texture : part.Diffuse;
+                    if (part == null && emitter.Definition.Orientation == 2 && texture != null)
+                        texture = RotateVelocityFrames(texture, emitter.Definition.FramesPerColumn);
+                    material.SetTexture("_BaseMap", factory.Texture(texture, TextureWrapMode.Clamp));
                     uploaded[i] = new MeshPartResources(source.Path + " particle " + i, part, material);
                 }
 
@@ -124,16 +129,25 @@ namespace Swg.Client.Runtime.Assets.Particles
                 _ => ParticleSystemShapeType.SingleSidedEdge
             };
             shape.rotation = new Vector3(-90, 0, 0);
+            // Native directional emitters may start particles far along their emission axis (e.g. falling waypoint beams).
+            shape.position = emitter.Direction == 1 ? Vector3.up * emitter.Waves[6].Value(0) : Vector3.zero;
             shape.radius = Mathf.Max(.001f, emitter.Waves[7].Value(0));
             shape.angle = emitter.Waves[8].Value(0);
             shape.randomDirectionAmount = emitter.Direction == 0 ? 1 : 0;
+            bool velocityBillboard = mesh == null && emitter.Orientation == 2;
             var size = system.sizeOverLifetime;
             size.enabled = true;
             size.separateAxes = true;
-            size.x = Curve(emitter.ParticleWaves[mesh == null ? 2 : 0]);
-            size.y = Curve(emitter.ParticleWaves[mesh == null ? 1 : 0]);
-            if (emitter.LinkedDimensions || mesh != null)
-                size.x = size.y;
+            if (mesh == null)
+            {
+                // Native quad length/width are half-extents. Unity Stretch uses X along velocity.
+                var length = Curve(emitter.ParticleWaves[1], 2);
+                var width = emitter.LinkedDimensions ? length : Curve(emitter.ParticleWaves[2], 2);
+                size.x = velocityBillboard ? length : width;
+                size.y = velocityBillboard ? width : length;
+            }
+            else
+                size.x = size.y = Curve(emitter.ParticleWaves[0]);
             size.z = size.y;
             var velocity = system.velocityOverLifetime;
             velocity.enabled = true;
@@ -155,11 +169,41 @@ namespace Swg.Client.Runtime.Assets.Particles
             renderer.enabled = emitter.Visible && emitter.TextureVisible;
             renderer.renderMode = mesh == null ? ParticleSystemRenderMode.Billboard : ParticleSystemRenderMode.Mesh;
             renderer.alignment = emitter.Orientation == 0 ? ParticleSystemRenderSpace.View : ParticleSystemRenderSpace.Velocity;
+            if (velocityBillboard)
+            {
+                // Native bank-to-camera quads keep their long axis along velocity while facing the camera.
+                renderer.renderMode = ParticleSystemRenderMode.Stretch;
+                renderer.freeformStretching = true;
+                renderer.rotateWithStretchDirection = true;
+                renderer.velocityScale = 0;
+                renderer.cameraVelocityScale = 0;
+                renderer.lengthScale = 1;
+            }
             if (mesh != null)
                 renderer.mesh = mesh;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             renderer.maxParticleSize = 1;
+        }
+
+        // Unity Stretch maps U along velocity; native quads map V along it.
+        // Rotate each animation cell independently so atlas frame ordering remains unchanged.
+        internal static TextureData RotateVelocityFrames(TextureData source, int tiles)
+        {
+            tiles = Math.Max(1, tiles);
+            int width = source.Width / tiles;
+            int height = source.Height / tiles;
+            var rotated = new TextureData(source.Height, source.Width);
+            for (int row = 0; row < tiles; row++)
+                for (int column = 0; column < tiles; column++)
+                    for (int y = 0; y < height; y++)
+                        for (int x = 0; x < width; x++)
+                        {
+                            int from = ((row * height + y) * source.Width + column * width + x) * 4;
+                            int to = ((row * width + width - 1 - x) * rotated.Width + column * height + y) * 4;
+                            Buffer.BlockCopy(source.Pixels, from, rotated.Pixels, to, 4);
+                        }
+            return rotated;
         }
 
         public void Dispose()

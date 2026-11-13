@@ -10,6 +10,7 @@ namespace Swg.Client.Core.Assets.Particles
     {
         public PeftEmitter Definition;
         public TextureData Texture;
+        public bool Additive;
         public AppearanceData Mesh;
         public AppearanceData[] Attachments;
     }

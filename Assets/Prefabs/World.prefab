@@ -34,6 +34,7 @@ Transform:
   - {fileID: 7794063486267807463}
   - {fileID: 8150500705046587820}
   - {fileID: 1172216569351888312}
+  - {fileID: 8714656095374764272}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6533920914463737076
@@ -54,6 +55,7 @@ MonoBehaviour:
   particleShader: {fileID: 4800000, guid: 8538057b73994cc38535ae75f94a9558, type: 3}
   orbit: {fileID: 6939532888089667915}
   environment: {fileID: 7190012345678901234}
+  waypoints: {fileID: 3488027027012468024}
 --- !u!114 &7190012345678901234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,6 +296,52 @@ MonoBehaviour:
   hoverCursor: {fileID: 11400000, guid: 99d3ef579d7dd1f43a68bec58d466584, type: 2}
   cursorHotspot: {x: 16, y: 16}
   maximumDistance: 256
+--- !u!1 &8994987272475963509
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8714656095374764272}
+  - component: {fileID: 3488027027012468024}
+  m_Layer: 0
+  m_Name: Waypoint pillars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8714656095374764272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8994987272475963509}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8639308293780189589}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3488027027012468024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8994987272475963509}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eace33501c735bc4eb3b7ad52d7b3166, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.SceneObjects.WorldWaypointRenderer
+  pillarPrefab: {fileID: 6816479424186807621, guid: a985721ded143a047b7f9005fe864183, type: 3}
+  visibilityDistance: 512
 --- !u!1001 &5463728766109037699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -402,6 +450,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7548992917536747370, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
+      propertyPath: worldCamera
+      value: 
+      objectReference: {fileID: 6689891359604919237}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

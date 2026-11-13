@@ -1,3 +1,5 @@
+using Swg.Client.Core.World.SceneObjects;
+using Swg.Client.Runtime.UI.Navigation;
 using System;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core;
@@ -25,6 +27,7 @@ namespace Swg.Client.Runtime.UI.Targeting
         public TMP_Text targetName;
         public RectTransform selection;
         public RectTransform hover;
+        public NavigationArrow directionArrow;
         public HamBars ham;
         public GameObject posture;
         public PostureVisual[] postureIcons;
@@ -57,6 +60,7 @@ namespace Swg.Client.Runtime.UI.Targeting
             panel.SetActive(selected);
             UpdateIndicator(selection, targeting.SelectedSwgId);
             UpdateIndicator(hover, targeting.HoveredSwgId == targeting.SelectedSwgId ? default : targeting.HoveredSwgId);
+            UpdateDirectionArrow();
             if (!selected)
                 return;
             int distance = -1;
@@ -94,6 +98,22 @@ namespace Swg.Client.Runtime.UI.Targeting
                 applicable |= active;
             }
             posture.SetActive(applicable);
+        }
+
+        void UpdateDirectionArrow()
+        {
+            // Any visible portion of the selection box suppresses the direction arrow.
+            if (selection.gameObject.activeSelf || worldCamera == null
+                || !state.SceneObjects.TryGet<SpatialSceneObject>(targeting.SelectedSwgId, out _)
+                || !ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player))
+            {
+                directionArrow.gameObject.SetActive(false);
+                return;
+            }
+            var destination = state.SceneObjects.GetServerWorldPose(targeting.SelectedSwgId).position - state.RenderOrigin;
+            if (ManagedSceneObject.TryGetObjectFrom(targeting.SelectedSwgId, out var target))
+                destination = target.transform.position;
+            directionArrow.Show(worldCamera, player.transform.position, destination);
         }
 
         void UpdateIndicator(RectTransform indicator, SwgId swgId)

@@ -32,7 +32,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<OfflineCommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
             });
             var state = scope.Resolve<WorldState>();
-            state.BeginScene(9000, Vector3.zero, "");
+            state.BeginScene(9000, Vector3.zero, "terrain/tatooine.trn");
+            state.UpdateWaypoints(list =>
+            {
+                list[9100] = new Waypoint(9100, new Vector3(800, 0, 200), state.PlanetCrc, "Combat medic", WaypointColor.Blue, true);
+                list[9101] = new Waypoint(9101, new Vector3(-250, 0, 100), state.PlanetCrc, "Player Association Hall", WaypointColor.Green, true);
+                list[9102] = new Waypoint(9102, new Vector3(-20, 0, -12), state.PlanetCrc, "Junk Ore", WaypointColor.Blue, true);
+            });
             state.SceneObjects.Add(new CreatureSceneObject
             {
                 SwgId = 9000,

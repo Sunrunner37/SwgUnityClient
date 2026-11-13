@@ -76,6 +76,12 @@ namespace Swg.Client.Runtime.Networking
             });
         }
 
+        internal void UpdateWaypoints(Action<Dictionary<SwgId, Waypoint>> update)
+        {
+            if (!disposed)
+                pending.Enqueue(() => State.UpdateWaypoints(update));
+        }
+
         internal void UpdateCommands(Action<List<string>> update)
         {
             if (!disposed)
