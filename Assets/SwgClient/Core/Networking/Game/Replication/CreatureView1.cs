@@ -9,10 +9,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         {
             var update = new CreatureSceneObjectUpdate { BankCredits = unchecked((int)reader.U32()), CashCredits = unchecked((int)reader.U32()) };
             update.Ham = new HamPoolUpdate { Base = ReplicationReader.ReadIntVector(reader) };
-            int count = reader.Count();
-            reader.U32();
-            for (int i = 0; i < count; i++)
-                reader.Ascii();
+            update.Skills = SkillReplication.ReadSkills(reader, true);
             return update;
         }
         public static bool ReadDeltaField(ushort field, ByteReader reader, CreatureSceneObjectUpdate update)
@@ -23,6 +20,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 update.CashCredits = unchecked((int)reader.U32());
             else if (field == 2)
                 (update.Ham ??= new HamPoolUpdate()).BaseDelta = IntVectorDelta.ReadFrom(reader);
+            else if (field == 3)
+                update.Skills = SkillReplication.ReadSkills(reader, false);
             else
                 return false;
             return true;

@@ -93,6 +93,7 @@ namespace Swg.Client.Runtime
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterType<ClientSkills>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();

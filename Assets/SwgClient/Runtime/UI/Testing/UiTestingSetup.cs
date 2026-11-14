@@ -96,6 +96,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterType<ClientSkills>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
@@ -220,6 +221,27 @@ namespace Swg.Client.Runtime.UI.Testing
         IEnumerator Start()
         {
             yield return FindAnyObjectByType<UiAssetPreloader>().Prewarm();
+            var skills = scope.Resolve<ClientSkills>();
+            yield return new WaitUntil(() => skills.Loading.IsCompleted);
+            if (skills.Loading.IsFaulted) { Debug.LogException(skills.Loading.Exception.GetBaseException(), this); yield break; }
+            var previewState = scope.Resolve<WorldState>();
+            previewState.SceneObjects.TryGet<CreatureSceneObject>(previewState.PlayerSwgId, out var previewPlayer);
+            previewPlayer.Skills.AddRange(new[] { "crafting_artisan_novice", "social_entertainer_novice", "social_musician_novice" });
+            var artisan = skills.Catalog.Skills["crafting_artisan"];
+            previewPlayer.Skills.AddRange(skills.Catalog.Tree(artisan).Skills.Where(skill => skill.Name.Contains("_survey_")).Select(skill => skill.Name));
+            foreach (string name in previewPlayer.Skills)
+                foreach (var modifier in skills.Catalog.Skills[name].Modifiers)
+                    previewPlayer.SkillModifiers[modifier.Key] = previewPlayer.SkillModifiers.TryGetValue(modifier.Key, out int value) ? value + modifier.Value : modifier.Value;
+            previewState.UpdateExperience(values =>
+            {
+                values["crafting_general"] = 1300;
+                values["combat_general"] = 806;
+                values["music"] = 970;
+                values["resource_harvesting_inorganic"] = 20000;
+            });
+            previewState.Commands.Apply(values => values.AddRange(new[] { "cert_pistol_cdef", "cert_rifle_cdef", "cert_carbine_cdef" }));
+            previewState.SceneObjects.NotifyChanged(previewPlayer, SceneObjectChange.Skills);
+
             if (!previewCombatQueue)
                 yield break;
             var catalog = scope.Resolve<CommandCatalog>();

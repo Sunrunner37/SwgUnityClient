@@ -43,7 +43,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 waypointReader.U16();
                 var waypoints = PlayerView8.ReadBaseline(waypointReader);
                 replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
-                replication.UpdateWaypoints(waypoints);
+                replication.UpdatePlayer(waypoints);
                 return;
             }
 

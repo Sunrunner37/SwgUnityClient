@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -24,7 +25,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public SwgId? TargetSwgId;
         public int? BattleFatigue;
         public HamPoolUpdate Ham;
+        public Action<List<string>> Skills;
+        public Action<Dictionary<string, int>> SkillModifiers;
         public override SceneObjectChange Changes => base.Changes
+            | (Skills != null || SkillModifiers != null ? SceneObjectChange.Skills : SceneObjectChange.None)
             | (Height.HasValue ? SceneObjectChange.Transform : SceneObjectChange.None)
             | (Equipment != null || EquipmentDelta != null ? SceneObjectChange.Appearance : SceneObjectChange.None)
             | (BattleFatigue.HasValue || Ham?.HasChanges == true ? SceneObjectChange.Vitals : SceneObjectChange.None)

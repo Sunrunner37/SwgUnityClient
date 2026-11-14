@@ -3,12 +3,13 @@ using UnityEngine.UI;
 
 namespace Swg.Client.Runtime.UI.Containers
 {
-    /// <summary>Two rows of capacity blocks, aligned to display pixels instead of stretching a bitmap.</summary>
+    /// <summary>Rows of capacity blocks, aligned to display pixels instead of stretching a bitmap.</summary>
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class CapacityBar : MaskableGraphic
     {
         [SerializeField, Range(0, 1)] float fill = 1;
         public Color backgroundColor = new Color(0, .035f, .04f, 1);
+        [Min(1)] public int rowCount = 2;
         [Min(1)] public int blockWidth = 5;
         [Min(1)] public int blockHeight = 5;
         [Min(1)] public int gap = 2;
@@ -35,14 +36,15 @@ namespace Swg.Client.Runtime.UI.Containers
             float pixel = 1 / scale;
             int width = Mathf.Max(1, Mathf.RoundToInt(blockWidth * scale));
             int spacing = Mathf.Max(1, Mathf.RoundToInt(gap * scale));
+            int rows = Mathf.Max(1, rowCount);
             int height = Mathf.Max(1, Mathf.Min(Mathf.RoundToInt(blockHeight * scale),
-                Mathf.FloorToInt((rect.height * scale - spacing * 2) / 2)));
+                Mathf.FloorToInt((rect.height * scale - spacing * 2) / rows)));
             int columns = Mathf.FloorToInt((rect.width * scale - spacing) / (width + spacing));
             int filled = Mathf.CeilToInt(columns * fill);
-            float bottom = rect.center.y - (height + spacing * .5f) * pixel;
+            float bottom = rect.center.y - (rows * height + (rows - 1) * spacing) * .5f * pixel;
             bottom = Mathf.Round(bottom * scale) * pixel;
             for (int column = 0; column < filled; column++)
-                for (int row = 0; row < 2; row++)
+                for (int row = 0; row < rows; row++)
                     AddBlock(mesh, new Rect(rect.xMin + (spacing + column * (width + spacing)) * pixel,
                         bottom + row * (height + spacing) * pixel, width * pixel, height * pixel), color);
         }

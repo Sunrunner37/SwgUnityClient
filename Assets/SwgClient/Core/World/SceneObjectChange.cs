@@ -15,6 +15,7 @@ namespace Swg.Client.Core.World
         Inventory = 64,
         Posture = 128,
         State = 256,
-        All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture | State
+        Skills = 512,
+        All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture | State | Skills
     }
 }

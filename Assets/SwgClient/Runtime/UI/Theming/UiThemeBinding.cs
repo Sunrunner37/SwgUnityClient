@@ -26,7 +26,10 @@ namespace Swg.Client.Runtime.UI.Theming
             HeaderDivider,
             CloseIcon,
             CloseGlow,
-            CapacityFill
+            CapacityFill,
+            Skill,
+            SkillExperience,
+            RowDivider
         }
 
         [Serializable]
@@ -152,6 +155,9 @@ namespace Swg.Client.Runtime.UI.Theming
             Role.CloseIcon => theme.closeIcon,
             Role.CloseGlow => theme.closeGlow,
             Role.CapacityFill => theme.capacityFill,
+            Role.Skill => theme.skill,
+            Role.SkillExperience => theme.skillExperience,
+            Role.RowDivider => theme.rowDivider,
             _ => theme.text
         };
     }

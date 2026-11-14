@@ -20,6 +20,10 @@ MonoBehaviour:
   input: {r: 0, g: 0.1764706, b: 0.22352941, a: 0.9019608}
   tab: {r: 0, g: 0.18431373, b: 0.23529412, a: 1}
   onAccent: {r: 0, g: 0.1764706, b: 0.21568628, a: 1}
+  rowDivider: {r: 0, g: 0.37254903, b: 0.4745098, a: 1}
+  skill: {r: 0, g: 0.31764707, b: 0.38431373, a: 1}
+  skillExperience: {r: 1, g: 0.88235295, b: 0, a: 1}
+  learnedSkill: {r: 0.003921569, g: 0.72156864, b: 0.019607844, a: 1}
   highlight: {r: 0.5882353, g: 0.9607843, b: 0, a: 1}
   attributeText: {r: 0.7529412, g: 1, b: 0, a: 1}
   bodyText: {r: 1, g: 1, b: 1, a: 1}

@@ -24,6 +24,8 @@ namespace Swg.Client.Runtime.Assets.Tre
     {
         public string atlasPath = "texture/ui_rebel_final.dds";
         public string stylesPath = "ui/ui_styles.inc";
+        [Tooltip("Make covered pixels opaque while preserving the transparent cutout mask.")]
+        public bool opaqueCoverage;
         public Vector2Int size = new Vector2Int(336, 201);
         public List<TreStyleLayer> layers = new List<TreStyleLayer>();
         public override TextureData Load(TreAssetLoader loader)
@@ -38,6 +40,9 @@ namespace Swg.Client.Runtime.Assets.Tre
                 composer.Nine(result, layer.style, r.x, r.y, r.width, r.height, Tint(layer.tint), layer.tint.a, layer.state);
             }
 
+            if (opaqueCoverage)
+                for (int pixel = 3; pixel < result.Pixels.Length; pixel += 4)
+                    if (result.Pixels[pixel] != 0) result.Pixels[pixel] = 255;
             return result;
         }
     }

@@ -105,7 +105,8 @@ namespace Swg.Client.Runtime.Assets.UI
         {
             disposed = true;
             foreach (var icon in icons)
-                UnityEngine.Object.Destroy(icon);
+                if (Application.isPlaying) UnityEngine.Object.Destroy(icon);
+                else UnityEngine.Object.DestroyImmediate(icon);
             icons.Clear();
             commandIcons.Clear();
             categories.Clear();

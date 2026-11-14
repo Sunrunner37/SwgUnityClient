@@ -27,6 +27,14 @@ namespace Swg.Client.Runtime.Commands
             public int Priority = 2;
             internal string Ability;
             internal bool AlwaysAvailable;
+            public Command WithArguments(string arguments)
+            {
+                var command = (Command)MemberwiseClone();
+                command.Arguments = arguments;
+                command.Label = Label + " (" + arguments + ")";
+                command.Ability = Name + "+" + arguments;
+                return command;
+            }
         }
 
         readonly List<Command> definitions = new List<Command>();
@@ -144,7 +152,7 @@ namespace Swg.Client.Runtime.Commands
                 if (template == null)
                     continue;
                 string arguments = ability.Substring(separator + 1);
-                available.Add(new Command { Name = template.Name, Arguments = arguments, Label = template.Label + " (" + arguments + ")", Category = template.Category, BrowserVisible = template.BrowserVisible, ClientHook = template.ClientHook, AddToCombatQueue = template.AddToCombatQueue, Priority = template.Priority, Ability = ability });
+                available.Add(template.WithArguments(arguments));
             }
 
             available.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Label, b.Label));

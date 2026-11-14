@@ -183,6 +183,7 @@ RectTransform:
   - {fileID: 8221313493815123637}
   - {fileID: 2394275737408145029}
   - {fileID: 5168158533236264837}
+  - {fileID: 5197120587326536233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1608,6 +1609,119 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405e14db55f84bb44a0d6f2122f1b4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Chat.ChatWindow
+--- !u!1001 &5689970253356032239
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6599915985732954427}
+    m_Modifications:
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1008
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 744
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8942714427976445705, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+      propertyPath: m_Name
+      value: Skills
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+--- !u!114 &4989451234556950139 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 849142634385888916, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+  m_PrefabInstance: {fileID: 5689970253356032239}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feb33bf1466f74544b3e3dece9b09a3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Skills.SkillsWindow
+--- !u!224 &5197120587326536233 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 497986885342517958, guid: ecd7940a432551845ae19ba15183e53c, type: 3}
+  m_PrefabInstance: {fileID: 5689970253356032239}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5799604928724086501
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2246,6 +2360,26 @@ PrefabInstance:
     - target: {fileID: 8336023903958619961, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Swg.Client.Runtime.UI.CharacterSheet.CharacterSheetWindow, Swg.Client
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019323263326383179, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019323263326383179, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4989451234556950139}
+    - target: {fileID: 9019323263326383179, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019323263326383179, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleOpen
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019323263326383179, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Swg.Client.Runtime.UI.Skills.SkillsWindow, Swg.Client
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

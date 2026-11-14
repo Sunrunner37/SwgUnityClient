@@ -3,6 +3,7 @@ using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using System;
+using System.Collections.Generic;
 
 namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
 {
@@ -18,6 +19,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public SwgId TargetSwgId;
         public HamPool Ham;
         public int BattleFatigue;
+        public List<string> Skills = new List<string>();
+        public Dictionary<string, int> SkillModifiers = new Dictionary<string, int>();
         public float AccelerationMultiplierBase = 1;
         public float AccelerationMultiplier = 1;
         public float RunSpeed;
@@ -29,6 +32,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         internal void Apply(CreatureSceneObjectUpdate update)
         {
             base.Apply(update);
+            update.Skills?.Invoke(Skills);
+            update.SkillModifiers?.Invoke(SkillModifiers);
             if (update.Height.HasValue)
                 Scale = update.Height.Value;
             if (update.CashCredits.HasValue)
@@ -63,6 +68,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         internal override SceneObject Copy()
         {
             var copy = (CreatureSceneObject)base.Copy();
+            copy.Skills = new List<string>(Skills);
+            copy.SkillModifiers = new Dictionary<string, int>(SkillModifiers);
             copy.Equipment = new WorldEquipment[Equipment.Length];
             for (int i = 0; i < Equipment.Length; i++)
             {

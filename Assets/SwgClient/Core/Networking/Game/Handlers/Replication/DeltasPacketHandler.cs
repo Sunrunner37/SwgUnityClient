@@ -39,7 +39,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
         {
             if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 8)
             {
-                replication.UpdateWaypoints(PlayerView8.ReadDelta(new ByteReader(packet.Payload)));
+                replication.UpdatePlayer(PlayerView8.ReadDelta(new ByteReader(packet.Payload)));
                 return;
             }
 

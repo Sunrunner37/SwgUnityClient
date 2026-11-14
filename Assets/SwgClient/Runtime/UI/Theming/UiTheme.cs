@@ -16,6 +16,10 @@ namespace Swg.Client.Runtime.UI.Theming
         public Color input = new Color32(0, 45, 57, 230);
         public Color tab = new Color32(0, 47, 60, 255);
         public Color onAccent = new Color32(0, 45, 55, 255);
+        public Color rowDivider = new Color32(0, 95, 121, 255);
+        public Color skill = new Color32(0, 81, 98, 255);
+        public Color skillExperience = new Color32(255, 225, 0, 255);
+        public Color learnedSkill = new Color32(1, 184, 5, 255);
         public Color highlight = new Color32(150, 245, 0, 255);
         public Color attributeText = new Color32(192, 255, 0, 255);
         public Color bodyText = Color.white;

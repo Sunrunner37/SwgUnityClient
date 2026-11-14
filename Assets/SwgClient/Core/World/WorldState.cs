@@ -18,6 +18,14 @@ namespace Swg.Client.Core.World
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId PlayerSwgId { get; private set; }
         public event Action SceneStarted;
+        readonly Dictionary<string, int> experience = new Dictionary<string, int>();
+        public IReadOnlyDictionary<string, int> Experience => experience;
+        public event Action ExperienceChanged;
+        internal void UpdateExperience(Action<Dictionary<string, int>> update)
+        {
+            update(experience);
+            ExperienceChanged?.Invoke();
+        }
         readonly List<uint> draftSchematics = new List<uint>();
         public IReadOnlyList<uint> DraftSchematics => draftSchematics;
         public event Action DraftSchematicsChanged;
@@ -78,6 +86,7 @@ namespace Swg.Client.Core.World
         internal void BeginScene(SwgId playerSwgId, Vector3 renderOrigin, string terrainPath)
         {
             CharacterSheet = new CharacterSheetData();
+            experience.Clear();
             draftSchematics.Clear();
             draftDetails.Clear();
             ShowWaypointIndicators = true;

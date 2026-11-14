@@ -14,7 +14,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 AccelerationMultiplier = reader.Float()
             };
             update.Ham = new HamPoolUpdate { Encumbrances = ReplicationReader.ReadIntVector(reader) };
-            SkipSkillMods(reader, false);
+            update.SkillModifiers = SkillReplication.ReadValues(reader, true, true);
             reader.Float(); // Speed multiplier base (Core3 validates run speed against its mod value).
             update.SpeedMultiplier = reader.Float();
             reader.U64(); // Listen ID.
@@ -47,7 +47,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     (update.Ham ??= new HamPoolUpdate()).EncumbrancesDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 case 3:
-                    SkipSkillMods(reader, true);
+                    update.SkillModifiers = SkillReplication.ReadValues(reader, false, true);
                     break;
                 case 5:
                     update.SpeedMultiplier = reader.Float();
@@ -71,19 +71,5 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return true;
         }
 
-        static void SkipSkillMods(ByteReader reader, bool delta)
-        {
-            int count = reader.Count();
-            reader.U32();
-            for (int i = 0; i < count; i++)
-            {
-                byte operation = reader.Byte();
-                reader.Ascii();
-                if (!delta || operation == 0)
-                    reader.Skip(8); // Skill value and bonus.
-                else if (operation != 1)
-                    throw new InvalidDataException("Unsupported skill-mod map operation " + operation);
-            }
-        }
     }
 }

@@ -10,9 +10,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
     // Core3 PlayerObjectMessage8 and WaypointList: map operations carry the entire waypoint even on removal.
     internal static class PlayerView8
     {
-        public static Action<Dictionary<SwgId, Waypoint>> ReadBaseline(ByteReader reader)
+        public static Action<WorldState> ReadBaseline(ByteReader reader)
         {
-            SkipExperience(reader);
+            var experience = SkillReplication.ReadValues(reader, true, false);
             var updates = ReadWaypoints(reader);
             reader.Skip(8); // Current and maximum Force.
             ReplicationReader.SkipVector(reader, 1); // Completed quests.
@@ -20,23 +20,29 @@ namespace Swg.Client.Core.Networking.Game.Replication
             SkipQuests(reader);
             reader.Skip(8); // Reserved map count and counter.
             ReplicationReader.RequireEnd(reader);
-            return list =>
+            return state =>
             {
-                list.Clear();
-                updates(list);
+                state.UpdateExperience(experience);
+                state.UpdateWaypoints(list => { list.Clear(); updates(list); });
             };
         }
 
-        public static Action<Dictionary<SwgId, Waypoint>> ReadDelta(ByteReader reader)
+        public static Action<WorldState> ReadDelta(ByteReader reader)
         {
-            var updates = new List<Action<Dictionary<SwgId, Waypoint>>>();
+            var updates = new List<Action<WorldState>>();
             int fields = reader.U16();
             for (int i = 0; i < fields; i++)
             {
                 switch (reader.U16())
                 {
-                    case 0: SkipExperience(reader); break;
-                    case 1: updates.Add(ReadWaypoints(reader)); break;
+                    case 0:
+                        var experience = SkillReplication.ReadValues(reader, false, false);
+                        updates.Add(state => state.UpdateExperience(experience));
+                        break;
+                    case 1:
+                        var waypoints = ReadWaypoints(reader);
+                        updates.Add(state => state.UpdateWaypoints(waypoints));
+                        break;
                     case 2:
                     case 3: reader.U32(); break;
                     case 4:
@@ -46,10 +52,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 }
             }
             ReplicationReader.RequireEnd(reader);
-            return list =>
+            return state =>
             {
                 foreach (var update in updates)
-                    update(list);
+                    update(state);
             };
         }
 
@@ -82,18 +88,6 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     else
                         list[entry.Waypoint.SwgId] = entry.Waypoint;
             };
-        }
-
-        static void SkipExperience(ByteReader reader)
-        {
-            int count = reader.Count();
-            reader.U32();
-            for (int i = 0; i < count; i++)
-            {
-                reader.Byte();
-                reader.Ascii();
-                reader.U32();
-            }
         }
 
         static void SkipQuests(ByteReader reader)
