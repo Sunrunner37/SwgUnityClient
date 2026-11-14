@@ -52,6 +52,20 @@ namespace Swg.Client.Core.World
             return capacity;
         }
 
+        readonly Dictionary<string, int> objectTypes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        public int GameObjectType(string templatePath)
+        {
+            if (string.IsNullOrEmpty(templatePath))
+                return 0;
+            if (!objectTypes.TryGetValue(templatePath, out int objectType))
+            {
+                var template = SharedObjectTemplate.Parse(loader.Read(templatePath));
+                objectType = template.GameObjectType ?? GameObjectType(template.BaseTemplate);
+                objectTypes.Add(templatePath, objectType);
+            }
+            return objectType;
+        }
+
         public string Resolve(uint crc) => names.TryGetValue(crc, out var path) ? path : null;
     }
 }

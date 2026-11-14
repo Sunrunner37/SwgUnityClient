@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Assets.Formats.Sht;
 using Swg.Client.Core.Assets.Formats.Cidm;
 using Swg.Client.Core.Assets.Formats.Customization;
@@ -17,21 +18,21 @@ using Swg.Client.Core.Characters.Appearance;
 using Swg.Client.Core.Characters.Materials;
 using Swg.Client.Core.Geometry;
 
-namespace Swg.Client.Core.Characters.Models
+namespace Swg.Client.Core.Assets.Appearances
 {
-    /// <summary>Builds native character, hair, and wearable meshes from templates and customization values.</summary>
-    public static class CharacterModel
+    /// <summary>Builds native skeletal appearances, including customization, wearables, occlusion, and vehicle bodies.</summary>
+    public static class SkeletalAppearanceLoader
     {
         public static List<MeshPart> Load(TreAssetLoader loader, string objectPath) => LoadDetailed(loader, objectPath).Parts;
-        public static CharacterModelResult LoadDetailed(TreAssetLoader loader, string objectPath) => LoadDetailed(loader, new CharacterAppearance { TemplatePath = objectPath, Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = Array.Empty<WearableAppearance>() });
+        public static SkeletalAppearanceData LoadDetailed(TreAssetLoader loader, string objectPath) => LoadDetailed(loader, new CharacterAppearance { TemplatePath = objectPath, Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = Array.Empty<WearableAppearance>() });
         public static List<MeshPart> Load(TreAssetLoader loader, CharacterAppearance appearance) => LoadDetailed(loader, appearance).Parts;
-        public static CharacterModelResult LoadDetailed(TreAssetLoader loader, CharacterAppearance appearance)
+        public static SkeletalAppearanceData LoadDetailed(TreAssetLoader loader, CharacterAppearance appearance)
         {
             if (loader == null)
                 throw new ArgumentNullException(nameof(loader));
             if (appearance == null)
                 throw new ArgumentNullException(nameof(appearance));
-            var result = new CharacterModelResult();
+            var result = new SkeletalAppearanceData();
             var ids = CidmFile.Parse(loader.Read("customization/customization_id_manager.iff"));
             var owner = new Dictionary<string, short>(appearance.Customization.ResolveNames(ids));
             var clientData = CharacterClientData.Load(loader, appearance.TemplatePath);
@@ -64,11 +65,16 @@ namespace Swg.Client.Core.Characters.Models
             }
 
             CharacterMeshOcclusion.Apply(result);
+            if (VehicleBodyAppearance.TryLoad(loader, ownerAppearance, owner, out var body))
+            {
+                result.Parts.AddRange(body.Parts);
+                result.Particles.AddRange(body.Particles);
+            }
             return result;
         }
 
         static bool IsVisibleWearable(string path) => path.StartsWith("object/tangible/hair/", StringComparison.Ordinal) || path.StartsWith("object/tangible/wearables/", StringComparison.Ordinal) || (path.StartsWith("object/weapon/", StringComparison.Ordinal) && !path.Contains("/unarmed/"));
-        static bool LoadObject(TreAssetLoader loader, string template, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CharacterModelResult result, string ownerAppearance)
+        static bool LoadObject(TreAssetLoader loader, string template, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, SkeletalAppearanceData result, string ownerAppearance)
         {
             string satPath = FindSkeletalAppearance(loader, template, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             if (satPath == null)
@@ -83,7 +89,7 @@ namespace Swg.Client.Core.Characters.Models
             return true;
         }
 
-        static void LoadMeshGenerator(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CharacterModelResult result, string ownerAppearance)
+        static void LoadMeshGenerator(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, SkeletalAppearanceData result, string ownerAppearance)
         {
             string mesh = path.EndsWith(".mgn", StringComparison.OrdinalIgnoreCase) ? path : References(loader.Read(path), "appearance/", ".mgn").FirstOrDefault();
             if (mesh == null)
@@ -112,7 +118,7 @@ namespace Swg.Client.Core.Characters.Models
             return null;
         }
 
-        static void LoadMesh(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, CharacterModelResult result, string ownerAppearance)
+        static void LoadMesh(TreAssetLoader loader, string template, string satPath, string path, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, Dictionary<string, TextureData> textures, SkeletalAppearanceData result, string ownerAppearance)
         {
             var skmg = IffNode.Form(IffNode.Parse(loader.Read(path)), "SKMG") ?? throw new InvalidDataException("Not a skeletal mesh");
             var version = skmg.Children.FirstOrDefault(n => n.Kind == "0003" || n.Kind == "0004") ?? throw new InvalidDataException("Unsupported skeletal mesh version");

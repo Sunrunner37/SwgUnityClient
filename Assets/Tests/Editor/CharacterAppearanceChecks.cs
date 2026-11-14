@@ -9,7 +9,6 @@ using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Characters.Appearance;
 using Swg.Client.Core.Characters.Materials;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Configuration;
 using UnityEngine;
 
@@ -31,7 +30,7 @@ namespace Swg.Client.Tests.Editor
             var clientData = CharacterClientData.Load(loader, template);
             Assert.That(clientData.Wearables.SelectMany(item => item.Meshes).Count(), Is.EqualTo(5));
             Assert.That(clientData.Customization["/private/index_style_beard"], Is.EqualTo(9));
-            var model = CharacterModel.LoadDetailed(loader, template);
+            var model = SkeletalAppearanceLoader.LoadDetailed(loader, template);
             var meshes = model.Sources.Select(source => source.MeshPath).Distinct().ToArray();
             foreach (string mesh in new[] { "hat_imperial_s01_m", "rank_imp_captain_m", "jacket_s03_m", "pants_s15_m", "boots_s12_m" })
                 Assert.That(meshes, Does.Contain("appearance/mesh/" + mesh + "_l0.mgn"));
@@ -45,7 +44,7 @@ namespace Swg.Client.Tests.Editor
             const string template = "object/mobile/shared_dark_trooper.iff";
             var clientData = CharacterClientData.Load(loader, template);
             Assert.That(clientData.Wearables, Is.Empty);
-            var model = CharacterModel.LoadDetailed(loader, template);
+            var model = SkeletalAppearanceLoader.LoadDetailed(loader, template);
             Assert.That(model.Parts, Is.Not.Empty);
             Assert.That(model.Parts.All(part => part.Triangles.Length > 0 && part.Skinning != null), Is.True);
         }
@@ -54,7 +53,7 @@ namespace Swg.Client.Tests.Editor
         public void DressedNobleAcceptsNativePaletteCustomization()
         {
             using var loader = Assets();
-            var model = CharacterModel.LoadDetailed(loader, "object/mobile/shared_dressed_noble_fat_human_male_01.iff");
+            var model = SkeletalAppearanceLoader.LoadDetailed(loader, "object/mobile/shared_dressed_noble_fat_human_male_01.iff");
             Assert.That(model.Sources.Select(source => source.MeshPath), Does.Contain("appearance/mesh/robe_s01_m_l0.mgn"));
             Assert.That(model.Parts.All(part => part.Diffuse != null), Is.True);
         }
@@ -64,7 +63,7 @@ namespace Swg.Client.Tests.Editor
         public void DirectSkeletalMeshesLoadWithTheirNativeNeutralAnimation(string path, string mesh, string idle)
         {
             using var loader = Assets();
-            var model = CharacterModel.LoadDetailed(loader, path);
+            var model = SkeletalAppearanceLoader.LoadDetailed(loader, path);
             Assert.That(model.Sources.Select(source => source.MeshPath), Does.Contain(mesh));
             Assert.That(model.Parts.Single().Skinning.Skeleton.IdleAnimationPath, Is.EqualTo(idle));
             var appearance = AppearanceLoader.LoadDetailed(loader, path);

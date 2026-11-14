@@ -15,7 +15,9 @@ namespace Swg.Client.Core.World
                 return typeof(CreatureSceneObject);
             if (path.StartsWith("object/cell/", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/shared_cell.iff", StringComparison.OrdinalIgnoreCase))
                 return typeof(SpatialSceneObject);
-            if (path.StartsWith("object/intangible/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/mission/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/waypoint/", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith("object/intangible/", StringComparison.OrdinalIgnoreCase))
+                return typeof(IntangibleSceneObject);
+            if (path.StartsWith("object/mission/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/waypoint/", StringComparison.OrdinalIgnoreCase))
                 return typeof(SceneObject);
             if (path.StartsWith("object/building/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/tangible/", StringComparison.OrdinalIgnoreCase))
                 return typeof(TangibleSceneObject);
@@ -44,6 +46,8 @@ namespace Swg.Client.Core.World
         {
             if (type == typeof(ManufactureSchematicSceneObject))
                 return new ManufactureSchematicSceneObject();
+            if (type == typeof(IntangibleSceneObject))
+                return new IntangibleSceneObject();
             if (type == typeof(SceneObject))
                 return new SceneObject();
             if (type == typeof(SpatialSceneObject))

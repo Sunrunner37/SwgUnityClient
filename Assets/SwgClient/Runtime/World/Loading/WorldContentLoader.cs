@@ -16,7 +16,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Characters.Appearance;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
@@ -325,8 +324,9 @@ namespace Swg.Client.Runtime.World.Loading
                     };
                 }
 
-                var character = CharacterModel.LoadDetailed(loader, characterAppearance);
+                var character = SkeletalAppearanceLoader.LoadDetailed(loader, characterAppearance);
                 result.Parts = character.Parts;
+                result.Particles = character.Particles;
                 result.RecalculateBounds();
             }
             catch (Exception error)

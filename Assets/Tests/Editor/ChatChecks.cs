@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Swg.Client.Runtime.World.SceneObjects;
 using System.IO;
 using Swg.Client.Core.Networking.Game.Packets.Data;
@@ -29,6 +31,29 @@ namespace Swg.Client.Tests.Editor
             using var writer = new BinaryWriter(stream);
             packet.WriteTo(writer);
             return new ByteReader(stream.ToArray());
+        }
+
+        [UnityTest]
+        public IEnumerator SystemMessagesRespectServerScreenDisplayFlag()
+        {
+            var state = new WorldState(new SceneObjectRegistry());
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
+            var messages = new List<string>();
+            chat.ScreenMessageReceived += messages.Add;
+            ChatSystemPacket Packet(byte display, string message)
+            {
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                writer.Write((ushort)4); writer.Write(ChatSystemPacket.Opcode); writer.Write(display);
+                PacketFieldCodec.Unicode(writer, message); writer.Write(0u);
+                return ChatSystemPacket.ReadFrom(new ByteReader(stream.ToArray()));
+            }
+            chat.Receive(Packet(ChatSystemPacket.DisplayChatAndScreen, "Generating vehicle in 15 seconds."));
+            chat.Receive(Packet(ChatSystemPacket.DisplayChatOnly, "Chat only"));
+            yield return null;
+            Assert.That(messages, Is.EqualTo(new[] { "Generating vehicle in 15 seconds." }));
+            Assert.That(chat.History.Select(message => message.Text), Is.EqualTo(new[] { "Generating vehicle in 15 seconds.", "Chat only" }));
         }
 
         [TestCase(" hello ", null, "hello")]

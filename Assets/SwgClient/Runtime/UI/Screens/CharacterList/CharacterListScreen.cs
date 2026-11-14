@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Session;
 using Swg.Client.Core.Configuration;
@@ -9,7 +10,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Swg.Client.Core.Characters.Appearance;
-using Swg.Client.Core.Characters.Models;
 
 namespace Swg.Client.Runtime.UI.Screens.CharacterList
 {
@@ -28,7 +28,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
         public CharacterPreview preview;
         readonly List<CharacterListRow> rows = new List<CharacterListRow>();
         readonly List<CharacterAppearanceProfile> profiles = new List<CharacterAppearanceProfile>();
-        readonly Dictionary<int, CharacterModelResult> models = new Dictionary<int, CharacterModelResult>();
+        readonly Dictionary<int, SkeletalAppearanceData> models = new Dictionary<int, SkeletalAppearanceData>();
         int selected = -1;
         int selectionVersion;
         public int CharacterCount => rows.Count;
@@ -184,7 +184,7 @@ namespace Swg.Client.Runtime.UI.Screens.CharacterList
             if (!models.TryGetValue(index, out var model))
             {
                 var appearance = profiles[index].Appearance;
-                var task = assets.ReadAsync(loader => CharacterModel.LoadDetailed(loader, appearance));
+                var task = assets.ReadAsync(loader => SkeletalAppearanceLoader.LoadDetailed(loader, appearance));
                 yield return new WaitUntil(() => task.IsCompleted);
                 if (task.IsFaulted)
                 {

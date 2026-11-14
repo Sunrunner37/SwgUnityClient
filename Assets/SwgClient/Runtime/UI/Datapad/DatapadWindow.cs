@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
+using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Runtime.Localization;
 using Swg.Client.Runtime.Networking;
@@ -50,6 +51,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         readonly Dictionary<ClientDatapad.Tab, string> selections = new Dictionary<ClientDatapad.Tab, string>();
         ClientDatapad.Entry[] entries = Array.Empty<ClientDatapad.Entry>();
         ClientDatapad datapad;
+        ClientObjectInteractions interactions;
         RadialContextMenu contextMenu;
         WorldState state;
         WorldContentLoader loader;
@@ -65,6 +67,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             contextMenu = GetComponentInParent<Canvas>().GetComponentInChildren<RadialContextMenu>(true);
             scroll = grid.GetComponentInParent<ScrollRect>(true);
             datapad = GameServices.Resolve<ClientDatapad>();
+            interactions = GameServices.Resolve<ClientObjectInteractions>();
             state = GameServices.Resolve<WorldState>();
             loader = GameServices.Resolve<WorldContentLoader>();
             localizer = GameServices.Resolve<StringTableLocalizer>();
@@ -172,7 +175,7 @@ namespace Swg.Client.Runtime.UI.Datapad
                 {
                     var cell = Instantiate(itemPrefab, grid.transform);
                     string key = entry.Key;
-                    cell.Bind(entry.SceneObject?.SwgId ?? default, () => Select(key), () => ToggleWaypoint(key), entry.Waypoint.HasValue ? position => OpenWaypointMenu(key, position) : null);
+                    cell.Bind(entry.SceneObject?.SwgId ?? default, () => Select(key), () => ActivateEntry(key), entry.Waypoint.HasValue || entry.SceneObject != null ? position => OpenContextMenu(key, position) : null);
                     cell.image.color = Color.clear;
                     cells.Add(cell);
                 }
@@ -180,10 +183,11 @@ namespace Swg.Client.Runtime.UI.Datapad
             {
                 var entry = entries[i];
                 var cell = cells[i];
+                cell.CanActivate = entry.Waypoint.HasValue || entry.SceneObject != null && interactions.HasDefaultAction(entry.SceneObject.SwgId);
                 cell.itemName.text = entry.Name;
                 cell.quantity.text = "";
                 cell.equipped.SetActive(false);
-                if (cell.activeIndicator != null) cell.activeIndicator.SetActive(entry.Waypoint?.Active == true);
+                if (cell.activeIndicator != null) cell.activeIndicator.SetActive(entry.Waypoint?.Active == true || entry.SceneObject != null && interactions.IsActiveControlDevice(entry.SceneObject.SwgId));
             }
             if (!selections.TryGetValue(CurrentTab, out selected) || !entries.Any(entry => entry.Key == selected)) selected = entries.FirstOrDefault()?.Key;
             for (int i = 0; i < cells.Count; i++) cells[i].selection.SetActive(entries[i].Key == selected);
@@ -227,17 +231,20 @@ namespace Swg.Client.Runtime.UI.Datapad
             previews.RenderNow();
             Ready = true;
         }
-        void OpenWaypointMenu(string key, Vector2 position)
+        void OpenContextMenu(string key, Vector2 position)
         {
             var entry = entries.FirstOrDefault(item => item.Key == key);
-            if (entry?.Waypoint is not Waypoint waypoint) return;
+            if (entry == null) return;
             Select(key);
-            contextMenu.OpenLocal(position, new[] { new RadialMenuEntry(1, 0, 0, 0, waypoint.Active ? "Deactivate" : "Activate") }, _ => ToggleWaypoint(key));
+            if (entry.SceneObject != null) { contextMenu.Open(entry.SceneObject.SwgId, position); return; }
+            if (entry.Waypoint is not Waypoint waypoint) return;
+            contextMenu.OpenLocal(position, new[] { new RadialMenuEntry(1, 0, 0, 0, waypoint.Active ? "Deactivate" : "Activate") }, _ => ActivateEntry(key));
         }
-        void ToggleWaypoint(string key)
+        void ActivateEntry(string key)
         {
             var entry = entries.FirstOrDefault(item => item.Key == key);
             if (entry?.Waypoint is Waypoint waypoint) datapad.ToggleWaypoint(waypoint);
+            else if (entry?.SceneObject != null) interactions.ActivateDefault(entry.SceneObject.SwgId);
         }
         public void Select(string key)
         {

@@ -9,7 +9,6 @@ using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Particles;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
-using Swg.Client.Core.Characters.Models;
 using UnityEngine;
 
 namespace Swg.Client.Core.Assets.Appearances
@@ -19,18 +18,18 @@ namespace Swg.Client.Core.Assets.Appearances
     {
         public const int LowestDetail = int.MaxValue;
         public static List<MeshPart> Load(TreAssetLoader loader, string path) => LoadDetailed(loader, path).Parts;
-        public static AppearanceData LoadDetailed(TreAssetLoader loader, string path, int detailLevel = 0)
+        public static AppearanceData LoadDetailed(TreAssetLoader loader, string path, int detailLevel = 0, IReadOnlyDictionary<string, short> customization = null)
         {
             var result = new AppearanceData
             {
                 Key = TreAssetLoader.Normalize(path) + (detailLevel == 0 ? "" : detailLevel == LowestDetail ? "#lowest" : "#lod" + detailLevel)
             };
-            LoadAppearance(loader, TreAssetLoader.Normalize(path), Matrix4x4.identity, result, new HashSet<string>(StringComparer.OrdinalIgnoreCase), 0, detailLevel);
+            LoadAppearance(loader, TreAssetLoader.Normalize(path), Matrix4x4.identity, result, new HashSet<string>(StringComparer.OrdinalIgnoreCase), 0, detailLevel, customization);
             result.RecalculateBounds();
             return result;
         }
 
-        static void LoadAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result, HashSet<string> stack, int depth, int detailLevel)
+        static void LoadAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result, HashSet<string> stack, int depth, int detailLevel, IReadOnlyDictionary<string, short> customization)
         {
             if (depth > 24 || !stack.Add(path))
                 throw new InvalidDataException("Appearance reference cycle/depth limit: " + path);
@@ -44,7 +43,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt", ".sat" });
                     if (appearances.Count > 0)
                     {
-                        LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel);
+                        LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel, customization);
                         return;
                     }
 
@@ -53,7 +52,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     foreach (var inherited in References(bytes, "object/", new[] { ".iff" }).Where(p => p != path))
                     {
                         int count = result.Parts.Count + result.Particles.Count;
-                        LoadAppearance(loader, inherited, transform, result, stack, depth + 1, detailLevel);
+                        LoadAppearance(loader, inherited, transform, result, stack, depth + 1, detailLevel, customization);
                         if (result.Parts.Count + result.Particles.Count != count)
                             return;
                     }
@@ -64,7 +63,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 if (root.Kind == "APT ")
                 {
                     var version = root.Children.First(n => n.Tag == "FORM");
-                    LoadAppearance(loader, AppearancePath(new ByteReader(version.Chunk("NAME")).CString()), transform, result, stack, depth + 1, detailLevel);
+                    LoadAppearance(loader, AppearancePath(new ByteReader(version.Chunk("NAME")).CString()), transform, result, stack, depth + 1, detailLevel, customization);
                 }
                 else if (root.Kind == "DTLA")
                 {
@@ -74,13 +73,14 @@ namespace Swg.Client.Core.Assets.Appearances
                     var child = children.Length == 0 ? throw new InvalidDataException("Empty detail appearance") : children[Math.Min(detailLevel, children.Length - 1)];
                     var reader = new ByteReader(child.Data);
                     reader.U32();
-                    LoadAppearance(loader, AppearancePath(reader.CString()), transform, result, stack, depth + 1, detailLevel);
+                    LoadAppearance(loader, AppearancePath(reader.CString()), transform, result, stack, depth + 1, detailLevel, customization);
                 }
                 else if (root.Kind == "MESH")
-                    MeshAppearanceReader.Load(loader, path, root, transform, result);
+                    MeshAppearanceReader.Load(loader, path, root, transform, result, customization);
                 else if (root.Kind == "SMAT")
                 {
-                    var skeletal = CharacterModel.LoadDetailed(loader, path);
+                    var skeletal = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+                    result.Particles.AddRange(skeletal.Particles.Select(effect => effect.WithTransform(transform)));
                     foreach (var part in skeletal.Parts)
                     {
                         if (transform != Matrix4x4.identity)
@@ -101,7 +101,7 @@ namespace Swg.Client.Core.Assets.Appearances
                         {
                             Key = AppearancePath(child)
                         };
-                        LoadAppearance(loader, AppearancePath(child), Matrix4x4.identity, appearance, stack, depth + 1, detailLevel);
+                        LoadAppearance(loader, AppearancePath(child), Matrix4x4.identity, appearance, stack, depth + 1, detailLevel, customization);
                         foreach (var warning in appearance.Warnings)
                             Warn(result, warning);
                         appearance.RecalculateBounds();
@@ -126,7 +126,7 @@ namespace Swg.Client.Core.Assets.Appearances
                         reader.CString();
                         string appearance = reader.CString();
                         if (!string.IsNullOrEmpty(appearance))
-                            LoadChild(loader, AppearancePath(appearance), transform, result, stack, depth + 1, detailLevel);
+                            LoadChild(loader, AppearancePath(appearance), transform, result, stack, depth + 1, detailLevel, customization);
                     }
                 }
                 else if (root.Kind == "CMPA")
@@ -141,7 +141,7 @@ namespace Swg.Client.Core.Assets.Appearances
                         for (int row = 0; row < 3; row++)
                             for (int column = 0; column < 4; column++)
                                 local[row, column] = reader.Float();
-                        LoadChild(loader, appearance, transform * local, result, stack, depth + 1, detailLevel);
+                        LoadChild(loader, appearance, transform * local, result, stack, depth + 1, detailLevel, customization);
                     }
                 }
                 else
@@ -153,11 +153,11 @@ namespace Swg.Client.Core.Assets.Appearances
             }
         }
 
-        static void LoadChild(TreAssetLoader loader, string path, Matrix4x4 matrix, AppearanceData result, HashSet<string> stack, int depth, int detailLevel)
+        static void LoadChild(TreAssetLoader loader, string path, Matrix4x4 matrix, AppearanceData result, HashSet<string> stack, int depth, int detailLevel, IReadOnlyDictionary<string, short> customization)
         {
             try
             {
-                LoadAppearance(loader, path, matrix, result, stack, depth, detailLevel);
+                LoadAppearance(loader, path, matrix, result, stack, depth, detailLevel, customization);
             }
             catch (Exception e)when (e is IOException || e is InvalidOperationException || e is ArgumentException)
             {

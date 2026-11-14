@@ -18,7 +18,7 @@ namespace Swg.Client.Tests.Editor
         [TestCase("object/tangible/datapad/shared_character_datapad.iff", typeof(TangibleSceneObject))]
         [TestCase("object/waypoint/shared_waypoint.iff", typeof(SceneObject))]
         [TestCase("object/mission/shared_mission.iff", typeof(SceneObject))]
-        [TestCase("object/intangible/vehicle/shared_speederbike.iff", typeof(SceneObject))]
+        [TestCase("object/intangible/vehicle/shared_speederbike.iff", typeof(IntangibleSceneObject))]
         public void TemplateFamiliesSelectConcreteTypes(string path, Type expected)
         {
             var result = SceneObjectFactory.Create(10, path);

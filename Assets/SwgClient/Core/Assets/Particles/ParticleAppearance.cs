@@ -18,6 +18,15 @@ namespace Swg.Client.Core.Assets.Particles
         public readonly List<ParticleEmitterAppearance> Emitters = new List<ParticleEmitterAppearance>();
         public readonly Matrix4x4 Transform;
         public readonly PeftFile Effect;
+        ParticleAppearance(ParticleAppearance source, Matrix4x4 transform)
+        {
+            Path = source.Path;
+            Transform = transform * source.Transform;
+            Effect = source.Effect;
+            Emitters.AddRange(source.Emitters);
+        }
+        public ParticleAppearance WithTransform(Matrix4x4 transform) => new ParticleAppearance(this, transform);
+
         public ParticleAppearance(TreAssetLoader assets, string path, Matrix4x4 transform, IffNode root, Func<string, AppearanceData> loadChild)
         {
             Path = path;

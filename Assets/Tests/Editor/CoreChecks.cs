@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Session;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
@@ -27,7 +28,6 @@ using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Audio;
 using Swg.Client.Core.Characters.Appearance;
 using Swg.Client.Core.Characters.Creation;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.Networking;
 using Swg.Client.Core.Networking.Login;
@@ -222,7 +222,7 @@ namespace Swg.Client.Tests.Editor
                 Check(appearance.SourcePath.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase), "Cache escaped client directory");
                 Check(!CharacterAppearanceCache.TryReadProfile(cacheRoot, "other-server:44453", "test-user", "Core3", 42, out _), "Cache leaked between servers");
                 Check(appearance.Appearance.Wearables.Count == 1 && appearance.Appearance.Wearables[0].ArrangementHint == 4, "Cached wearable record");
-                var model = CharacterModel.LoadDetailed(loader, appearance.Appearance);
+                var model = SkeletalAppearanceLoader.LoadDetailed(loader, appearance.Appearance);
                 Check(model.Parts.Count > 0, "Cached character has no mesh");
                 var positions = model.Parts.SelectMany(p => p.Vertices).ToArray();
                 Check(positions.All(p => !float.IsNaN(p.x) && !float.IsInfinity(p.x) && !float.IsNaN(p.y) && !float.IsInfinity(p.y) && !float.IsNaN(p.z) && !float.IsInfinity(p.z)), "Nonfinite cached character");
@@ -656,7 +656,7 @@ namespace Swg.Client.Tests.Editor
 
                     )
                     {
-                        var parts = CharacterModel.Load(assets, path);
+                        var parts = SkeletalAppearanceLoader.Load(assets, path);
                         Check(parts.Count > 0 && parts.Sum(p => p.Triangles.Length) > 300, "Empty original model");
                     }
 

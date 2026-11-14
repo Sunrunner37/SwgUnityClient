@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Swg.Client.Runtime.UI.Containers
 {
-    public sealed class ContainerItem : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerMoveHandler
+    public sealed class ContainerItem : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerMoveHandler
     {
         public Button button;
         public RawImage image;
@@ -18,6 +18,8 @@ namespace Swg.Client.Runtime.UI.Containers
         public GameObject equipped;
         public GameObject activeIndicator;
         public SwgId SwgId { get; private set; }
+        public bool CanActivate { get; set; }
+        ClientCursor cursors;
         Action doubleClick;
         Action<Vector2> hold;
         Coroutine holding;
@@ -43,12 +45,26 @@ namespace Swg.Client.Runtime.UI.Containers
             holding = null;
         }
         public void OnPointerUp(PointerEventData pointer) => CancelHold();
-        public void OnPointerExit(PointerEventData pointer) => CancelHold();
+        public void OnPointerEnter(PointerEventData pointer)
+        {
+            if (!CanActivate) return;
+            cursors = GameServices.Resolve<ClientCursor>();
+            cursors.ShowActivation(this);
+        }
+        public void OnPointerExit(PointerEventData pointer)
+        {
+            CancelHold();
+            cursors?.ClearActivation(this);
+        }
         public void OnPointerMove(PointerEventData pointer)
         {
             if (Vector2.Distance(pressedAt, pointer.position) > 8) CancelHold();
         }
-        void OnDisable() => CancelHold();
+        void OnDisable()
+        {
+            CancelHold();
+            cursors?.ClearActivation(this);
+        }
         public void OnPointerClick(PointerEventData pointer)
         {
             if (!held && pointer.button == PointerEventData.InputButton.Left && pointer.clickCount == 2) doubleClick?.Invoke();

@@ -23,13 +23,26 @@ namespace Swg.Client.Core.Assets.Appearances
         sealed class AssetCache
         {
             public readonly Dictionary<string, TextureData> Textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
+            public readonly Dictionary<string, TextureData> ColoredTextures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
             public readonly Dictionary<string, EftFile> Effects = new Dictionary<string, EftFile>(StringComparer.OrdinalIgnoreCase);
         }
 
         static readonly ConditionalWeakTable<TreAssetLoader, AssetCache> CachedAssets = new ConditionalWeakTable<TreAssetLoader, AssetCache>();
         static readonly IReadOnlyDictionary<string, short> Defaults = new Dictionary<string, short>();
-        public static void Load(TreAssetLoader loader, string path, IffNode mesh, Matrix4x4 matrix, AppearanceData result)
+        public static void Load(TreAssetLoader loader, string path, IffNode mesh, Matrix4x4 matrix, AppearanceData result, IReadOnlyDictionary<string, short> customization = null)
         {
+            customization = customization ?? Defaults;
+            var hardpoints = IffNode.Form(mesh.Children, "HPTS");
+            if (hardpoints != null)
+                foreach (var hardpoint in hardpoints.Children.Where(node => node.Tag == "HPNT"))
+                {
+                    var reader = new ByteReader(hardpoint.Data);
+                    var local = Matrix4x4.identity;
+                    for (int row = 0; row < 3; row++)
+                        for (int column = 0; column < 4; column++)
+                            local[row, column] = reader.Float();
+                    result.Hardpoints[reader.CString()] = matrix * local;
+                }
             // Inverse-transpose preserves normals under non-uniform scale. Compute once per mesh.
             var normalMatrix = Math.Abs(matrix.determinant) < .000001f ? Matrix4x4.identity : matrix.inverse.transpose;
             var version = mesh.Children.First(n => n.Tag == "FORM");
@@ -125,9 +138,15 @@ namespace Swg.Client.Core.Assets.Appearances
                         diffuse = References(shaderBytes, "texture/", new[] { ".dds" }).FirstOrDefault(p => !p.EndsWith("_n.dds") && !p.EndsWith("_cn.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds"));
                     if (diffuse != null)
                         texture = Texture(loader, diffuse);
-                    tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, Defaults, Defaults);
+                    tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, customization, customization);
                     var effect = References(shaderBytes, "effect/", new[] { ".eft" }).FirstOrDefault();
                     cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
+                    var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, customization, customization, "HUEB");
+                    if (texture != null && trim != null && effect != null && Path.GetFileName(effect).StartsWith("h_color2_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        texture = TwoColorTexture(loader, shader, texture, tint ?? new byte[] { 255, 255, 255, 255 }, trim);
+                        tint = null;
+                    }
                 }
                 catch (Exception e)when (e is IOException || e is ArgumentException)
                 {
@@ -142,6 +161,27 @@ namespace Swg.Client.Core.Assets.Appearances
 
                 result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, VertexColors = colors });
                 result.Sources.Add(new StaticMeshSource { AppearancePath = path, ShaderPath = shader, DiffusePath = diffuse });
+            }
+        }
+
+        // Native h_color2 shaders interpolate MAIN/HUEB using diffuse alpha, which is a paint mask, not transparency.
+        static TextureData TwoColorTexture(TreAssetLoader loader, string shader, TextureData source, byte[] main, byte[] trim)
+        {
+            var cache = CachedAssets.GetValue(loader, _ => new AssetCache());
+            string key = shader + "#" + BitConverter.ToString(main) + "/" + BitConverter.ToString(trim);
+            lock (cache)
+            {
+                if (cache.ColoredTextures.TryGetValue(key, out var texture)) return texture;
+                texture = new TextureData(source.Width, source.Height);
+                for (int i = 0; i < source.Pixels.Length; i += 4)
+                {
+                    float mask = source.Pixels[i + 3] / 255f;
+                    for (int channel = 0; channel < 3; channel++)
+                        texture.Pixels[i + channel] = (byte)Mathf.RoundToInt(source.Pixels[i + channel] * Mathf.Lerp(main[channel], trim[channel], mask) / 255f);
+                    texture.Pixels[i + 3] = 255;
+                }
+                cache.ColoredTextures.Add(key, texture);
+                return texture;
             }
         }
 

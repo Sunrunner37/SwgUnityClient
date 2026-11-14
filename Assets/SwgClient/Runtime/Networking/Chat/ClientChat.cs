@@ -31,6 +31,7 @@ namespace Swg.Client.Runtime.Networking.Chat
         bool roomsRequested;
         bool disposed;
         public event Action<string, string> MessageReceived;
+        public event Action<string> ScreenMessageReceived;
         public IEnumerable<(string Channel, string Text)> History => history;
         public IReadOnlyDictionary<uint, ChatRoomData> Rooms => rooms;
 
@@ -160,7 +161,12 @@ namespace Swg.Client.Runtime.Networking.Chat
         }
 
         public void Receive(SpatialChatPacket packet) => Post(() => Add("Spatial", text.Name(packet.SenderSwgId) + ": " + text.Format(packet.Message, packet.Parameters)));
-        public void Receive(ChatSystemPacket packet) => Post(() => Add("Spatial", text.Format(packet.Message, packet.Parameters)));
+        public void Receive(ChatSystemPacket packet) => Post(() =>
+        {
+            string message = text.Format(packet.Message, packet.Parameters);
+            Add("Spatial", message);
+            if (packet.ShowOnScreen) ScreenMessageReceived?.Invoke(message);
+        });
         public void Receive(ChatRoomPacket packet) => Post(() =>
         {
             string channel = rooms.TryGetValue(packet.ChannelId, out var room) ? Channel(room) : "Spatial";

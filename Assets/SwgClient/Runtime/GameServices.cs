@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.UI;
 using Swg.Client.Core;
 using Swg.Client.Runtime.UI.Inventory;
 using Swg.Client.Runtime.UI.Containers;
@@ -57,6 +58,7 @@ namespace Swg.Client.Runtime
             builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.RegisterType<AudioClipLoader>().SingleInstance();
             builder.RegisterType<SwgMaterialFactory>().SingleInstance();
+            builder.RegisterType<ClientCursor>().SingleInstance();
             builder.RegisterInstance(music).ExternallyOwned();
             builder.Register(_ => Connection ?? throw new InvalidOperationException("Log in before sending game packets.")).ExternallyOwned();
             global = builder.Build();
@@ -97,6 +99,7 @@ namespace Swg.Client.Runtime
                     var commands = context.Resolve<ClientCommands>();
                     return new Action<SwgId>(swgId => commands.Enqueue("getAttributesBatch", swgId.ToString()));
                 }).SingleInstance();
+                builder.RegisterInstance(new Action<ObjectMenuSelectPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
                 builder.Register(context =>
                 {

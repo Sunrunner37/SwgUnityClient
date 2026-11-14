@@ -11,7 +11,6 @@ using Swg.Client.Core.Assets.Formats.Customization;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Characters.Animation;
 using Swg.Client.Core.Characters.Appearance;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Geometry;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.Networking;
@@ -29,8 +28,8 @@ namespace Swg.Client.Tests.Editor
         public void CharacterPreviewUsesSharedSkinningAndBreathesWithoutMoving()
         {
             using var loader = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
-            var source = CharacterModel.LoadDetailed(loader, "object/creature/player/shared_human_female.iff");
-            var model = new CharacterModelResult();
+            var source = SkeletalAppearanceLoader.LoadDetailed(loader, "object/creature/player/shared_human_female.iff");
+            var model = new SkeletalAppearanceData();
             foreach (var part in source.Parts)
                 model.Parts.Add(new MeshPart { Vertices = part.Vertices, Normals = part.Normals, Uvs = part.Uvs, Triangles = part.Triangles, Skinning = part.Skinning, UseCharacterShader = true, AlphaCutout = part.AlphaCutout });
             var root = new GameObject("preview-test");
@@ -152,7 +151,7 @@ namespace Swg.Client.Tests.Editor
         public void GpuSkinMatchesTheNeutralPreviewAndKeepsTheRunCycleThroughTurns()
         {
             using var loader = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
-            var model = CharacterModel.LoadDetailed(loader, new CharacterAppearance { TemplatePath = "object/creature/player/shared_human_female.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = new[] { new WearableAppearance { TemplatePath = "object/tangible/hair/human/shared_hair_human_female_s31.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()) } } });
+            var model = SkeletalAppearanceLoader.LoadDetailed(loader, new CharacterAppearance { TemplatePath = "object/creature/player/shared_human_female.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = new[] { new WearableAppearance { TemplatePath = "object/tangible/hair/human/shared_hair_human_female_s31.iff", Customization = PackedCustomization.Decode(Array.Empty<byte>()) } } });
             var appearance = new AppearanceData
             {
                 Key = "running-test"

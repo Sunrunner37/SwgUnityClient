@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Swg.Client.Core.World.SceneObjects;
 using System.Threading;
 using Swg.Client.Core;
 using Swg.Client.Core.Networking.Game.Packets.Data;
@@ -12,7 +13,7 @@ namespace Swg.Client.Runtime.Networking
     /// <summary>Game-owned menu and examine requests. Network replies are delivered to views on the main thread.</summary>
     public sealed class ClientObjectInteractions : IDisposable
     {
-        public const byte ExamineAction = 7; // Core3 RadialOptions / native radial_menu.iff.
+        readonly Action<ObjectMenuSelectPacket> selectMenu;
         readonly WorldState state;
         readonly Action<ObjectMenuRequestPacket> sendMenu;
         readonly Action<SwgId> requestAttributes;
@@ -26,9 +27,10 @@ namespace Swg.Client.Runtime.Networking
         public event Action MenuChanged;
         public event Action<SwgId> AttributesChanged;
 
-        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes)
+        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu)
         {
             this.state = state;
+            this.selectMenu = selectMenu;
             this.sendMenu = sendMenu;
             this.requestAttributes = requestAttributes;
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create object interactions on Unity's main thread.");
@@ -37,11 +39,25 @@ namespace Swg.Client.Runtime.Networking
         public void RequestMenu(SwgId swgId)
         {
             MenuTargetSwgId = swgId;
-            var defaults = new[] { new RadialMenuEntry(1, 0, ExamineAction, 1, "@ui_radial:examine") };
+            state.SceneObjects.TryGet(swgId, out var sceneObject);
+            var defaults = ObjectMenuDefaults.Create(sceneObject, ObjectType(sceneObject));
             Menu = defaults;
             MenuChanged?.Invoke();
             sendMenu(new ObjectMenuRequestPacket(state.PlayerSwgId, swgId, defaults, unchecked(++counter)));
         }
+
+        int ObjectType(SceneObject sceneObject) => sceneObject == null ? 0 : state.Templates.GameObjectType(sceneObject.TemplatePath);
+
+        public bool IsActiveControlDevice(SwgId swgId) => state.SceneObjects.TryGet<IntangibleSceneObject>(swgId, out var device) && device.IsActive && ObjectMenuDefaults.IsControlDevice(ObjectType(device));
+
+        public bool HasDefaultAction(SwgId swgId) => state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out _);
+
+        public void ActivateDefault(SwgId swgId)
+        {
+            if (state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
+                SelectMenuAction(swgId, action);
+        }
+        public void SelectMenuAction(SwgId swgId, byte radialId) => selectMenu(new ObjectMenuSelectPacket(swgId, radialId));
 
         public void RequestExamine(SwgId swgId) => requestAttributes(swgId);
 

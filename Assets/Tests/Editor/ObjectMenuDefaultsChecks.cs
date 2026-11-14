@@ -1,0 +1,90 @@
+using System.Linq;
+using NUnit.Framework;
+using Swg.Client.Core.World.SceneObjects;
+using Swg.Client.Core.Networking.Game.Replication;
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
+
+namespace Swg.Client.Tests.Editor
+{
+    public sealed class ObjectMenuDefaultsChecks
+    {
+        [TestCase(0x807, 44, 59)] // Creature-handler pets
+        [TestCase(0x80b, 44, 59)] // Droids use the same PetControlDevice handler
+        [TestCase(0x808, 60, 61)]
+        public void ControlDeviceMenuAndDoubleClickUseTheSameReplicatedStatus(int objectType, byte call, byte store)
+        {
+            var device = new IntangibleSceneObject();
+            Assert.That(ObjectMenuDefaults.Create(device, objectType).Select(entry => entry.RadialId), Is.EqualTo(new byte[] { 7, call }));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(device, objectType, out byte action), Is.True);
+            Assert.That(action, Is.EqualTo(call));
+            device.Apply(new IntangibleSceneObjectUpdate { Status = 1 });
+            Assert.That(ObjectMenuDefaults.Create(device, objectType).Select(entry => entry.RadialId), Is.EqualTo(new byte[] { 7, store }));
+            ObjectMenuDefaults.TryGetDefaultAction(device, objectType, out action);
+            Assert.That(action, Is.EqualTo(store));
+            Assert.That(ObjectMenuDefaults.IsControlDevice(objectType), Is.True);
+        }
+
+        [TestCase(0x200a)]
+        [TestCase(0x2018)]
+        [TestCase(0x200d)]
+        [TestCase(0x201b)]
+        [TestCase(0x2019)]
+        [TestCase(0x201c)]
+        [TestCase(0x4011)]
+        [TestCase(0x2012)]
+        [TestCase(0x2014)]
+        [TestCase(0x4003)]
+        [TestCase(0x4004)]
+        [TestCase(0x400a)]
+        [TestCase(0x4012)]
+        [TestCase(0x8004)]
+        [TestCase(0x20003)]
+        [TestCase(0x20004)]
+        [TestCase(0x20006)]
+        [TestCase(0x800006)]
+        [TestCase(0x800008)]
+        [TestCase(0x200f)] // Sign
+        [TestCase(0x4001)] // Bank root, with server-provided children
+        [TestCase(0x8002)] // Survey tool
+        [TestCase(0x8003)] // Repair tool
+        [TestCase(0x800001)] // Structure deed
+        [TestCase(0x800002)] // Installation deed
+        public void SuppliesUseOnlyWhereCore3ExpectsIt(int objectType)
+        {
+            var menu = ObjectMenuDefaults.Create(new SceneObject(), objectType);
+            Assert.That(menu.Select(entry => entry.RadialId), Is.EqualTo(new byte[] { 7, 20 }));
+            Assert.That(menu[1].Callback, Is.EqualTo(objectType == 0x4001 ? 1 : 3));
+        }
+
+        [TestCase(0x80a)] // ShipControlDevice supplies Launch/Land itself
+        [TestCase(0x800005)] // Vehicle deed supplies Generate itself
+        [TestCase(0x800003)] // Pet deed supplies Tame itself
+        [TestCase(0x1003)] // Harvester supplies its own management options
+        public void DoesNotDuplicateServerProvidedOptions(int objectType)
+        {
+            Assert.That(ObjectMenuDefaults.Create(new SceneObject(), objectType).Single().RadialId, Is.EqualTo(7));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new SceneObject(), objectType, out _), Is.False);
+        }
+
+        [TestCase("object/tangible/item/shared_droid_customization.iff")]
+        [TestCase("object/tangible/gambling/slot/shared_standard.iff")]
+        [TestCase("object/tangible/skill_buff/shared_skill_buff_unarmed_speed.iff")]
+        [TestCase("object/tangible/jedi/shared_jedi_holocron_light.iff")]
+        public void GenericTemplatesWithCore3UseComponentsHaveUse(string path)
+        {
+            Assert.That(ObjectMenuDefaults.Create(new SceneObject { TemplatePath = path }, 0).Select(entry => entry.RadialId), Is.EqualTo(new byte[] { 7, 20 }));
+        }
+
+        [Test]
+        public void LootAppearsOnlyForDeadCreatures()
+        {
+            var creature = new CreatureSceneObject();
+            Assert.That(ObjectMenuDefaults.Create(creature, 0x401).Length, Is.EqualTo(1));
+            creature.Posture = CreaturePosture.Dead;
+            var menu = ObjectMenuDefaults.Create(creature, 0x401);
+            Assert.That(menu.Select(entry => entry.RadialId), Is.EqualTo(new byte[] { 7, 35, 36 }));
+            Assert.That(menu.Select(entry => entry.Index).Distinct().Count(), Is.EqualTo(menu.Length));
+        }
+    }
+}

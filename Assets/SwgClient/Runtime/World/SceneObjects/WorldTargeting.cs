@@ -28,12 +28,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
         ClientTargeting targeting;
         WorldState state;
         Texture2D cursor;
-        bool cursorShown;
+        ClientCursor cursors;
         int targetMask;
 
         void Awake()
         {
             targeting = GameServices.Resolve<ClientTargeting>();
+            cursors = GameServices.Resolve<ClientCursor>();
             state = GameServices.Resolve<WorldState>();
             targetMask = LayerMask.GetMask(TargetableSceneObject.LayerName);
         }
@@ -54,12 +55,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 yield break;
             }
             var source = read.Result;
-            cursor = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, false);
-            var pixels = new byte[source.Pixels.Length];
-            for (int y = 0; y < source.Height; y++)
-                Buffer.BlockCopy(source.Pixels, y * source.Width * 4, pixels, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
-            cursor.SetPixelData(pixels, 0);
-            cursor.Apply(false, false); // OS cursors require a readable texture.
+            cursor = ClientCursor.Create(source);
         }
 
         void LateUpdate()
@@ -102,12 +98,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (mouse == null || !mouse.leftButton.isPressed || overUi || hovered != heldSwgId || Vector2.Distance(holdPosition, mouse.position.ReadValue()) > holdMovementTolerance)
                 heldSwgId = default;
             targeting.Hover(hovered);
-            bool showCursor = !hovered.IsNone && cursor != null;
-            if (showCursor != cursorShown)
-            {
-                cursorShown = showCursor;
-                Cursor.SetCursor(showCursor ? cursor : null, showCursor ? cursorHotspot : Vector2.zero, CursorMode.Auto);
-            }
+            cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot);
             if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 targeting.Select(default);
         }
@@ -115,8 +106,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void OnDisable()
         {
             targeting.Hover(default);
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            cursorShown = false;
+            cursors.SetWorldHover(false, cursor, cursorHotspot);
             StopAllCoroutines();
         }
 

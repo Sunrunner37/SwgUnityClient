@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +59,7 @@ namespace Swg.Client.Core.Characters.Models
             }
         }
 
-        public static void Apply(CharacterModelResult model)
+        public static void Apply(SkeletalAppearanceData model)
         {
             var meshes = model.Sources.Select(source => source.MeshVersion).Distinct().ToDictionary(version => version, version => new MeshZones(version));
             for (int partIndex = model.Parts.Count - 1; partIndex >= 0; partIndex--)

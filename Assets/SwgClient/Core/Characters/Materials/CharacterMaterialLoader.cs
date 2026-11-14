@@ -22,7 +22,9 @@ namespace Swg.Client.Core.Characters.Materials
             return "shader/" + Path.GetFileNameWithoutExtension(ownerAppearance.Replace('\\', '/')) + "_" + material + ".sht";
         }
 
-        internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner)
+        internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner) => PaletteTint(loader, nodes, own, owner, "MAIN");
+
+        internal static byte[] PaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, string slot)
         {
             var factors = IffNode.Form(nodes, "TFAC");
             if (factors == null)
@@ -37,7 +39,7 @@ namespace Swg.Client.Core.Characters.Materials
                 int index = checked((int)r.U32());
                 if (r.Remaining != 0)
                     throw new InvalidDataException("Unsupported shader palette binding");
-                if (target != "MAIN")
+                if (target != slot)
                     continue;
                 var values = scope == 0 ? owner : own;
                 string scoped = (scope == 0 ? "/shared_owner/" : "/private/") + variable;

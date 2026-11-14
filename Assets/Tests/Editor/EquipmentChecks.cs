@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -104,7 +105,7 @@ namespace Swg.Client.Tests.Editor
                 return version;
             }
 
-            var result = new CharacterModelResult();
+            var result = new SkeletalAppearanceData();
             void Part(IffNode mesh, int[] combinations)
             {
                 result.Parts.Add(new MeshPart { Triangles = new[] { 0, 1, 2, 2, 3, 0 } });

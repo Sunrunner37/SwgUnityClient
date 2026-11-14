@@ -1,5 +1,8 @@
 using System.Linq;
+using Swg.Client.Runtime.Networking.Chat;
+using Swg.Client.Runtime.Localization;
 using Swg.Client.Core.Assets;
+using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core.Assets.Formats.ObjectTemplates;
 using System.Collections;
 using Swg.Client.Runtime.World.Loading;
@@ -52,13 +55,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 {
                     var world = context.Resolve<WorldState>();
                     ClientObjectInteractions interactions = null;
-                    interactions = new ClientObjectInteractions(world, request => interactions.Receive(new ObjectMenuResponsePacket(world.PlayerSwgId.Value, request.TargetSwgId.Value, new[]
+                    interactions = new ClientObjectInteractions(world, request => interactions.Receive(new ObjectMenuResponsePacket(world.PlayerSwgId.Value, request.TargetSwgId.Value, request.Items.Length > 1 ? request.Items : new[]
                     {
                         request.Items[0],
                         new RadialMenuEntry(2, 0, 118, 3, "@player_structure:management"),
                         new RadialMenuEntry(3, 0, 117, 3, "@player_structure:permissions"),
                         new RadialMenuEntry(4, 2, 124, 3, "@player_structure:management_status")
-                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })));
+                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet));
                     return interactions;
                 }).SingleInstance();
                 builder.RegisterInstance(new Admission { Username = "ui-testing", Galaxy = new Galaxy { Name = "Offline" } });
@@ -77,6 +80,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => Debug.Log("Offline queue enqueue: " + packet.CommandCrc)));
                 builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => Debug.Log("Offline queue cancel: " + packet.ActionCounter)));
                 builder.RegisterType<ClientCommands>().SingleInstance();
+                builder.Register(context => new ClientChat(null, context.Resolve<WorldState>(), context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>())).SingleInstance();
                 builder.Register(context =>
                 {
                     var commands = context.Resolve<ClientCommands>();
@@ -142,8 +146,9 @@ namespace Swg.Client.Runtime.UI.Testing
             for (int i = 0; i < 24; i++)
                 state.SceneObjects.Add(new TangibleSceneObject { SwgId = (ulong)(9300 + i), ParentSwgId = 9200, TemplatePath = templates[i % templates.Length], Name = itemNames[i % templates.Length], Quantity = i % templates.Length < 2 ? 41000 + i * 1000 : 1 });
             state.SceneObjects.Add(new TangibleSceneObject { SwgId = 9800, ParentSwgId = 9000, TemplatePath = "object/tangible/datapad/shared_character_datapad.iff", Name = "Datapad" });
-            state.SceneObjects.Add(new SceneObject { SwgId = 9801, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2.iff", Name = "A helper R2 unit" });
-            state.SceneObjects.Add(new SceneObject { SwgId = 9802, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2_crafted.iff", Name = "R2 crafting assistant" });
+            state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9801, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2.iff", Name = "A helper R2 unit" });
+            state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9802, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2_crafted.iff", Name = "R2 crafting assistant" });
+            state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9803, ParentSwgId = 9800, TemplatePath = "object/intangible/vehicle/shared_landspeeder_x31_pcd.iff", Name = "Landspeeder" });
             state.UpdateDraftSchematics(list => list.AddRange(new[]
             {
                 ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_t21.iff"),
@@ -171,6 +176,18 @@ namespace Swg.Client.Runtime.UI.Testing
             RefreshAbilities();
         }
 
+
+        static void ApplyOfflineMenuSelection(WorldState world, ObjectMenuSelectPacket packet)
+        {
+            Debug.Log("Offline radial: " + packet.RadialId + " on " + packet.TargetSwgId);
+            bool activate = packet.RadialId == ObjectMenuDefaults.VehicleGenerateAction || packet.RadialId == ObjectMenuDefaults.PetCallAction;
+            bool store = packet.RadialId == ObjectMenuDefaults.VehicleStoreAction || packet.RadialId == ObjectMenuDefaults.PetStoreAction;
+            if (!activate && !store) return;
+            if (!world.SceneObjects.TryGet<IntangibleSceneObject>(packet.TargetSwgId, out var device) || !ObjectMenuDefaults.IsControlDevice(world.Templates.GameObjectType(device.TemplatePath))) return;
+            var update = new IntangibleSceneObjectUpdate { Status = activate ? 1 : 0 };
+            device.Apply(update);
+            world.SceneObjects.NotifyChanged(device, update.Changes);
+        }
 
         public void ShowSampleMenu() => FindAnyObjectByType<RadialContextMenu>().Open(9002, new Vector2(Screen.width * .5f, Screen.height * .5f));
 

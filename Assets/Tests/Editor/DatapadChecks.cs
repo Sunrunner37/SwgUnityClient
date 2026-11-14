@@ -258,7 +258,7 @@ namespace Swg.Client.Tests.Editor
                 initialMovement: new MovementUpdate(Vector3.one, Quaternion.identity));
             replication.ApplyPending();
             Assert.That(state.SceneObjects.TryGet(42, out var sceneObject), Is.True);
-            Assert.That(sceneObject, Is.TypeOf<SceneObject>());
+            Assert.That(sceneObject, Is.TypeOf<IntangibleSceneObject>());
         }
         [UnityTest, Category("NativeAssets")]
         public IEnumerator CapacityCountsStoredDataSizeWithoutChargingForWaypoints()

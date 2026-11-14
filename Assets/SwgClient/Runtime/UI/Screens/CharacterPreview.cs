@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Swg.Client.Core.Assets.Appearances;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Assets.Shaders;
 
@@ -30,7 +29,7 @@ namespace Swg.Client.Runtime.UI.Screens
         [Range(.1f, 1f)]
         public float heightFraction = .8f;
         public float yawDegrees = 0;
-        public void Show(string key, CharacterModelResult result)
+        public void Show(string key, SkeletalAppearanceData result)
         {
             if (!models.TryGetValue(key, out var model))
             {
@@ -51,7 +50,7 @@ namespace Swg.Client.Runtime.UI.Screens
         {
             if (!models.TryGetValue(path, out var model))
             {
-                model = BuildModel(path, CharacterModel.LoadDetailed(assets.Loader, path));
+                model = BuildModel(path, SkeletalAppearanceLoader.LoadDetailed(assets.Loader, path));
                 models.Add(path, model);
             }
 
@@ -67,7 +66,7 @@ namespace Swg.Client.Runtime.UI.Screens
             FrameModel(modelRoot.transform, model.Bounds);
         }
 
-        Model BuildModel(string key, CharacterModelResult result)
+        Model BuildModel(string key, SkeletalAppearanceData result)
         {
             if (characterShader == null)
                 throw new InvalidOperationException("SWG character shader is missing");

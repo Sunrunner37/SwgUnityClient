@@ -7,6 +7,9 @@ namespace Swg.Client.Core.Networking.Game.Packets.Chat
     // Core3/MMOCoreORB/src/server/zone/packets/chat/ChatSystemMessage.h:11 (ChatSystemMessage).
     public readonly struct ChatSystemPacket : IPacket
     {
+        public const byte DisplayChatAndScreen = 0;
+        public const byte DisplayChatOnly = 2;
+        public bool ShowOnScreen => DisplayType == DisplayChatAndScreen;
         public const uint Opcode = 0x6d2a6413;
         public readonly ushort OperandCount;
         public readonly byte DisplayType;

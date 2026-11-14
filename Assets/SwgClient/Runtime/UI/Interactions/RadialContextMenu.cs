@@ -107,14 +107,18 @@ namespace Swg.Client.Runtime.UI.Interactions
             }
             Close();
             if (localSelection != null) { localSelection(entry); return; }
-            if (entry.RadialId == ClientObjectInteractions.ExamineAction)
+            if (entry.RadialId == ObjectMenuDefaults.ExamineAction)
                 examineWindow.Open(interactions.MenuTargetSwgId);
-            // Remaining actions are intentionally display-only until their gameplay is implemented.
+            else
+                interactions.SelectMenuAction(interactions.MenuTargetSwgId, entry.RadialId);
         }
         string Caption(RadialMenuEntry entry)
         {
             if (!string.IsNullOrEmpty(entry.Text))
                 return localizer.Localize(entry.Text);
+            string reference = ObjectMenuDefaults.CaptionReference(entry.RadialId);
+            if (!string.IsNullOrEmpty(reference))
+                return localizer.Localize(reference);
             return entry.RadialId < captions.Length ? localizer.Lookup("ui_radial", captions[entry.RadialId].ToLowerInvariant()) : "Option " + entry.RadialId;
         }
         void Refresh()

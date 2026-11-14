@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Assets.Audio;
 using System;
 using System.IO;
@@ -9,7 +10,6 @@ using UnityEngine;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Audio;
 using Swg.Client.Core.Characters.Creation;
-using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.UI.Screens;
@@ -67,8 +67,8 @@ namespace Swg.Client.Editor
                     var creation = new CharacterCreationData(loader);
                     foreach (var species in creation.Species)
                     {
-                        CharacterModel.Load(loader, species.Male);
-                        CharacterModel.Load(loader, species.Female);
+                        SkeletalAppearanceLoader.Load(loader, species.Male);
+                        SkeletalAppearanceLoader.Load(loader, species.Female);
                     }
 
                     var audio = MusicLoader.Load(loader, "sound/music_main_title.snd");
