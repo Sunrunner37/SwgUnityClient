@@ -4,6 +4,7 @@ using UnityEngine.UI;
 namespace Swg.Client.Runtime.UI.Containers
 {
     /// <summary>Two rows of capacity blocks, aligned to display pixels instead of stretching a bitmap.</summary>
+    [RequireComponent(typeof(CanvasRenderer))]
     public sealed class CapacityBar : MaskableGraphic
     {
         [SerializeField, Range(0, 1)] float fill = 1;

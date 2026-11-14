@@ -1,3 +1,5 @@
+using Swg.Client.Core.World;
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +10,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
     // Core3 PlayerObjectMessage9: owner-only abilities followed by crafting, social and consumption state.
     internal static class PlayerView9
     {
-        public static (Action<List<string>> Abilities, Action<List<uint>> Schematics) ReadBaseline(ByteReader r)
+        public static (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<WorldState> Details) ReadBaseline(ByteReader r)
         {
             var abilities = Strings(r);
             r.Skip(16);
@@ -20,10 +22,16 @@ namespace Swg.Client.Core.Networking.Game.Replication
             r.Skip(8);
             Strings(r);
             Strings(r);
-            r.Skip(40);
+            r.U32(); // Language.
+            int food = unchecked((int)r.U32());
+            int foodMaximum = unchecked((int)r.U32());
+            int drink = unchecked((int)r.U32());
+            int drinkMaximum = unchecked((int)r.U32());
+            r.Skip(20);
             ReplicationReader.RequireEnd(r);
             return (list => { list.Clear(); list.AddRange(abilities); },
-                list => { list.Clear(); list.AddRange(schematics); });
+                list => { list.Clear(); list.AddRange(schematics); },
+                state => state.CharacterSheet.Update(data => { data.Food = food; data.FoodMaximum = foodMaximum; data.Drink = drink; data.DrinkMaximum = drinkMaximum; }, CharacterSheetChange.Status));
         }
 
         static List<string> Strings(ByteReader r)
@@ -36,15 +44,21 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return list;
         }
 
-        public static bool TryReadDelta(ByteReader r, out (Action<List<string>> Abilities, Action<List<uint>> Schematics) update)
+        public static bool TryReadDelta(ByteReader r, out (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<WorldState> Details) update)
         {
             var updates = new List<Action<List<string>>>();
             var schematicUpdates = new List<Action<List<uint>>>();
+            var details = new List<Action<CharacterSheetData>>();
             int fields = r.U16();
             for (int i = 0; i < fields; i++)
             {
                 ushort field = r.U16();
-                if (field == 0)
+                if (field >= 10 && field <= 13)
+                {
+                    int value = unchecked((int)r.U32());
+                    details.Add(data => { switch (field) { case 10: data.Food = value; break; case 11: data.FoodMaximum = value; break; case 12: data.Drink = value; break; case 13: data.DrinkMaximum = value; break; } });
+                }
+                else if (field == 0)
                     ReadStringChanges(r, updates);
                 else if (field == 4)
                     ReadSchematicChanges(r, schematicUpdates);
@@ -62,8 +76,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
 
             ReplicationReader.RequireEnd(r);
             update = (updates.Count == 0 ? null : list => { foreach (var apply in updates) apply(list); },
-                schematicUpdates.Count == 0 ? null : list => { foreach (var apply in schematicUpdates) apply(list); });
-            return updates.Count > 0 || schematicUpdates.Count > 0;
+                schematicUpdates.Count == 0 ? null : list => { foreach (var apply in schematicUpdates) apply(list); },
+                details.Count == 0 ? null : state => state.CharacterSheet.Update(data => { foreach (var apply in details) apply(data); }, CharacterSheetChange.Status));
+            return updates.Count > 0 || schematicUpdates.Count > 0 || details.Count > 0;
         }
 
         static uint ReadSchematic(ByteReader reader)

@@ -57,6 +57,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 {
                     if (commands.Abilities != null) state.Commands.Apply(commands.Abilities);
                     if (commands.Schematics != null) state.UpdateDraftSchematics(commands.Schematics);
+                    commands.Details?.Invoke(state);
                 });
                 return;
             }

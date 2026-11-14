@@ -13,18 +13,19 @@ namespace Swg.Client.Tests.Editor
         static readonly FieldInfo game = typeof(GameServices).GetField("game", BindingFlags.Static | BindingFlags.NonPublic);
         readonly object previous;
         readonly ILifetimeScope scope;
-        ManagedObjectTestScope(SceneObjectRegistry registry)
+        ManagedObjectTestScope(SceneObjectRegistry registry, Action<ContainerBuilder> register)
         {
             previous = game.GetValue(null);
             var builder = new ContainerBuilder();
             builder.RegisterInstance(registry);
             builder.RegisterInstance(new WorldState(registry));
+            register?.Invoke(builder);
             scope = builder.Build();
             ManagedSceneObject.ResetPlayerCache();
             game.SetValue(null, scope);
         }
 
-        internal static ManagedObjectTestScope Use(SceneObjectRegistry registry) => new ManagedObjectTestScope(registry);
+        internal static ManagedObjectTestScope Use(SceneObjectRegistry registry, Action<ContainerBuilder> register = null) => new ManagedObjectTestScope(registry, register);
         public void Dispose()
         {
             game.SetValue(null, previous);

@@ -30,8 +30,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return new CreatureSceneObjectUpdate
             {
                 TargetSwgId = targetSwgId,
-                Ham = ham,
-                MaxHam = maxHam,
+                Ham = new HamPoolUpdate { Current = ham, Maximum = maxHam },
                 Equipment = equipment,
                 AlternateAppearance = appearance
             };
@@ -75,10 +74,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     reader.Byte();
                     break;
                 case 13:
-                    update.HamDelta = IntVectorDelta.ReadFrom(reader);
+                    (update.Ham ??= new HamPoolUpdate()).CurrentDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 case 14:
-                    update.MaxHamDelta = IntVectorDelta.ReadFrom(reader);
+                    (update.Ham ??= new HamPoolUpdate()).MaximumDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 case 15:
                     update.EquipmentDelta = EquipmentDelta.ReadFrom(reader);

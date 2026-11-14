@@ -1,3 +1,5 @@
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Characters;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Player;
@@ -10,14 +12,17 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
     {
         public override uint Opcode => FactionResponsePacket.Opcode;
 
+        readonly GameReplication replication;
+
         [Preserve]
-        public FactionResponsePacketHandler() : base(FactionResponsePacket.ReadFrom)
+        public FactionResponsePacketHandler(GameReplication replication) : base(FactionResponsePacket.ReadFrom)
         {
+            this.replication = replication;
         }
 
         protected override void Handle(FactionResponsePacket packet)
         {
-            throw new NotImplementedException($"FactionResponseMessage (opcode 0x{Opcode:X8})");
+            replication.UpdatePlayer(state => state.CharacterSheet.Update(data => { data.ImperialPoints = packet.ImperialPoints; data.RebelPoints = packet.RebelPoints; }, CharacterSheetChange.Status));
         }
     }
 }

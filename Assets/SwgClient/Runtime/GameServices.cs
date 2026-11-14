@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Packets.Player;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Core;
 using Swg.Client.Runtime.UI.Inventory;
@@ -90,6 +91,8 @@ namespace Swg.Client.Runtime
                     var commands = context.Resolve<ClientCommands>();
                     return new Action<string, string, SwgId>((name, arguments, target) => commands.Enqueue(name, arguments, target));
                 }).SingleInstance();
+                builder.RegisterInstance(new Action<FactionRequestPacket>(packet => connection.Send(packet)));
+                builder.RegisterType<ClientCharacterSheet>().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();

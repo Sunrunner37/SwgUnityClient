@@ -10,13 +10,26 @@ namespace Swg.Client.Core.Networking.Game.Replication
         {
             Current,
             Maximum,
-            Wounds
+            Wounds,
+            Base,
+            Encumbrance
         }
 
-        public static void Apply(CreatureSceneObjectUpdate update, ref HamPool ham)
+        public static void Apply(HamPoolUpdate update, ref HamPool ham)
         {
-            ApplyVector(ref ham, update.Ham, update.HamDelta, ValueKind.Current);
-            ApplyVector(ref ham, update.MaxHam, update.MaxHamDelta, ValueKind.Maximum);
+            ApplyVector(ref ham, update.Base, update.BaseDelta, ValueKind.Base);
+            if (update.Encumbrances != null || update.EncumbrancesDelta != null)
+            {
+                var values = update.Encumbrances ?? new[] { ham.Strength.Encumbrance, ham.Quickness.Encumbrance, ham.Focus.Encumbrance };
+                if (update.EncumbrancesDelta != null) values = update.EncumbrancesDelta.Apply(values);
+                var expanded = new int[9];
+                // Core3 PlayerManager::fixHAM subtracts each group penalty from its two secondary attributes.
+                for (int i = 0; i < Math.Min(3, values.Length); i++)
+                    expanded[i * 3 + 1] = expanded[i * 3 + 2] = values[i];
+                Assign(ref ham, expanded, ValueKind.Encumbrance);
+            }
+            ApplyVector(ref ham, update.Current, update.CurrentDelta, ValueKind.Current);
+            ApplyVector(ref ham, update.Maximum, update.MaximumDelta, ValueKind.Maximum);
             ApplyVector(ref ham, update.Wounds, update.WoundsDelta, ValueKind.Wounds);
         }
 
@@ -30,7 +43,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             for (int i = 0; i < values.Length; i++)
             {
                 var attribute = At(ref ham, i);
-                values[i] = kind == ValueKind.Current ? attribute.Current : kind == ValueKind.Maximum ? attribute.Maximum : attribute.Wounds;
+                values[i] = kind switch { ValueKind.Current => attribute.Current, ValueKind.Maximum => attribute.Maximum, ValueKind.Wounds => attribute.Wounds, ValueKind.Base => attribute.Base, _ => attribute.Encumbrance };
             }
             Assign(ref ham, delta.Apply(values), kind);
         }
@@ -44,7 +57,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 attribute = new HamElement(
                     kind == ValueKind.Current ? value : attribute.Current,
                     kind == ValueKind.Maximum ? value : attribute.Maximum,
-                    kind == ValueKind.Wounds ? value : attribute.Wounds);
+                    kind == ValueKind.Wounds ? value : attribute.Wounds,
+                    kind == ValueKind.Base ? value : attribute.Base,
+                    kind == ValueKind.Encumbrance ? value : attribute.Encumbrance);
             }
         }
 

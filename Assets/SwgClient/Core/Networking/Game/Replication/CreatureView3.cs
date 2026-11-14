@@ -12,9 +12,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Byte(); // Faction rank.
             reader.U64(); // Creature link.
             update.Height = reader.Float();
-            reader.U32(); // Shock wounds.
+            update.BattleFatigue = unchecked((int)reader.U32());
             update.States = reader.U64();
-            update.Wounds = ReplicationReader.ReadIntVector(reader);
+            update.Ham = new HamPoolUpdate { Wounds = ReplicationReader.ReadIntVector(reader) };
             return update;
         }
 
@@ -40,10 +40,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     update.Height = reader.Float();
                     break;
                 case 15:
-                    reader.U32();
+                    update.BattleFatigue = unchecked((int)reader.U32());
                     break;
                 case 17:
-                    update.WoundsDelta = IntVectorDelta.ReadFrom(reader);
+                    (update.Ham ??= new HamPoolUpdate()).WoundsDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 default:
                     return false;

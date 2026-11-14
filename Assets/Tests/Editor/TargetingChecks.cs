@@ -127,7 +127,7 @@ namespace Swg.Client.Tests.Editor
         public void ReplicationMapsAllNineAttributesWithoutExposingWireVectors()
         {
             var creature = new CreatureSceneObject();
-            creature.Apply(new CreatureSceneObjectUpdate { Ham = new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18 }, MaxHam = new[] { 100, 101, 102, 103, 104, 105, 106, 107, 108 }, Wounds = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 } });
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { Current = new[] { 10, 11, 12, 13, 14, 15, 16, 17, 18 }, Maximum = new[] { 100, 101, 102, 103, 104, 105, 106, 107, 108 }, Wounds = new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 } } });
             var ham = creature.Ham;
             var named = new[] { ham.Health, ham.Strength, ham.Constitution, ham.Action, ham.Quickness, ham.Stamina, ham.Mind, ham.Focus, ham.Willpower };
             for (int i = 0; i < named.Length; i++)
@@ -136,7 +136,7 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(named[i].Maximum, Is.EqualTo(100 + i));
                 Assert.That(named[i].Wounds, Is.EqualTo(i));
             }
-            creature.Apply(new CreatureSceneObjectUpdate { Ham = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } });
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { Current = new[] { 20, 21, 22, 23, 24, 25, 26, 27, 28 } } });
             Assert.That(creature.Ham.Constitution.Current, Is.EqualTo(22));
             Assert.That(creature.Ham.Constitution.Maximum, Is.EqualTo(102));
             Assert.That(creature.Ham.Constitution.Wounds, Is.EqualTo(2));
@@ -230,8 +230,8 @@ namespace Swg.Client.Tests.Editor
             Assert.That(creature.Ham.Mind.Maximum, Is.EqualTo(1006));
             Assert.That(creature.TargetSwgId.Value, Is.EqualTo(42));
             var copy = (CreatureSceneObjectUpdate)update.CopyForQueue();
-            update.Ham[0] = 0;
-            Assert.That(copy.Ham[0], Is.EqualTo(500));
+            update.Ham.Current[0] = 0;
+            Assert.That(copy.Ham.Current[0], Is.EqualTo(500));
         }
 
         [TestCase(13, 3)]
@@ -256,6 +256,59 @@ namespace Swg.Client.Tests.Editor
             var pool = attributeIndex == 3 ? creature.Ham.Action : creature.Ham.Constitution;
             Assert.That(field == 13 ? pool.Current : field == 14 ? pool.Maximum : pool.Wounds, Is.EqualTo(123));
             Assert.That(update.Changes, Is.EqualTo(SceneObjectChange.Vitals));
+        }
+
+        [Test]
+        public void HamQueueCopyOwnsEveryBaselineVector()
+        {
+            var values = new[] { 500, 400, 400, 900, 500, 400, 1000, 500, 600 };
+            var update = new CreatureSceneObjectUpdate
+            {
+                Ham = new HamPoolUpdate { Base = values, Current = values, Maximum = values, Wounds = values, Encumbrances = new[] { 10, 20, 30 } }
+            };
+            var copy = (CreatureSceneObjectUpdate)update.CopyForQueue();
+            values[0] = 0;
+            update.Ham.Encumbrances[0] = 0;
+            update.Ham.Current = null;
+            Assert.That(copy.Ham, Is.Not.SameAs(update.Ham));
+            Assert.That(copy.Ham.Base[0], Is.EqualTo(500));
+            Assert.That(copy.Ham.Current[0], Is.EqualTo(500));
+            Assert.That(copy.Ham.Maximum[0], Is.EqualTo(500));
+            Assert.That(copy.Ham.Wounds[0], Is.EqualTo(500));
+            Assert.That(copy.Ham.Encumbrances[0], Is.EqualTo(10));
+        }
+
+        [Test]
+        public void PartialHamDeltaCanSetZeroWithoutClearingOtherValues()
+        {
+            var creature = new CreatureSceneObject();
+            var values = new[] { 500, 400, 400, 900, 500, 400, 1000, 500, 600 };
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { Current = values, Maximum = values, Wounds = new[] { 10, 0, 0, 20, 0, 0, 30, 0, 0 }, Encumbrances = new[] { 10, 20, 30 } } });
+            var unrelated = new CreatureSceneObjectUpdate { Posture = 1 };
+            creature.Apply(unrelated);
+            Assert.That(unrelated.Ham, Is.Null);
+            Assert.That(unrelated.Changes & SceneObjectChange.Vitals, Is.EqualTo(SceneObjectChange.None));
+            var empty = new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate() };
+            creature.Apply(empty);
+            Assert.That(empty.Changes & SceneObjectChange.Vitals, Is.EqualTo(SceneObjectChange.None));
+
+            using var bytes = new MemoryStream();
+            using var writer = new BinaryWriter(bytes);
+            writer.Write(1u);
+            writer.Write(1u);
+            writer.Write((byte)2);
+            writer.Write((ushort)0);
+            writer.Write(0);
+            var zero = IntVectorDelta.ReadFrom(new ByteReader(bytes.ToArray()));
+            creature.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { CurrentDelta = zero, WoundsDelta = zero, EncumbrancesDelta = zero } });
+            Assert.That(creature.Ham.Health.Current, Is.Zero);
+            Assert.That(creature.Ham.Health.Wounds, Is.Zero);
+            Assert.That(creature.Ham.Health.Maximum, Is.EqualTo(500));
+            Assert.That(creature.Ham.Strength.Encumbrance, Is.Zero);
+            Assert.That(creature.Ham.Constitution.Encumbrance, Is.Zero);
+            Assert.That(creature.Ham.Action.Current, Is.EqualTo(900));
+            Assert.That(creature.Ham.Action.Wounds, Is.EqualTo(20));
+            Assert.That(creature.Ham.Quickness.Encumbrance, Is.EqualTo(20));
         }
 
         [Test]

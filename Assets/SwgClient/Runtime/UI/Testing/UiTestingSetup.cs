@@ -1,3 +1,5 @@
+using Swg.Client.Core.Characters;
+using Swg.Client.Core.Networking.Game.Packets.Player;
 using System.Linq;
 using Swg.Client.Runtime.Networking.Chat;
 using Swg.Client.Runtime.Localization;
@@ -84,8 +86,16 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.Register(context =>
                 {
                     var commands = context.Resolve<ClientCommands>();
-                    return new Action<string, string, SwgId>((name, arguments, target) => commands.Enqueue(name, arguments, target));
+                    var world = context.Resolve<WorldState>();
+                    return new Action<string, string, SwgId>((name, arguments, target) =>
+                    {
+                        commands.Enqueue(name, arguments, target);
+                        if (name == "requestStatMigrationData")
+                            world.CharacterSheet.Update(data => data.HasMigrationTargets = true, CharacterSheetChange.Migration);
+                    });
                 }).SingleInstance();
+                builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
+                builder.RegisterType<ClientCharacterSheet>().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
@@ -168,6 +178,22 @@ namespace Swg.Client.Runtime.UI.Testing
                             new DraftSchematicDetails.ExperimentWeight("Unit toughness", 1)
                         }).ToArray()
                 });
+            state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var character);
+            character.BattleFatigue = 100;
+            character.Ham = new HamPool
+            {
+                Health = new HamElement(650, 900, 100, 700), Strength = new HamElement(398, 400, 2, 400), Constitution = new HamElement(398, 400, 2, 400),
+                Action = new HamElement(700, 900, 100, 900), Quickness = new HamElement(499, 500, 1, 500), Stamina = new HamElement(399, 400, 1, 400),
+                Mind = new HamElement(900, 1000, 100, 1000), Focus = new HamElement(500, 500, 0, 500), Willpower = new HamElement(600, 600, 0, 600)
+            };
+            state.CharacterSheet.Update(data =>
+            {
+                data.Food = 65; data.FoodMaximum = 100; data.Drink = 35; data.DrinkMaximum = 100;
+                data.LotsRemaining = 200; data.BadgeMasks = new uint[] { 3, 0, 0, 0, 0 };
+                data.Biography = "An explorer finding her way across the galaxy.";
+                data.MigrationTargets = HamAttributes.FromArray(new[] { 700, 400, 400, 900, 500, 400, 1000, 500, 600 });
+                data.MigrationBudget = data.MigrationTargets.Total; data.HasMigrationTargets = true;
+            });
             var preview = FindAnyObjectByType<InventoryWindow>(FindObjectsInactive.Include).characterPreview;
             scope.Resolve<WorldRenderingContext>().Initialize(preview.worldShader, preview.characterShader, preview.particleShader, null, null, this);
             scope.Resolve<InventoryPreviewCache>();

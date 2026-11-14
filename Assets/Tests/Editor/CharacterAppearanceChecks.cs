@@ -49,6 +49,17 @@ namespace Swg.Client.Tests.Editor
             Assert.That(model.Parts.All(part => part.Triangles.Length > 0 && part.Skinning != null), Is.True);
         }
 
+        [TestCase("object/creature/player/shared_wookiee_male.iff")]
+        [TestCase("object/creature/player/shared_wookiee_female.iff")]
+        public void WookieeClientDataLookupIgnoresCustomizationMappingChunks(string template)
+        {
+            using var loader = Assets();
+            // These templates include an empty XXXX after CVMM, outside the SHOT fields.
+            Assert.DoesNotThrow(() => CharacterClientData.Load(loader, template));
+            var appearance = SkeletalAppearanceLoader.LoadDetailed(loader, template);
+            Assert.That(appearance.Parts.Sum(part => part.Triangles.Length), Is.GreaterThan(300));
+        }
+
         [Test]
         public void DressedNobleAcceptsNativePaletteCustomization()
         {

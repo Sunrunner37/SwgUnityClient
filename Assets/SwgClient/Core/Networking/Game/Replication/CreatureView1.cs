@@ -8,7 +8,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
             var update = new CreatureSceneObjectUpdate { BankCredits = unchecked((int)reader.U32()), CashCredits = unchecked((int)reader.U32()) };
-            ReplicationReader.SkipVector(reader, sizeof(int));
+            update.Ham = new HamPoolUpdate { Base = ReplicationReader.ReadIntVector(reader) };
             int count = reader.Count();
             reader.U32();
             for (int i = 0; i < count; i++)
@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             else if (field == 1)
                 update.CashCredits = unchecked((int)reader.U32());
             else if (field == 2)
-                ReplicationReader.SkipVectorDelta(reader, sizeof(int));
+                (update.Ham ??= new HamPoolUpdate()).BaseDelta = IntVectorDelta.ReadFrom(reader);
             else
                 return false;
             return true;

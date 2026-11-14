@@ -1,3 +1,5 @@
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Characters;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Player;
@@ -10,14 +12,17 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
     {
         public override uint Opcode => StatMigrationTargetsPacket.Opcode;
 
+        readonly GameReplication replication;
+
         [Preserve]
-        public StatMigrationTargetsPacketHandler() : base(StatMigrationTargetsPacket.ReadFrom)
+        public StatMigrationTargetsPacketHandler(GameReplication replication) : base(StatMigrationTargetsPacket.ReadFrom)
         {
+            this.replication = replication;
         }
 
         protected override void Handle(StatMigrationTargetsPacket packet)
         {
-            throw new NotImplementedException($"StatMigrationTargetsMessage (opcode 0x{Opcode:X8})");
+            replication.UpdatePlayer(state => state.CharacterSheet.Update(data => { data.MigrationTargets = HamAttributes.FromArray(packet.Attributes); data.MigrationBudget = data.MigrationTargets.Total + packet.RemainingPoints; data.HasMigrationTargets = true; }, CharacterSheetChange.Migration));
         }
     }
 }

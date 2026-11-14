@@ -68,29 +68,18 @@ namespace Swg.Client.Core.Characters.Appearance
             if (!seen.Add(template))
                 throw new InvalidDataException("Cyclic character template inheritance: " + template);
             var nodes = IffNode.Parse(loader.Read(template));
-            string ReadFields(IEnumerable<IffNode> fields)
-            {
-                foreach (var node in fields)
+            // clientDataFile belongs to SHOT; other template forms contain XXXX chunks with unrelated layouts.
+            var shot = IffNode.Form(nodes, "SHOT");
+            if (shot != null)
+                foreach (var field in shot.Children.SelectMany(version => version.Children).Where(node => node.Tag == "XXXX"))
                 {
-                    if (node.Tag == "XXXX")
-                    {
-                        var reader = new ByteReader(node.Data);
-                        if (reader.CString() == "clientDataFile" && reader.Byte() == 1)
-                        {
-                            string clientDataPath = reader.CString();
-                            // An explicit empty value means this template has no client-data file.
-                            return clientDataPath.Length == 0 ? clientDataPath : TreAssetLoader.Normalize(clientDataPath);
-                        }
-                    }
-                    string value = ReadFields(node.Children);
-                    if (value != null)
-                        return value;
+                    var reader = new ByteReader(field.Data);
+                    if (reader.CString() != "clientDataFile" || reader.Byte() != 1)
+                        continue;
+                    string clientDataPath = reader.CString();
+                    // An explicit empty value means this template has no client-data file.
+                    return clientDataPath.Length == 0 ? clientDataPath : TreAssetLoader.Normalize(clientDataPath);
                 }
-                return null;
-            }
-            string own = ReadFields(nodes);
-            if (own != null)
-                return own;
             var parent = IffNode.Form(nodes, "DERV");
             string inherited = parent == null ? null : IffNode.References(parent.Data, "object/", ".iff").FirstOrDefault();
             return inherited == null ? null : FindClientData(loader, inherited, seen);

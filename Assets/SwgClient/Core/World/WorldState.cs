@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace Swg.Client.Core.World
     public sealed class WorldState
     {
         public SceneObjectRegistry SceneObjects { get; }
+        public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId PlayerSwgId { get; private set; }
         public event Action SceneStarted;
@@ -75,6 +77,7 @@ namespace Swg.Client.Core.World
         public WorldState(SceneObjectRegistry sceneObjects) => SceneObjects = sceneObjects;
         internal void BeginScene(SwgId playerSwgId, Vector3 renderOrigin, string terrainPath)
         {
+            CharacterSheet = new CharacterSheetData();
             draftSchematics.Clear();
             draftDetails.Clear();
             ShowWaypointIndicators = true;

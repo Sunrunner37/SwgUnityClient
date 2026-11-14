@@ -17,6 +17,7 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public bool IsInCombat => (States & CreatureState.Combat) != 0;
         public SwgId TargetSwgId;
         public HamPool Ham;
+        public int BattleFatigue;
         public float AccelerationMultiplierBase = 1;
         public float AccelerationMultiplier = 1;
         public float RunSpeed;
@@ -36,7 +37,9 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
                 BankCredits = update.BankCredits.Value;
             if (update.TargetSwgId.HasValue)
                 TargetSwgId = update.TargetSwgId.Value;
-            HamPoolReplication.Apply(update, ref Ham);
+            if (update.Ham != null)
+                HamPoolReplication.Apply(update.Ham, ref Ham);
+            if (update.BattleFatigue.HasValue) BattleFatigue = update.BattleFatigue.Value;
             if (update.AccelerationMultiplierBase.HasValue)
                 AccelerationMultiplierBase = update.AccelerationMultiplierBase.Value;
             if (update.AccelerationMultiplier.HasValue)

@@ -13,7 +13,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 AccelerationMultiplierBase = reader.Float(),
                 AccelerationMultiplier = reader.Float()
             };
-            ReplicationReader.SkipVector(reader, sizeof(uint)); // Encumbrances.
+            update.Ham = new HamPoolUpdate { Encumbrances = ReplicationReader.ReadIntVector(reader) };
             SkipSkillMods(reader, false);
             reader.Float(); // Speed multiplier base (Core3 validates run speed against its mod value).
             update.SpeedMultiplier = reader.Float();
@@ -44,7 +44,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     reader.Float();
                     break;
                 case 2:
-                    ReplicationReader.SkipVectorDelta(reader, sizeof(uint));
+                    (update.Ham ??= new HamPoolUpdate()).EncumbrancesDelta = IntVectorDelta.ReadFrom(reader);
                     break;
                 case 3:
                     SkipSkillMods(reader, true);

@@ -1,3 +1,5 @@
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Characters;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Player;
@@ -10,14 +12,28 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
     {
         public override uint Opcode => CharacterSheetResponsePacket.Opcode;
 
+        readonly GameReplication replication;
+
         [Preserve]
-        public CharacterSheetResponsePacketHandler() : base(CharacterSheetResponsePacket.ReadFrom)
+        public CharacterSheetResponsePacketHandler(GameReplication replication) : base(CharacterSheetResponsePacket.ReadFrom)
         {
+            this.replication = replication;
         }
 
         protected override void Handle(CharacterSheetResponsePacket packet)
         {
-            throw new NotImplementedException($"CharacterSheetResponseMessage (opcode 0x{Opcode:X8})");
+            replication.UpdatePlayer(state => state.CharacterSheet.Update(data =>
+            {
+                data.Spouse = packet.SpouseName;
+                data.ResidencePlanet = packet.ResidencePlanet;
+                data.ResidencePosition = packet.ResidencePosition;
+                data.CloningPlanet = packet.CloningPlanet;
+                data.CloningPosition = packet.CloningPosition;
+                data.BankPlanet = packet.BankPlanet;
+                data.LotsRemaining = packet.LotsRemaining;
+                data.Faction = packet.Faction;
+                data.FactionStatus = packet.FactionStatus;
+            }, CharacterSheetChange.Status | CharacterSheetChange.Personal));
         }
     }
 }
