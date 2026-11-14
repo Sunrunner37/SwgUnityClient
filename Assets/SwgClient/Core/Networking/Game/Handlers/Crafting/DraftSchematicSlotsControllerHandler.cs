@@ -1,23 +1,27 @@
+using System.Linq;
 using Swg.Client.Core.Networking.Game.Packets.Crafting;
-using System;
+using Swg.Client.Core.World;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
-
 namespace Swg.Client.Core.Networking.Game.Handlers.Crafting
 {
-    // Core3/MMOCoreORB/src/server/zone/objects/draftschematic/DraftSchematicImplementation.cpp:43 (DraftSchematicSlots).
     [Preserve]
     internal sealed class DraftSchematicSlotsControllerHandler : ObjectControllerHandler<DraftSchematicSlotsPacket>
     {
+        readonly GameReplication replication;
         public override uint ControllerType => DraftSchematicSlotsPacket.ControllerType;
-
         [Preserve]
-        public DraftSchematicSlotsControllerHandler() : base(DraftSchematicSlotsPacket.ReadFrom)
-        {
-        }
-
+        public DraftSchematicSlotsControllerHandler(GameReplication replication) : base(DraftSchematicSlotsPacket.ReadFrom) => this.replication = replication;
         protected override void Handle(DraftSchematicSlotsPacket packet)
         {
-            throw new NotImplementedException($"DraftSchematicSlots (controller 0x{ControllerType:X8})");
+            replication.UpdateDraftDetails(packet.ClientCrc, new DraftSchematicDetails
+            {
+                Complexity = packet.Complexity,
+                Size = packet.Size,
+                Ingredients = packet.Slots.Select(slot => new DraftSchematicDetails.Ingredient(
+                    "@" + slot.Name.File + ":" + slot.Name.Key,
+                    slot.ResourceType, slot.Quantity, slot.Optional != 0)).ToArray()
+            });
         }
     }
 }

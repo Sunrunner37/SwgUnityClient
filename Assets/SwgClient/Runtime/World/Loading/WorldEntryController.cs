@@ -205,6 +205,7 @@ namespace Swg.Client.Runtime.World.Loading
             {
                 // Start alongside geometry preparation, once world shaders and inventory metadata exist.
                 session.Resolve<ClientInventory>().Open();
+                session.Resolve<ClientDatapad>().Open();
                 inventoryPreviews = session.Resolve<InventoryPreviewCache>();
             }
             catch (Exception error)

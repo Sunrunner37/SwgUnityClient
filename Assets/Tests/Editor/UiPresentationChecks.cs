@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Runtime.UI.Windows;
 using Swg.Client.Runtime.UI.Theming;
@@ -60,7 +61,7 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(skin.down.onClick.GetPersistentEventCount(), Is.EqualTo(1));
                 Assert.That(skin.transform.Find("Rail"), Is.Not.Null);
             }
-            var item = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Inventory/InventoryItem.prefab").GetComponent<InventoryItem>();
+            var item = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Containers/ContainerItem.prefab").GetComponent<ContainerItem>();
             Assert.That(item.equipped.GetComponent<Outline>(), Is.Not.Null);
             Assert.That(item.itemName.color, Is.EqualTo(Color.white));
         }
@@ -153,9 +154,9 @@ namespace Swg.Client.Tests.Editor
                 var window = root.GetComponent<InventoryWindow>();
                 var source = (IUiPrefabSource)window;
                 Assert.That(source.UiPrefabs.Single(), Is.EqualTo(window.itemPrefab.gameObject));
-                var replacement = new GameObject("Replacement item", typeof(RectTransform), typeof(InventoryItem));
+                var replacement = new GameObject("Replacement item", typeof(RectTransform), typeof(ContainerItem));
                 replacement.transform.SetParent(root.transform, false);
-                window.itemPrefab = replacement.GetComponent<InventoryItem>();
+                window.itemPrefab = replacement.GetComponent<ContainerItem>();
                 Assert.That(source.UiPrefabs.Single(), Is.EqualTo(replacement));
             }
             finally
@@ -165,5 +166,3 @@ namespace Swg.Client.Tests.Editor
         }
     }
 }
-
-

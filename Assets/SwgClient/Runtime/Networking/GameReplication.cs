@@ -82,10 +82,16 @@ namespace Swg.Client.Runtime.Networking
                 pending.Enqueue(() => State.UpdateWaypoints(update));
         }
 
-        internal void UpdateCommands(Action<List<string>> update)
+        internal void UpdatePlayer(Action<WorldState> update)
         {
             if (!disposed)
-                pending.Enqueue(() => State.Commands.Apply(update));
+                pending.Enqueue(() => update(State));
+        }
+
+        internal void UpdateDraftDetails(uint crc, DraftSchematicDetails details)
+        {
+            if (!disposed)
+                pending.Enqueue(() => State.UpdateDraftDetails(crc, details));
         }
 
         internal void AcknowledgeSceneReady()
@@ -158,8 +164,8 @@ namespace Swg.Client.Runtime.Networking
                 var state = ApplyObject(swgId, requiredType, sceneObject =>
                 {
                     owned?.ApplyTo(sceneObject);
-                    if (initialMovement.HasValue)
-                        ((SpatialSceneObject)sceneObject).Apply(initialMovement.Value);
+                    if (initialMovement.HasValue && sceneObject is SpatialSceneObject spatial)
+                        spatial.Apply(initialMovement.Value);
                 }, changes, update.TemplateCrc, initialMovement?.ParentSwgId);
                 if (update.BaselinesComplete)
                     state.BaselinesComplete = true;

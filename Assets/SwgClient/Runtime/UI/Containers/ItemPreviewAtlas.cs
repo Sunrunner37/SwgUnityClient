@@ -1,13 +1,16 @@
+using Swg.Client.Core.Assets.Appearances;
+using Swg.Client.Runtime.Assets.Appearances;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Swg.Client.Runtime.UI.Inventory
+namespace Swg.Client.Runtime.UI.Containers
 {
     /// <summary>One camera renders all item thumbnails into an atlas; UI cells reference individual atlas regions.</summary>
-    public sealed class InventoryPreviewAtlas : MonoBehaviour
+    public sealed class ItemPreviewAtlas : MonoBehaviour
     {
         public Camera previewCamera;
         public Transform stage;
+        public Vector3 stagePosition = new Vector3(20000, 0, 0);
         public int columns = 9;
         public int pixelsPerItem = 128;
         [Range(-45, 45)]
@@ -24,7 +27,7 @@ namespace Swg.Client.Runtime.UI.Inventory
             // Preview cameras and models live in world units, independent of CanvasScaler.
             stage.SetParent(null, false);
             stage.localScale = Vector3.one;
-            stage.position = new Vector3(20000, 0, 0);
+            stage.position = stagePosition;
         }
         void OnEnable() => stage.gameObject.SetActive(true);
         void OnDisable()
@@ -48,9 +51,8 @@ namespace Swg.Client.Runtime.UI.Inventory
             previewCamera.transform.SetPositionAndRotation(stage.position + new Vector3(-(columns - 1), -(rows - 1), 40), Quaternion.Euler(0, 180, 0));
             nextRender = 0;
         }
-        public void Show(int index, InventoryPreviewCache.Preview preview, InventoryItem item)
+        public void Show(int index, AppearanceData appearance, AppearanceResources resources, ContainerItem item)
         {
-            var appearance = preview.Appearance;
             if (pivots[index] != null)
             {
                 pivots[index].gameObject.SetActive(false);
@@ -59,7 +61,7 @@ namespace Swg.Client.Runtime.UI.Inventory
             var pivot = new GameObject("Item " + item.SwgId).transform;
             pivot.SetParent(stage, false);
             pivot.localPosition = new Vector3(-(index % columns) * 2, -(index / columns) * 2, 0);
-            var root = preview.Resources.Create(pivot, detectMovement: false);
+            var root = resources.Create(pivot, detectMovement: false, previewLighting: true);
             var bounds = new Bounds((appearance.BoundsMin + appearance.BoundsMax) * .5f, appearance.BoundsMax - appearance.BoundsMin);
             float scale = .82f / Mathf.Max(.1f, bounds.extents.magnitude);
             root.transform.localScale = Vector3.one * scale;

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Swg.Client.Runtime.UI.Inventory
+namespace Swg.Client.Runtime.UI.Containers
 {
     /// <summary>Two rows of capacity blocks, aligned to display pixels instead of stretching a bitmap.</summary>
-    public sealed class InventoryCapacityBar : MaskableGraphic
+    public sealed class CapacityBar : MaskableGraphic
     {
         [SerializeField, Range(0, 1)] float fill = 1;
         public Color backgroundColor = new Color(0, .035f, .04f, 1);

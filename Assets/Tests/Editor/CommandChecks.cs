@@ -31,7 +31,7 @@ namespace Swg.Client.Tests.Editor
                     w.Write(new byte[88]);
                 }
 
-                PlayerView9.ReadBaseline(new ByteReader(bytes.ToArray()))(list);
+                PlayerView9.ReadBaseline(new ByteReader(bytes.ToArray())).Abilities(list);
             }
 
             Assert.That(list, Is.EqualTo(new[] { "attack", "flourish+1" }));
@@ -54,7 +54,7 @@ namespace Swg.Client.Tests.Editor
                 }
 
                 Assert.That(PlayerView9.TryReadDelta(new ByteReader(bytes.ToArray()), out var update), Is.True);
-                update(list);
+                update.Abilities(list);
             }
 
             Assert.That(list, Is.EqualTo(new[] { "aim", "burstRun" }));
@@ -79,7 +79,7 @@ namespace Swg.Client.Tests.Editor
                 }
 
                 Assert.That(PlayerView9.TryReadDelta(new ByteReader(bytes.ToArray()), out var update), Is.True);
-                update(list);
+                update.Abilities(list);
             }
 
             Assert.That(list, Is.Empty);
@@ -100,7 +100,8 @@ namespace Swg.Client.Tests.Editor
                 }
 
                 Assert.That(PlayerView9.TryReadDelta(new ByteReader(bytes.ToArray()), out var update), Is.False);
-                Assert.That(update, Is.Null);
+                Assert.That(update.Abilities, Is.Null);
+                Assert.That(update.Schematics, Is.Null);
             }
         }
     }

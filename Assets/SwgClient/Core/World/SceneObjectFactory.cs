@@ -9,6 +9,8 @@ namespace Swg.Client.Core.World
         internal static Type TypeForTemplate(string templatePath)
         {
             string path = templatePath ?? "";
+            if (path.StartsWith("object/manufacture_schematic/", StringComparison.OrdinalIgnoreCase))
+                return typeof(ManufactureSchematicSceneObject);
             if (path.StartsWith("object/creature/", StringComparison.OrdinalIgnoreCase))
                 return typeof(CreatureSceneObject);
             if (path.StartsWith("object/cell/", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/shared_cell.iff", StringComparison.OrdinalIgnoreCase))
@@ -40,6 +42,8 @@ namespace Swg.Client.Core.World
 
         internal static SceneObject CreateInstance(Type type)
         {
+            if (type == typeof(ManufactureSchematicSceneObject))
+                return new ManufactureSchematicSceneObject();
             if (type == typeof(SceneObject))
                 return new SceneObject();
             if (type == typeof(SpatialSceneObject))

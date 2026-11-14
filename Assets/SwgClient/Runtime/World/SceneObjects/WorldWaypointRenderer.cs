@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Swg.Client.Core;
 using Swg.Client.Core.World;
 using UnityEngine;
 
@@ -11,7 +10,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public ParticleSystem pillarPrefab;
         [Min(1)]
         public float visibilityDistance = 512;
-        readonly Dictionary<SwgId, GameObject> pillars = new Dictionary<SwgId, GameObject>();
+        readonly List<GameObject> pillars = new List<GameObject>();
         WorldState state;
 
         void OnEnable()
@@ -25,7 +24,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void Rebuild()
         {
             ClearPillars();
-            foreach (var waypoint in state.Waypoints.Values)
+            foreach (var waypoint in state.NavigationWaypoints)
             {
                 if (!waypoint.Active || waypoint.PlanetCrc != state.PlanetCrc)
                     continue;
@@ -36,7 +35,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 var instance = Instantiate(pillarPrefab, transform.TransformPoint(position - state.RenderOrigin), Quaternion.identity, transform);
                 var pillar = instance.gameObject;
                 pillar.name = waypoint.Name + " (" + waypoint.SwgId + ")";
-                pillars.Add(waypoint.SwgId, pillar);
+                pillars.Add(pillar);
             }
             UpdateVisibility();
         }
@@ -48,13 +47,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (!ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player))
                 return;
             float distanceSquared = visibilityDistance * visibilityDistance;
-            foreach (var pillar in pillars.Values)
+            foreach (var pillar in pillars)
                 pillar.SetActive((pillar.transform.position - player.transform.position).sqrMagnitude <= distanceSquared);
         }
 
         void ClearPillars()
         {
-            foreach (var pillar in pillars.Values)
+            foreach (var pillar in pillars)
             {
                 pillar.SetActive(false);
                 Destroy(pillar);

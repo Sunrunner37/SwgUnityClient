@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.UI.Containers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Swg.Client.Runtime.UI.Inventory
         public TMP_Text capacity;
         public TMP_Text cash;
         public TMP_Text bank;
-        public InventoryCapacityBar capacityBar;
+        public CapacityBar capacityBar;
         public RectTransform examinePanel;
         public RectTransform characterPanel;
         public RectTransform centerPanel;
@@ -27,8 +28,8 @@ namespace Swg.Client.Runtime.UI.Inventory
         public ExaminePreview characterPreview;
         public TMP_Text characterName;
         public GridLayoutGroup grid;
-        public InventoryItem itemPrefab;
-        public InventoryPreviewAtlas previews;
+        public ContainerItem itemPrefab;
+        public ItemPreviewAtlas previews;
         public Toggle examineToggle;
         public Toggle characterToggle;
         public IEnumerable<GameObject> UiPrefabs
@@ -38,7 +39,7 @@ namespace Swg.Client.Runtime.UI.Inventory
                 yield return itemPrefab.gameObject;
             }
         }
-        readonly List<InventoryItem> cells = new List<InventoryItem>();
+        readonly List<ContainerItem> cells = new List<ContainerItem>();
         ClientInventory inventory;
         SceneObjectNameResolver names;
         InventoryPreviewCache cache;
@@ -106,7 +107,7 @@ namespace Swg.Client.Runtime.UI.Inventory
                 foreach (var item in items)
                 {
                     var cell = Instantiate(itemPrefab, grid.transform);
-                    cell.Bind(this, item.SwgId);
+                    cell.Bind(item.SwgId, () => Select(item.SwgId));
                     cells.Add(cell);
                 }
                 if (!items.Any(item => item.SwgId == selected))
@@ -117,7 +118,7 @@ namespace Swg.Client.Runtime.UI.Inventory
                 UpdateCell(cells[i], items[i]);
             RefreshPreviews();
         }
-        void UpdateCell(InventoryItem cell, TangibleSceneObject item)
+        void UpdateCell(ContainerItem cell, TangibleSceneObject item)
         {
             cell.itemName.text = names.Resolve(item);
             cell.quantity.text = item.Quantity > 1 ? (item.Quantity >= 1000 ? (item.Quantity / 1000).ToString() + "k" : item.Quantity.ToString()) : "";
@@ -134,7 +135,7 @@ namespace Swg.Client.Runtime.UI.Inventory
                 string key = preview.Appearance.Key;
                 if (appearanceKeys.TryGetValue(cell.SwgId, out var previous) && previous == key)
                     continue;
-                previews.Show(i, preview, cell);
+                previews.Show(i, preview.Appearance, preview.Resources, cell);
                 appearanceKeys[cell.SwgId] = key;
             }
             var player = inventory.Player;

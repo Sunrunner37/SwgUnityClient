@@ -66,7 +66,7 @@ namespace Swg.Client.Runtime.UI.Navigation
                 Destroy(display.Arrow.gameObject);
             }
             displays.Clear();
-            foreach (var waypoint in state.Waypoints.Values)
+            foreach (var waypoint in state.NavigationWaypoints)
             {
                 if (!waypoint.Active || waypoint.PlanetCrc != state.PlanetCrc)
                     continue;
@@ -74,6 +74,7 @@ namespace Swg.Client.Runtime.UI.Navigation
                 var arrow = Instantiate(arrowPrefab, arrows);
                 var color = ColorFor(waypoint.Color);
                 row.Bind(localizer.Localize(waypoint.Name), color);
+                if (waypoint.PoiKey != null) row.waypointName.color = color;
                 arrow.image.color = color;
                 displays.Add(new Display { Waypoint = waypoint, Row = row, Arrow = arrow });
             }
@@ -89,6 +90,7 @@ namespace Swg.Client.Runtime.UI.Navigation
                 playerPosition = player.transform.position;
             foreach (var display in displays)
             {
+                display.Arrow.gameObject.SetActive(state.ShowWaypointIndicators);
                 var destination = display.Waypoint.Position - state.RenderOrigin;
                 var delta = Vector3.ProjectOnPlane(destination - playerPosition, Vector3.up);
                 var bearing = worldCamera != null ? NavigationArrow.Bearing(worldCamera, playerPosition, destination) : Vector2.up;

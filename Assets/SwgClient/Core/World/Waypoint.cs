@@ -12,9 +12,11 @@ namespace Swg.Client.Core.World
         Purple
     }
 
-    /// <summary>A player-owned navigation destination. Position is absolute SWG world space (Y is height).</summary>
+    /// <summary>A player-owned or client POI navigation destination. Position is absolute SWG world space (Y is height).</summary>
     public readonly struct Waypoint
     {
+        /// <summary>Native POI catalog key; POIs have no server SwgId.</summary>
+        public string PoiKey { get; }
         public SwgId SwgId { get; }
         public Vector3 Position { get; }
         public uint PlanetCrc { get; }
@@ -22,8 +24,9 @@ namespace Swg.Client.Core.World
         public WaypointColor Color { get; }
         public bool Active { get; }
 
-        public Waypoint(SwgId swgId, Vector3 position, uint planetCrc, string name, WaypointColor color, bool active)
+        public Waypoint(SwgId swgId, Vector3 position, uint planetCrc, string name, WaypointColor color, bool active, string poiKey = null)
         {
+            PoiKey = poiKey;
             SwgId = swgId;
             Position = position;
             PlanetCrc = planetCrc;

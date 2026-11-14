@@ -8,8 +8,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
         Cell = 0x43454c4c,
         Player = 0x504c4159,
         Guild = 0x47494c44,
+        ManufactureSchematic = 0x4d53434f,
         ResourceContainer = 0x52434e4f,
-        Intangible = 0x49544e4f,
+        Intangible = 0x4f4e5449,
         Mission = 0x4d49534f
     }
 }

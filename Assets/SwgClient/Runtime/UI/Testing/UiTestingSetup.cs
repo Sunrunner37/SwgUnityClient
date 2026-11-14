@@ -1,7 +1,11 @@
+using System.Linq;
+using Swg.Client.Core.Assets;
+using Swg.Client.Core.Assets.Formats.ObjectTemplates;
 using System.Collections;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Runtime.Assets.Shaders;
 using Swg.Client.Core.Networking.Login;
 using Swg.Client.Runtime.UI.Interactions;
@@ -61,10 +65,11 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<AppearanceCache>().SingleInstance();
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
                 builder.RegisterType<WorldRenderingContext>().SingleInstance();
+                builder.RegisterType<ItemPreviewCache>().SingleInstance();
                 builder.Register(context =>
                 {
                     var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();
-                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<SwgMaterialFactory>(), context.Resolve<WorldRenderingContext>());
+                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<ItemPreviewCache>());
                     UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
                     return previews;
                 }).SingleInstance();
@@ -72,6 +77,12 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => Debug.Log("Offline queue enqueue: " + packet.CommandCrc)));
                 builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => Debug.Log("Offline queue cancel: " + packet.ActionCounter)));
                 builder.RegisterType<ClientCommands>().SingleInstance();
+                builder.Register(context =>
+                {
+                    var commands = context.Resolve<ClientCommands>();
+                    return new Action<string, string, SwgId>((name, arguments, target) => commands.Enqueue(name, arguments, target));
+                }).SingleInstance();
+                builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
@@ -130,6 +141,28 @@ namespace Swg.Client.Runtime.UI.Testing
             string[] itemNames = { "Aluminum", "Copper", "Chemical Survey Device", "Structure and Furniture Crafting Tool", "Composite Armor Boots", "Composite Armor Chest Plate" };
             for (int i = 0; i < 24; i++)
                 state.SceneObjects.Add(new TangibleSceneObject { SwgId = (ulong)(9300 + i), ParentSwgId = 9200, TemplatePath = templates[i % templates.Length], Name = itemNames[i % templates.Length], Quantity = i % templates.Length < 2 ? 41000 + i * 1000 : 1 });
+            state.SceneObjects.Add(new TangibleSceneObject { SwgId = 9800, ParentSwgId = 9000, TemplatePath = "object/tangible/datapad/shared_character_datapad.iff", Name = "Datapad" });
+            state.SceneObjects.Add(new SceneObject { SwgId = 9801, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2.iff", Name = "A helper R2 unit" });
+            state.SceneObjects.Add(new SceneObject { SwgId = 9802, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2_crafted.iff", Name = "R2 crafting assistant" });
+            state.UpdateDraftSchematics(list => list.AddRange(new[]
+            {
+                ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_t21.iff"),
+                ObjectTemplateNames.TemplateCrc("object/draft_schematic/item/shared_item_recycler_flora.iff"),
+                ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_flame_thrower.iff")
+            }));
+            foreach (uint crc in state.DraftSchematics)
+                state.UpdateDraftDetails(crc, new DraftSchematicDetails
+                {
+                    Complexity = 7,
+                    Size = 4,
+                    Ingredients = new[] { new DraftSchematicDetails.Ingredient("Metal", "metal", 8, false) },
+                    Experiments = SharedDraftSchematicTemplate.Attributes(GameServices.Resolve<TreRuntimeAssets>().Loader.Read(state.Templates.Resolve(crc)))
+                        .Select(attribute => string.IsNullOrEmpty(attribute.Experiment) ? Array.Empty<DraftSchematicDetails.ExperimentWeight>() : new[]
+                        {
+                            new DraftSchematicDetails.ExperimentWeight("Overall quality", 2),
+                            new DraftSchematicDetails.ExperimentWeight("Unit toughness", 1)
+                        }).ToArray()
+                });
             var preview = FindAnyObjectByType<InventoryWindow>(FindObjectsInactive.Include).characterPreview;
             scope.Resolve<WorldRenderingContext>().Initialize(preview.worldShader, preview.characterShader, preview.particleShader, null, null, this);
             scope.Resolve<InventoryPreviewCache>();

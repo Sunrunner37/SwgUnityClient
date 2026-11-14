@@ -3596,7 +3596,7 @@
       "group": "Crafting",
       "packet": "DraftSchematicSlotsPacket",
       "handler": "DraftSchematicSlotsControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "DraftSchematicSlots",
@@ -3706,7 +3706,7 @@
       "group": "Crafting",
       "packet": "DraftSchematicResourceWeightsPacket",
       "handler": "DraftSchematicResourceWeightsControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "DraftSchematicResourceWeights",

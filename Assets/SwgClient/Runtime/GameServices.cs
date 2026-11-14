@@ -1,5 +1,6 @@
 using Swg.Client.Core;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
 using Swg.Client.Core.Networking.Game.Packets.Commands;
 using Swg.Client.Core.Networking.Game.Packets.Targeting;
@@ -82,6 +83,12 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => connection.Send(packet)));
                 builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => connection.Send(packet)));
+                builder.Register(context =>
+                {
+                    var commands = context.Resolve<ClientCommands>();
+                    return new Action<string, string, SwgId>((name, arguments, target) => commands.Enqueue(name, arguments, target));
+                }).SingleInstance();
+                builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombatQueue>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<ObjectMenuRequestPacket>(packet => connection.Send(packet)));
@@ -111,10 +118,11 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<AppearanceCache>().SingleInstance();
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
                 builder.RegisterType<WorldRenderingContext>().SingleInstance();
+                builder.RegisterType<ItemPreviewCache>().SingleInstance();
                 builder.Register(context =>
                 {
                     var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();
-                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<SwgMaterialFactory>(), context.Resolve<WorldRenderingContext>());
+                    previews.Initialize(context.Resolve<ClientInventory>(), context.Resolve<WorldContentLoader>(), context.Resolve<ItemPreviewCache>());
                     UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
                     return previews;
                 }).SingleInstance();

@@ -179,6 +179,7 @@ RectTransform:
   - {fileID: 4928380251780953679}
   - {fileID: 7602042068758603606}
   - {fileID: 5560446173265454509}
+  - {fileID: 9046216107507280727}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -710,6 +711,119 @@ PrefabInstance:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1042465095439056197, guid: 9e1e4d4653b53a942a86f679cd688190, type: 3}
   m_PrefabInstance: {fileID: 2532323803605284270}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4210372180142359338
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6599915985732954427}
+    m_Modifications:
+    - target: {fileID: 4625634065615559334, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_Name
+      value: Datapad
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 690
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 390
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+--- !u!114 &1428720772276767481 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3007818278305647059, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+  m_PrefabInstance: {fileID: 4210372180142359338}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8587070bf95c55a4c90346e89766cefa, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Datapad.DatapadWindow
+--- !u!224 &9046216107507280727 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5180444340814735485, guid: 13a739bddf4a8004c9f0e7db79fc4e3c, type: 3}
+  m_PrefabInstance: {fileID: 4210372180142359338}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4553439356098841827
 PrefabInstance:
@@ -1678,6 +1792,26 @@ PrefabInstance:
     - target: {fileID: 152049299189673103, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
       propertyPath: m_Name
       value: ButtonBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237902590281036190, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237902590281036190, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value:
+      objectReference: {fileID: 1428720772276767481}
+    - target: {fileID: 1237902590281036190, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237902590281036190, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleOpen
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237902590281036190, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Swg.Client.Runtime.UI.Datapad.DatapadWindow, Swg.Client
       objectReference: {fileID: 0}
     - target: {fileID: 2294175089751611891, guid: 553fb323b3eeae44e95cf465fcb26dc0, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

@@ -2,6 +2,7 @@ Shader "SWG/Character"
 {
     Properties
     {
+        _SwgPreview("UI preview lighting", Float) = 0
         _BaseMap("Diffuse", 2D) = "white" {}
         _Tint("Skin tint", Color) = (1,1,1,1)
         _Cutoff("Alpha cutoff", Range(0,1)) = 0
@@ -20,6 +21,7 @@ Shader "SWG/Character"
             float4 _BaseMap_ST;
             half4 _Tint;
             half _Cutoff;
+            float _SwgPreview;
         CBUFFER_END
         float _SwgEnvironmentLighting;
         Varyings Vert(Attributes input)
@@ -51,8 +53,8 @@ Shader "SWG/Character"
                 half brightness = .42 + .58 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
                 Light light = SwgMainLight(input.worldPosition);
                 half3 lighting = max(SampleSH(normal), half3(0,0,0)) + light.color * saturate(dot(normal, light.direction)) * light.shadowAttenuation * .75;
-                half3 color = surface.rgb * _Tint.rgb * lerp(half3(brightness,brightness,brightness), lighting, _SwgEnvironmentLighting);
-                return half4(lerp(color, MixFog(color, input.fog), _SwgEnvironmentLighting), 1);
+                half3 color = surface.rgb * _Tint.rgb * lerp(half3(brightness,brightness,brightness), lighting, _SwgEnvironmentLighting * (1 - _SwgPreview));
+                return half4(lerp(color, MixFog(color, input.fog), _SwgEnvironmentLighting * (1 - _SwgPreview)), 1);
             }
             ENDHLSL
         }

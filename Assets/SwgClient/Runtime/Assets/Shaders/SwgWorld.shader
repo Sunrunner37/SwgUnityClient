@@ -2,6 +2,7 @@ Shader "SWG/World"
 {
     Properties
     {
+        _SwgPreview("UI preview lighting", Float) = 0
         _BaseMap("Diffuse", 2D) = "white" {}
         _TerrainBlend("Terrain layer blending", Float) = 0
         _TerrainMap1("Terrain layer 1", 2D) = "white" {}
@@ -43,6 +44,7 @@ Shader "SWG/World"
             float _TerrainBlend;
             half4 _Tint;
             half _Cutoff;
+            float _SwgPreview;
             half _UseVertexColor;
             float _Billboard;
             float _SwayDisplacement;
@@ -147,8 +149,10 @@ Shader "SWG/World"
                 Light sun = SwgMainLight(input.worldPosition);
                 half3 normal = normalize(input.normalWS);
                 half3 lighting = max(SampleSH(normal), half3(0,0,0)) + sun.color * saturate(dot(normal, sun.direction)) * sun.shadowAttenuation * .75;
+                half previewBrightness = .55 + .45 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
+                lighting = lerp(lighting, previewBrightness.xxx, _SwgPreview);
                 half3 color = surface.rgb * _Tint.rgb * input.floraTint * lerp(half3(1,1,1), input.color.rgb, _UseVertexColor) * lighting;
-                return half4(MixFog(color, input.fog), coverage);
+                return half4(lerp(MixFog(color, input.fog), color, _SwgPreview), coverage);
             }
             ENDHLSL
         }

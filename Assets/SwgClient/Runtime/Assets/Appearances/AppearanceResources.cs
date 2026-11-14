@@ -20,7 +20,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             particles = appearance.Particles.Select(effect => new ParticleEffectResources(effect, factory, worldShader, characterShader, particleShader)).ToArray();
         }
 
-        public GameObject Create(Transform parent, bool detectMovement = true)
+        public GameObject Create(Transform parent, bool detectMovement = true, bool previewLighting = false)
         {
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
@@ -51,6 +51,18 @@ namespace Swg.Client.Runtime.Assets.Appearances
 
             foreach (var effect in particles)
                 effect.Create(root.transform);
+            if (previewLighting)
+            {
+                var properties = new MaterialPropertyBlock();
+                foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
+                {
+                    renderer.GetPropertyBlock(properties);
+                    properties.SetFloat("_SwgPreview", 1);
+                    renderer.SetPropertyBlock(properties);
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.receiveShadows = false;
+                }
+            }
             return root;
         }
 

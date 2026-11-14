@@ -22,6 +22,9 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             this.replication = replication;
             baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, SceneObjectUpdate>>
             {
+                [(ReplicatedObjectType.ManufactureSchematic, 3)] = ManufactureSchematicView.ReadBaseline3,
+                [(ReplicatedObjectType.ManufactureSchematic, 6)] = ManufactureSchematicView.ReadBaseline6,
+                [(ReplicatedObjectType.Intangible, 3)] = IntangibleView3.ReadBaseline,
                 [(ReplicatedObjectType.Creature, 1)] = CreatureView1.ReadBaseline,
                 [(ReplicatedObjectType.ResourceContainer, 3)] = ResourceContainerView.ReadBaseline3,
                 [(ReplicatedObjectType.ResourceContainer, 6)] = ResourceContainerView.ReadBaseline6,
@@ -50,7 +53,11 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 abilitiesReader.U16();
                 var commands = PlayerView9.ReadBaseline(abilitiesReader);
                 replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
-                replication.UpdateCommands(commands);
+                replication.UpdatePlayer(state =>
+                {
+                    if (commands.Abilities != null) state.Commands.Apply(commands.Abilities);
+                    if (commands.Schematics != null) state.UpdateDraftSchematics(commands.Schematics);
+                });
                 return;
             }
 

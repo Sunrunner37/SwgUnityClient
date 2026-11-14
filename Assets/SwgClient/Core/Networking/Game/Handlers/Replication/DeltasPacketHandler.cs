@@ -24,6 +24,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             this.replication = replication;
             deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<DeltasPacket, SceneObjectUpdate>>
             {
+                [(ReplicatedObjectType.ManufactureSchematic, 3)] = packet => ReadDelta<ManufactureSchematicSceneObjectUpdate>(packet, ManufactureSchematicView.ReadDelta3),
+                [(ReplicatedObjectType.Intangible, 3)] = packet => ReadDelta<SceneObjectUpdate>(packet, IntangibleView3.ReadDeltaField),
                 [(ReplicatedObjectType.Creature, 1)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView1.ReadDeltaField),
                 [(ReplicatedObjectType.ResourceContainer, 3)] = packet => ReadDelta<TangibleSceneObjectUpdate>(packet, ResourceContainerView.ReadDelta3),
                 [(ReplicatedObjectType.Tangible, 3)] = packet => ReadDelta<TangibleSceneObjectUpdate>(packet, TangibleView3.ReadDeltaField),
@@ -44,7 +46,11 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 9)
             {
                 if (PlayerView9.TryReadDelta(new ByteReader(packet.Payload), out var commands))
-                    replication.UpdateCommands(commands);
+                    replication.UpdatePlayer(state =>
+                {
+                    if (commands.Abilities != null) state.Commands.Apply(commands.Abilities);
+                    if (commands.Schematics != null) state.UpdateDraftSchematics(commands.Schematics);
+                });
                 return;
             }
 

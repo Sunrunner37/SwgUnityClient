@@ -34,6 +34,9 @@ namespace Swg.Client.Runtime.UI.Interactions
         StringTableLocalizer localizer;
         string[] captions = System.Array.Empty<string>();
         readonly List<RadialMenuOption> rows = new List<RadialMenuOption>();
+        IReadOnlyList<RadialMenuEntry> localEntries;
+        System.Action<RadialMenuEntry> localSelection;
+        IEnumerable<RadialMenuEntry> Entries => localEntries ?? interactions.Menu;
         byte parent;
         int renderedFrame;
 
@@ -62,6 +65,20 @@ namespace Swg.Client.Runtime.UI.Interactions
         }
         public void Open(SwgId swgId, Vector2 screenPosition)
         {
+            localEntries = null;
+            localSelection = null;
+            Position(screenPosition);
+            interactions.RequestMenu(swgId);
+        }
+        public void OpenLocal(Vector2 screenPosition, IReadOnlyList<RadialMenuEntry> entries, System.Action<RadialMenuEntry> select)
+        {
+            localEntries = entries;
+            localSelection = select;
+            Position(screenPosition);
+            Refresh();
+        }
+        void Position(Vector2 screenPosition)
+        {
             parent = 0;
             overlay.SetActive(true);
             transform.SetAsLastSibling();
@@ -71,7 +88,6 @@ namespace Swg.Client.Runtime.UI.Interactions
             point.x = Mathf.Clamp(point.x, area.rect.xMin + 220, area.rect.xMax - 220);
             point.y = Mathf.Clamp(point.y, area.rect.yMin + 130, area.rect.yMax - 130);
             menu.anchoredPosition = point;
-            interactions.RequestMenu(swgId);
         }
         public void Close() => overlay.SetActive(false);
         public void Back()
@@ -83,13 +99,14 @@ namespace Swg.Client.Runtime.UI.Interactions
         {
             if (!IsOpen || entry.ParentIndex != parent)
                 return;
-            if (interactions.Menu.Any(item => item.ParentIndex == entry.Index))
+            if (Entries.Any(item => item.ParentIndex == entry.Index))
             {
                 parent = entry.Index;
                 Refresh();
                 return;
             }
             Close();
+            if (localSelection != null) { localSelection(entry); return; }
             if (entry.RadialId == ClientObjectInteractions.ExamineAction)
                 examineWindow.Open(interactions.MenuTargetSwgId);
             // Remaining actions are intentionally display-only until their gameplay is implemented.
@@ -108,7 +125,7 @@ namespace Swg.Client.Runtime.UI.Interactions
             foreach (var row in rows)
                 Destroy(row.gameObject);
             rows.Clear();
-            var entries = interactions.Menu.Where(item => item.ParentIndex == parent).ToArray();
+            var entries = Entries.Where(item => item.ParentIndex == parent).ToArray();
             float step = entries.Length > 8 ? 360f / entries.Length : 45;
             for (int i = 0; i < entries.Length; i++)
             {
