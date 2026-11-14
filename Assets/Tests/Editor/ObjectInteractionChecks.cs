@@ -32,7 +32,7 @@ namespace Swg.Client.Tests.Editor
             try
             {
                 ObjectMenuSelectPacket sent = default;
-                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), _ => { }, _ => { }, packet => sent = packet);
+                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), _ => { }, _ => { }, packet => sent = packet, (name, arguments, target) => { });
                 interactions.SelectMenuAction(123, 118); // Server-provided structure management action.
                 Assert.That(sent.TargetSwgId, Is.EqualTo((SwgId)123));
                 Assert.That(sent.RadialId, Is.EqualTo(118));
@@ -74,7 +74,7 @@ namespace Swg.Client.Tests.Editor
                 var state = new WorldState(new SceneObjectRegistry());
                 ObjectMenuRequestPacket request = default;
                 SwgId examined = default;
-                using var interactions = new ClientObjectInteractions(state, packet => request = packet, swgId => examined = swgId, packet => { });
+                using var interactions = new ClientObjectInteractions(state, packet => request = packet, swgId => examined = swgId, packet => { }, (name, arguments, target) => { });
                 interactions.RequestMenu(100);
                 byte oldCounter = request.Counter;
                 interactions.RequestMenu(200);
@@ -104,7 +104,7 @@ namespace Swg.Client.Tests.Editor
             SynchronizationContext.SetSynchronizationContext(main);
             try
             {
-                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), packet => { }, swgId => { }, packet => { });
+                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), packet => { }, swgId => { }, packet => { }, (name, arguments, target) => { });
                 var notifications = new List<SwgId>();
                 interactions.AttributesChanged += notifications.Add;
                 interactions.RequestExamine(100);
@@ -129,7 +129,7 @@ namespace Swg.Client.Tests.Editor
             try
             {
                 ObjectMenuRequestPacket request = default;
-                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), packet => request = packet, swgId => { }, packet => { });
+                using var interactions = new ClientObjectInteractions(new WorldState(new SceneObjectRegistry()), packet => request = packet, swgId => { }, packet => { }, (name, arguments, target) => { });
                 interactions.RequestMenu(200);
                 interactions.RequestExamine(200);
                 int notifications = 0;

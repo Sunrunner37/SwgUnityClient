@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Swg.Client.Core.Assets.Formats.Animation;
-using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Geometry;
@@ -32,12 +31,13 @@ namespace Swg.Client.Core.Characters.Animation
         {
             public readonly Dictionary<string, SkeletonData> Skeletons = new Dictionary<string, SkeletonData>();
             public readonly Dictionary<string, SkeletalAnimation> Animations = new Dictionary<string, SkeletalAnimation>();
-            public readonly Dictionary<string, Dictionary<string, string[]>> AnimationStates = new Dictionary<string, Dictionary<string, string[]>>();
+            public readonly Dictionary<string, Dictionary<string, LatFile.Animation>> AnimationStates = new Dictionary<string, Dictionary<string, LatFile.Animation>>();
         }
 
         static readonly ConditionalWeakTable<TreAssetLoader, AssetCache> caches = new ConditionalWeakTable<TreAssetLoader, AssetCache>();
         public Joint[] Joints { get; private set; }
         public Matrix4x4[] BindPoses { get; private set; }
+        public readonly Dictionary<string, SkeletalAnimation> RidingPoses = new Dictionary<string, SkeletalAnimation>(StringComparer.Ordinal);
         public SkeletalAnimation Idle { get; private set; }
         public SkeletalAnimation Run { get; private set; }
         public SkeletalAnimation Crawl { get; private set; }
@@ -128,28 +128,31 @@ namespace Swg.Client.Core.Characters.Animation
         {
             if (!cache.AnimationStates.TryGetValue(satPath, out var states))
             {
-                states = new Dictionary<string, string[]>(StringComparer.Ordinal);
+                states = new Dictionary<string, LatFile.Animation>(StringComparer.Ordinal);
                 foreach (string table in IffNode.References(loader.Read(satPath), "appearance/", ".lat"))
-                {
-                    var root = IffNode.Parse(loader.Read(table)).Single(n => n.Kind == "LATT");
-                    foreach (var state in root.Children.First(n => n.Tag == "FORM").Children.Where(n => n.Kind == "ANIM"))
-                    {
-                        string name = new ByteReader(state.Chunk("INFO")).CString();
-                        if (!states.ContainsKey(name))
-                            states.Add(name, IffNode.References(state.Data, "appearance/animation/", ".ans").ToArray());
-                    }
-                }
+                    foreach (var entry in LatFile.Parse(loader.Read(table)).Animations)
+                        if (!states.ContainsKey(entry.Key))
+                            states.Add(entry.Key, entry.Value);
                 cache.AnimationStates.Add(satPath, states);
             }
-            string Clip(string state) => states.TryGetValue(state, out var clips) ? clips.FirstOrDefault() : null;
+            if (states.TryGetValue("loop_riding", out var riding))
+                foreach (var selection in riding.Selections)
+                {
+                    if (selection.Key.Selector != "rider_pose")
+                        continue;
+                    string path = selection.Value.FirstOrDefault();
+                    if (path != null)
+                        skeleton.RidingPoses.Add(selection.Key.Value, load(path));
+                }
+            string Clip(string state) => states.TryGetValue(state, out var clips) ? clips.Clips.FirstOrDefault() : null;
             skeleton.IdleAnimationPath = Clip("loop_ground") ?? Clip("loop_stand") ?? SkeletalPose.NeutralIdleAnimation;
             skeleton.RunAnimationPath = states.TryGetValue("loop_standing", out var standing)
-                ? standing.FirstOrDefault(path => path.Contains("_loc_run")) : null;
+                ? standing.Clips.FirstOrDefault(path => path.Contains("_loc_run")) : null;
             skeleton.RunAnimationPath ??= skeleton.IdleAnimationPath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : skeleton.IdleAnimationPath;
             skeleton.Idle = load(skeleton.IdleAnimationPath);
             skeleton.Run = load(skeleton.RunAnimationPath);
             skeleton.CrawlAnimationPath = states.TryGetValue("loop_prone", out var prone)
-                ? prone.FirstOrDefault(path => path.Contains("_crawl")) : null;
+                ? prone.Clips.FirstOrDefault(path => path.Contains("_crawl")) : null;
             skeleton.Crawl = skeleton.CrawlAnimationPath == null ? null : load(skeleton.CrawlAnimationPath);
             var postures = new[]
             {

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Linq;
 using Swg.Client.Core.Assets.Appearances;
@@ -11,11 +13,13 @@ namespace Swg.Client.Runtime.Assets.Appearances
     public sealed class AppearanceResources : IDisposable
     {
         readonly string name;
+        readonly RiderSeatData? riderSeat;
         readonly MeshPartResources[] parts;
         readonly ParticleEffectResources[] particles;
         public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
             name = appearance.Key;
+            riderSeat = appearance.RiderSeat;
             parts = Enumerable.Range(0, appearance.Parts.Count).Select(i => MeshPartResources.FromAppearance(appearance, i, factory, appearance.Parts[i].UseCharacterShader ? characterShader : worldShader, wrapMode)).ToArray();
             particles = appearance.Particles.Select(effect => new ParticleEffectResources(effect, factory, worldShader, characterShader, particleShader)).ToArray();
         }
@@ -49,8 +53,22 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 }
             }
 
+            if (riderSeat.HasValue)
+            {
+                var seat = new GameObject("Driver seat");
+                seat.transform.SetParent(root.transform, false);
+                seat.transform.localPosition = riderSeat.Value.Transform.GetColumn(3);
+                seat.transform.localRotation = riderSeat.Value.Transform.rotation;
+                seat.AddComponent<VehicleSeat>().riderPose = riderSeat.Value.PoseName;
+            }
+            var exhausts = new List<Transform>();
             foreach (var effect in particles)
-                effect.Create(root.transform);
+            {
+                var instance = effect.Create(root.transform);
+                if (effect.IsVehicleExhaust) exhausts.Add(instance.transform);
+            }
+            if (exhausts.Count > 0)
+                root.AddComponent<VehicleExhaust>().Initialize(exhausts.ToArray());
             if (previewLighting)
             {
                 var properties = new MaterialPropertyBlock();

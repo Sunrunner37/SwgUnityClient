@@ -1,3 +1,4 @@
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -46,9 +47,23 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 return;
             }
 
-            var serverWorldPose = this.state.SceneObjects.GetServerWorldPose(swgId);
-            var localPose = new Pose(serverWorldPose.position - this.state.RenderOrigin, serverWorldPose.rotation);
-            SetTarget(localPose, this.sceneObject.Scale, snap);
+            if (sceneObject is CreatureSceneObject rider && rider.Mount != null)
+            {
+                enabled = false; // VehicleRider follows the rendered seat instead of interpolating the rider independently.
+                return;
+            }
+
+            SetTarget(GetLocalPose(state, sceneObject), sceneObject.Scale, snap);
+        }
+
+        internal static Pose GetLocalPose(WorldState state, SpatialSceneObject sceneObject)
+        {
+            var pose = state.SceneObjects.GetServerWorldPose(sceneObject.SwgId);
+            // Server terrain and the rendered terrain can disagree. Keep exterior creatures,
+            // including summoned vehicles, above our ground without changing network state.
+            if (sceneObject is CreatureSceneObject && sceneObject.ParentSwgId.IsNone && state.Terrain != null)
+                pose.position.y = Mathf.Max(pose.position.y, state.Terrain.SampleHeight(pose.position.x, pose.position.z));
+            return new Pose(pose.position - state.RenderOrigin, pose.rotation);
         }
 
         internal void Unbind()

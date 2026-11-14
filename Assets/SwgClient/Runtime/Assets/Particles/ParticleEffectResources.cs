@@ -15,6 +15,7 @@ namespace Swg.Client.Runtime.Assets.Particles
     public sealed class ParticleEffectResources : IDisposable
     {
         readonly ParticleAppearance source;
+        public bool IsVehicleExhaust => source.IsVehicleExhaust;
         sealed class EmitterResources
         {
             public PeftEmitter Definition;

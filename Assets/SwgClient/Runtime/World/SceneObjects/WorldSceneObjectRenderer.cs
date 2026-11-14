@@ -69,6 +69,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public void RemoveScenery(SwgId swgId) => RemoveInstance(swgId);
         void OnObjectChanged(SceneObject sceneObject, SceneObjectChange changes)
         {
+            if ((changes & (SceneObjectChange.Containment | SceneObjectChange.Replaced)) != 0 && sceneObject is CreatureSceneObject rider && rider.Mount != null && ManagedSceneObject.TryGetObjectFrom(rider.SwgId, out var instance) && instance.GetComponent<VehicleRider>() == null && instance.TryGetComponent<CharacterAnimation>(out _))
+                instance.AddComponent<VehicleRider>().Initialize(rider);
             if ((changes & (SceneObjectChange.Appearance | SceneObjectChange.Containment)) != 0)
                 dirtyAppearances.Add(sceneObject.SwgId);
         }
@@ -165,9 +167,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
         {
             var instance = appearanceLibrary.Create(appearance, transform);
             instance.name = string.IsNullOrEmpty(sceneObject.Name) ? sceneObject.TemplatePath : sceneObject.Name;
-            var serverWorldPose = registry.GetServerWorldPose(sceneObject.SwgId);
-            instance.transform.localPosition = serverWorldPose.position - this.state.RenderOrigin;
-            instance.transform.localRotation = serverWorldPose.rotation;
+            var localPose = SceneObjectMovement.GetLocalPose(state, sceneObject);
+            instance.transform.localPosition = localPose.position;
+            instance.transform.localRotation = localPose.rotation;
             instance.transform.localScale = Vector3.one * sceneObject.Scale;
             // Preserve the displayed pose if an appearance finishes loading during interpolation.
             if (ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var previous))
@@ -183,8 +185,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (this.state.Templates.IsTargetable(sceneObject.TemplatePath))
                 instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
+            if (sceneObject is CreatureSceneObject vehicle && instance.TryGetComponent<VehicleExhaust>(out var exhaust))
+                exhaust.Bind(vehicle, state.Templates.CreatureMovement(sceneObject.TemplatePath).RunSpeed);
             if (sceneObject is CreatureSceneObject creature && instance.TryGetComponent<CharacterAnimation>(out var animation))
+            {
                 instance.AddComponent<SceneObjectAnimation>().Initialize(creature, animation);
+                if (creature.Mount != null) instance.AddComponent<VehicleRider>().Initialize(creature);
+            }
             if (sceneObject.SwgId == this.state.PlayerSwgId)
             {
                 var movement = instance.AddComponent<PlayerMovement>();

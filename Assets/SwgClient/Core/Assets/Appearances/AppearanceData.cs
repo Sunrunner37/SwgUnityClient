@@ -11,6 +11,7 @@ namespace Swg.Client.Core.Assets.Appearances
         public string Key;
         public readonly Dictionary<string, Matrix4x4> Hardpoints = new Dictionary<string, Matrix4x4>(StringComparer.OrdinalIgnoreCase);
         public List<ParticleAppearance> Particles = new List<ParticleAppearance>();
+        public RiderSeatData? RiderSeat;
         public List<MeshPart> Parts = new List<MeshPart>();
         public readonly List<StaticMeshSource> Sources = new List<StaticMeshSource>();
         public readonly List<string> Warnings = new List<string>();

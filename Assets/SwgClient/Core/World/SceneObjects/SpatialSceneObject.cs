@@ -5,7 +5,7 @@ namespace Swg.Client.Core.World.SceneObjects
 {
     public class SpatialSceneObject : SceneObject
     {
-        // SWG coordinates: relative to the parent, or absolute server world coordinates without a parent.
+        // SWG coordinates: parent-relative indoors; absolute without a parent and for mounted riders.
         public Vector3 Position;
         public Quaternion Rotation = Quaternion.identity;
         public float Scale = 1;

@@ -1,3 +1,4 @@
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -190,7 +191,8 @@ namespace Swg.Client.Core.World
                 throw new InvalidOperationException("This scene object has no spatial pose.");
             var position = spatial.Position;
             var rotation = spatial.Rotation.normalized;
-            var parent = spatial.Parent;
+            // Core3 keeps mounted riders in absolute coordinates despite their creature parent.
+            var parent = spatial is CreatureSceneObject rider && rider.Mount != null ? null : spatial.Parent;
             while (parent != null)
             {
                 if (parent is SpatialSceneObject transform)
@@ -200,7 +202,7 @@ namespace Swg.Client.Core.World
                     rotation = direction * rotation;
                 }
 
-                parent = parent.Parent;
+                parent = parent is CreatureSceneObject mountedParent && mountedParent.Mount != null ? null : parent.Parent;
             }
 
             return new Pose(position, rotation);

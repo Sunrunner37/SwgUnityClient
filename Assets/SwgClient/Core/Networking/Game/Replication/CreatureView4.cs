@@ -8,14 +8,15 @@ namespace Swg.Client.Core.Networking.Game.Replication
     {
         public static CreatureSceneObjectUpdate ReadBaseline(ByteReader reader)
         {
-            reader.Skip(8); // Acceleration multipliers.
+            var update = new CreatureSceneObjectUpdate
+            {
+                AccelerationMultiplierBase = reader.Float(),
+                AccelerationMultiplier = reader.Float()
+            };
             ReplicationReader.SkipVector(reader, sizeof(uint)); // Encumbrances.
             SkipSkillMods(reader, false);
             reader.Float(); // Speed multiplier base (Core3 validates run speed against its mod value).
-            var update = new CreatureSceneObjectUpdate
-            {
-                SpeedMultiplier = reader.Float()
-            };
+            update.SpeedMultiplier = reader.Float();
             reader.U64(); // Listen ID.
             update.RunSpeed = reader.Float();
             reader.Skip(8); // Slope angle / percent.
@@ -30,7 +31,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
             switch (field)
             {
                 case 0:
+                    update.AccelerationMultiplierBase = reader.Float();
+                    break;
                 case 1:
+                    update.AccelerationMultiplier = reader.Float();
+                    break;
                 case 4:
                 case 8:
                 case 9:

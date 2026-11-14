@@ -15,17 +15,19 @@ namespace Swg.Client.Core.Assets.Particles
     public sealed class ParticleAppearance
     {
         public readonly string Path;
+        public readonly bool IsVehicleExhaust;
         public readonly List<ParticleEmitterAppearance> Emitters = new List<ParticleEmitterAppearance>();
         public readonly Matrix4x4 Transform;
         public readonly PeftFile Effect;
-        ParticleAppearance(ParticleAppearance source, Matrix4x4 transform)
+        ParticleAppearance(ParticleAppearance source, Matrix4x4 transform, bool vehicleExhaust)
         {
             Path = source.Path;
+            IsVehicleExhaust = source.IsVehicleExhaust || vehicleExhaust;
             Transform = transform * source.Transform;
             Effect = source.Effect;
             Emitters.AddRange(source.Emitters);
         }
-        public ParticleAppearance WithTransform(Matrix4x4 transform) => new ParticleAppearance(this, transform);
+        public ParticleAppearance WithTransform(Matrix4x4 transform, bool vehicleExhaust = false) => new ParticleAppearance(this, transform, vehicleExhaust);
 
         public ParticleAppearance(TreAssetLoader assets, string path, Matrix4x4 transform, IffNode root, Func<string, AppearanceData> loadChild)
         {

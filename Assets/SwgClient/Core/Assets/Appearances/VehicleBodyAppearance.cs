@@ -16,6 +16,7 @@ namespace Swg.Client.Core.Assets.Appearances
         sealed class Body
         {
             public string AppearancePath;
+            public string RiderPose;
             public (string AppearancePath, string Hardpoint)[] Thrusters;
         }
         static readonly ConditionalWeakTable<TreAssetLoader, Dictionary<string, Body>> bodies = new ConditionalWeakTable<TreAssetLoader, Dictionary<string, Body>>();
@@ -33,6 +34,8 @@ namespace Swg.Client.Core.Assets.Appearances
             body = null;
             if (skeletalAppearance == null || !bodies.GetValue(loader, Load).TryGetValue(skeletalAppearance, out var definition)) return false;
             body = AppearanceLoader.LoadDetailed(loader, definition.AppearancePath, customization: customization);
+            if (body.Hardpoints.TryGetValue("player", out var seat))
+                body.RiderSeat = new RiderSeatData(seat, definition.RiderPose);
             foreach (var thruster in definition.Thrusters)
             {
                 if (!body.Hardpoints.TryGetValue(thruster.Hardpoint, out var transform))
@@ -41,18 +44,21 @@ namespace Swg.Client.Core.Assets.Appearances
                     continue;
                 }
                 var effect = AppearanceLoader.LoadDetailed(loader, thruster.AppearancePath);
-                body.Particles.AddRange(effect.Particles.Select(particle => particle.WithTransform(transform)));
+                body.Particles.AddRange(effect.Particles.Select(particle => particle.WithTransform(transform, vehicleExhaust: true)));
             }
             return true;
         }
 
         static Dictionary<string, Body> Load(TreAssetLoader loader)
         {
+            var poses = DataTableFile.Parse(loader.Read("datatables/mount/rider_pose_map.iff")).Rows
+                .Where(row => row.Get<int>("seat_index") == 1).ToDictionary(row => row.Get<string>("saddle_appearance_name"), row => row.Get<string>("rider_pose"), StringComparer.OrdinalIgnoreCase);
             var appearances = DataTableFile.Parse(loader.Read("datatables/mount/saddle_appearance_map.iff")).Rows
                 .Where(row => row.Get<string>("client_data_filename").StartsWith("clientdata/vehicle/", StringComparison.OrdinalIgnoreCase))
                 .ToDictionary(row => row.Get<string>("logical_saddle_name"), row => new Body
                 {
                     AppearancePath = row.Get<string>("saddle_appearance_name"),
+                    RiderPose = poses[row.Get<string>("saddle_appearance_name")],
                     Thrusters = ReadThrusters(loader.Read(row.Get<string>("client_data_filename")))
                 }, StringComparer.OrdinalIgnoreCase);
             var result = new Dictionary<string, Body>(StringComparer.OrdinalIgnoreCase);

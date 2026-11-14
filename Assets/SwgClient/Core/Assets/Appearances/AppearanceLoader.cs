@@ -80,6 +80,8 @@ namespace Swg.Client.Core.Assets.Appearances
                 else if (root.Kind == "SMAT")
                 {
                     var skeletal = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+                    if (skeletal.RiderSeat.HasValue)
+                        result.RiderSeat = new RiderSeatData(transform * skeletal.RiderSeat.Value.Transform, skeletal.RiderSeat.Value.PoseName);
                     result.Particles.AddRange(skeletal.Particles.Select(effect => effect.WithTransform(transform)));
                     foreach (var part in skeletal.Parts)
                     {

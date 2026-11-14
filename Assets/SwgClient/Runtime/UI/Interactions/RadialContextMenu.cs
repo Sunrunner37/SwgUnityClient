@@ -110,7 +110,7 @@ namespace Swg.Client.Runtime.UI.Interactions
             if (entry.RadialId == ObjectMenuDefaults.ExamineAction)
                 examineWindow.Open(interactions.MenuTargetSwgId);
             else
-                interactions.SelectMenuAction(interactions.MenuTargetSwgId, entry.RadialId);
+                interactions.SelectMenuAction(interactions.MenuTargetSwgId, entry.RadialId, entry.Callback);
         }
         string Caption(RadialMenuEntry entry)
         {

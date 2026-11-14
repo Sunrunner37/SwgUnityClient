@@ -327,6 +327,7 @@ namespace Swg.Client.Runtime.World.Loading
                 var character = SkeletalAppearanceLoader.LoadDetailed(loader, characterAppearance);
                 result.Parts = character.Parts;
                 result.Particles = character.Particles;
+                result.RiderSeat = character.RiderSeat;
                 result.RecalculateBounds();
             }
             catch (Exception error)

@@ -1,3 +1,4 @@
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Replication;
 using UnityEngine;
@@ -131,12 +132,23 @@ namespace Swg.Client.Runtime.Networking
             Enqueue(swgId, () => ApplyObject(swgId, owned.RequiredType, owned.ApplyTo, owned.Changes));
         }
 
-        internal void Commit(SwgId swgId, MovementUpdate update)
+        internal void Commit(SwgId swgId, MovementUpdate update, bool isBroadcast = false)
         {
             Enqueue(swgId, () =>
             {
+                // Core3 broadcasts an extrapolated vehicle pose back to its rider. Local input owns this prediction; explicit controller corrections still apply.
+                if (isBroadcast && SceneObjects.TryGet<CreatureSceneObject>(State.PlayerSwgId, out var localPlayer) && localPlayer.Mount?.SwgId == swgId && (localPlayer.States & CreatureState.RidingMount) != 0)
+                    return;
+                var parentSwgId = update.ParentSwgId;
+                // A rider still receives world-space corrections; they do not remove its mount containment.
+                if (parentSwgId == 0 && SceneObjects.TryGet<CreatureSceneObject>(swgId, out var rider) && rider.Mount != null && (rider.States & CreatureState.RidingMount) != 0)
+                {
+                    parentSwgId = null;
+                    rider.Mount.Apply(update);
+                    SceneObjects.NotifyChanged(rider.Mount, SceneObjectChange.Transform);
+                }
                 var state = ApplyObject(swgId, typeof(SpatialSceneObject), sceneObject => ((SpatialSceneObject)sceneObject).Apply(update),
-                    SceneObjectChange.Transform, parentSwgId: update.ParentSwgId);
+                    SceneObjectChange.Transform, parentSwgId: parentSwgId);
                 if (update.MovementCounter.HasValue)
                     state.MovementCounter = update.MovementCounter.Value;
             });

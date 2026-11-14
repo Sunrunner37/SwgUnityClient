@@ -9,6 +9,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         None = 0,
         Cover = 1,
         Combat = 2,
-        Peace = 4
+        Peace = 4,
+        RidingMount = 0x8000000,
+        MountedCreature = 0x10000000
     }
 }

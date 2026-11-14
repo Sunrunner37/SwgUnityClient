@@ -66,6 +66,20 @@ namespace Swg.Client.Core.World
             return objectType;
         }
 
+        readonly Dictionary<string, (float RunSpeed, float RunAcceleration)> movement = new Dictionary<string, (float, float)>(StringComparer.OrdinalIgnoreCase);
+        public (float RunSpeed, float RunAcceleration) CreatureMovement(string templatePath)
+        {
+            if (string.IsNullOrEmpty(templatePath)) return default;
+            if (!movement.TryGetValue(templatePath, out var value))
+            {
+                var template = SharedCreatureTemplate.Parse(loader.Read(templatePath));
+                var inherited = template.RunSpeed.HasValue && template.RunAcceleration.HasValue ? default : CreatureMovement(template.BaseTemplate);
+                value = (template.RunSpeed ?? inherited.RunSpeed, template.RunAcceleration ?? inherited.RunAcceleration);
+                movement.Add(templatePath, value);
+            }
+            return value;
+        }
+
         public string Resolve(uint crc) => names.TryGetValue(crc, out var path) ? path : null;
     }
 }

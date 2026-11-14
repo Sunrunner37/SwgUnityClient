@@ -16,6 +16,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public float? Height;
         public byte? Posture;
         public ulong? States;
+        public float? AccelerationMultiplierBase;
+        public float? AccelerationMultiplier;
         public float? RunSpeed;
         public float? SpeedMultiplier;
         public float? TurnScale;

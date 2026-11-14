@@ -13,6 +13,7 @@ namespace Swg.Client.Runtime.Networking
     /// </summary>
     public static class ObjectMenuDefaults
     {
+        public const byte VehicleEnterExitAction = 205;
         public const byte ExamineAction = 7;
         public const byte UseAction = 20;
         public const byte LootAction = 35;

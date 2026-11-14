@@ -61,7 +61,7 @@ namespace Swg.Client.Runtime.UI.Testing
                         new RadialMenuEntry(2, 0, 118, 3, "@player_structure:management"),
                         new RadialMenuEntry(3, 0, 117, 3, "@player_structure:permissions"),
                         new RadialMenuEntry(4, 2, 124, 3, "@player_structure:management_status")
-                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet));
+                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet), context.Resolve<Action<string, string, SwgId>>());
                     return interactions;
                 }).SingleInstance();
                 builder.RegisterInstance(new Admission { Username = "ui-testing", Galaxy = new Galaxy { Name = "Offline" } });

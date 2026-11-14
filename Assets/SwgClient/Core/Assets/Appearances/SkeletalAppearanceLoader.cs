@@ -69,6 +69,7 @@ namespace Swg.Client.Core.Assets.Appearances
             {
                 result.Parts.AddRange(body.Parts);
                 result.Particles.AddRange(body.Particles);
+                result.RiderSeat = body.RiderSeat;
             }
             return result;
         }

@@ -22,6 +22,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         readonly List<Rig> rigs = new List<Rig>();
         Vector3 previousPosition;
         bool positioned;
+        string ridingPose;
         float idleTime;
         float locomotionTime;
         float postureAge = 1;
@@ -50,6 +51,13 @@ namespace Swg.Client.Runtime.Assets.Appearances
 
             rigs.Add(new Rig { Skeleton = skeleton, Bones = bones, StartPose = new Pose[bones.Length] });
             return bones;
+        }
+
+        public void SetRidingPose(string pose)
+        {
+            if (ridingPose == pose) return;
+            ridingPose = pose;
+            SetPosture(Posture, true);
         }
 
         public void SetPosture(CreaturePosture posture, bool snap = false)
@@ -104,7 +112,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             Speed = speed;
             idleTime += seconds;
             postureAge += seconds;
-            LocomotionBlend = Mathf.MoveTowards(LocomotionBlend, (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone) && speed > .05f ? 1 : 0, seconds / .12f);
+            LocomotionBlend = Mathf.MoveTowards(LocomotionBlend, ridingPose == null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone) && speed > .05f ? 1 : 0, seconds / .12f);
             // All equipment shares the same clock and native locomotion mapping.
             if (rigs.Count > 0 && speed > 0)
             {
@@ -123,13 +131,14 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     rig.TransitionIndex++;
                 }
                 var transition = rig.TransitionIndex < rig.Transitions.Count ? rig.Transitions[rig.TransitionIndex] : null;
-                var idleClip = rig.Skeleton.Postures.TryGetValue(Posture, out var postureClip) ? postureClip : rig.Skeleton.Idle;
+                var idleClip = ridingPose != null && rig.Skeleton.RidingPoses.TryGetValue(ridingPose, out var ridingClip) ? ridingClip
+                    : rig.Skeleton.Postures.TryGetValue(Posture, out var postureClip) ? postureClip : rig.Skeleton.Idle;
                 for (int i = 0; i < rig.Bones.Length; i++)
                 {
                     var joint = rig.Skeleton.Joints[i];
                     var sample = transition != null ? transition.Sample(joint.Name, rig.PostureTime, false)
                         : idleClip.Sample(joint.Name, Posture == CreaturePosture.Upright ? idleTime : rig.PostureTime);
-                    if (transition == null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone))
+                    if (transition == null && ridingPose == null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone))
                     {
                         var clip = Locomotion(rig.Skeleton);
                         var moving = clip == null || ReferenceEquals(clip, idleClip) ? sample : clip.Sample(joint.Name, locomotionTime);
@@ -140,6 +149,9 @@ namespace Swg.Client.Runtime.Assets.Appearances
                         };
                     }
                     var pose = joint.Sample(sample);
+                    // Native mounted creatures use ZeroTranslationTransformModifier on the root joint.
+                    if (ridingPose != null && joint.Name == "root")
+                        pose.position = Vector3.zero;
                     float blend = Mathf.Clamp01(postureAge / .12f);
                     rig.Bones[i].SetLocalPositionAndRotation(Vector3.Lerp(rig.StartPose[i].position, pose.position, blend),
                         Quaternion.Slerp(rig.StartPose[i].rotation, pose.rotation, blend));

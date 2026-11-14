@@ -8,6 +8,7 @@ namespace Swg.Client.Core.Assets.Appearances
     public sealed class SkeletalAppearanceData
     {
         public readonly List<ParticleAppearance> Particles = new List<ParticleAppearance>();
+        public RiderSeatData? RiderSeat;
         public readonly List<MeshPart> Parts = new List<MeshPart>();
         public readonly List<CachedMeshPartSource> Sources = new List<CachedMeshPartSource>();
     }

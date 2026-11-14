@@ -13,9 +13,12 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public WorldEquipment[] Equipment = Array.Empty<WorldEquipment>();
         public CreaturePosture Posture;
         public CreatureState States;
+        public CreatureSceneObject Mount => Parent as CreatureSceneObject;
         public bool IsInCombat => (States & CreatureState.Combat) != 0;
         public SwgId TargetSwgId;
         public HamPool Ham;
+        public float AccelerationMultiplierBase = 1;
+        public float AccelerationMultiplier = 1;
         public float RunSpeed;
         public float SpeedMultiplier = 1;
         public float TurnScale = 1;
@@ -34,6 +37,10 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
             if (update.TargetSwgId.HasValue)
                 TargetSwgId = update.TargetSwgId.Value;
             HamPoolReplication.Apply(update, ref Ham);
+            if (update.AccelerationMultiplierBase.HasValue)
+                AccelerationMultiplierBase = update.AccelerationMultiplierBase.Value;
+            if (update.AccelerationMultiplier.HasValue)
+                AccelerationMultiplier = update.AccelerationMultiplier.Value;
             if (update.RunSpeed.HasValue)
                 RunSpeed = update.RunSpeed.Value;
             if (update.SpeedMultiplier.HasValue)

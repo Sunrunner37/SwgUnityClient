@@ -49,7 +49,7 @@ namespace Swg.Client.Tests.Editor
             var droid = (IntangibleSceneObject)SceneObjectFactory.Create(10, "object/intangible/pet/shared_r2.iff");
             state.SceneObjects.Add(droid);
             ObjectMenuSelectPacket sent = default;
-            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, packet => sent = packet);
+            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, packet => sent = packet, (name, arguments, target) => { });
             interactions.RequestMenu(10);
             Assert.That(interactions.Menu[1].Text, Is.EqualTo("@pet/pet_menu:menu_call"));
             interactions.ActivateDefault(10);
@@ -118,7 +118,7 @@ namespace Swg.Client.Tests.Editor
             state.SceneObjects.Add(device);
             state.SceneObjects.Add(SceneObjectFactory.Create(11, "object/mobile/vehicle/shared_speederbike.iff"));
             ObjectMenuSelectPacket sent = default;
-            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, packet => sent = packet);
+            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, packet => sent = packet, (name, arguments, target) => { });
             interactions.ActivateDefault(10);
             Assert.That(sent.RadialId, Is.EqualTo(60));
             Assert.That(device.IsActive, Is.False);
@@ -137,7 +137,7 @@ namespace Swg.Client.Tests.Editor
             var device = (IntangibleSceneObject)SceneObjectFactory.Create(10, "object/intangible/vehicle/shared_speederbike_pcd.iff");
             state.SceneObjects.Add(device);
             ObjectMenuRequestPacket request = default;
-            using var interactions = new ClientObjectInteractions(state, packet => request = packet, _ => { }, _ => { });
+            using var interactions = new ClientObjectInteractions(state, packet => request = packet, _ => { }, _ => { }, (name, arguments, target) => { });
             interactions.RequestMenu(10);
             Assert.That(request.Items[0].RadialId, Is.EqualTo(ObjectMenuDefaults.ExamineAction));
             Assert.That(request.Items[1].RadialId, Is.EqualTo(ObjectMenuDefaults.VehicleGenerateAction));

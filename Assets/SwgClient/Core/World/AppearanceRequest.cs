@@ -82,7 +82,8 @@ namespace Swg.Client.Core.World
             {
                 bool cell = parent != null && IsCell(state.Templates.Resolve(parent.TemplateCrc) ?? parent.TemplatePath);
                 bool staticCell = state.Snapshot != null && state.Snapshot.ById.TryGetValue(sceneObject.ParentSwgId, out var staticParent) && IsCell(staticParent.TemplatePath);
-                if (!cell && !staticCell)
+                bool riding = sceneObject is CreatureSceneObject && parent is CreatureSceneObject;
+                if (!cell && !staticCell && !riding)
                     return null;
             }
 

@@ -1,3 +1,4 @@
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using System;
 using System.Collections.Generic;
 using Swg.Client.Core.World.SceneObjects;
@@ -14,6 +15,7 @@ namespace Swg.Client.Runtime.Networking
     public sealed class ClientObjectInteractions : IDisposable
     {
         readonly Action<ObjectMenuSelectPacket> selectMenu;
+        readonly Action<string, string, SwgId> enqueueCommand;
         readonly WorldState state;
         readonly Action<ObjectMenuRequestPacket> sendMenu;
         readonly Action<SwgId> requestAttributes;
@@ -27,10 +29,11 @@ namespace Swg.Client.Runtime.Networking
         public event Action MenuChanged;
         public event Action<SwgId> AttributesChanged;
 
-        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu)
+        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand)
         {
             this.state = state;
             this.selectMenu = selectMenu;
+            this.enqueueCommand = enqueueCommand;
             this.sendMenu = sendMenu;
             this.requestAttributes = requestAttributes;
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create object interactions on Unity's main thread.");
@@ -57,7 +60,16 @@ namespace Swg.Client.Runtime.Networking
             if (state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
                 SelectMenuAction(swgId, action);
         }
-        public void SelectMenuAction(SwgId swgId, byte radialId) => selectMenu(new ObjectMenuSelectPacket(swgId, radialId));
+        public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
+        {
+            if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
+            {
+                state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player);
+                enqueueCommand(player?.Mount != null ? "dismount" : "mount", "", swgId);
+            }
+            else
+                selectMenu(new ObjectMenuSelectPacket(swgId, radialId));
+        }
 
         public void RequestExamine(SwgId swgId) => requestAttributes(swgId);
 
