@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Swg.Client.Core.Assets.Formats.Iff;
+using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Characters.Animation;
 
 namespace Swg.Client.Core.Assets.Formats.Animation
@@ -115,7 +116,17 @@ namespace Swg.Client.Core.Assets.Formats.Animation
 
             var locomotion = version.Children.FirstOrDefault(n => n.Tag == "LOCT");
             float speed = locomotion == null ? 0 : BitConverter.ToSingle(locomotion.Data, 0);
-            return new SkeletalAnimation(frameRate, lastFrame, speed, joints);
+            var messages = new List<SkeletalAnimation.Message>();
+            var messageForm = IffNode.Form(version.Children, "MSGS");
+            if (messageForm != null)
+                foreach (var node in messageForm.Children.Where(n => n.Tag == "MESG"))
+                {
+                    var reader = new ByteReader(node.Data);
+                    int count = reader.U16();
+                    string name = reader.CString();
+                    for (int i = 0; i < count; i++) messages.Add(new SkeletalAnimation.Message(name, reader.U16() / frameRate));
+                }
+            return new SkeletalAnimation(frameRate, lastFrame, speed, joints) { Messages = messages.OrderBy(m => m.Time).ToArray() };
         }
 
         // The packed quaternion stores sign/magnitude X11,Y11,Z10. Format bytes describe

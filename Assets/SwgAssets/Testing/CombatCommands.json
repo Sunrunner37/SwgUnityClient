@@ -7,7 +7,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "actionshot2",
@@ -15,7 +16,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "animalattack",
@@ -47,7 +49,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "blindattack",
@@ -63,7 +66,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "bodyshot2",
@@ -71,7 +75,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "bodyshot3",
@@ -79,7 +84,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "burstshot1",
@@ -87,7 +93,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "burstshot2",
@@ -95,7 +102,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "chargeshot1",
@@ -103,7 +111,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "chargeshot2",
@@ -111,7 +120,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "concealshot",
@@ -119,7 +129,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "confusionshot",
@@ -127,7 +138,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.3,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "creatureareaattack",
@@ -191,7 +203,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "defaultdroidattack",
@@ -207,7 +220,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "disarmingshot2",
@@ -215,7 +229,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.75
+      "damage": 2.75,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "diveshot",
@@ -223,7 +238,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "dizzyattack",
@@ -239,7 +255,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.1,
-      "damage": 2.8
+      "damage": 2.8,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "drainforce",
@@ -255,7 +272,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "fanshot",
@@ -263,7 +281,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "fastblast",
@@ -271,7 +290,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.05,
-      "damage": 6.0
+      "damage": 6.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "fireacidcone1",
@@ -279,7 +299,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "fireacidcone2",
@@ -287,7 +308,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 6.0
+      "damage": 6.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "fireacidsingle1",
@@ -295,7 +317,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "fireacidsingle2",
@@ -303,7 +326,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 8.0
+      "damage": 8.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "firelightningcone1",
@@ -311,7 +335,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "firelightningcone2",
@@ -319,7 +344,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "firelightningsingle1",
@@ -327,7 +353,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "firelightningsingle2",
@@ -335,7 +362,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 2.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "flamecone1",
@@ -343,7 +371,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "flamecone2",
@@ -351,7 +380,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 6.0
+      "damage": 6.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "flamesingle1",
@@ -359,7 +389,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "flamesingle2",
@@ -367,7 +398,8 @@
       "generated": true,
       "range": 16.0,
       "speed": 4.0,
-      "damage": 8.0
+      "damage": 8.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_flame_thrower.iff"
     },
     {
       "name": "flurryshot1",
@@ -375,7 +407,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "flurryshot2",
@@ -383,7 +416,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "flushingshot1",
@@ -391,7 +425,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "flushingshot2",
@@ -399,7 +434,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "forcechoke",
@@ -455,7 +491,8 @@
       "generated": true,
       "range": 32.0,
       "speed": 1,
-      "damage": 1
+      "damage": 1,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "forcelightningcone2",
@@ -463,7 +500,8 @@
       "generated": true,
       "range": 32.0,
       "speed": 1,
-      "damage": 1
+      "damage": 1,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "forcelightningsingle1",
@@ -471,7 +509,8 @@
       "generated": true,
       "range": 32.0,
       "speed": 1,
-      "damage": 1
+      "damage": 1,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "forcelightningsingle2",
@@ -479,7 +518,8 @@
       "generated": true,
       "range": 32.0,
       "speed": 1,
-      "damage": 1
+      "damage": 1,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_lightning.iff"
     },
     {
       "name": "forcethrow1",
@@ -519,7 +559,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "fullautoarea2",
@@ -527,7 +568,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "fullautosingle1",
@@ -535,7 +577,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "fullautosingle2",
@@ -543,7 +586,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 3.5
+      "damage": 3.5,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "headshot1",
@@ -551,7 +595,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "headshot2",
@@ -559,7 +604,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "headshot3",
@@ -567,7 +613,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "healthshot1",
@@ -575,7 +622,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "healthshot2",
@@ -583,7 +631,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "intimidate1",
@@ -591,7 +640,8 @@
       "generated": false,
       "range": 24.0,
       "speed": 1.0,
-      "damage": 0.0
+      "damage": 0.0,
+      "effect": "clienteffect/combat_special_attacker_intimidate.cef"
     },
     {
       "name": "intimidate2",
@@ -599,7 +649,8 @@
       "generated": false,
       "range": 24.0,
       "speed": 1.0,
-      "damage": 0.0
+      "damage": 0.0,
+      "effect": "clienteffect/combat_special_attacker_intimidate.cef"
     },
     {
       "name": "intimidationattack",
@@ -623,7 +674,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "knockdownattack",
@@ -639,7 +691,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "lastditch",
@@ -647,7 +700,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 4.0,
-      "damage": 6.0
+      "damage": 6.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "legshot1",
@@ -655,7 +709,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "legshot2",
@@ -663,7 +718,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "legshot3",
@@ -671,7 +727,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "lowblow",
@@ -679,7 +736,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "melee1hblindhit1",
@@ -687,7 +745,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hblindhit2",
@@ -695,7 +754,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hbodyhit1",
@@ -703,7 +763,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hbodyhit2",
@@ -711,7 +772,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hbodyhit3",
@@ -719,7 +781,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 3.5
+      "damage": 3.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hdizzyhit1",
@@ -727,7 +790,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hdizzyhit2",
@@ -735,7 +799,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 3.5
+      "damage": 3.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hhealthhit1",
@@ -743,7 +808,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hhealthhit2",
@@ -751,7 +817,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hhit1",
@@ -759,7 +826,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hhit2",
@@ -767,7 +835,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 3.5
+      "damage": 3.5,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hhit3",
@@ -775,7 +844,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hlunge1",
@@ -783,7 +853,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hlunge2",
@@ -791,7 +862,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 2.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hscatterhit1",
@@ -799,7 +871,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hscatterhit2",
@@ -807,7 +880,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hspinattack1",
@@ -815,7 +889,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee1hspinattack2",
@@ -823,7 +898,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/knife/shared_knife_dagger.iff"
     },
     {
       "name": "melee2harea1",
@@ -831,7 +907,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2harea2",
@@ -839,7 +916,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2harea3",
@@ -847,7 +925,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hheadhit1",
@@ -855,7 +934,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.25,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hheadhit2",
@@ -863,7 +943,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.75,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hheadhit3",
@@ -871,7 +952,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 3.5
+      "damage": 3.5,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hhit1",
@@ -879,7 +961,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hhit2",
@@ -887,7 +970,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hhit3",
@@ -895,7 +979,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hlunge1",
@@ -903,7 +988,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 1.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hlunge2",
@@ -911,7 +997,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 2.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hmindhit1",
@@ -919,7 +1006,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.25,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hmindhit2",
@@ -927,7 +1015,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hspinattack1",
@@ -935,7 +1024,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hspinattack2",
@@ -943,7 +1033,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hsweep1",
@@ -951,7 +1042,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "melee2hsweep2",
@@ -959,7 +1051,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff"
     },
     {
       "name": "mindblast1",
@@ -983,7 +1076,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.0,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "mindshot2",
@@ -991,7 +1085,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "multitargetpistolshot",
@@ -999,7 +1094,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.5,
-      "damage": 4.2
+      "damage": 4.2,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "overchargeshot1",
@@ -1023,7 +1119,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "pistolmeleedefense1",
@@ -1031,7 +1128,8 @@
       "generated": true,
       "range": 10.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "pistolmeleedefense2",
@@ -1039,7 +1137,8 @@
       "generated": true,
       "range": 10.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "pointblankarea1",
@@ -1055,7 +1154,8 @@
       "generated": true,
       "range": 12.0,
       "speed": 1.5,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "pointblanksingle1",
@@ -1071,7 +1171,8 @@
       "generated": true,
       "range": 10.0,
       "speed": 1.8,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "polearmactionhit1",
@@ -1079,7 +1180,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmactionhit2",
@@ -1087,7 +1189,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmarea1",
@@ -1095,7 +1198,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.75,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmarea2",
@@ -1103,7 +1207,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 2.75
+      "damage": 2.75,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmhit1",
@@ -1111,7 +1216,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmhit2",
@@ -1119,7 +1225,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmhit3",
@@ -1127,7 +1234,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmleghit1",
@@ -1135,7 +1243,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.25,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmleghit2",
@@ -1143,7 +1252,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.75,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmleghit3",
@@ -1151,7 +1261,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.25,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmlunge1",
@@ -1159,7 +1270,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 1.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmlunge2",
@@ -1167,7 +1279,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 2.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmspinattack1",
@@ -1175,7 +1288,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmspinattack2",
@@ -1183,7 +1297,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmstun1",
@@ -1191,7 +1306,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmstun2",
@@ -1199,7 +1315,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmsweep1",
@@ -1207,7 +1324,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "polearmsweep2",
@@ -1215,7 +1333,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/melee/polearm/shared_lance_staff_metal.iff"
     },
     {
       "name": "posturedownattack",
@@ -1239,7 +1358,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "saber1hcombohit1",
@@ -1535,7 +1655,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.25
+      "damage": 3.25,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "scattershot2",
@@ -1543,7 +1664,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "snipershot",
@@ -1551,7 +1673,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1,
-      "damage": 1
+      "damage": 1,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "sprayshot",
@@ -1559,7 +1682,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.5,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "startleshot1",
@@ -1567,7 +1691,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "startleshot2",
@@ -1575,7 +1700,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "stoppingshot",
@@ -1583,7 +1709,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "strafeshot1",
@@ -1591,7 +1718,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "strafeshot2",
@@ -1599,7 +1727,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 5.0
+      "damage": 5.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "stunattack",
@@ -1623,7 +1752,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "surpriseshot",
@@ -1631,7 +1761,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/rifle/shared_rifle_cdef.iff"
     },
     {
       "name": "threatenshot",
@@ -1655,7 +1786,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.3,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/pistol/shared_pistol_cdef.iff"
     },
     {
       "name": "transferforce",
@@ -1679,7 +1811,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": ""
     },
     {
       "name": "unarmedbodyhit1",
@@ -1687,7 +1820,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": ""
     },
     {
       "name": "unarmedcombo1",
@@ -1695,7 +1829,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": ""
     },
     {
       "name": "unarmedcombo2",
@@ -1703,7 +1838,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 4.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": ""
     },
     {
       "name": "unarmeddizzy1",
@@ -1711,7 +1847,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": ""
     },
     {
       "name": "unarmedheadhit1",
@@ -1719,7 +1856,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": ""
     },
     {
       "name": "unarmedhit1",
@@ -1727,7 +1865,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": ""
     },
     {
       "name": "unarmedhit2",
@@ -1735,7 +1874,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": ""
     },
     {
       "name": "unarmedhit3",
@@ -1743,7 +1883,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.0,
-      "damage": 4.0
+      "damage": 4.0,
+      "weapon": ""
     },
     {
       "name": "unarmedknockdown1",
@@ -1751,7 +1892,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 1.0
+      "damage": 1.0,
+      "weapon": ""
     },
     {
       "name": "unarmedknockdown2",
@@ -1759,7 +1901,8 @@
       "generated": false,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.5
+      "damage": 1.5,
+      "weapon": ""
     },
     {
       "name": "unarmedleghit1",
@@ -1767,7 +1910,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.5
+      "damage": 2.5,
+      "weapon": ""
     },
     {
       "name": "unarmedlunge1",
@@ -1775,7 +1919,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 1.5,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": ""
     },
     {
       "name": "unarmedlunge2",
@@ -1783,7 +1928,8 @@
       "generated": false,
       "range": 20.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": ""
     },
     {
       "name": "unarmedspinattack1",
@@ -1791,7 +1937,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.0
+      "damage": 2.0,
+      "weapon": ""
     },
     {
       "name": "unarmedspinattack2",
@@ -1799,7 +1946,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 3.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": ""
     },
     {
       "name": "unarmedstun1",
@@ -1807,7 +1955,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 1.25
+      "damage": 1.25,
+      "weapon": ""
     },
     {
       "name": "underhandshot",
@@ -1815,7 +1964,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 1.5,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "warcry1",
@@ -1823,7 +1973,8 @@
       "generated": false,
       "range": 24.0,
       "speed": 1.0,
-      "damage": 0.0
+      "damage": 0.0,
+      "effect": "clienteffect/combat_special_attacker_warcry.cef"
     },
     {
       "name": "warcry2",
@@ -1831,7 +1982,8 @@
       "generated": false,
       "range": 24.0,
       "speed": 1.0,
-      "damage": 0.0
+      "damage": 0.0,
+      "effect": "clienteffect/combat_special_attacker_warcry.cef"
     },
     {
       "name": "warningshot",
@@ -1847,7 +1999,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 2.25
+      "damage": 2.25,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "wildshot2",
@@ -1855,7 +2008,8 @@
       "generated": true,
       "range": -1.0,
       "speed": 2.0,
-      "damage": 3.0
+      "damage": 3.0,
+      "weapon": "object/weapon/ranged/carbine/shared_carbine_cdef.iff"
     },
     {
       "name": "wookieeroar",
@@ -1863,7 +2017,8 @@
       "generated": false,
       "range": 15.0,
       "speed": 1.0,
-      "damage": 0.0
+      "damage": 0.0,
+      "effect": "clienteffect/combat_special_attacker_intimidate.cef"
     }
   ]
 }

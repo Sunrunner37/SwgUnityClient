@@ -18,6 +18,7 @@ using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Characters;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Runtime.Assets.Appearances;
+using Swg.Client.Runtime.Assets.Particles;
 using Swg.Client.Runtime.Assets.Shaders;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Commands;
@@ -35,6 +36,8 @@ namespace Swg.Client.Runtime.UI.Testing
         {
             public string name;
             public string animation;
+            public string effect;
+            public string weapon;
             public bool generated;
             public float range;
             public float speed;
@@ -47,7 +50,10 @@ namespace Swg.Client.Runtime.UI.Testing
         public TMP_Dropdown weaponStance;
         public TMP_Text status;
         public Slider dummyDistance;
+        public Slider attackSpeedBonus;
+        public TMP_Text speedBonusLabel;
         public Transform stage;
+        [Tooltip("Base weapon attack speed before command multipliers and the speed bonus.")]
         public float recoverySeconds = 2;
         public bool Ready { get; private set; }
         readonly Queue<CommandQueueEnqueuePacket> waiting = new Queue<CommandQueueEnqueuePacket>();
@@ -60,6 +66,11 @@ namespace Swg.Client.Runtime.UI.Testing
         WorldState state;
         CreatureSceneObject dummy;
         GameObject dummyObject;
+        GameObject playerObject;
+        GameObject weaponObject;
+        readonly Dictionary<string, AppearanceResources> weapons = new Dictionary<string, AppearanceResources>();
+        Coroutine weaponLoading;
+        string equippedWeapon = "";
         bool autoAttack;
         uint serverCounter = 0x40000000;
         string[] animationNames;
@@ -99,15 +110,17 @@ namespace Swg.Client.Runtime.UI.Testing
                 instance.AddComponent<ManagedSceneObject>().Bind(creature.SwgId);
                 instance.AddComponent<SceneObjectAnimation>().Initialize(creature, instance.GetComponent<CharacterAnimation>());
                 if (creature == dummy) dummyObject = instance;
+                else playerObject = instance;
             }
             GameServices.Resolve<ClientTargeting>().Select(dummy.SwgId);
             animationNames = combat.Loading.Result.Actions.Values.OrderBy(name => name).ToArray();
             animations.ClearOptions();
             animations.AddOptions(new[] { "Automatic attack" }.Concat(animationNames).ToList());
             var slots = FindAnyObjectByType<ActionBar>().slots;
-            string[] defaults = { "attack", "unarmedHit1", "unarmedHit2", "unarmedSpinAttack1", "unarmedKnockdown1", "intimidate1", "warcry1", "oneHandMeleeHit1", "twoHandMeleeHit1", "polearmHit1", "bodyShot1", "peace" };
+            string[] defaults = { "attack", "unarmedHit1", "unarmedHit2", "unarmedSpinAttack1", "unarmedKnockdown1", "intimidate1", "warcry1", "melee1hHit1", "melee2hHit1", "polearmHit1", "bodyShot1", "peace" };
             var attacks = defaults.Select(catalog.Find).Where(c => c != null).ToArray();
             for (int i = 0; i < slots.Length && i < attacks.Length; i++) slots[i].Bind(attacks[i]);
+            UpdateSpeedLabel(attackSpeedBonus.value);
             Ready = true;
             StartCoroutine(Process());
             status.text = "Offline combat � select an attack in the browser or action bar. All native playback actions are available below.";
@@ -122,12 +135,42 @@ namespace Swg.Client.Runtime.UI.Testing
         public void SetWeapon(int index)
         {
             if (!Ready) return;
-            string[] paths = { "", "object/weapon/melee/knife/shared_knife_dagger.iff", "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff", "object/weapon/melee/polearm/shared_polearm_staff_metal.iff", "object/weapon/ranged/pistol/shared_pistol_cdef.iff", "object/weapon/ranged/rifle/shared_rifle_cdef.iff" };
-            if (!state.SceneObjects.TryGet(9901, out var weapon)) { weapon = new SceneObject { SwgId = 9901 }; state.SceneObjects.Add(weapon); }
-            weapon.TemplatePath = paths[index];
-            player.Creature.WeaponSwgId = index == 0 ? default : weapon.SwgId;
-            state.SceneObjects.NotifyChanged(player.Creature, SceneObjectChange.State);
+            string[] paths = { "", "object/weapon/melee/knife/shared_knife_dagger.iff", "object/weapon/melee/2h_sword/shared_2h_sword_scythe.iff", "object/weapon/melee/polearm/shared_lance_staff_metal.iff", "object/weapon/ranged/pistol/shared_pistol_cdef.iff", "object/weapon/ranged/rifle/shared_rifle_cdef.iff" };
+            if (weaponLoading != null) StopCoroutine(weaponLoading);
+            weaponLoading = StartCoroutine(EquipWeapon(paths[index]));
         }
+        IEnumerator EquipWeapon(string path)
+        {
+            if (path == equippedWeapon) yield break;
+            AppearanceResources resource = null;
+            if (!string.IsNullOrEmpty(path) && !weapons.TryGetValue(path, out resource))
+            {
+                var load = GameServices.Resolve<WorldContentLoader>().LoadAppearanceAsync(new SceneObject { TemplatePath = path });
+                yield return new WaitUntil(() => load.IsCompleted);
+                if (load.IsFaulted) { Debug.LogException(load.Exception.GetBaseException(), this); yield break; }
+                resource = new AppearanceResources(load.Result, new SwgMaterialFactory(GameServices.Resolve<TreRuntimeAssets>()), Shader.Find("SWG/World"), Shader.Find("SWG/Character"), Shader.Find("SWG/Particle"));
+                weapons.Add(path, resource);
+                resources.Add(resource);
+            }
+            if (weaponObject != null) { weaponObject.SetActive(false); Destroy(weaponObject); }
+            if (resource != null)
+            {
+                var hand = playerObject.GetComponentsInChildren<Transform>().First(t => t.name == "hold_r");
+                weaponObject = resource.Create(hand, false);
+                weaponObject.name = "Equipped " + path;
+            }
+            if (!state.SceneObjects.TryGet(9901, out var weapon)) { weapon = new SceneObject { SwgId = 9901 }; state.SceneObjects.Add(weapon); }
+            weapon.TemplatePath = path;
+            player.Creature.WeaponSwgId = string.IsNullOrEmpty(path) ? default : weapon.SwgId;
+            equippedWeapon = path;
+            state.SceneObjects.NotifyChanged(player.Creature, SceneObjectChange.State);
+            int stance = GameServices.Resolve<ClientCombat>().WeaponStance(player.Creature) switch { "sword_1h" => 1, "sword_2h" => 2, "polearm" => 3, "pistol" => 4, "rifle" => 5, _ => 0 };
+            weaponStance.SetValueWithoutNotify(stance);
+        }
+        public void UpdateSpeedLabel(float value) => speedBonusLabel.text = "Speed bonus: " + Mathf.RoundToInt(value) + "%";
+        // Core3 CombatManager::calculateWeaponAttackSpeed, with the slider representing combined speed modifiers.
+        internal static float CalculateAttackDuration(float weaponSpeed, float commandMultiplier, float speedBonus)
+            => Mathf.Max(1, (1 - speedBonus / 100) * commandMultiplier * weaponSpeed);
         public void Attack() => GameServices.Resolve<ICommandDispatcher>().Execute("attack", "", out _);
         public void Clear() => GameServices.Resolve<ClientCombatQueue>().Clear();
         public void Peace() => GameServices.Resolve<ClientCombatQueue>().Peace();
@@ -186,6 +229,16 @@ namespace Swg.Client.Runtime.UI.Testing
                 if (cancelled.Remove(packet.Sequence)) continue;
                 var command = catalog.FindByCrc(packet.CommandCrc);
                 attackDefinitions.TryGetValue(command?.Name ?? "", out var definition);
+                if (animations.value > 0)
+                {
+                    string selected = animationNames[animations.value - 1];
+                    definition = attackDefinitions.Values.FirstOrDefault(d => d.animation + (d.generated ? "_light" : "") == selected) ?? definition;
+                }
+                if (definition?.weapon != null)
+                {
+                    if (weaponLoading != null) { StopCoroutine(weaponLoading); weaponLoading = null; }
+                    yield return EquipWeapon(definition.weapon);
+                }
                 float maximumRange = definition != null && definition.range > 0 ? definition.range : weaponStance.value >= 4 ? 64 : 5;
                 if ((dummy.Position - player.Creature.Position).magnitude > maximumRange)
                 {
@@ -199,12 +252,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 string automatic = definition == null ? weaponStance.value >= 4 ? "fire_1_single_light" : "attack_mid_center_light_0"
                     : definition.animation + (definition.generated ? "_light" : "");
                 string action = animations.value == 0 ? automatic : animationNames[animations.value - 1];
-                float recovery = recoverySeconds * (definition?.speed ?? 1);
+                float recovery = CalculateAttackDuration(recoverySeconds, definition?.speed ?? 1, attackSpeedBonus.value);
                 combat.Receive(CombatActionPacket.ReadFrom(Packet(CombatActionPacket.ControllerType, w =>
                 {
-                    w.Write(ObjectTemplateNames.TemplateCrc(action)); w.Write(player.SwgId.Value); w.Write(player.Creature.WeaponSwgId.Value); w.Write((byte)0); w.Write((byte)0); w.Write((byte)0);
+                    w.Write(ObjectTemplateNames.TemplateCrc(action)); w.Write(player.SwgId.Value); w.Write(player.Creature.WeaponSwgId.Value); w.Write((byte)0); w.Write((byte)(definition == null ? 0 : 255)); w.Write((byte)0);
                     w.Write((ushort)1); w.Write(dummy.SwgId.Value); w.Write((byte)0); w.Write((byte)1); w.Write((byte)0);
                 })));
+                if (!string.IsNullOrEmpty(definition?.effect)) GameServices.Resolve<ClientEffects>().PlayObject(definition.effect, player.SwgId);
                 dummy.Ham.Health = new HamElement(Math.Max(0, dummy.Ham.Health.Current - (int)(10 * (definition?.damage ?? 1))), 1000, 0);
                 state.SceneObjects.NotifyChanged(dummy, SceneObjectChange.Vitals);
                 Complete(packet.Sequence, recovery);

@@ -11,7 +11,7 @@
       "group": "Effects",
       "packet": "PlayClientEffectLocPacket",
       "handler": "PlayClientEffectLocPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "PlayClientEffectLoc",
@@ -1507,7 +1507,7 @@
       "group": "Effects",
       "packet": "PlayClientEffectObjectPacket",
       "handler": "PlayClientEffectObjectPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "PlayClientEffectObjectMessage",

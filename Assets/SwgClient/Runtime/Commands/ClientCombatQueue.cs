@@ -16,18 +16,22 @@ namespace Swg.Client.Runtime.Commands
             public readonly ClientCommands.QueuedCommand Command;
             public readonly bool Executing;
             public readonly float Alpha;
-            public Entry(uint actionCounter, ClientCommands.QueuedCommand command, bool executing, float alpha = 1)
+            public readonly double EndsAt;
+            public Entry(uint actionCounter, ClientCommands.QueuedCommand command, bool executing, float alpha = 1, double endsAt = 0)
             {
                 ActionCounter = actionCounter;
                 Command = command;
                 Executing = executing;
                 Alpha = alpha;
+                EndsAt = endsAt;
             }
         }
         readonly ClientCommands commands;
         readonly CommandCatalog catalog;
         (uint Counter, ClientCommands.QueuedCommand Command, double EndsAt, float Duration)? recovery;
         public event Action Changed;
+        /// <summary>Local action counter and realtime deadline computed from the authoritative recovery timer.</summary>
+        public event Action<uint, double> RecoveryStarted;
         public ClientCombatQueue(ClientCommands commands, CommandCatalog catalog)
         {
             this.commands = commands;
@@ -40,7 +44,10 @@ namespace Swg.Client.Runtime.Commands
         void OnCompleted(uint counter, ClientCommands.QueuedCommand command, CommandQueueRemovePacket result)
         {
             if (result.ErrorType == 0 && result.Timer > 0 && catalog.FindByCrc(command.CommandCrc)?.AddToCombatQueue == true)
+            {
                 recovery = (counter, command, Time.realtimeSinceStartupAsDouble + result.Timer, result.Timer);
+                RecoveryStarted?.Invoke(counter, recovery.Value.EndsAt);
+            }
         }
         public bool TryGetRecovery(double now, out Entry entry)
         {
@@ -48,7 +55,7 @@ namespace Swg.Client.Runtime.Commands
             if (!recovery.HasValue || now >= recovery.Value.EndsAt)
                 return false;
             var active = recovery.Value;
-            entry = new Entry(active.Counter, active.Command, true, Mathf.Clamp01((float)(active.EndsAt - now) / active.Duration));
+            entry = new Entry(active.Counter, active.Command, true, Mathf.Clamp01((float)(active.EndsAt - now) / active.Duration), active.EndsAt);
             return true;
         }
         public IEnumerable<Entry> GetEntries(double now)
@@ -84,6 +91,7 @@ namespace Swg.Client.Runtime.Commands
             commands.Completed -= OnCompleted;
             catalog.Changed -= OnChanged;
             Changed = null;
+            RecoveryStarted = null;
         }
     }
 }

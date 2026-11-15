@@ -1,3 +1,5 @@
+using Swg.Client.Runtime.Assets.Particles;
+using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.Characters;
 using Swg.Client.Core.Crafting;
 using Swg.Client.Runtime.Networking;
@@ -44,6 +46,12 @@ namespace Swg.Client.Tests.Editor
             builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>(), currentPlayer)).SingleInstance();
             // Crafting handlers resolve their session only when a crafting reply is applied on the main thread.
             builder.RegisterType<ClientCombat>().SingleInstance();
+            builder.Register(context =>
+            {
+                var effects = new GameObject("Test client effects").AddComponent<ClientEffects>();
+                effects.Initialize(context.Resolve<TreRuntimeAssets>(), replication.State, context.Resolve<ClientCombat>());
+                return effects;
+            }).SingleInstance();
             builder.Register(_ => new Swg.Client.Runtime.Assets.Tre.TreRuntimeAssets(Swg.Client.Core.Configuration.ClientSettings.From(System.IO.Path.Combine(Application.dataPath, "../client.ini")))).SingleInstance();
             builder.RegisterType<ClientCrafting>().SingleInstance();
             builder.RegisterType<ClientMissions>().SingleInstance();

@@ -6,6 +6,13 @@ namespace Swg.Client.Core.Characters.Animation
     /// <summary>Native joint channels resampled at their authored frame rate. Locomotion stays in the movement controller.</summary>
     public sealed class SkeletalAnimation
     {
+        public readonly struct Message
+        {
+            public readonly string Name;
+            public readonly float Time;
+            public Message(string name, float time) { Name = name; Time = time; }
+        }
+        public Message[] Messages { get; internal set; } = System.Array.Empty<Message>();
         public readonly float FrameRate;
         public readonly int LastFrame;
         public readonly float LocomotionSpeed;

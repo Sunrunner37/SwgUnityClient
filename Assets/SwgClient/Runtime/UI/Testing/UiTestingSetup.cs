@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Assets.Particles;
 using Swg.Client.Core.Crafting;
 using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Packets.Player;
@@ -115,6 +116,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<DraftSchematicCatalog>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombat>().AsSelf().SingleInstance().AutoActivate();
+                builder.Register(context =>
+                {
+                    var effects = new GameObject("Client effects").AddComponent<ClientEffects>();
+                    effects.Initialize(context.Resolve<TreRuntimeAssets>(), context.Resolve<WorldState>(), context.Resolve<ClientCombat>());
+                    UnityEngine.Object.DontDestroyOnLoad(effects.gameObject);
+                    return effects;
+                }).AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();

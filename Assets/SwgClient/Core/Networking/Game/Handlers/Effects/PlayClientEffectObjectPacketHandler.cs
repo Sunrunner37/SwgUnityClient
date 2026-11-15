@@ -1,4 +1,4 @@
-using System;
+using Swg.Client.Runtime.Assets.Particles;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Effects;
 
@@ -10,14 +10,9 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Effects
     {
         public override uint Opcode => PlayClientEffectObjectPacket.Opcode;
 
+        readonly ClientEffects effects;
         [Preserve]
-        public PlayClientEffectObjectPacketHandler() : base(PlayClientEffectObjectPacket.ReadFrom)
-        {
-        }
-
-        protected override void Handle(PlayClientEffectObjectPacket packet)
-        {
-            throw new NotImplementedException($"PlayClientEffectObjectMessage (opcode 0x{Opcode:X8})");
-        }
+        public PlayClientEffectObjectPacketHandler(ClientEffects effects) : base(PlayClientEffectObjectPacket.ReadFrom) => this.effects = effects;
+        protected override void Handle(PlayClientEffectObjectPacket packet) => effects.Receive(packet);
     }
 }

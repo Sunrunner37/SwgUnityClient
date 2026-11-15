@@ -24,11 +24,12 @@ namespace Swg.Client.Runtime.Networking
         int variation;
         public Task<CbtmFile> Loading => loading;
         public event Action<CombatActionPacket> ActionReceived;
+        public event Action<CombatActionPacket, CbtmFile.Playback> PlaybackRequested;
         public ClientCombat(TreRuntimeAssets assets, WorldState state)
         {
             this.state = state;
             context = SynchronizationContext.Current;
-            loading = assets.ReadAsync(loader => CbtmFile.Parse(loader.Read("combat/combat_manager.iff")));
+            loading = assets.ReadAsync(loader => CbtmFile.Parse(loader.Read("combat/combat_manager.iff"), loader.Read));
         }
         public void Subscribe(SwgId id, Action<string, string, bool> callback)
         {
@@ -70,16 +71,24 @@ namespace Swg.Client.Runtime.Networking
                 foreach (var defender in packet.Defenders)
                 {
                     if (!table.TryGet(packet.AnimationCrc, defender.Hit, packet.AttackerPosture, defender.Posture, variation++, out var playback)) continue;
-                    if (!attackerPlayed) { Play(packet.AttackerSwgId, playback.Attacker, weapon: packet.WeaponSwgId); attackerPlayed = true; }
+                    if (!attackerPlayed)
+                    {
+                        PlaybackRequested?.Invoke(packet, playback);
+                        Play(packet.AttackerSwgId, playback.Attacker, weapon: packet.WeaponSwgId);
+                        attackerPlayed = true;
+                    }
                     Play(defender.SwgId, playback.Defender, reaction: true);
                 }
                 if (!attackerPlayed && table.TryGet(packet.AnimationCrc, 0, packet.AttackerPosture, 0, variation++, out var solo))
+                {
+                    PlaybackRequested?.Invoke(packet, solo);
                     Play(packet.AttackerSwgId, solo.Attacker, weapon: packet.WeaponSwgId);
+                }
                 ActionReceived?.Invoke(packet);
             }
             catch (Exception error) { Debug.LogException(error); }
         }
         public void Receive(AnimationPacket packet) => context.Post(_ => { if (!disposed) Play(packet.ReceiverSwgId, packet.Animation); }, null);
-        public void Dispose() { disposed = true; listeners.Clear(); ActionReceived = null; }
+        public void Dispose() { disposed = true; listeners.Clear(); ActionReceived = null; PlaybackRequested = null; }
     }
 }

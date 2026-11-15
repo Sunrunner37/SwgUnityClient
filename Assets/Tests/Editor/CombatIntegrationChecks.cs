@@ -29,6 +29,7 @@ using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.UI.Testing;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -216,6 +217,92 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(bones[head].position.y, Is.LessThan(1), "Defeated creatures must not stand and idle.");
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+        [TestCase(.5f)]
+        [TestCase(3f)]
+        public async Task ServerIntervalScalesTheAnimationClock(float seconds)
+        {
+            using var assets = new TreRuntimeAssets(Settings());
+            await assets.Ready;
+            var skeleton = SkeletonData.Load(assets.Loader, "appearance/hum_f.sat");
+            var clip = skeleton.ResolveAction("attack_mid_center_0", "", CreaturePosture.Upright);
+            var root = new GameObject("Server-timed animation");
+            try
+            {
+                var animation = root.AddComponent<CharacterAnimation>();
+                animation.GetBones(skeleton);
+                await Run(animation.LoadAction(assets, "attack_mid_center_0", ""));
+                animation.SetActionDeadline(Time.realtimeSinceStartupAsDouble + seconds);
+                Assert.That(animation.ActionPlaybackRate, Is.EqualTo(clip.Duration / seconds).Within(.01f));
+                animation.Advance(0, seconds * .5f);
+                Assert.That(animation.ActionTime, Is.EqualTo(clip.Duration * .5f).Within(.01f));
+                Assert.That(animation.IsPlayingAction, Is.True);
+                animation.Advance(0, seconds * .6f);
+                Assert.That(animation.IsPlayingAction, Is.False);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+        [Test]
+        public async Task LateServerDurationRetimesOnlyTheRemainingClip()
+        {
+            using var assets = new TreRuntimeAssets(Settings());
+            await assets.Ready;
+            var skeleton = SkeletonData.Load(assets.Loader, "appearance/hum_f.sat");
+            var clip = skeleton.ResolveAction("attack_mid_center_0", "", CreaturePosture.Upright);
+            var root = new GameObject("Late attack duration");
+            try
+            {
+                var animation = root.AddComponent<CharacterAnimation>();
+                animation.GetBones(skeleton);
+                await Run(animation.LoadAction(assets, "attack_mid_center_0", ""));
+                animation.Advance(0, clip.Duration * .25f);
+                float before = animation.ActionTime;
+                animation.SetActionDeadline(Time.realtimeSinceStartupAsDouble + .5);
+                Assert.That(animation.ActionTime, Is.EqualTo(before), "A late timer must not restart the clip.");
+                animation.Advance(0, .25f);
+                Assert.That(animation.ActionTime, Is.EqualTo(clip.Duration * .625f).Within(.01f));
+                animation.Advance(0, .3f);
+                Assert.That(animation.IsPlayingAction, Is.False);
+                int actionId = animation.ActionId;
+                animation.SetPosture(CreaturePosture.Dead, true);
+                Assert.That(animation.ActionId, Is.GreaterThan(actionId), "Trails must stop using an interrupted action's clock.");
+                Assert.That(animation.ActionPlaybackRate, Is.EqualTo(1));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+        [Test]
+        public async Task RecoveryDeadlineSurvivesPendingAssetLoading()
+        {
+            using var assets = new TreRuntimeAssets(Settings());
+            await assets.Ready;
+            var skeleton = SkeletonData.Load(assets.Loader, "appearance/hum_f.sat");
+            var clip = skeleton.ResolveAction("attack_mid_center_0", "", CreaturePosture.Upright);
+            var root = new GameObject("Pending attack duration");
+            try
+            {
+                var animation = root.AddComponent<CharacterAnimation>();
+                animation.GetBones(skeleton);
+                var load = animation.LoadAction(assets, "attack_mid_center_0", "");
+                Assert.That(load.MoveNext(), Is.True);
+                double endsAt = Time.realtimeSinceStartupAsDouble + .5;
+                animation.SetActionDeadline(endsAt);
+                var wait = (CustomYieldInstruction)load.Current;
+                while (wait.keepWaiting) await Task.Delay(10);
+                await Run(load);
+                Assert.That(animation.ActionPlaybackRate, Is.GreaterThanOrEqualTo(clip.Duration / .5f));
+                animation.Advance(0, .51f);
+                Assert.That(animation.IsPlayingAction, Is.False);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+        [TestCase(4, 1, 0, 4)]
+        [TestCase(4, 1, 50, 2)]
+        [TestCase(4, 1, 90, 1)]
+        [TestCase(4, 1, -50, 6)]
+        [TestCase(4, 2, 50, 4)]
+        public void OfflineSpeedBonusUsesCore3FormulaAndOneSecondFloor(float weaponSpeed, float commandMultiplier, float bonus, float expected)
+        {
+            Assert.That(CombatTestingSetup.CalculateAttackDuration(weaponSpeed, commandMultiplier, bonus), Is.EqualTo(expected));
         }
         [TestCase(CreaturePosture.Dead)]
         [TestCase(CreaturePosture.Incapacitated)]

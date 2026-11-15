@@ -33,17 +33,26 @@ namespace Swg.Client.Runtime.Assets.Appearances
         float postureAge = 1;
         float actionAge;
         float actionDuration;
+        float actionPlaybackRate = 1;
+        double? actionDeadline;
+        public int ActionId { get; private set; }
+        public float ActionTime => actionAge;
+        public float ActionPlaybackRate => actionPlaybackRate;
         Coroutine actionLoading;
         Coroutine stanceLoading;
         bool actionPending;
         bool UnableToAct => Posture == CreaturePosture.Dead || Posture == CreaturePosture.Incapacitated || Posture == CreaturePosture.KnockedDown;
         public bool IsPlayingAction => actionAge < actionDuration;
         public string LastAction { get; private set; }
-        public void PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction)
+        public event System.Action<SkeletalAnimation> ActionStarted;
+        public bool PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction, double? endsAt = null)
         {
-            if (UnableToAct || reaction && (actionPending || IsPlayingAction)) return;
+            if (UnableToAct || reaction && (actionPending || IsPlayingAction)) return false;
             if (actionLoading != null) StopCoroutine(actionLoading);
+            ActionId++;
+            actionDeadline = endsAt;
             actionLoading = StartCoroutine(LoadAction(assets, name, weapon));
+            return true;
         }
         internal IEnumerator LoadAction(TreRuntimeAssets assets, string name, string weapon)
         {
@@ -59,7 +68,17 @@ namespace Swg.Client.Runtime.Assets.Appearances
             for (int i = 0; i < actionRigs.Length; i++) actionRigs[i].Action = read.Result[i];
             actionAge = 0;
             actionDuration = read.Result.Where(clip => clip != null).Max(clip => clip.Duration);
+            actionPlaybackRate = 1;
+            if (actionDeadline.HasValue) SetActionDeadline(actionDeadline.Value);
             LastAction = name;
+            ActionStarted?.Invoke(read.Result.First(clip => clip != null));
+        }
+        /// <summary>Fits the remaining clip to the server recovery deadline, including time spent loading assets.</summary>
+        public void SetActionDeadline(double endsAt)
+        {
+            actionDeadline = endsAt;
+            if (IsPlayingAction)
+                actionPlaybackRate = (actionDuration - actionAge) / Mathf.Max(.01f, (float)(endsAt - Time.realtimeSinceStartupAsDouble));
         }
         public void SetCombatStance(TreRuntimeAssets assets, string weapon, bool combat)
         {
@@ -88,6 +107,9 @@ namespace Swg.Client.Runtime.Assets.Appearances
             actionLoading = null;
             stanceLoading = null;
             actionPending = false;
+            ActionId++;
+            actionDeadline = null;
+            actionPlaybackRate = 1;
             actionDuration = 0;
             foreach (var rig in rigs) { rig.Action = null; rig.CombatIdle = null; }
         }
@@ -178,7 +200,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         internal void Advance(float speed, float seconds)
         {
             Speed = speed;
-            actionAge += seconds;
+            actionAge += seconds * actionPlaybackRate;
             idleTime += seconds;
             postureAge += seconds;
             LocomotionBlend = Mathf.MoveTowards(LocomotionBlend, ridingPose == null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone) && speed > .05f ? 1 : 0, seconds / .12f);

@@ -10,16 +10,20 @@ namespace Swg.Client.Core.Assets.Formats.Animation
     public sealed class CbtmFile
     {
         readonly Dictionary<uint, IffNode> actions = new Dictionary<uint, IffNode>();
+        readonly Dictionary<string, PstFile> scripts = new Dictionary<string, PstFile>();
         readonly Dictionary<uint, string> names = new Dictionary<uint, string>();
         public IReadOnlyDictionary<uint, string> Actions => names;
         public readonly struct Playback
         {
             public readonly string Attacker;
             public readonly string Defender;
-            public Playback(string attacker, string defender) { Attacker = attacker; Defender = defender; }
+            public readonly PstFile.Particle[] Particles;
+            public readonly bool HasTrails;
+            public Playback(string attacker, string defender, PstFile.Particle[] particles, bool hasTrails)
+            { Attacker = attacker; Defender = defender; Particles = particles; HasTrails = hasTrails; }
         }
         CbtmFile() { }
-        public static CbtmFile Parse(byte[] bytes)
+        public static CbtmFile Parse(byte[] bytes, Func<string, byte[]> readScript = null)
         {
             var file = new CbtmFile();
             var root = IffNode.Form(IffNode.Parse(bytes), "CBTM");
@@ -30,6 +34,9 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                 file.names.Add(crc, name);
                 file.actions.Add(crc, entry.Children.Single(n => n.Tag == "FORM"));
             }
+            if (readScript != null)
+                foreach (string path in IffNode.References(root.Data, "playback/", ".pst"))
+                    file.scripts.Add(path, PstFile.Parse(readScript(path)));
             return file;
         }
         public bool TryGet(uint crc, byte hit, byte attackerPosture, byte defenderPosture, int variation, out Playback playback)
@@ -71,7 +78,10 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                 if (tag == 0x41414354) attacker = value; // AACT
                 else if (tag == 0x44484143 || tag == 0x444d4143 || tag == 0x44414354) defender = value; // DHAC / DMAC / DACT
             }
-            playback = new Playback(attacker, defender);
+            string scriptPath = new ByteReader(node.Chunk("NAME")).CString();
+            scripts.TryGetValue(scriptPath, out var script);
+            var variables = node.Children.Single(n => n.Kind == "VARS");
+            playback = new Playback(attacker, defender, script?.ResolveParticles(variables) ?? Array.Empty<PstFile.Particle>(), script?.HasTrails ?? false);
             return true;
         }
     }

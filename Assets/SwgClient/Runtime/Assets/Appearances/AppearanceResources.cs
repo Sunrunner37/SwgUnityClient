@@ -13,12 +13,14 @@ namespace Swg.Client.Runtime.Assets.Appearances
     public sealed class AppearanceResources : IDisposable
     {
         readonly string name;
+        readonly KeyValuePair<string, Matrix4x4>[] hardpoints;
         readonly RiderSeatData? riderSeat;
         readonly MeshPartResources[] parts;
         readonly ParticleEffectResources[] particles;
         public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
             name = appearance.Key;
+            hardpoints = appearance.Hardpoints.ToArray();
             riderSeat = appearance.RiderSeat;
             parts = Enumerable.Range(0, appearance.Parts.Count).Select(i => MeshPartResources.FromAppearance(appearance, i, factory, appearance.Parts[i].UseCharacterShader ? characterShader : worldShader, wrapMode)).ToArray();
             particles = appearance.Particles.Select(effect => new ParticleEffectResources(effect, factory, worldShader, characterShader, particleShader)).ToArray();
@@ -51,6 +53,13 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     // Include arm swings and hip bob beyond the static bind-pose box.
                     renderer.localBounds = new Bounds(resource.Bounds.center, resource.Bounds.size + Vector3.one);
                 }
+            }
+
+            foreach (var hardpoint in hardpoints)
+            {
+                var point = new GameObject(hardpoint.Key);
+                point.transform.SetParent(root.transform, false);
+                point.transform.SetLocalPositionAndRotation(hardpoint.Value.GetColumn(3), hardpoint.Value.rotation);
             }
 
             if (riderSeat.HasValue)

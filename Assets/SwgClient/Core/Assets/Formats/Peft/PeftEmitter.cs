@@ -76,7 +76,8 @@ namespace Swg.Client.Core.Assets.Formats.Peft
         public bool LinkedDimensions;
         internal static PeftEmitter Read(IffNode root)
         {
-            var version = PeftFile.Version(root, 11, 14);
+            var version = PeftFile.Version(root, 10, 14);
+            bool legacyFlocking = version.Kind == "0010" || version.Kind == "0011";
             var result = new PeftEmitter();
             var timing = PeftFile.Timing(version);
             result.Delay = timing.Delay;
@@ -107,7 +108,7 @@ namespace Swg.Client.Core.Assets.Formats.Peft
             result.LocalSpace = reader.Byte() != 0;
             result.GroundCollision = reader.Byte() != 0;
             result.KillOnCollision = reader.Byte() != 0;
-            if (version.Kind == "0011")
+            if (legacyFlocking)
                 reader.Float(); // Removed collision offset.
             result.CollisionHeight = reader.Float();
             result.ForwardVelocityMaintained = new Vector2(reader.Float(), reader.Float());
@@ -115,17 +116,17 @@ namespace Swg.Client.Core.Assets.Formats.Peft
             result.WindResistance = reader.Float();
             result.LodMinimum = reader.Float();
             result.LodMaximum = reader.Float();
-            result.FlockingType = version.Kind == "0011" ? (reader.Byte() == 0 ? 0 : 1) : (int)reader.U32();
+            result.FlockingType = legacyFlocking ? (reader.Byte() == 0 ? 0 : 1) : (int)reader.U32();
             result.SeparationDistance = reader.Float();
             result.AlignmentGain = reader.Float();
             result.CohesionGain = reader.Float();
             result.SeparationGain = reader.Float();
             result.CageWidth = reader.Float();
-            if (version.Kind == "0011")
+            if (legacyFlocking)
             {
                 float minimum = reader.Float();
                 result.CageHeight = reader.Float() - minimum;
-                result.TimeOfDayColor = reader.Float();
+                if (version.Kind == "0011") result.TimeOfDayColor = reader.Float();
             }
             else
             {
