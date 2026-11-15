@@ -9,18 +9,22 @@ namespace Swg.Client.Core.Assets.Formats.Animation
 {
     /// <summary>
     /// LAT (Logical Animation Table) maps animation names to native animation templates.
-    /// Retains clip references and SSAT string-selector associations; does not evaluate blend templates.
+    /// Retains clip references, PXAT locomotion channels, and SSAT string-selector associations.
     /// </summary>
     public sealed class LatFile
     {
         public sealed class Animation
         {
             public string[] Clips { get; }
+            public string[] LocomotionClips { get; }
+            public string[] IdleClips { get; }
             public IReadOnlyDictionary<(string Selector, string Value), string[]> Selections { get; }
 
             internal Animation(IffNode node)
             {
                 Clips = ClipReferences(node);
+                LocomotionClips = ChannelClips(node, "locomotion").Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                IdleClips = ChannelClips(node, "zero_speed").Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
                 var selections = new Dictionary<(string, string), string[]>();
                 ReadSelectors(node.Children, selections);
                 Selections = selections;
@@ -73,6 +77,22 @@ namespace Swg.Client.Core.Assets.Formats.Animation
                 }
                 ReadSelectors(node.Children, selections);
             }
+        }
+
+        // PXAT assigns clips to movement channels, independently of species-specific filenames.
+        static IEnumerable<string> ChannelClips(IffNode node, string channel)
+        {
+            if (node.Kind == "PXAT")
+            {
+                var version = node.Children.First(child => child.Tag == "FORM");
+                var uniform = version.Children.FirstOrDefault(child => child.Tag == "PUNF");
+                if (uniform != null && new ByteReader(uniform.Data).CString() == channel)
+                    foreach (string path in ClipReferences(node))
+                        yield return path;
+            }
+            foreach (var child in node.Children)
+                foreach (string path in ChannelClips(child, channel))
+                    yield return path;
         }
 
         static string[] ClipReferences(IffNode node) => IffNode.References(node.Data, "appearance/animation/", ".ans").ToArray();

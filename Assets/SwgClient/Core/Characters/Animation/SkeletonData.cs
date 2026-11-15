@@ -39,6 +39,8 @@ namespace Swg.Client.Core.Characters.Animation
         public Matrix4x4[] BindPoses { get; private set; }
         public readonly Dictionary<string, SkeletalAnimation> RidingPoses = new Dictionary<string, SkeletalAnimation>(StringComparer.Ordinal);
         public SkeletalAnimation Idle { get; private set; }
+        public SkeletalAnimation Walk { get; private set; }
+        public string WalkAnimationPath { get; private set; }
         public SkeletalAnimation Run { get; private set; }
         public SkeletalAnimation Crawl { get; private set; }
         public string CrawlAnimationPath { get; private set; }
@@ -145,11 +147,19 @@ namespace Swg.Client.Core.Characters.Animation
                         skeleton.RidingPoses.Add(selection.Key.Value, load(path));
                 }
             string Clip(string state) => states.TryGetValue(state, out var clips) ? clips.Clips.FirstOrDefault() : null;
-            skeleton.IdleAnimationPath = Clip("loop_ground") ?? Clip("loop_stand") ?? SkeletalPose.NeutralIdleAnimation;
-            skeleton.RunAnimationPath = states.TryGetValue("loop_standing", out var standing)
-                ? standing.Clips.FirstOrDefault(path => path.Contains("_loc_run")) : null;
-            skeleton.RunAnimationPath ??= skeleton.IdleAnimationPath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : skeleton.IdleAnimationPath;
+            var standing = new[] { "loop_ground", "loop_standing", "loop_stand", "loop_hovering" }
+                .Where(states.ContainsKey).Select(name => states[name]).ToArray();
+            skeleton.IdleAnimationPath = standing.SelectMany(state => state.IdleClips).FirstOrDefault()
+                ?? Clip("loop_ground") ?? Clip("loop_stand") ?? SkeletalPose.NeutralIdleAnimation;
+            var locomotion = standing.SelectMany(state => state.LocomotionClips).Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(path => (Path: path, Clip: load(path))).Where(item => item.Clip.LocomotionSpeed > .001f)
+                .OrderBy(item => item.Clip.LocomotionSpeed).ToArray();
+            skeleton.WalkAnimationPath = locomotion.FirstOrDefault().Path;
+            skeleton.RunAnimationPath = locomotion.LastOrDefault().Path
+                ?? (skeleton.IdleAnimationPath == SkeletalPose.NeutralIdleAnimation ? "appearance/animation/all_b_loc_run.ans" : skeleton.IdleAnimationPath);
+            skeleton.WalkAnimationPath ??= skeleton.RunAnimationPath;
             skeleton.Idle = load(skeleton.IdleAnimationPath);
+            skeleton.Walk = load(skeleton.WalkAnimationPath);
             skeleton.Run = load(skeleton.RunAnimationPath);
             skeleton.CrawlAnimationPath = states.TryGetValue("loop_prone", out var prone)
                 ? prone.Clips.FirstOrDefault(path => path.Contains("_crawl")) : null;

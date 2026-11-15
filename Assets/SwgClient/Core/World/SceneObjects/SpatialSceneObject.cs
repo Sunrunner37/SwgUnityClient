@@ -9,8 +9,12 @@ namespace Swg.Client.Core.World.SceneObjects
         public Vector3 Position;
         public Quaternion Rotation = Quaternion.identity;
         public float Scale = 1;
+        /// <summary>Latest server-reported travel speed in metres per second; absent on initial creation.</summary>
+        public float? ServerSpeed { get; private set; }
         internal void Apply(MovementUpdate update)
         {
+            if (update.Speed.HasValue)
+                ServerSpeed = update.Speed.Value;
             if (update.Position.HasValue)
                 Position = update.Position.Value;
             if (update.Rotation.HasValue)
@@ -25,6 +29,7 @@ namespace Swg.Client.Core.World.SceneObjects
                 spatial.Position = Position;
                 spatial.Rotation = Rotation;
                 spatial.Scale = Scale;
+                spatial.ServerSpeed = ServerSpeed;
             }
         }
     }

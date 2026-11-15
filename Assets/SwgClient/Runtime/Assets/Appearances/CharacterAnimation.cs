@@ -32,6 +32,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public bool IsChangingPosture => rigs.Exists(rig => rig.TransitionIndex < rig.Transitions.Count);
         public float Speed { get; private set; }
         public float LocomotionBlend { get; private set; }
+        public float WalkRunBlend { get; private set; }
         public float LocomotionTime => locomotionTime;
 
         public Transform[] GetBones(SkeletonData skeleton)
@@ -117,9 +118,25 @@ namespace Swg.Client.Runtime.Assets.Appearances
             if (rigs.Count > 0 && speed > 0)
             {
                 var clip = Locomotion(rigs[0].Skeleton);
-                float authoredSpeed = (clip?.LocomotionSpeed ?? 0) * Mathf.Abs(transform.lossyScale.x);
-                if (authoredSpeed > .001f)
-                    locomotionTime += seconds * speed / authoredSpeed;
+                var skeleton = rigs[0].Skeleton;
+                float scale = Mathf.Abs(transform.lossyScale.x);
+                float authoredSpeed = (clip?.LocomotionSpeed ?? 0) * scale;
+                if (Posture == CreaturePosture.Prone)
+                {
+                    if (authoredSpeed > .001f)
+                        locomotionTime += seconds * speed / authoredSpeed;
+                }
+                else if (clip != null)
+                {
+                    var walk = skeleton.Walk ?? clip;
+                    float walkSpeed = walk.LocomotionSpeed * scale;
+                    float targetBlend = authoredSpeed > walkSpeed + .001f
+                        ? Mathf.InverseLerp(walkSpeed, authoredSpeed, speed) : 1;
+                    WalkRunBlend = Mathf.MoveTowards(WalkRunBlend, targetBlend, seconds / .15f);
+                    // Blend by stride length and share normalized phase so walk/run and equipment stay in step.
+                    float stride = Mathf.Lerp(walkSpeed * walk.Duration, authoredSpeed * clip.Duration, WalkRunBlend);
+                    locomotionTime += stride > .001f ? seconds * speed * clip.Duration / stride : seconds;
+                }
             }
 
             foreach (var rig in rigs)
@@ -142,6 +159,16 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     {
                         var clip = Locomotion(rig.Skeleton);
                         var moving = clip == null || ReferenceEquals(clip, idleClip) ? sample : clip.Sample(joint.Name, locomotionTime);
+                        if (Posture == CreaturePosture.Upright && clip != null && rig.Skeleton.Walk != null && clip.Duration > 0)
+                        {
+                            var walk = rig.Skeleton.Walk;
+                            var walking = walk.Sample(joint.Name, locomotionTime / clip.Duration * walk.Duration);
+                            moving = new JointSample
+                            {
+                                Rotation = Quaternion.Slerp(walking.Rotation, moving.Rotation, WalkRunBlend),
+                                Translation = Vector3.Lerp(walking.Translation, moving.Translation, WalkRunBlend)
+                            };
+                        }
                         sample = new JointSample
                         {
                             Rotation = Quaternion.Slerp(sample.Rotation, moving.Rotation, LocomotionBlend),

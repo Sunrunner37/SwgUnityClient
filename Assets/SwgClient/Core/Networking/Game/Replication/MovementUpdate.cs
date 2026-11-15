@@ -9,12 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public readonly Quaternion? Rotation;
         public readonly SwgId? ParentSwgId;
         public readonly uint? MovementCounter;
-        public MovementUpdate(Vector3? position = null, Quaternion? rotation = null, SwgId? parentSwgId = null, uint? movementCounter = null)
+        public readonly float? Speed;
+        public MovementUpdate(Vector3? position = null, Quaternion? rotation = null, SwgId? parentSwgId = null, uint? movementCounter = null, float? speed = null)
         {
             Position = position;
             Rotation = rotation;
             ParentSwgId = parentSwgId;
             MovementCounter = movementCounter;
+            Speed = speed;
         }
     }
 }

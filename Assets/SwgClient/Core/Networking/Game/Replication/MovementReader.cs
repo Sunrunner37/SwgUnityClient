@@ -12,8 +12,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ulong parent = withParent ? reader.U64() : 0;
             var rotation = new Quaternion(reader.Float(), reader.Float(), reader.Float(), reader.Float());
             var position = new Vector3(reader.Float(), reader.Float(), reader.Float());
-            reader.Float();
-            return new MovementUpdate(position, rotation, parent, movement);
+            float speed = reader.Float();
+            return new MovementUpdate(position, rotation, parent, movement, speed);
         }
 
         // Compressed game transforms encode a full turn as 100 heading units.

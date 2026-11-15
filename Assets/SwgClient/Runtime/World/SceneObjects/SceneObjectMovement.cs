@@ -17,6 +17,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
         Pose startLocalPose;
         Pose targetLocalPose;
         float elapsed;
+        float travelSeconds;
+        float lastTravelSpeed;
         WorldState state;
         SpatialSceneObject sceneObject;
         SwgId swgId;
@@ -53,7 +55,19 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 return;
             }
 
-            SetTarget(GetLocalPose(state, sceneObject), sceneObject.Scale, snap);
+            var pose = GetLocalPose(state, sceneObject);
+            float duration = interpolationSeconds;
+            if (sceneObject is CreatureSceneObject && sceneObject.ServerSpeed.HasValue)
+            {
+                // Core3 sends the next AI path point with its travel speed (typically every 400 ms).
+                // Spread that segment over its travel time instead of finishing it in a 100 ms burst.
+                float speed = sceneObject.ServerSpeed.Value;
+                if (speed > .01f) lastTravelSpeed = speed;
+                float distance = Vector3.ProjectOnPlane(pose.position - transform.localPosition, Vector3.up).magnitude;
+                if (lastTravelSpeed > .01f)
+                    duration = Mathf.Clamp(distance / lastTravelSpeed, interpolationSeconds, 1f);
+            }
+            SetTarget(pose, sceneObject.Scale, snap, duration);
         }
 
         internal static Pose GetLocalPose(WorldState state, SpatialSceneObject sceneObject)
@@ -75,13 +89,14 @@ namespace Swg.Client.Runtime.World.SceneObjects
         }
 
         void OnDestroy() => Unbind();
-        public void SetTarget(Pose localPose, float scale, bool snap)
+        public void SetTarget(Pose localPose, float scale, bool snap, float? duration = null)
         {
             transform.localScale = Vector3.one * scale;
             targetLocalPose = localPose;
             startLocalPose = new Pose(transform.localPosition, transform.localRotation);
             elapsed = 0;
-            if (snap || interpolationSeconds <= 0 || Vector3.Distance(startLocalPose.position, targetLocalPose.position) >= teleportDistance)
+            travelSeconds = duration ?? interpolationSeconds;
+            if (snap || travelSeconds <= 0 || Vector3.Distance(startLocalPose.position, targetLocalPose.position) >= teleportDistance)
             {
                 Apply(targetLocalPose);
                 enabled = false;
@@ -95,7 +110,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         internal void Advance(float seconds)
         {
             elapsed += seconds;
-            float t = interpolationSeconds <= 0 ? 1 : Mathf.Clamp01(elapsed / interpolationSeconds);
+            float t = travelSeconds <= 0 ? 1 : Mathf.Clamp01(elapsed / travelSeconds);
             Apply(new Pose(Vector3.Lerp(startLocalPose.position, targetLocalPose.position, t), Quaternion.Slerp(startLocalPose.rotation, targetLocalPose.rotation, t)));
             if (t >= 1)
                 enabled = false;
