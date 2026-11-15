@@ -62,7 +62,10 @@ namespace Swg.Client.Runtime.Networking
         }
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
-            if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
+            state.SceneObjects.TryGet(swgId, out var sceneObject);
+            if (radialId == ObjectMenuDefaults.UseAction && ObjectMenuDefaults.IsCrafting(ObjectType(sceneObject)))
+                enqueueCommand("requestCraftingSession", "", swgId);
+            else if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
             {
                 state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player);
                 enqueueCommand(player?.Mount != null ? "dismount" : "mount", "", swgId);

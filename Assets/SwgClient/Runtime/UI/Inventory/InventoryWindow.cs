@@ -17,6 +17,8 @@ namespace Swg.Client.Runtime.UI.Inventory
     public sealed class InventoryWindow : MonoBehaviour, IUiPrefabSource
     {
         public TMP_Text title;
+        public RadialContextMenu contextMenu;
+        ClientObjectInteractions interactions;
         public TMP_Text capacity;
         public TMP_Text cash;
         public TMP_Text bank;
@@ -50,6 +52,7 @@ namespace Swg.Client.Runtime.UI.Inventory
         WorldState state;
         void Awake()
         {
+            interactions = GameServices.Resolve<ClientObjectInteractions>();
             state = GameServices.Resolve<WorldState>();
             inventory = GameServices.Resolve<ClientInventory>();
             names = GameServices.Resolve<SceneObjectNameResolver>();
@@ -107,7 +110,8 @@ namespace Swg.Client.Runtime.UI.Inventory
                 foreach (var item in items)
                 {
                     var cell = Instantiate(itemPrefab, grid.transform);
-                    cell.Bind(item.SwgId, () => Select(item.SwgId));
+                    cell.Bind(item.SwgId, () => Select(item.SwgId), () => interactions.ActivateDefault(item.SwgId), position => contextMenu.Open(item.SwgId, position));
+                    cell.CanActivate = interactions.HasDefaultAction(item.SwgId);
                     cells.Add(cell);
                 }
                 if (!items.Any(item => item.SwgId == selected))

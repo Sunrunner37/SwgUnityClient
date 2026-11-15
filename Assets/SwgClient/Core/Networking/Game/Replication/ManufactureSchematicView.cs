@@ -30,17 +30,30 @@ namespace Swg.Client.Core.Networking.Game.Replication
         {
             switch (field)
             {
-                case 0: reader.Float(); return true;
+                case 0: update.Complexity = reader.Float(); return true;
                 case 1: reader.Ascii(); reader.U32(); reader.Ascii(); return true;
                 case 2: update.Name = reader.Unicode(); return true;
                 case 3: update.DataSize = unchecked((int)reader.U32()); return true;
                 case 4: reader.U32(); return true;
-                case 5: SkipValues(reader); return true;
+                case 5:
+                    int count = reader.Count(); reader.U32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        reader.Byte(); string file = reader.Ascii(); reader.U32(); string key = reader.Ascii(); float value = reader.Float();
+                        update.Crafting.Add(item => item.CraftingValues["@" + file + ":" + key] = value);
+                    }
+                    return true;
                 case 6: reader.Unicode(); return true;
                 case 7: reader.U32(); return true;
                 case 8: reader.Float(); return true;
                 default: return false;
             }
+        }
+        public static bool ReadDelta6(ushort field, ByteReader reader, ManufactureSchematicSceneObjectUpdate update)
+        {
+            if (field != 5) return false;
+            reader.Byte(); // Core3's last-inserted slot notification; contents arrive in MSCO7.
+            return true;
         }
         static void SkipValues(ByteReader reader)
         {

@@ -24,6 +24,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             this.replication = replication;
             deltaFields = new Dictionary<(ReplicatedObjectType, byte), Func<DeltasPacket, SceneObjectUpdate>>
             {
+                [(ReplicatedObjectType.ManufactureSchematic, 7)] = packet => ManufactureSchematicView7.ReadDeltaPacket(new ByteReader(packet.Payload)),
+                [(ReplicatedObjectType.ManufactureSchematic, 6)] = packet => ReadDelta<ManufactureSchematicSceneObjectUpdate>(packet, ManufactureSchematicView.ReadDelta6),
                 [(ReplicatedObjectType.ManufactureSchematic, 3)] = packet => ReadDelta<ManufactureSchematicSceneObjectUpdate>(packet, ManufactureSchematicView.ReadDelta3),
                 [(ReplicatedObjectType.Intangible, 3)] = packet => ReadDelta<IntangibleSceneObjectUpdate>(packet, IntangibleView3.ReadDeltaField),
                 [(ReplicatedObjectType.Creature, 1)] = packet => ReadDelta<CreatureSceneObjectUpdate>(packet, CreatureView1.ReadDeltaField),

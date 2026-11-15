@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using Swg.Client.Runtime.Networking.Chat;
 using TMPro;
 using UnityEngine;
@@ -12,6 +14,8 @@ namespace Swg.Client.Runtime.UI.Hud
         [Min(.1f)] public float fadeDuration = .5f;
         ClientChat source;
         Coroutine displaying;
+        [Min(1)] public int maxMessages = 4;
+        readonly List<(string Text, float Expires)> messages = new List<(string, float)>();
         void Awake()
         {
             source = GameServices.Resolve<ClientChat>();
@@ -23,24 +27,38 @@ namespace Swg.Client.Runtime.UI.Hud
             if (source != null) source.ScreenMessageReceived -= Show;
             if (displaying != null) StopCoroutine(displaying);
             displaying = null;
+            messages.Clear();
             label.enabled = false;
         }
         public void Show(string message)
         {
             if (string.IsNullOrEmpty(message)) return;
-            if (displaying != null) StopCoroutine(displaying);
+            float now = Time.unscaledTime;
+            // Keep one extra fading line while new messages push the older lines upward.
+            if (messages.Count >= maxMessages + 1) messages.RemoveAt(0);
+            for (int i = 0; i <= messages.Count - maxMessages; i++)
+                messages[i] = (messages[i].Text, Mathf.Min(messages[i].Expires, now + fadeDuration));
+            messages.Add((message, now + duration + fadeDuration));
             transform.SetAsLastSibling();
-            displaying = StartCoroutine(Display(message));
+            if (displaying == null) displaying = StartCoroutine(Display());
         }
-        IEnumerator Display(string message)
+        IEnumerator Display()
         {
-            label.text = message;
+            var text = new StringBuilder();
             label.alpha = 1;
             label.enabled = true;
-            yield return new WaitForSecondsRealtime(duration);
-            for (float age = 0; age < fadeDuration; age += Time.unscaledDeltaTime)
+            while (messages.Count > 0)
             {
-                label.alpha = 1 - age / fadeDuration;
+                float now = Time.unscaledTime;
+                messages.RemoveAll(message => message.Expires <= now);
+                text.Clear();
+                foreach (var message in messages)
+                {
+                    byte alpha = (byte)Mathf.RoundToInt(255 * Mathf.Clamp01((message.Expires - now) / fadeDuration));
+                    if (text.Length > 0) text.AppendLine();
+                    text.Append("<alpha=#").Append(alpha.ToString("X2")).Append('>').Append(message.Text);
+                }
+                label.text = text.ToString();
                 yield return null;
             }
             label.enabled = false;

@@ -23,6 +23,7 @@ namespace Swg.Client.Runtime.UI.Theming
         public Color highlight = new Color32(150, 245, 0, 255);
         public Color attributeText = new Color32(192, 255, 0, 255);
         public Color bodyText = Color.white;
+        public Color headerBar = new Color32(0, 214, 251, 255);
         public Color headerTitle = new Color32(0, 30, 33, 255);
         public Color headerStrip = new Color(0, .8f, .9f, .12f);
         public Color headerDivider = new Color(0, .75f, .85f, .8f);

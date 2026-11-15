@@ -1,4 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Crafting;
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 
@@ -8,16 +9,20 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Crafting
     [Preserve]
     internal sealed class CraftingIngredientSlotsControllerHandler : ObjectControllerHandler<CraftingIngredientSlotsPacket>
     {
+        readonly Lazy<ClientCrafting> crafting;
+        readonly GameReplication replication;
         public override uint ControllerType => CraftingIngredientSlotsPacket.ControllerType;
 
         [Preserve]
-        public CraftingIngredientSlotsControllerHandler() : base(CraftingIngredientSlotsPacket.ReadFrom)
+        public CraftingIngredientSlotsControllerHandler(Lazy<ClientCrafting> crafting, GameReplication replication) : base(CraftingIngredientSlotsPacket.ReadFrom)
         {
+            this.crafting = crafting;
+            this.replication = replication;
         }
 
         protected override void Handle(CraftingIngredientSlotsPacket packet)
         {
-            throw new NotImplementedException($"CraftingIngredientSlots (controller 0x{ControllerType:X8})");
+            replication.UpdatePlayer(_ => crafting.Value.Receive(packet));
         }
     }
 }

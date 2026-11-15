@@ -9,7 +9,7 @@ namespace Swg.Client.Runtime.Networking
     /// <summary>
     /// Supplies base entries Core3 expects before adding its own entries to ObjectMenuRequest.
     /// Identifiers come from RadialOptions.h and SceneObjectType.h; types come from SHOT metadata.
-    /// Covers server-radial actions and local Examine, not native command/UI-only operations.
+    /// Includes server-radial actions, local Examine, and the native crafting Use action.
     /// </summary>
     public static class ObjectMenuDefaults
     {
@@ -27,13 +27,15 @@ namespace Swg.Client.Runtime.Networking
         const int DroidControlDevice = 0x80b;
         const int BankTerminal = 0x4001;
 
+        public static bool IsCrafting(int objectType) => objectType == 0x8001 || objectType == 0x2006;
+
         public static bool IsControlDevice(int objectType) => objectType == PetControlDevice || objectType == DroidControlDevice || objectType == VehicleControlDevice;
 
         public static RadialMenuEntry[] Create(SceneObject sceneObject, int objectType)
         {
             var entries = new List<RadialMenuEntry> { new RadialMenuEntry(1, 0, ExamineAction, 1, "@ui_radial:examine") };
             if (TryGetDefaultAction(sceneObject, objectType, out byte action))
-                entries.Add(new RadialMenuEntry(2, 0, action, objectType == BankTerminal ? (byte)1 : (byte)3, CaptionReference(action)));
+                entries.Add(new RadialMenuEntry(2, 0, action, objectType == BankTerminal || IsCrafting(objectType) ? (byte)1 : (byte)3, CaptionReference(action)));
             // CreatureObject/AiAgent handle these without adding them to the response.
             if ((objectType & ~0xff) == 0x400 && sceneObject is CreatureSceneObject creature && creature.Posture == CreaturePosture.Dead)
             {
@@ -56,6 +58,8 @@ namespace Swg.Client.Runtime.Networking
                     action = sceneObject is IntangibleSceneObject pet && pet.IsActive ? PetStoreAction : PetCallAction;
                     return true;
                 // BankTerminalMenuComponent attaches server options to this client-provided root.
+                case 0x8001: // CraftingTool: native requestCraftingSession command.
+                case 0x2006: // CraftingStation: server chooses a compatible inventory tool.
                 case BankTerminal:
                 // These handlers implement Use but do not supply that entry themselves.
                 case 0x200a: // Consumable: food/spice

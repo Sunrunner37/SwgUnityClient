@@ -1,4 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Crafting;
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 
@@ -8,16 +9,20 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Crafting
     [Preserve]
     internal sealed class CloseCraftingWindowControllerHandler : ObjectControllerHandler<CloseCraftingWindowPacket>
     {
+        readonly Lazy<ClientCrafting> crafting;
+        readonly GameReplication replication;
         public override uint ControllerType => CloseCraftingWindowPacket.ControllerType;
 
         [Preserve]
-        public CloseCraftingWindowControllerHandler() : base(CloseCraftingWindowPacket.ReadFrom)
+        public CloseCraftingWindowControllerHandler(Lazy<ClientCrafting> crafting, GameReplication replication) : base(CloseCraftingWindowPacket.ReadFrom)
         {
+            this.crafting = crafting;
+            this.replication = replication;
         }
 
         protected override void Handle(CloseCraftingWindowPacket packet)
         {
-            throw new NotImplementedException($"CloseCraftingWindow (controller 0x{ControllerType:X8})");
+            replication.UpdatePlayer(_ => crafting.Value.Receive(packet));
         }
     }
 }

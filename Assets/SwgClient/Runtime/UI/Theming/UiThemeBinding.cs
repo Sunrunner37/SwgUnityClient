@@ -29,7 +29,8 @@ namespace Swg.Client.Runtime.UI.Theming
             CapacityFill,
             Skill,
             SkillExperience,
-            RowDivider
+            RowDivider,
+            HeaderBar
         }
 
         [Serializable]
@@ -149,6 +150,7 @@ namespace Swg.Client.Runtime.UI.Theming
             Role.Highlight => theme.highlight,
             Role.AttributeText => theme.attributeText,
             Role.BodyText => theme.bodyText,
+            Role.HeaderBar => theme.headerBar,
             Role.HeaderTitle => theme.headerTitle,
             Role.HeaderStrip => theme.headerStrip,
             Role.HeaderDivider => theme.headerDivider,

@@ -1,4 +1,5 @@
 using Swg.Client.Core.World;
+using Swg.Client.Core.Crafting;
 using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
@@ -49,8 +50,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
             var updates = new List<Action<List<string>>>();
             var schematicUpdates = new List<Action<List<uint>>>();
             var details = new List<Action<CharacterSheetData>>();
+            var crafting = new List<Action<CraftingProgress>>();
             int fields = r.U16();
-            for (int i = 0; i < fields; i++)
+            // Core3 finishStage2 inserts field 5 directly, so its count omits that field.
+            // Decode the known owner fields through the payload boundary.
+            for (int i = 0; i < fields || r.Remaining > 0; i++)
             {
                 ushort field = r.U16();
                 if (field >= 10 && field <= 13)
@@ -65,7 +69,15 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 else if (field == 7 || field == 8)
                     ReadStringChanges(r, null);
                 else if (field == 3)
-                    r.U64();
+                {
+                    var station = new SwgId(r.U64());
+                    crafting.Add(data => data.StationSwgId = station);
+                }
+                else if (field == 1 || field == 2 || field == 5)
+                {
+                    int value = (int)r.U32();
+                    crafting.Add(data => { switch (field) { case 1: data.ExperimentationEnabled = value == 3; break; case 2: data.ServerStage = value; break; case 5: data.ExperimentationPoints = Math.Max(0, value); break; } });
+                }
                 else if (field == 16)
                     ReplicationReader.SkipVectorDelta(r, 0);
                 else if (field <= 18)
@@ -77,8 +89,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicationReader.RequireEnd(r);
             update = (updates.Count == 0 ? null : list => { foreach (var apply in updates) apply(list); },
                 schematicUpdates.Count == 0 ? null : list => { foreach (var apply in schematicUpdates) apply(list); },
-                details.Count == 0 ? null : state => state.CharacterSheet.Update(data => { foreach (var apply in details) apply(data); }, CharacterSheetChange.Status));
-            return updates.Count > 0 || schematicUpdates.Count > 0 || details.Count > 0;
+                details.Count == 0 && crafting.Count == 0 ? null : state =>
+                {
+                    if (details.Count > 0) state.CharacterSheet.Update(data => { foreach (var apply in details) apply(data); }, CharacterSheetChange.Status);
+                    if (crafting.Count > 0) state.Crafting.Update(data => { foreach (var apply in crafting) apply(data); });
+                });
+            return updates.Count > 0 || schematicUpdates.Count > 0 || details.Count > 0 || crafting.Count > 0;
         }
 
         static uint ReadSchematic(ByteReader reader)

@@ -23,6 +23,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, SceneObjectUpdate>>
             {
                 [(ReplicatedObjectType.ManufactureSchematic, 3)] = ManufactureSchematicView.ReadBaseline3,
+                [(ReplicatedObjectType.ManufactureSchematic, 7)] = ManufactureSchematicView7.ReadBaseline,
                 [(ReplicatedObjectType.ManufactureSchematic, 6)] = ManufactureSchematicView.ReadBaseline6,
                 [(ReplicatedObjectType.Intangible, 3)] = IntangibleView3.ReadBaseline,
                 [(ReplicatedObjectType.Creature, 1)] = CreatureView1.ReadBaseline,

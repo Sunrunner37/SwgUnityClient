@@ -1,4 +1,5 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.Crafting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,7 @@ namespace Swg.Client.Core.World
     {
         public SceneObjectRegistry SceneObjects { get; }
         public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
+        public CraftingProgress Crafting { get; } = new CraftingProgress();
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId PlayerSwgId { get; private set; }
         public event Action SceneStarted;

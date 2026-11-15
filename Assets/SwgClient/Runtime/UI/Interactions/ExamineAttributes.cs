@@ -15,6 +15,7 @@ namespace Swg.Client.Runtime.UI.Interactions
     {
         public TMP_Text text;
         public UiTheme theme;
+        public float groupIndent;
         ClientObjectInteractions interactions;
         StringTableLocalizer localizer;
         SwgId swgId;
@@ -54,13 +55,27 @@ namespace Swg.Client.Runtime.UI.Interactions
         void Refresh()
         {
             var result = new StringBuilder();
+            string previousGroup = "";
             foreach (var attribute in interactions.GetAttributes(swgId))
             {
-                string name = localizer.Lookup("obj_attr_n", attribute.Name);
+                int separator = attribute.Name.LastIndexOf('.');
+                string key = separator < 0 ? attribute.Name : attribute.Name.Substring(separator + 1);
+                string group = separator < 0 ? "" : attribute.Name.Substring(0, separator);
+                if (group.Length > 0 && group != previousGroup)
+                {
+                    string heading = localizer.Lookup("obj_attr_n", group);
+                    if (heading.StartsWith("@", StringComparison.Ordinal)) heading = group.Replace('_', ' ');
+                    result.Append("<color=#FFBB00>").Append(Literal(heading)).AppendLine("</color>");
+                }
+                previousGroup = group;
+                string name = localizer.Lookup("obj_attr_n", key);
                 if (name.StartsWith("@", StringComparison.Ordinal))
-                    name = attribute.Name.Replace('_', ' ');
+                    name = key.Replace('_', ' ');
+                if (group.Length > 0 && groupIndent > 0) result.Append("<pos=").Append(groupIndent).Append('>');
                 result.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(theme.attributeText)).Append('>')
-                    .Append(Literal(name)).Append(":</color>    ").AppendLine(Literal(localizer.Localize(attribute.Value)));
+                    .Append(Literal(name)).Append(":</color>");
+                result.Append("    ");
+                result.AppendLine(Literal(localizer.Localize(attribute.Value)));
             }
             if (!string.IsNullOrEmpty(description))
                 result.AppendLine().AppendLine(Literal(description));

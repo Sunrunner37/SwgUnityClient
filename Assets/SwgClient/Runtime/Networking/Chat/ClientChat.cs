@@ -160,6 +160,8 @@ namespace Swg.Client.Runtime.Networking.Chat
             MessageReceived?.Invoke(channel, message);
         }
 
+        public void ShowScreenMessage(string message) => ScreenMessageReceived?.Invoke(message);
+
         public void Receive(SpatialChatPacket packet) => Post(() => Add("Spatial", text.Name(packet.SenderSwgId) + ": " + text.Format(packet.Message, packet.Parameters)));
         public void Receive(ChatSystemPacket packet) => Post(() =>
         {

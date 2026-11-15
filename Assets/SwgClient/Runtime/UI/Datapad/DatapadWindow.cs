@@ -51,6 +51,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         readonly Dictionary<ClientDatapad.Tab, string> selections = new Dictionary<ClientDatapad.Tab, string>();
         ClientDatapad.Entry[] entries = Array.Empty<ClientDatapad.Entry>();
         ClientDatapad datapad;
+        DraftSchematicCatalog schematics;
         ClientObjectInteractions interactions;
         RadialContextMenu contextMenu;
         WorldState state;
@@ -67,6 +68,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             contextMenu = GetComponentInParent<Canvas>().GetComponentInChildren<RadialContextMenu>(true);
             scroll = grid.GetComponentInParent<ScrollRect>(true);
             datapad = GameServices.Resolve<ClientDatapad>();
+            schematics = GameServices.Resolve<DraftSchematicCatalog>();
             interactions = GameServices.Resolve<ClientObjectInteractions>();
             state = GameServices.Resolve<WorldState>();
             loader = GameServices.Resolve<WorldContentLoader>();
@@ -192,7 +194,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             if (!selections.TryGetValue(CurrentTab, out selected) || !entries.Any(entry => entry.Key == selected)) selected = entries.FirstOrDefault()?.Key;
             for (int i = 0; i < cells.Count; i++) cells[i].selection.SetActive(entries[i].Key == selected);
             var selectedEntry = entries.FirstOrDefault(entry => entry.Key == selected);
-            if (selectedEntry != null) datapad.RequestDetails(selectedEntry);
+            if (selectedEntry != null) schematics.RequestDetails(selectedEntry.SchematicCrc);
             RefreshDetails();
             yield return null; // Let Unity's layout groups establish the viewport and grid width.
             yield return RenderVisible();
@@ -252,7 +254,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             if (key != null) selections[CurrentTab] = key;
             for (int i = 0; i < cells.Count; i++) cells[i].selection.SetActive(entries[i].Key == key);
             var entry = entries.FirstOrDefault(item => item.Key == key);
-            if (entry != null) datapad.RequestDetails(entry);
+            if (entry != null) schematics.RequestDetails(entry.SchematicCrc);
             RefreshDetails();
             RefreshPreview();
         }
@@ -264,16 +266,6 @@ namespace Swg.Client.Runtime.UI.Datapad
             var request = Describe(entry);
             if (cache.TryGet(request.Key, out var result) && (result.Appearance.Parts.Count > 0 || result.Appearance.Particles.Count > 0))
                 preview.Show(result.Appearance, result.Resources);
-        }
-        string CraftingLabel(string reference)
-        {
-            string label = localizer.Localize(reference);
-            if (!label.StartsWith("@", StringComparison.Ordinal)) return label;
-            string key = reference.Substring(reference.IndexOf(':') + 1);
-            label = localizer.Lookup("obj_attr_n", key);
-            if (!label.StartsWith("@", StringComparison.Ordinal)) return label;
-            label = Regex.Replace(key.Replace('_', ' '), "([a-z])([A-Z])", "$1 $2");
-            return label.Length == 0 ? "" : char.ToUpperInvariant(label[0]) + label.Substring(1);
         }
         string Attribute(string name, string value) => "<color=#" + ColorUtility.ToHtmlStringRGB(theme.attributeText) + ">" + name + ":</color>    <noparse>" + value + "</noparse>\n";
         void RefreshDetails()
@@ -292,19 +284,19 @@ namespace Swg.Client.Runtime.UI.Datapad
                 text.Append(Attribute("Position", Mathf.RoundToInt(waypoint.Position.x) + ", " + Mathf.RoundToInt(waypoint.Position.y) + ", " + Mathf.RoundToInt(waypoint.Position.z)));
                 text.Append(Attribute("Active", waypoint.Active ? "Yes" : "No"));
             }
-            if (entry.SchematicCrc != 0 && datapad.TryGetDetails(entry.SchematicCrc, out var schematic))
+            if (entry.SchematicCrc != 0 && schematics.TryGetDetails(entry.SchematicCrc, out var schematic))
             {
                 text.Append(Attribute("Complexity", schematic.Complexity.ToString()));
                 text.Append(Attribute("Schematic Data Size", schematic.Size.ToString()));
                 foreach (var ingredient in schematic.Ingredients)
                     text.Append(Attribute(localizer.Localize(ingredient.Name), "Requires " + ingredient.Quantity + " units of " + ingredient.Resource + (ingredient.Optional ? " (optional)" : "")));
             }
-            foreach (var group in datapad.GetExperiments(entry))
+            foreach (var group in schematics.GetExperiments(entry.SchematicCrc))
             {
-                text.AppendLine().AppendLine(CraftingLabel(group.Name));
+                text.AppendLine().AppendLine(schematics.CraftingLabel(group.Name));
                 foreach (var experiment in group.Properties)
                 {
-                    text.Append("    ").AppendLine(CraftingLabel(experiment.Name));
+                    text.Append("    ").AppendLine(schematics.CraftingLabel(experiment.Name));
                     foreach (var weight in experiment.Weights)
                         text.Append("        ").Append(Attribute(weight.Attribute, weight.Percentage + "%"));
                 }

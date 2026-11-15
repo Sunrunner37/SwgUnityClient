@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5a5fc69d70ff646aa66ec1d8412e1f, type: 3}
+  m_Name: CraftingTheme
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Theming.UiTheme
+  font: {fileID: 11400000, guid: 9df1ccfd7ca907b43b2c683a88a9a07e, type: 2}
+  fontSize: 12
+  accent: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  text: {r: 0.5882353, g: 0.95686275, b: 0.9882353, a: 1}
+  surface: {r: 0, g: 0.27450982, b: 0.34117648, a: 1}
+  input: {r: 0, g: 0.1764706, b: 0.22352941, a: 0.9019608}
+  tab: {r: 0, g: 0.18431373, b: 0.23529412, a: 1}
+  onAccent: {r: 0, g: 0.1764706, b: 0.21568628, a: 1}
+  rowDivider: {r: 0, g: 0.37254903, b: 0.4745098, a: 1}
+  skill: {r: 0, g: 0.31764707, b: 0.38431373, a: 1}
+  skillExperience: {r: 1, g: 0.88235295, b: 0, a: 1}
+  learnedSkill: {r: 0.003921569, g: 0.72156864, b: 0.019607844, a: 1}
+  highlight: {r: 0.5882353, g: 0.9607843, b: 0, a: 1}
+  attributeText: {r: 0.5019608, g: 1, b: 0, a: 1}
+  bodyText: {r: 0.88235295, g: 1, b: 1, a: 1}
+  headerBar: {r: 0.078431375, g: 1, b: 0.9764706, a: 1}
+  headerTitle: {r: 0, g: 0.14117648, b: 0.23529412, a: 1}
+  headerStrip: {r: 0, g: 0.8, b: 0.9, a: 0.12}
+  headerDivider: {r: 0, g: 0.75, b: 0.85, a: 0.8}
+  closeIcon: {r: 0, g: 0.24313726, b: 0.30980393, a: 1}
+  closeGlow: {r: 0, g: 0.9, b: 1, a: 0.7}
+  capacityFill: {r: 0.4, g: 1, b: 0, a: 1}
+  itemPanel: {fileID: 2100000, guid: 544558f2fc28e5f44a80699589589ce0, type: 2}
+  characterPanel: {fileID: 2100000, guid: 43c1b0405f70e0b45bf7e10decc126da, type: 2}
+  currencyPanel: {fileID: 2100000, guid: 83c69b251164ff2488ee0f2559abf458, type: 2}

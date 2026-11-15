@@ -11,6 +11,7 @@ namespace Swg.Client.Runtime.UI.Interactions
     {
         public Vector3 stagePosition = new Vector3(10000, 0, 0);
         public Vector3 modelRotation;
+        [Min(.1f)] public float framingPadding = 1.15f;
         public RawImage image;
         public Camera previewCamera;
         public Transform stage;
@@ -84,7 +85,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         {
             float radius = Mathf.Max(.1f, modelBounds.extents.magnitude);
             var center = model.transform.TransformPoint(modelBounds.center);
-            float distance = radius / Mathf.Sin(previewCamera.fieldOfView * Mathf.Deg2Rad * .5f) * 1.15f / Mathf.Min(1, previewCamera.aspect);
+            float distance = radius / Mathf.Sin(previewCamera.fieldOfView * Mathf.Deg2Rad * .5f) * framingPadding / Mathf.Min(1, previewCamera.aspect);
             previewCamera.transform.position = center + new Vector3(-.25f, .15f, 1).normalized * distance;
             previewCamera.transform.LookAt(center);
             previewCamera.farClipPlane = distance + radius * 3;

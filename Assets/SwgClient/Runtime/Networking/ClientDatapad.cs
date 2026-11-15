@@ -48,8 +48,7 @@ namespace Swg.Client.Runtime.Networking
         readonly List<Poi> pois = new List<Poi>();
         readonly Dictionary<uint, string> planets = new Dictionary<uint, string>();
         readonly Dictionary<uint, string> planetAppearances = new Dictionary<uint, string>();
-        readonly Dictionary<uint, Entry> schematics = new Dictionary<uint, Entry>();
-        readonly HashSet<uint> requested = new HashSet<uint>();
+        readonly DraftSchematicCatalog schematics;
         public Task Loading { get; }
         public event Action Changed;
         public SwgId ContainerSwgId { get; private set; }
@@ -64,8 +63,9 @@ namespace Swg.Client.Runtime.Networking
             _ => 1
         });
 
-        public ClientDatapad(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send)
+        public ClientDatapad(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send, DraftSchematicCatalog schematics)
         {
+            this.schematics = schematics;
             this.state = state;
             this.assets = assets;
             this.names = names;
@@ -101,7 +101,7 @@ namespace Swg.Client.Runtime.Networking
         public string PlanetName(uint crc) => planets.TryGetValue(crc, out var name) ? localizer.Lookup("planet_n", name) : "Unknown";
         string PlanetAppearance(uint crc) => planetAppearances.TryGetValue(crc, out var path) ? path : "appearance/ui_planet_sel_default.apt";
         IEnumerable<SceneObject> DataObjects() => state.SceneObjects.ChildrenOf(ContainerSwgId).Where(item => item.TemplatePath?.StartsWith("object/waypoint/", StringComparison.Ordinal) != true);
-        void SceneStarted() { requested.Clear(); Refresh(); }
+        void SceneStarted() => Refresh();
         void Refresh()
         {
             var container = state.SceneObjects.ChildrenOf(state.PlayerSwgId).FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) == true);
@@ -146,36 +146,16 @@ namespace Swg.Client.Runtime.Networking
                     return state.DraftSchematics.Select(Schematic).Where(entry => entry != null).ToArray();
             }
         }
+        Entry Schematic(uint crc)
+        {
+            var draft = schematics.Get(crc);
+            return draft == null ? null : new Entry { Key = "draft:" + crc, Name = draft.Name, Kind = "Data", Description = draft.Description, PreviewPath = draft.PreviewPath, SchematicCrc = crc, Attributes = draft.Attributes };
+        }
         Entry DataEntry(SceneObject item)
         {
             var draft = item is ManufactureSchematicSceneObject schematic && schematic.DraftSchematicCrc != 0 ? Schematic(schematic.DraftSchematicCrc) : null;
             return new Entry { Key = "data:" + item.SwgId, Name = names.Resolve(item), Kind = names.Resolve(new SceneObject { TemplatePath = item.TemplatePath }), Description = names.Description(item), SceneObject = item, PreviewPath = draft?.PreviewPath ?? item.TemplatePath };
         }
-        Entry Schematic(uint crc)
-        {
-            if (schematics.TryGetValue(crc, out var cached)) return cached;
-            string path = state.Templates.Resolve(crc);
-            if (path == null) return null;
-            byte[] bytes = assets.Loader.Read(path);
-            string crafted = SharedDraftSchematicTemplate.CraftedTemplate(bytes);
-            var item = new SceneObject { TemplatePath = crafted ?? path };
-            cached = new Entry { Key = "draft:" + crc, Name = names.Resolve(item), Kind = "Data", Description = names.Description(item), PreviewPath = crafted ?? path, SchematicCrc = crc, Attributes = SharedDraftSchematicTemplate.Attributes(bytes) };
-            schematics.Add(crc, cached);
-            return cached;
-        }
-        public void RequestDetails(Entry entry)
-        {
-            if (entry.SchematicCrc != 0 && requested.Add(entry.SchematicCrc))
-            {
-                string arguments = entry.SchematicCrc + " " + entry.SchematicCrc;
-                send("requestDraftSlotsBatch", arguments, default);
-                send("requestResourceWeightsBatch", entry.SchematicCrc.ToString(), default);
-            }
-        }
-        public bool TryGetDetails(uint crc, out DraftSchematicDetails details) => state.DraftDetails.TryGetValue(crc, out details);
-        public IReadOnlyList<DraftSchematicDetails.ExperimentGroup> GetExperiments(Entry entry) => TryGetDetails(entry.SchematicCrc, out var details)
-            ? details.GroupExperiments(entry.Attributes) : Array.Empty<DraftSchematicDetails.ExperimentGroup>();
-
         public void ToggleWaypoint(Waypoint waypoint)
         {
             if (!waypoint.Active && SingleActiveWaypoint)

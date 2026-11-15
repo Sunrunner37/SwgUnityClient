@@ -114,8 +114,9 @@ namespace Swg.Client.Tests.Editor
             state.BeginScene(7, Vector3.zero, "terrain/corellia.trn");
             var sent = new List<(string Name, SwgId Target)>();
             var localizer = new StringTableLocalizer(assets);
+            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { });
             using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer,
-                (name, arguments, target) => sent.Add((name, target)));
+                (name, arguments, target) => sent.Add((name, target)), schematics);
             yield return new WaitUntil(() => datapad.Loading.IsCompleted);
             Assert.That(datapad.Loading.IsFaulted, Is.False);
             var entry = datapad.Entries(ClientDatapad.Tab.PointsOfInterest).First();
@@ -274,7 +275,8 @@ namespace Swg.Client.Tests.Editor
             state.SceneObjects.Add(new ManufactureSchematicSceneObject { SwgId = 3, ParentSwgId = 2, DataSize = 4 });
             state.SceneObjects.Add(new SceneObject { SwgId = 4, ParentSwgId = 2 });
             var localizer = new StringTableLocalizer(assets);
-            using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { });
+            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { });
+            using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { }, schematics);
             yield return new WaitUntil(() => datapad.Loading.IsCompleted);
             Assert.That(datapad.Loading.IsFaulted, Is.False);
             state.UpdateWaypoints(list => list.Add(5, new Waypoint(5, Vector3.zero, state.PlanetCrc, "Home", WaypointColor.Blue, true)));

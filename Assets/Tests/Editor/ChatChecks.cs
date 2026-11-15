@@ -33,6 +33,69 @@ namespace Swg.Client.Tests.Editor
             return new ByteReader(stream.ToArray());
         }
 
+        [Test]
+        public void ScreenMessagesKeepTheirOrderAndExpireIndependently()
+        {
+            var parent = new GameObject("Inactive screen-message test");
+            parent.SetActive(false);
+            try
+            {
+                var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Hud/SystemMessageHud.prefab");
+                var hud = UnityEngine.Object.Instantiate(prefab, parent.transform).GetComponent<Swg.Client.Runtime.UI.Hud.SystemMessageHud>();
+                Assert.That(hud.label.richText, Is.True, "Per-line opacity uses TMP alpha tags.");
+                Assert.That(hud.label.verticalAlignment, Is.EqualTo(TMPro.VerticalAlignmentOptions.Bottom));
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var messages = (System.Collections.IList)hud.GetType().GetField("messages", flags).GetValue(hud);
+                messages.Add(("Practice complete", Time.unscaledTime + 10));
+                messages.Add(("You gain 105 experience", Time.unscaledTime + 15));
+                var display = (IEnumerator)hud.GetType().GetMethod("Display", flags).Invoke(hud, null);
+                Assert.That(display.MoveNext(), Is.True);
+                Assert.That(hud.label.text.IndexOf("Practice complete"), Is.LessThan(hud.label.text.IndexOf("You gain 105 experience")));
+                messages[0] = ("Practice complete", Time.unscaledTime - 1);
+                display.MoveNext();
+                Assert.That(hud.label.text, Does.Not.Contain("Practice complete").And.Contain("You gain 105 experience"));
+                messages[0] = ("You gain 105 experience", Time.unscaledTime - 1);
+                display.MoveNext();
+                Assert.That(display.MoveNext(), Is.False);
+                Assert.That(hud.label.enabled, Is.False);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(parent); }
+        }
+        [Test]
+        public async System.Threading.Tasks.Task PracticeExperienceProseReachesChatAndScreen()
+        {
+            var settings = Swg.Client.Core.Configuration.ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var assets = new Swg.Client.Runtime.Assets.Tre.TreRuntimeAssets(settings);
+            await assets.Ready;
+            var state = new WorldState(new SceneObjectRegistry());
+            using var commands = new ClientCommands(_ => { }, _ => { }, state);
+            var localizer = new StringTableLocalizer(assets);
+            using var chat = new ClientChat(null, state, localizer, new ProseFormatter(), commands);
+            var received = new System.Threading.Tasks.TaskCompletionSource<string>();
+            chat.ScreenMessageReceived += message => received.TrySetResult(message);
+            using var body = new MemoryStream();
+            using var prose = new BinaryWriter(body);
+            prose.Write((ushort)0); prose.Write((byte)1); prose.Write(uint.MaxValue);
+            void StringId(string file, string key) { PacketFieldCodec.Ascii(prose, file); prose.Write(0u); PacketFieldCodec.Ascii(prose, key); }
+            StringId("base_player", "prose_grant_xp");
+            for (int i = 0; i < 3; i++)
+            {
+                prose.Write(0ul); StringId(i == 2 ? "exp_n" : "", i == 2 ? "crafting_general" : ""); PacketFieldCodec.Unicode(prose, "");
+            }
+            prose.Write(105); prose.Write(0f); prose.Write((byte)0);
+            if ((body.Length & 1) != 0) { prose.Write((byte)0); body.Position = 0; prose.Write((ushort)1); }
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write((ushort)4); writer.Write(ChatSystemPacket.Opcode); writer.Write(ChatSystemPacket.DisplayChatAndScreen);
+            PacketFieldCodec.Unicode(writer, ""); writer.Write((uint)(body.Length / 2)); writer.Write(body.ToArray());
+            chat.Receive(ChatSystemPacket.ReadFrom(new ByteReader(stream.ToArray())));
+            var completed = await System.Threading.Tasks.Task.WhenAny(received.Task, System.Threading.Tasks.Task.Delay(5000));
+            Assert.That(completed, Is.SameAs(received.Task));
+            string message = await received.Task;
+            Assert.That(message, Does.Contain("105").And.Contain(localizer.Lookup("exp_n", "crafting_general")));
+            Assert.That(message, Does.Not.Contain("%DI").And.Not.Contain("%TO"));
+            Assert.That(chat.History.Single().Text, Is.EqualTo(message));
+        }
         [UnityTest]
         public IEnumerator SystemMessagesRespectServerScreenDisplayFlag()
         {
