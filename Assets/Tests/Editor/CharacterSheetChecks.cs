@@ -31,9 +31,11 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ConsumptionBaselineAndDeltasUpdateTheSharedSheet()
         {
-            var state = new WorldState(new SceneObjectRegistry());
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
             var notifications = new List<CharacterSheetChange>();
-            state.CharacterSheet.Changed += notifications.Add;
+            currentPlayer.CharacterSheet.Changed += notifications.Add;
             var baseline = Bytes(writer =>
             {
                 writer.Write(new byte[8 + 16 + 8 + 8 + 8 + 8]);
@@ -41,9 +43,9 @@ namespace Swg.Client.Tests.Editor
                 writer.Write(65); writer.Write(100); writer.Write(25); writer.Write(50);
                 writer.Write(new byte[20]);
             });
-            PlayerView9.ReadBaseline(new ByteReader(baseline)).Details(state);
-            Assert.That(state.CharacterSheet.FoodFullness, Is.EqualTo(.65f));
-            Assert.That(state.CharacterSheet.DrinkFullness, Is.EqualTo(.5f));
+            PlayerView9.ReadBaseline(new ByteReader(baseline)).Details(currentPlayer);
+            Assert.That(currentPlayer.CharacterSheet.FoodFullness, Is.EqualTo(.65f));
+            Assert.That(currentPlayer.CharacterSheet.DrinkFullness, Is.EqualTo(.5f));
             var delta = Bytes(writer =>
             {
                 writer.Write((ushort)4);
@@ -53,10 +55,10 @@ namespace Swg.Client.Tests.Editor
                 writer.Write((ushort)13); writer.Write(80);
             });
             Assert.That(PlayerView9.TryReadDelta(new ByteReader(delta), out var update), Is.True);
-            update.Details(state);
+            update.Details(currentPlayer);
             Assert.That(notifications, Is.EqualTo(new[] { CharacterSheetChange.Status, CharacterSheetChange.Status }));
-            Assert.That(state.CharacterSheet.FoodFullness, Is.EqualTo(.64f));
-            Assert.That(state.CharacterSheet.DrinkFullness, Is.EqualTo(.5f));
+            Assert.That(currentPlayer.CharacterSheet.FoodFullness, Is.EqualTo(.64f));
+            Assert.That(currentPlayer.CharacterSheet.DrinkFullness, Is.EqualTo(.5f));
         }
 
         [Test]
@@ -77,13 +79,16 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ProfileAndMigrationRepliesAreAppliedThroughTheMainThreadQueue()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(42, Vector3.zero, "terrain/corellia.trn");
-            var replication = GameServicesForTests.CreateReplication(state);
-            using var scope = GameServicesForTests.Create(replication);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(42);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
+            var replication = GameServicesForTests.CreateReplication(state, currentPlayer);
+            using var scope = GameServicesForTests.Create(replication, currentPlayer);
             var router = new GamePacketRouter(scope);
             var notifications = new List<CharacterSheetChange>();
-            state.CharacterSheet.Changed += notifications.Add;
+            currentPlayer.CharacterSheet.Changed += notifications.Add;
             try
             {
                 router.Accept(Bytes(writer =>
@@ -101,13 +106,13 @@ namespace Swg.Client.Tests.Editor
                     foreach (int value in new[] { 700, 400, 400, 900, 500, 400, 1000, 500, 600 }) writer.Write(value);
                     writer.Write(0);
                 }));
-                Assert.That(state.CharacterSheet.Spouse, Is.Empty);
+                Assert.That(currentPlayer.CharacterSheet.Spouse, Is.Empty);
                 replication.ApplyPending();
-                Assert.That(state.CharacterSheet.Spouse, Is.EqualTo("Partner"));
-                Assert.That(state.CharacterSheet.LotsRemaining, Is.EqualTo(175));
-                Assert.That(state.CharacterSheet.BankPlanet, Is.EqualTo("naboo"));
-                Assert.That(state.CharacterSheet.MigrationTargets.Mind, Is.EqualTo(1000));
-                Assert.That(state.CharacterSheet.MigrationBudget, Is.EqualTo(5400));
+                Assert.That(currentPlayer.CharacterSheet.Spouse, Is.EqualTo("Partner"));
+                Assert.That(currentPlayer.CharacterSheet.LotsRemaining, Is.EqualTo(175));
+                Assert.That(currentPlayer.CharacterSheet.BankPlanet, Is.EqualTo("naboo"));
+                Assert.That(currentPlayer.CharacterSheet.MigrationTargets.Mind, Is.EqualTo(1000));
+                Assert.That(currentPlayer.CharacterSheet.MigrationBudget, Is.EqualTo(5400));
                 Assert.That(notifications, Is.EqualTo(new[] { CharacterSheetChange.Status | CharacterSheetChange.Personal, CharacterSheetChange.Migration }));
             }
             finally { UnityEngine.Object.DestroyImmediate(replication.gameObject); }
@@ -118,17 +123,20 @@ namespace Swg.Client.Tests.Editor
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new TreRuntimeAssets(settings);
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(42, Vector3.zero, "terrain/corellia.trn");
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(42);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             state.SceneObjects.Add(new CreatureSceneObject { SwgId = 42, TemplatePath = "object/creature/player/shared_human_female.iff" });
             var sent = new List<string>();
-            var sheet = new ClientCharacterSheet(state, assets, new StringTableLocalizer(assets), (command, arguments, target) => sent.Add(command + ":" + arguments), packet => { });
+            var sheet = new ClientCharacterSheet(state, assets, new StringTableLocalizer(assets), (command, arguments, target) => sent.Add(command + ":" + arguments), packet => { }, currentPlayer);
             yield return new WaitUntil(() => sheet.Loading.IsCompleted);
             Assert.That(sheet.Loading.IsFaulted, Is.False);
             var targets = HamAttributes.FromArray(new[] { 700, 400, 400, 900, 500, 400, 1000, 500, 600 });
-            state.CharacterSheet.MigrationTargets = targets;
-            state.CharacterSheet.MigrationBudget = targets.Total;
-            state.CharacterSheet.HasMigrationTargets = true;
+            currentPlayer.CharacterSheet.MigrationTargets = targets;
+            currentPlayer.CharacterSheet.MigrationBudget = targets.Total;
+            currentPlayer.CharacterSheet.HasMigrationTargets = true;
             Assert.That(sheet.SaveMigration(targets, out var error), Is.True, error);
             Assert.That(sent.Single(), Is.EqualTo("requestSetStatMigrationData:700 400 400 900 500 400 1000 500 600"));
             targets.Health++;
@@ -174,19 +182,20 @@ namespace Swg.Client.Tests.Editor
         public IEnumerator ReopenedMigrationWaitsForItsDelayedFreshReplyBeforeDisplayingOrSavingTargets()
         {
             using var assets = new TreRuntimeAssets(Settings());
-            var state = SheetState();
+            var state = SheetState(out var currentPlayer);
             var sent = new List<string>();
             var strings = new StringTableLocalizer(assets);
-            var sheet = new ClientCharacterSheet(state, assets, strings, (command, arguments, target) => sent.Add(command + ":" + arguments), packet => { });
+            var sheet = new ClientCharacterSheet(state, assets, strings, (command, arguments, target) => sent.Add(command + ":" + arguments), packet => { }, currentPlayer);
             yield return new WaitUntil(() => sheet.Loading.IsCompleted);
             Assert.That(sheet.Loading.IsCompletedSuccessfully, Is.True);
             using var services = ManagedObjectTestScope.Use(state.SceneObjects, builder =>
             {
                 builder.RegisterInstance(state);
+                builder.RegisterInstance(currentPlayer);
                 builder.RegisterInstance(sheet);
             });
-            var replication = GameServicesForTests.CreateReplication(state);
-            using var routing = GameServicesForTests.Create(replication);
+            var replication = GameServicesForTests.CreateReplication(state, currentPlayer);
+            using var routing = GameServicesForTests.Create(replication, currentPlayer);
             var router = new GamePacketRouter(routing);
             var root = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/CharacterSheet/StatMigration.prefab"));
             var window = root.GetComponent<StatMigrationWindow>();
@@ -210,7 +219,7 @@ namespace Swg.Client.Tests.Editor
                 root.SetActive(true);
                 Invoke(window, "OnEnable");
                 yield return null;
-                state.CharacterSheet.Update(data => data.Spouse = "Unrelated reply", CharacterSheetChange.Personal);
+                currentPlayer.CharacterSheet.Update(data => data.Spouse = "Unrelated reply", CharacterSheetChange.Personal);
                 yield return null;
                 Assert.That(window.rows[0].target.text, Is.EqualTo("--"), "Cached targets and unrelated replies must not initialize a reopened popup.");
                 Assert.That(window.save.interactable, Is.False);
@@ -254,15 +263,16 @@ namespace Swg.Client.Tests.Editor
         public IEnumerator SheetIgnoresMovementAndRefreshesOnlyRelevantVisibleSections()
         {
             using var assets = new TreRuntimeAssets(Settings());
-            var state = SheetState();
+            var state = SheetState(out var currentPlayer);
             var strings = new StringTableLocalizer(assets);
             var names = new SceneObjectNameResolver(assets, strings);
-            var sheet = new ClientCharacterSheet(state, assets, strings, (command, arguments, target) => { }, packet => { });
+            var sheet = new ClientCharacterSheet(state, assets, strings, (command, arguments, target) => { }, packet => { }, currentPlayer);
             yield return new WaitUntil(() => sheet.Loading.IsCompleted);
             Assert.That(sheet.Loading.IsCompletedSuccessfully, Is.True);
             using var services = ManagedObjectTestScope.Use(state.SceneObjects, builder =>
             {
                 builder.RegisterInstance(state);
+                builder.RegisterInstance(currentPlayer);
                 builder.RegisterInstance(sheet);
                 builder.RegisterInstance(names);
             });
@@ -278,7 +288,7 @@ namespace Swg.Client.Tests.Editor
                 window.attributes[0].value.text = "unchanged status";
                 window.badges.text = "hidden badges";
                 window.married.text = "hidden personal";
-                state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player);
+                state.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var player);
                 state.SceneObjects.NotifyChanged(player, SceneObjectChange.Transform | SceneObjectChange.Target | SceneObjectChange.Posture | SceneObjectChange.Inventory);
                 Invoke(window, "LateUpdate");
                 Assert.That(window.attributes[0].value.text, Is.EqualTo("unchanged status"));
@@ -289,7 +299,7 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(window.fatigue.text, Is.EqualTo("25"));
                 Assert.That(window.attributes[0].value.text, Is.EqualTo("700 / 700"));
                 Assert.That(window.badges.text, Is.EqualTo("hidden badges"));
-                state.CharacterSheet.Update(data => data.Spouse = "Partner", CharacterSheetChange.Personal);
+                currentPlayer.CharacterSheet.Update(data => data.Spouse = "Partner", CharacterSheetChange.Personal);
                 Invoke(window, "LateUpdate");
                 Assert.That(window.married.text, Is.EqualTo("hidden personal"));
                 window.SelectTab(true);
@@ -299,17 +309,17 @@ namespace Swg.Client.Tests.Editor
                 window.badges.text = "unchanged badges";
                 window.lots.text = "unchanged profile";
                 state.SceneObjects.NotifyChanged(player, SceneObjectChange.Transform | SceneObjectChange.Vitals);
-                state.CharacterSheet.Update(data => { data.Food = 75; data.FoodMaximum = 100; }, CharacterSheetChange.Status);
+                currentPlayer.CharacterSheet.Update(data => { data.Food = 75; data.FoodMaximum = 100; }, CharacterSheetChange.Status);
                 Invoke(window, "LateUpdate");
                 Assert.That(window.food.Fill, Is.Zero, "Status controls stay deferred while Personal is shown.");
                 Assert.That(window.badges.text, Is.EqualTo("unchanged badges"));
                 Assert.That(window.lots.text, Is.EqualTo("unchanged profile"));
-                state.CharacterSheet.Update(data => data.Biography = "Updated biography", CharacterSheetChange.Personal);
+                currentPlayer.CharacterSheet.Update(data => data.Biography = "Updated biography", CharacterSheetChange.Personal);
                 Invoke(window, "LateUpdate");
                 Assert.That(window.biography.text, Does.Contain("Updated biography"));
                 Assert.That(window.badges.text, Is.EqualTo("unchanged badges"));
                 window.lots.text = "unchanged profile";
-                state.CharacterSheet.Update(data => data.BadgeMasks = new uint[] { 1 }, CharacterSheetChange.Badges);
+                currentPlayer.CharacterSheet.Update(data => data.BadgeMasks = new uint[] { 1 }, CharacterSheetChange.Badges);
                 Invoke(window, "LateUpdate");
                 Assert.That(window.badges.text, Is.Not.EqualTo("unchanged badges"));
                 Assert.That(window.lots.text, Is.EqualTo("unchanged profile"));
@@ -329,10 +339,13 @@ namespace Swg.Client.Tests.Editor
         }
 
         static ClientSettings Settings() => ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
-        static WorldState SheetState()
+        static WorldState SheetState(out CurrentPlayer currentPlayer)
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(42, Vector3.zero, "terrain/corellia.trn");
+            var playerRegistry = new SceneObjectRegistry();
+            currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(42);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             var player = new CreatureSceneObject { SwgId = 42, Name = "Misty", TemplatePath = "object/creature/player/shared_human_female.iff" };
             var values = new[] { 700, 400, 400, 900, 500, 400, 1000, 500, 600 };
             player.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { Base = values, Maximum = values, Current = values } });

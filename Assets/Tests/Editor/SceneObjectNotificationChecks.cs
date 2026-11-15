@@ -1,3 +1,5 @@
+using Swg.Client.Core.Characters;
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void MovementNotifiesOnlyTheObjectAndItsDescendantsWithoutAppearanceWork()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f)));
             world.Commit(2, new ContainmentUpdate(parentSwgId: 1));
             world.Commit(3, new SceneObjectUpdate());
@@ -79,7 +81,8 @@ namespace Swg.Client.Tests.Editor
                 Position = Vector3.right * 10,
                 Rotation = Quaternion.Euler(0, 90, 0)
             };
-            GameServices.Resolve<WorldState>().BeginScene(99, Vector3.right * 2, "terrain/test.trn");
+            GameServices.Resolve<CurrentPlayer>().BeginScene(99);
+            GameServices.Resolve<WorldState>().BeginScene(Vector3.right * 2, "terrain/test.trn");
             registry.Add(sceneObject);
             var instance = new GameObject("interpolation test");
             try
@@ -109,7 +112,8 @@ namespace Swg.Client.Tests.Editor
         {
             var registry = new SceneObjectRegistry();
             using var services = ManagedObjectTestScope.Use(registry);
-            GameServices.Resolve<WorldState>().BeginScene(99, Vector3.right * 2, "terrain/test.trn");
+            GameServices.Resolve<CurrentPlayer>().BeginScene(99);
+            GameServices.Resolve<WorldState>().BeginScene(Vector3.right * 2, "terrain/test.trn");
             var parent = new SpatialSceneObject
             {
                 SwgId = 1,

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -6,7 +7,6 @@ using Swg.Client.Core.Assets;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Networking.Game.Packets.Commands;
-using Swg.Client.Core.World;
 
 namespace Swg.Client.Runtime.Networking
 {
@@ -14,7 +14,7 @@ namespace Swg.Client.Runtime.Networking
     {
         readonly Action<CommandQueueEnqueuePacket> send;
         readonly Action<CommandQueueDequeuePacket> dequeue;
-        readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly SynchronizationContext context;
         public readonly struct QueuedCommand
         {
@@ -41,11 +41,11 @@ namespace Swg.Client.Runtime.Networking
         uint sequence;
         long order;
         bool disposed;
-        public ClientCommands(Action<CommandQueueEnqueuePacket> send, Action<CommandQueueDequeuePacket> dequeue, WorldState state)
+        public ClientCommands(Action<CommandQueueEnqueuePacket> send, Action<CommandQueueDequeuePacket> dequeue, CurrentPlayer currentPlayer)
         {
             this.send = send;
             this.dequeue = dequeue;
-            this.state = state;
+            this.currentPlayer = currentPlayer;
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create ClientCommands on Unity's main thread.");
         }
 
@@ -54,7 +54,7 @@ namespace Swg.Client.Runtime.Networking
             uint id = ++sequence;
             uint crc = ObjectTemplateNames.TemplateCrc(command.ToLowerInvariant());
             queued.Add(id, new QueuedCommand(crc, completed, targetSwgId, arguments, ++order));
-            send(new CommandQueueEnqueuePacket(state.PlayerSwgId.Value, id, crc, arguments, targetSwgId.Value));
+            send(new CommandQueueEnqueuePacket(currentPlayer.SwgId.Value, id, crc, arguments, targetSwgId.Value));
             Changed?.Invoke();
             return id;
         }
@@ -65,7 +65,7 @@ namespace Swg.Client.Runtime.Networking
                 return;
             bool known = queued.TryGetValue(packet.ActionCounter, out var existing);
             var target = existing.TargetSwgId;
-            if (!known && state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player))
+            if (!known && currentPlayer.Creature is CreatureSceneObject player)
                 target = player.TargetSwgId;
             queued[packet.ActionCounter] = new QueuedCommand(packet.ActionCrc, existing.Completed, target, existing.Arguments ?? "", known ? existing.Order : ++order);
             Changed?.Invoke();
@@ -88,7 +88,7 @@ namespace Swg.Client.Runtime.Networking
         {
             if (!queued.TryGetValue(actionCounter, out var command))
                 return;
-            dequeue(new CommandQueueDequeuePacket(state.PlayerSwgId.Value, actionCounter, command.CommandCrc));
+            dequeue(new CommandQueueDequeuePacket(currentPlayer.SwgId.Value, actionCounter, command.CommandCrc));
             queued.Remove(actionCounter);
             Changed?.Invoke();
         }

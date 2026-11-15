@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Threading.Tasks;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Assets;
 using Swg.Client.Core.Characters.Skills;
-using Swg.Client.Core.World;
 using Swg.Client.Core;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Runtime.Localization;
@@ -28,17 +28,17 @@ namespace Swg.Client.Runtime.Networking
         }
         readonly CommandCatalog commands;
         readonly Action<string, string, SwgId> send;
-        readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly TreRuntimeAssets assets;
         readonly StringTableLocalizer strings;
         readonly Dictionary<string, Task<Unlock[]>> unlocks = new Dictionary<string, Task<Unlock[]>>();
         public SkillCatalog Catalog { get; private set; }
         public Task Loading { get; }
-        public CreatureSceneObject Player => state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player) ? player : null;
+        public CreatureSceneObject Player => currentPlayer.Creature;
         public int AvailablePoints => Catalog.PointsAvailable(Player?.Skills ?? Enumerable.Empty<string>());
-        public ClientSkills(WorldState state, TreRuntimeAssets assets, StringTableLocalizer strings, CommandCatalog commands, Action<string, string, SwgId> send)
+        public ClientSkills(TreRuntimeAssets assets, StringTableLocalizer strings, CommandCatalog commands, Action<string, string, SwgId> send, CurrentPlayer currentPlayer)
         {
-            this.state = state;
+            this.currentPlayer = currentPlayer;
             this.assets = assets;
             this.strings = strings;
             this.commands = commands;
@@ -51,13 +51,13 @@ namespace Swg.Client.Runtime.Networking
         public bool Surrender(SkillCatalog.Skill skill)
         {
             if (!Learned(skill)) return false;
-            send("surrenderSkill", skill.Name, state.PlayerSwgId);
+            send("surrenderSkill", skill.Name, currentPlayer.SwgId);
             return true;
         }
         public bool IsNext(SkillCatalog.Skill skill) => Player != null && !Learned(skill) && Catalog.HasPrerequisites(skill, Player.Skills);
-        public int Experience(SkillCatalog.Skill skill) => state.Experience.TryGetValue(skill.ExperienceType, out var value) ? value : 0;
+        public int Experience(SkillCatalog.Skill skill) => currentPlayer.Experience.TryGetValue(skill.ExperienceType, out var value) ? value : 0;
         public float Progress(SkillCatalog.Skill skill) => skill.ExperienceCost > 0 ? Math.Min(1f, (float)Experience(skill) / skill.ExperienceCost) : 1;
-        public IEnumerable<string> Certifications => state.Commands.Abilities.Where(name => name.StartsWith("cert_", StringComparison.Ordinal)).Select(name => Catalog.Label("cmd_n", name)).OrderBy(name => name);
+        public IEnumerable<string> Certifications => currentPlayer.Commands.Abilities.Where(name => name.StartsWith("cert_", StringComparison.Ordinal)).Select(name => Catalog.Label("cmd_n", name)).OrderBy(name => name);
         public Task<Unlock[]> Unlocks(SkillCatalog.Skill skill)
         {
             if (!unlocks.TryGetValue(skill.Name, out var result)) unlocks.Add(skill.Name, result = LoadUnlocks(skill));

@@ -1,3 +1,5 @@
+using Swg.Client.Core.Crafting;
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Packets.Player;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Core;
@@ -83,6 +85,8 @@ namespace Swg.Client.Runtime
                 builder.RegisterInstance(connection).ExternallyOwned();
                 builder.RegisterInstance(connection.Admission);
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
+                builder.RegisterType<CurrentPlayer>().SingleInstance();
+                builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
@@ -120,7 +124,7 @@ namespace Swg.Client.Runtime
                 builder.Register(context =>
                 {
                     var commands = context.Resolve<ClientCommands>();
-                    return new ClientInventory(context.Resolve<WorldState>(), swgId => commands.Enqueue("openContainer", "", swgId));
+                    return new ClientInventory(context.Resolve<WorldState>(), swgId => commands.Enqueue("openContainer", "", swgId), context.Resolve<CurrentPlayer>());
                 }).SingleInstance();
                 builder.RegisterType<ClientChat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientFlyText>().SingleInstance();
@@ -130,7 +134,7 @@ namespace Swg.Client.Runtime
                 builder.Register(context =>
                 {
                     var replication = new GameObject("Game replication").AddComponent<GameReplication>();
-                    replication.Initialize(context.Resolve<WorldState>());
+                    replication.Initialize(context.Resolve<WorldState>(), context.Resolve<CurrentPlayer>(), context.Resolve<CraftingProgress>());
                     UnityEngine.Object.DontDestroyOnLoad(replication.gameObject);
                     return replication;
                 }).AsSelf().SingleInstance().AutoActivate();

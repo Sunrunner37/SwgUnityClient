@@ -49,12 +49,12 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 9)
             {
                 if (PlayerView9.TryReadDelta(new ByteReader(packet.Payload), out var commands))
-                    replication.UpdatePlayer(state =>
+                    replication.UpdatePlayer(player =>
                 {
-                    if (commands.Abilities != null) state.Commands.Apply(commands.Abilities);
-                    if (commands.Schematics != null) state.UpdateDraftSchematics(commands.Schematics);
-                    commands.Details?.Invoke(state);
-                });
+                    if (commands.Abilities != null) player.Commands.Apply(commands.Abilities);
+                    if (commands.Schematics != null) player.UpdateDraftSchematics(commands.Schematics);
+                    commands.Details?.Invoke(player);
+                }, commands.Crafting);
                 return;
             }
 

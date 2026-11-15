@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.IO;
 using System.Text;
@@ -65,14 +66,16 @@ namespace Swg.Client.Tests.Editor
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new TreRuntimeAssets(settings);
-            var registry = new SceneObjectRegistry();var state = new WorldState(registry);
-            state.BeginScene(1, Vector3.zero, "terrain/tatooine.trn");state.Templates = new ObjectTemplateCatalog(assets.Loader);
+            var registry = new SceneObjectRegistry();var currentPlayer = new CurrentPlayer(registry);
+            var state = new WorldState(registry);
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/tatooine.trn");state.Templates = new ObjectTemplateCatalog(assets.Loader);
             registry.Add(new CreatureSceneObject { SwgId = 1 });
             registry.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/inventory/shared_character_inventory.iff" });
             registry.Add(new TangibleSceneObject { SwgId = 3, ParentSwgId = 2, Volume = 2 });
             registry.Add(new TangibleSceneObject { SwgId = 4, ParentSwgId = 1, TemplatePath = "object/tangible/wearables/armor/composite/shared_armor_composite_boots.iff" });
             SwgId opened = default;
-            using var inventory = new ClientInventory(state, id => opened = id);
+            using var inventory = new ClientInventory(state, id => opened = id, currentPlayer);
             inventory.Open();
             Assert.That(opened.Value, Is.EqualTo(2));Assert.That(inventory.Capacity, Is.EqualTo(80));Assert.That(inventory.UsedCapacity, Is.EqualTo(2));Assert.That(inventory.Items.Count, Is.EqualTo(2));
             registry.Reparent(3, 99);

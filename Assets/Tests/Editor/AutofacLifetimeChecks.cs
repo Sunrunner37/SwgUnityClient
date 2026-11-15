@@ -1,3 +1,5 @@
+using Swg.Client.Core;
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.Networking;
 using Autofac;
 using NUnit.Framework;
@@ -10,7 +12,7 @@ namespace Swg.Client.Tests.Editor
     public sealed class AutofacLifetimeChecks
     {
         [Test]
-        public void GameScopesShareGlobalInstancesButIsolateWorldState()
+        public void GameScopesShareGlobalInstancesButIsolatePlayerAndWorldState()
         {
             var builder = new ContainerBuilder();
             builder.RegisterInstance(new object ());
@@ -22,6 +24,13 @@ namespace Swg.Client.Tests.Editor
             Assert.That(first.Resolve<WorldState>(), Is.Not.SameAs(second.Resolve<WorldState>()));
             Assert.That(first.Resolve<GameReplication>().State, Is.SameAs(first.Resolve<WorldState>()));
             Assert.That(root.IsRegistered<WorldState>(), Is.False);
+            var firstPlayer = first.Resolve<CurrentPlayer>();
+            Assert.That(firstPlayer, Is.SameAs(first.Resolve<CurrentPlayer>()));
+            Assert.That(firstPlayer, Is.Not.SameAs(second.Resolve<CurrentPlayer>()));
+            Assert.That(root.IsRegistered<CurrentPlayer>(), Is.False);
+            firstPlayer.BeginScene(42); first.Resolve<WorldState>().BeginScene(UnityEngine.Vector3.zero, "terrain/corellia.trn");
+            Assert.That(firstPlayer.SwgId, Is.EqualTo(new SwgId(42)));
+            Assert.That(second.Resolve<CurrentPlayer>().SwgId.IsNone, Is.True);
         }
 
         [Test]
@@ -73,8 +82,9 @@ namespace Swg.Client.Tests.Editor
         static void RegisterGame(ContainerBuilder builder)
         {
             builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
+            builder.RegisterType<CurrentPlayer>().SingleInstance();
             builder.RegisterType<WorldState>().SingleInstance();
-            builder.Register(context => GameServicesForTests.CreateReplication(context.Resolve<WorldState>())).SingleInstance();
+            builder.Register(context => GameServicesForTests.CreateReplication(context.Resolve<WorldState>(), context.Resolve<CurrentPlayer>())).SingleInstance();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
 
         protected override void Handle(CharacterSheetResponsePacket packet)
         {
-            replication.UpdatePlayer(state => state.CharacterSheet.Update(data =>
+            replication.UpdatePlayer(player => player.CharacterSheet.Update(data =>
             {
                 data.Spouse = packet.SpouseName;
                 data.ResidencePlanet = packet.ResidencePlanet;

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Text.RegularExpressions;
 using System;
 using System.Collections;
@@ -55,6 +56,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         ClientObjectInteractions interactions;
         RadialContextMenu contextMenu;
         WorldState state;
+        CurrentPlayer currentPlayer;
         WorldContentLoader loader;
         StringTableLocalizer localizer;
         Coroutine loading;
@@ -70,6 +72,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             datapad = GameServices.Resolve<ClientDatapad>();
             schematics = GameServices.Resolve<DraftSchematicCatalog>();
             interactions = GameServices.Resolve<ClientObjectInteractions>();
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             loader = GameServices.Resolve<WorldContentLoader>();
             localizer = GameServices.Resolve<StringTableLocalizer>();
@@ -78,7 +81,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         void OnEnable()
         {
             datapad.Changed += Changed;
-            state.DraftDetailsChanged += DetailsChanged;
+            currentPlayer.DraftDetailsChanged += DetailsChanged;
             theme.Changed += RefreshDetails;
             for (int i = 0; i < tabs.Length; i++)
             {
@@ -89,7 +92,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             }
             onlyCurrentPlanet.SetIsOnWithoutNotify(datapad.OnlyCurrentPlanet);
             singleActive.SetIsOnWithoutNotify(datapad.SingleActiveWaypoint);
-            indicators.SetIsOnWithoutNotify(state.ShowWaypointIndicators);
+            indicators.SetIsOnWithoutNotify(currentPlayer.ShowWaypointIndicators);
             onlyCurrentPlanet.onValueChanged.AddListener(FilterPlanet);
             singleActive.onValueChanged.AddListener(SetSingleActive);
             indicators.onValueChanged.AddListener(SetIndicators);
@@ -99,7 +102,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         void OnDisable()
         {
             datapad.Changed -= Changed;
-            state.DraftDetailsChanged -= DetailsChanged;
+            currentPlayer.DraftDetailsChanged -= DetailsChanged;
             theme.Changed -= RefreshDetails;
             for (int i = 0; i < tabs.Length; i++) tabs[i].onValueChanged.RemoveListener(tabListeners[i]);
             tabListeners.Clear();
@@ -118,7 +121,7 @@ namespace Swg.Client.Runtime.UI.Datapad
         }
         void FilterPlanet(bool value) { datapad.OnlyCurrentPlanet = value; dirty = true; }
         void SetSingleActive(bool value) => datapad.SingleActiveWaypoint = value;
-        void SetIndicators(bool value) => state.ShowWaypointIndicators = value;
+        void SetIndicators(bool value) => currentPlayer.ShowWaypointIndicators = value;
         public void SelectTab(int index)
         {
             CurrentTab = (ClientDatapad.Tab)index;

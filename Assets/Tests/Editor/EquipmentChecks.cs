@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Assets.Appearances;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void EquipmentDeltasApplyInOrderOnMainThreadAndNotifyAppearance()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            using var services = GameServicesForTests.Create(world);
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            using var services = GameServicesForTests.Create(world, currentPlayer);
             var router = new GamePacketRouter(services);
             world.Commit(1, new CreatureSceneObjectUpdate { Equipment = new[] { new WorldEquipment(new byte[] { 1 }, 4, 10, 100) } });
             world.ApplyPending();

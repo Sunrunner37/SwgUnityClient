@@ -25,7 +25,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Crafting
         {
             var weights = packet.Weights.Select(group => group.Weights.Where(value => (value >> 4) != 0 && (value & 15) != 0)
                 .Select(value => new DraftSchematicDetails.ExperimentWeight((value >> 4) < attributes.Length ? attributes[value >> 4] : "Resource attribute " + (value >> 4), value & 15)).ToArray()).ToArray();
-            replication.UpdatePlayer(state => state.UpdateDraftExperiments(packet.ClientCrc, weights));
+            replication.UpdatePlayer(player => player.UpdateDraftExperiments(packet.ClientCrc, weights));
         }
     }
 }

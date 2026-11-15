@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Core.World;
@@ -19,7 +20,7 @@ namespace Swg.Client.Tests.Editor
             var parent = new GameObject("Terrain ownership test");
             var settings = new WorldRenderingContext();
             settings.Initialize(Shader.Find("SWG/World"), null, null, null, null, null);
-            var renderer = new WorldTerrainRenderer(new SwgMaterialFactory(null), new WorldState(new SceneObjectRegistry()), settings);
+            var renderer = new WorldTerrainRenderer(new SwgMaterialFactory(null), GameServicesForTests.CreateState(out var currentPlayer), settings);
             var patch = WorldTerrainPatch.Build(new WorldTerrain(), Vector3.zero, 2, 1);
             try
             {

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime.World.Streaming;
@@ -99,6 +100,7 @@ namespace Swg.Client.Runtime.World.Terrain
         SwgMaterialFactory materials;
         Shader shader;
         WorldState state;
+        CurrentPlayer currentPlayer;
         WorldStreamingSettings settings;
         public IEnumerable<Vector2Int> Keys => tiles.Keys;
         public int InstanceCount => tiles.Values.Sum(tile => tile.Batches.Sum(batch => batch.VisibleCount));
@@ -107,6 +109,7 @@ namespace Swg.Client.Runtime.World.Terrain
 
         public void Initialize(WorldState state, Shader shader, Shader particleShader, WorldStreamingSettings settings, Camera worldCamera = null)
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             this.state = state;
             this.shader = shader;
             this.particleShader = particleShader;
@@ -309,7 +312,7 @@ namespace Swg.Client.Runtime.World.Terrain
 
         void RefreshEffects()
         {
-            if (!ManagedSceneObject.TryGetObjectFrom(this.state.PlayerSwgId, out var player))
+            if (!ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var player))
                 return;
             foreach (var effect in effects.Values.SelectMany(tile => tile))
             {

@@ -11,7 +11,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
     // Core3 PlayerObjectMessage9: owner-only abilities followed by crafting, social and consumption state.
     internal static class PlayerView9
     {
-        public static (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<WorldState> Details) ReadBaseline(ByteReader r)
+        public static (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<CurrentPlayer> Details, Action<CraftingProgress> Crafting) ReadBaseline(ByteReader r)
         {
             var abilities = Strings(r);
             r.Skip(16);
@@ -32,7 +32,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicationReader.RequireEnd(r);
             return (list => { list.Clear(); list.AddRange(abilities); },
                 list => { list.Clear(); list.AddRange(schematics); },
-                state => state.CharacterSheet.Update(data => { data.Food = food; data.FoodMaximum = foodMaximum; data.Drink = drink; data.DrinkMaximum = drinkMaximum; }, CharacterSheetChange.Status));
+                player => player.CharacterSheet.Update(data => { data.Food = food; data.FoodMaximum = foodMaximum; data.Drink = drink; data.DrinkMaximum = drinkMaximum; }, CharacterSheetChange.Status), null);
         }
 
         static List<string> Strings(ByteReader r)
@@ -45,7 +45,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return list;
         }
 
-        public static bool TryReadDelta(ByteReader r, out (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<WorldState> Details) update)
+        public static bool TryReadDelta(ByteReader r, out (Action<List<string>> Abilities, Action<List<uint>> Schematics, Action<CurrentPlayer> Details, Action<CraftingProgress> Crafting) update)
         {
             var updates = new List<Action<List<string>>>();
             var schematicUpdates = new List<Action<List<uint>>>();
@@ -89,11 +89,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicationReader.RequireEnd(r);
             update = (updates.Count == 0 ? null : list => { foreach (var apply in updates) apply(list); },
                 schematicUpdates.Count == 0 ? null : list => { foreach (var apply in schematicUpdates) apply(list); },
-                details.Count == 0 && crafting.Count == 0 ? null : state =>
-                {
-                    if (details.Count > 0) state.CharacterSheet.Update(data => { foreach (var apply in details) apply(data); }, CharacterSheetChange.Status);
-                    if (crafting.Count > 0) state.Crafting.Update(data => { foreach (var apply in crafting) apply(data); });
-                });
+                details.Count == 0 ? null : player => player.CharacterSheet.Update(data => { foreach (var apply in details) apply(data); }, CharacterSheetChange.Status),
+                crafting.Count == 0 ? null : progress => progress.Update(data => { foreach (var apply in crafting) apply(data); }));
             return updates.Count > 0 || schematicUpdates.Count > 0 || details.Count > 0 || crafting.Count > 0;
         }
 

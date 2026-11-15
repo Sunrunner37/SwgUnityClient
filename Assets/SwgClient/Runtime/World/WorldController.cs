@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Runtime.World.Streaming;
@@ -29,6 +30,7 @@ namespace Swg.Client.Runtime.World
         public SceneObjectRegistry SceneObjects => this.state?.SceneObjects;
 
         WorldState state;
+        CurrentPlayer currentPlayer;
         WorldLoadingData loadedData;
         ILifetimeScope session;
         WorldStreamingSettings settings;
@@ -42,6 +44,7 @@ namespace Swg.Client.Runtime.World
                 throw new InvalidOperationException("WorldController was already initialized.");
             loadedData = sceneData ?? throw new ArgumentNullException(nameof(sceneData));
             this.session = session;
+            currentPlayer = session.Resolve<CurrentPlayer>();
             this.state = session.Resolve<WorldState>();
             Content = session.Resolve<WorldContentLoader>();
             settings = streamingSettings ?? throw new ArgumentNullException(nameof(streamingSettings));
@@ -106,7 +109,7 @@ namespace Swg.Client.Runtime.World
         {
             if (!revealed || !IsReady)
                 return;
-            if (SceneObjects.TryGet<SpatialSceneObject>(this.state.PlayerSwgId, out var player))
+            if (SceneObjects.TryGet<SpatialSceneObject>(currentPlayer.SwgId, out var player))
                 Streaming.Update(SceneObjects.GetServerWorldPose(player.SwgId).position);
         }
 

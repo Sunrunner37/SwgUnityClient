@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.IO;
 using Swg.Client.Core.Assets.Formats.Dds;
@@ -57,8 +58,10 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void BaselineAndDeltasReachSharedStateOnTheMainThread()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            var replication = GameServicesForTests.CreateReplication(state);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            var replication = GameServicesForTests.CreateReplication(state, currentPlayer);
             try
             {
                 var payload = Bytes(writer =>
@@ -72,11 +75,11 @@ namespace Swg.Client.Tests.Editor
                 });
                 var handler = (IGamePacketHandler)new BaselinesPacketHandler(replication);
                 handler.Handle(new ByteReader(Bytes(writer => new BaselinesPacket(7, 0x504c4159, 8, payload).WriteTo(writer))));
-                Assert.That(state.Waypoints, Is.Empty);
+                Assert.That(currentPlayer.Waypoints, Is.Empty);
                 replication.ApplyPending();
-                Assert.That(state.Waypoints.Count, Is.EqualTo(2));
-                Assert.That(state.Waypoints[42].Position, Is.EqualTo(new Vector3(100, 25, -200)));
-                Assert.That(state.Waypoints[43].Active, Is.False);
+                Assert.That(currentPlayer.Waypoints.Count, Is.EqualTo(2));
+                Assert.That(currentPlayer.Waypoints[42].Position, Is.EqualTo(new Vector3(100, 25, -200)));
+                Assert.That(currentPlayer.Waypoints[43].Active, Is.False);
 
                 var delta = Bytes(writer =>
                 {
@@ -90,13 +93,13 @@ namespace Swg.Client.Tests.Editor
                 });
                 var deltaHandler = (IGamePacketHandler)new DeltasPacketHandler(replication);
                 deltaHandler.Handle(new ByteReader(Bytes(writer => new DeltasPacket(7, 0x504c4159, 8, delta).WriteTo(writer))));
-                Assert.That(state.Waypoints[42].Name, Is.EqualTo("First"));
+                Assert.That(currentPlayer.Waypoints[42].Name, Is.EqualTo("First"));
                 replication.ApplyPending();
-                Assert.That(state.Waypoints.Count, Is.EqualTo(2));
-                Assert.That(state.Waypoints.ContainsKey(43), Is.False);
-                Assert.That(state.Waypoints[42].Name, Is.EqualTo("Renamed"));
-                Assert.That(state.Waypoints[42].Active, Is.False);
-                Assert.That(state.Waypoints[44].Active, Is.True);
+                Assert.That(currentPlayer.Waypoints.Count, Is.EqualTo(2));
+                Assert.That(currentPlayer.Waypoints.ContainsKey(43), Is.False);
+                Assert.That(currentPlayer.Waypoints[42].Name, Is.EqualTo("Renamed"));
+                Assert.That(currentPlayer.Waypoints[42].Active, Is.False);
+                Assert.That(currentPlayer.Waypoints[44].Active, Is.True);
             }
             finally { Object.DestroyImmediate(replication.gameObject); }
         }
@@ -104,13 +107,17 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void PlanetChangesPreserveThePlayersWaypointList()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(7, Vector3.zero, "terrain/corellia.trn");
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(7);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             Assert.That(state.PlanetCrc, Is.EqualTo(1666541635u));
-            state.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.zero, state.PlanetCrc, "Home", WaypointColor.Blue, true));
-            state.BeginScene(7, Vector3.zero, "terrain/tatooine.trn");
-            Assert.That(state.Waypoints.ContainsKey(42), Is.True);
-            Assert.That(state.PlanetCrc, Is.Not.EqualTo(state.Waypoints[42].PlanetCrc));
+            currentPlayer.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.zero, state.PlanetCrc, "Home", WaypointColor.Blue, true));
+            currentPlayer.BeginScene(7);
+            state.BeginScene(Vector3.zero, "terrain/tatooine.trn");
+            Assert.That(currentPlayer.Waypoints.ContainsKey(42), Is.True);
+            Assert.That(state.PlanetCrc, Is.Not.EqualTo(currentPlayer.Waypoints[42].PlanetCrc));
         }
 
         [TestCase(0, 1, 0)]

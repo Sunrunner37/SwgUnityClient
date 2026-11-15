@@ -1,3 +1,4 @@
+using Swg.Client.Core.Crafting;
 using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Packets.Player;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace Swg.Client.Runtime.UI.Testing
     {
         public bool previewCombatQueue = true;
         public string[] sampleAbilities = Array.Empty<string>();
-        PlayerCommands player;
+        CurrentPlayer currentPlayer;
         ILifetimeScope scope;
 
         void Awake()
@@ -52,6 +53,8 @@ namespace Swg.Client.Runtime.UI.Testing
             scope = GameServices.BeginLifetimeScope(builder =>
             {
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance();
+                builder.RegisterType<CurrentPlayer>().SingleInstance();
+                builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => Debug.Log("Offline target: " + packet.TargetSwgId)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
@@ -59,13 +62,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 {
                     var world = context.Resolve<WorldState>();
                     ClientObjectInteractions interactions = null;
-                    interactions = new ClientObjectInteractions(world, request => interactions.Receive(new ObjectMenuResponsePacket(world.PlayerSwgId.Value, request.TargetSwgId.Value, request.Items.Length > 1 ? request.Items : new[]
+                    interactions = new ClientObjectInteractions(world, request => interactions.Receive(new ObjectMenuResponsePacket(currentPlayer.SwgId.Value, request.TargetSwgId.Value, request.Items.Length > 1 ? request.Items : new[]
                     {
                         request.Items[0],
                         new RadialMenuEntry(2, 0, 118, 3, "@player_structure:management"),
                         new RadialMenuEntry(3, 0, 117, 3, "@player_structure:permissions"),
                         new RadialMenuEntry(4, 2, 124, 3, "@player_structure:management_status")
-                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet), context.Resolve<Action<string, string, SwgId>>());
+                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet), context.Resolve<Action<string, string, SwgId>>(), context.Resolve<CurrentPlayer>());
                     return interactions;
                 }).SingleInstance();
                 builder.RegisterInstance(new Admission { Username = "ui-testing", Galaxy = new Galaxy { Name = "Offline" } });
@@ -80,11 +83,11 @@ namespace Swg.Client.Runtime.UI.Testing
                     UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
                     return previews;
                 }).SingleInstance();
-                builder.Register(context => new ClientInventory(context.Resolve<WorldState>(), swgId => Debug.Log("Offline inventory opened: " + swgId))).SingleInstance();
+                builder.Register(context => new ClientInventory(context.Resolve<WorldState>(), swgId => Debug.Log("Offline inventory opened: " + swgId), context.Resolve<CurrentPlayer>())).SingleInstance();
                 builder.RegisterInstance(new Action<CommandQueueEnqueuePacket>(packet => Debug.Log("Offline queue enqueue: " + packet.CommandCrc)));
                 builder.RegisterInstance(new Action<CommandQueueDequeuePacket>(packet => Debug.Log("Offline queue cancel: " + packet.ActionCounter)));
                 builder.RegisterType<ClientCommands>().SingleInstance();
-                builder.Register(context => new ClientChat(null, context.Resolve<WorldState>(), context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>())).SingleInstance();
+                builder.Register(context => new ClientChat(null, context.Resolve<WorldState>(), context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>(), context.Resolve<CurrentPlayer>())).SingleInstance();
                 builder.Register(context =>
                 {
                     var commands = context.Resolve<ClientCommands>();
@@ -93,7 +96,7 @@ namespace Swg.Client.Runtime.UI.Testing
                     {
                         commands.Enqueue(name, arguments, target);
                         if (name == "requestStatMigrationData")
-                            world.CharacterSheet.Update(data => data.HasMigrationTargets = true, CharacterSheetChange.Migration);
+                            currentPlayer.CharacterSheet.Update(data => data.HasMigrationTargets = true, CharacterSheetChange.Migration);
                     });
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
@@ -116,10 +119,12 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<ClientFlyText>().SingleInstance();
                 builder.RegisterType<OfflineCommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
             });
+            currentPlayer = scope.Resolve<CurrentPlayer>();
             var state = scope.Resolve<WorldState>();
-            state.BeginScene(9000, Vector3.zero, "terrain/tatooine.trn");
+            currentPlayer.BeginScene(9000);
+            state.BeginScene(Vector3.zero, "terrain/tatooine.trn");
             state.Templates = new ObjectTemplateCatalog(scope.Resolve<TreRuntimeAssets>().Loader);
-            state.UpdateWaypoints(list =>
+            currentPlayer.UpdateWaypoints(list =>
             {
                 list[9100] = new Waypoint(9100, new Vector3(800, 0, 200), state.PlanetCrc, "Combat medic", WaypointColor.Blue, true);
                 list[9101] = new Waypoint(9101, new Vector3(-250, 0, 100), state.PlanetCrc, "Player Association Hall", WaypointColor.Green, true);
@@ -188,14 +193,14 @@ namespace Swg.Client.Runtime.UI.Testing
                     Description = "A dangerous breeding colony has appeared near our settlement. We are offering a substantial reward to anyone who can destroy the nest before it threatens the local population.",
                     Waypoint = new Waypoint((ulong)(9880 + i), new Vector3(i * 130, 0, 866 - i * 28), state.PlanetCrc, titles[i % 6], WaypointColor.Orange, true)
                 });
-            state.UpdateDraftSchematics(list => list.AddRange(new[]
+            currentPlayer.UpdateDraftSchematics(list => list.AddRange(new[]
             {
                 ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_t21.iff"),
                 ObjectTemplateNames.TemplateCrc("object/draft_schematic/item/shared_item_recycler_flora.iff"),
                 ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_flame_thrower.iff")
             }));
-            foreach (uint crc in state.DraftSchematics)
-                state.UpdateDraftDetails(crc, new DraftSchematicDetails
+            foreach (uint crc in currentPlayer.DraftSchematics)
+                currentPlayer.UpdateDraftDetails(crc, new DraftSchematicDetails
                 {
                     Complexity = 7,
                     Size = 4,
@@ -207,7 +212,7 @@ namespace Swg.Client.Runtime.UI.Testing
                             new DraftSchematicDetails.ExperimentWeight("Unit toughness", 1)
                         }).ToArray()
                 });
-            state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var character);
+            state.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var character);
             character.BattleFatigue = 100;
             character.Ham = new HamPool
             {
@@ -215,7 +220,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 Action = new HamElement(700, 900, 100, 900), Quickness = new HamElement(499, 500, 1, 500), Stamina = new HamElement(399, 400, 1, 400),
                 Mind = new HamElement(900, 1000, 100, 1000), Focus = new HamElement(500, 500, 0, 500), Willpower = new HamElement(600, 600, 0, 600)
             };
-            state.CharacterSheet.Update(data =>
+            currentPlayer.CharacterSheet.Update(data =>
             {
                 data.Food = 65; data.FoodMaximum = 100; data.Drink = 35; data.DrinkMaximum = 100;
                 data.LotsRemaining = 200; data.BadgeMasks = new uint[] { 3, 0, 0, 0, 0 };
@@ -227,7 +232,6 @@ namespace Swg.Client.Runtime.UI.Testing
             scope.Resolve<WorldRenderingContext>().Initialize(preview.worldShader, preview.characterShader, preview.particleShader, null, null, this);
             scope.Resolve<InventoryPreviewCache>();
             scope.Resolve<ClientTargeting>().Select(9001);
-            player = state.Commands;
             RefreshAbilities();
         }
 
@@ -245,7 +249,7 @@ namespace Swg.Client.Runtime.UI.Testing
         [ContextMenu("Preview mission terminal")]
         public void ShowSampleMissions() => scope.Resolve<ClientMissions>().Open(9851);
 
-        static void ApplyOfflineMenuSelection(WorldState world, ObjectMenuSelectPacket packet)
+        void ApplyOfflineMenuSelection(WorldState world, ObjectMenuSelectPacket packet)
         {
             Debug.Log("Offline radial: " + packet.RadialId + " on " + packet.TargetSwgId);
             bool activate = packet.RadialId == ObjectMenuDefaults.VehicleGenerateAction || packet.RadialId == ObjectMenuDefaults.PetCallAction;
@@ -266,21 +270,21 @@ namespace Swg.Client.Runtime.UI.Testing
             yield return new WaitUntil(() => skills.Loading.IsCompleted);
             if (skills.Loading.IsFaulted) { Debug.LogException(skills.Loading.Exception.GetBaseException(), this); yield break; }
             var previewState = scope.Resolve<WorldState>();
-            previewState.SceneObjects.TryGet<CreatureSceneObject>(previewState.PlayerSwgId, out var previewPlayer);
+            previewState.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var previewPlayer);
             previewPlayer.Skills.AddRange(new[] { "crafting_artisan_novice", "social_entertainer_novice", "social_musician_novice" });
             var artisan = skills.Catalog.Skills["crafting_artisan"];
             previewPlayer.Skills.AddRange(skills.Catalog.Tree(artisan).Skills.Where(skill => skill.Name.Contains("_survey_")).Select(skill => skill.Name));
             foreach (string name in previewPlayer.Skills)
                 foreach (var modifier in skills.Catalog.Skills[name].Modifiers)
                     previewPlayer.SkillModifiers[modifier.Key] = previewPlayer.SkillModifiers.TryGetValue(modifier.Key, out int value) ? value + modifier.Value : modifier.Value;
-            previewState.UpdateExperience(values =>
+            currentPlayer.UpdateExperience(values =>
             {
                 values["crafting_general"] = 1300;
                 values["combat_general"] = 806;
                 values["music"] = 970;
                 values["resource_harvesting_inorganic"] = 20000;
             });
-            previewState.Commands.Apply(values => values.AddRange(new[] { "cert_pistol_cdef", "cert_rifle_cdef", "cert_carbine_cdef" }));
+            currentPlayer.Commands.Apply(values => values.AddRange(new[] { "cert_pistol_cdef", "cert_rifle_cdef", "cert_carbine_cdef" }));
             previewState.SceneObjects.NotifyChanged(previewPlayer, SceneObjectChange.Skills);
 
             if (!previewCombatQueue)
@@ -294,7 +298,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 yield break;
             }
             var state = scope.Resolve<WorldState>();
-            state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var creature);
+            state.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var creature);
             creature.States |= CreatureState.Combat;
             state.SceneObjects.NotifyChanged(creature, SceneObjectChange.State);
             var commands = scope.Resolve<ClientCommands>();
@@ -303,7 +307,7 @@ namespace Swg.Client.Runtime.UI.Testing
             commands.Enqueue("attack", targetSwgId: 9001);
         }
 
-        public void RefreshAbilities() => player.Apply(list =>
+        public void RefreshAbilities() => currentPlayer.Commands.Apply(list =>
         {
             list.Clear();
             list.AddRange(sampleAbilities);

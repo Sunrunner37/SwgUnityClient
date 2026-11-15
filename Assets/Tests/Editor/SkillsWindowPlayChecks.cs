@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Linq;
 using System.Collections;
@@ -49,8 +50,10 @@ namespace Swg.Client.Tests.Editor
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
             });
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
             var state = GameServices.Resolve<WorldState>();
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             var player = new CreatureSceneObject { SwgId = 1 };
             player.Skills.Add("crafting_artisan_novice");
             registry.Add(player);
@@ -113,6 +116,7 @@ namespace Swg.Client.Tests.Editor
                 label.ForceMeshUpdate();
                 Assert.That(label.isTextOverflowing, Is.False, tab.name);
             }
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
             var state = GameServices.Resolve<WorldState>();
             var artisan = service.Catalog.Skills["crafting_artisan"];
             window.SelectProfession(artisan);
@@ -120,13 +124,13 @@ namespace Swg.Client.Tests.Editor
             var rowButton = window.professionList.GetComponentsInChildren<Button>().Single(button => button.name == artisan.Name);
             Assert.That(rowButton.colors.normalColor, Is.EqualTo(window.theme.accent));
             var first = service.Catalog.Skills["crafting_artisan_engineering_01"];
-            state.UpdateExperience(values => values[first.ExperienceType] = first.ExperienceCost / 2);
+            currentPlayer.UpdateExperience(values => values[first.ExperienceType] = first.ExperienceCost / 2);
             window.SelectSkill(first);
             yield return null;
             Assert.That(window.experienceBar.gameObject.activeSelf, Is.True);
             Assert.That(window.experienceBar.Fill, Is.EqualTo(.5f).Within(.01f));
             Assert.That(window.experienceBar.color, Is.EqualTo(window.theme.skillExperience));
-            state.UpdateExperience(values => values[first.ExperienceType] = first.ExperienceCost);
+            currentPlayer.UpdateExperience(values => values[first.ExperienceType] = first.ExperienceCost);
             yield return null;
             var box = window.branches.Single(item => item.skill == first);
             Assert.That(box.progress.color, Is.EqualTo(window.theme.capacityFill));

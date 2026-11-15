@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core;
 using Swg.Client.Core.World.SceneObjects;
 using System;
@@ -27,17 +28,15 @@ namespace Swg.Client.Tests.Editor
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
-            this.state = new WorldState(new SceneObjectRegistry())
-            {
-                Templates = new ObjectTemplateCatalog(loader)
-            };
+            this.state = GameServicesForTests.CreateState(out _);
+            this.state.Templates = new ObjectTemplateCatalog(loader);
             Assert.That(this.state.Templates.Resolve(ObjectTemplateNames.TemplateCrc(Hair)), Is.EqualTo(Hair));
         }
 
         [Test]
         public void LateTemplateCatalogRefinesTheModelOutsideTheRegistryAndPreservesGraphState()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.Commit(1, new ReplicationLifecycleUpdate(templateCrc: ObjectTemplateNames.TemplateCrc(Human)), objectUpdate: new TangibleSceneObjectUpdate { Customization = new byte[] { 1, 0, 255, 3 }, Name = "Player" }, initialMovement: new MovementUpdate(position: new Vector3(1, 2, 3)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var previous), Is.True);

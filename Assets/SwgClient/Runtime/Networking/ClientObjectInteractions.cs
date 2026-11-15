@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Swg.Client.Runtime.Networking
         readonly Action<ObjectMenuSelectPacket> selectMenu;
         readonly Action<string, string, SwgId> enqueueCommand;
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly Action<ObjectMenuRequestPacket> sendMenu;
         readonly Action<SwgId> requestAttributes;
         readonly SynchronizationContext context;
@@ -29,8 +31,9 @@ namespace Swg.Client.Runtime.Networking
         public event Action MenuChanged;
         public event Action<SwgId> AttributesChanged;
 
-        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand)
+        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.selectMenu = selectMenu;
             this.enqueueCommand = enqueueCommand;
@@ -46,7 +49,7 @@ namespace Swg.Client.Runtime.Networking
             var defaults = ObjectMenuDefaults.Create(sceneObject, ObjectType(sceneObject));
             Menu = defaults;
             MenuChanged?.Invoke();
-            sendMenu(new ObjectMenuRequestPacket(state.PlayerSwgId, swgId, defaults, unchecked(++counter)));
+            sendMenu(new ObjectMenuRequestPacket(currentPlayer.SwgId, swgId, defaults, unchecked(++counter)));
         }
 
         int ObjectType(SceneObject sceneObject) => sceneObject == null ? 0 : state.Templates.GameObjectType(sceneObject.TemplatePath);
@@ -63,7 +66,7 @@ namespace Swg.Client.Runtime.Networking
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)) && radialId == ObjectMenuDefaults.MissionListAction)
+            if (radialId == ObjectMenuDefaults.MissionListAction && ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)))
                 GameServices.Resolve<ClientMissions>().Open(swgId);
             else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionDetailsAction)
                 GameServices.Resolve<ClientMissions>().ShowDetails(swgId);
@@ -73,7 +76,7 @@ namespace Swg.Client.Runtime.Networking
                 enqueueCommand("requestCraftingSession", "", swgId);
             else if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
             {
-                state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player);
+                state.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var player);
                 enqueueCommand(player?.Mount != null ? "dismount" : "mount", "", swgId);
             }
             else

@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
 
         protected override void Handle(FactionResponsePacket packet)
         {
-            replication.UpdatePlayer(state => state.CharacterSheet.Update(data => { data.ImperialPoints = packet.ImperialPoints; data.RebelPoints = packet.RebelPoints; }, CharacterSheetChange.Status));
+            replication.UpdatePlayer(player => player.CharacterSheet.Update(data => { data.ImperialPoints = packet.ImperialPoints; data.RebelPoints = packet.RebelPoints; }, CharacterSheetChange.Status));
         }
     }
 }

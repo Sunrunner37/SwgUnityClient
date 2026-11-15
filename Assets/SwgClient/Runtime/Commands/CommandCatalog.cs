@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Commands;
 using System;
 using System.Collections.Generic;
@@ -46,9 +47,9 @@ namespace Swg.Client.Runtime.Commands
         internal IReadOnlyList<Command> Definitions => definitions;
         public Task Loading { get; }
 
-        public CommandCatalog(TreRuntimeAssets assets, WorldState state)
+        public CommandCatalog(TreRuntimeAssets assets, CurrentPlayer currentPlayer)
         {
-            player = state.Commands;
+            player = currentPlayer.Commands;
             player.Changed += Refresh;
             Loading = LoadAsync(assets);
         }

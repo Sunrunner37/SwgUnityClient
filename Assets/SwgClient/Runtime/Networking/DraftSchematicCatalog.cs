@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +24,16 @@ namespace Swg.Client.Runtime.Networking
             public SharedDraftSchematicTemplate.Attribute[] Attributes;
         }
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly TreRuntimeAssets assets;
         readonly SceneObjectNameResolver names;
         readonly StringTableLocalizer localizer;
         readonly Action<string, string, SwgId> send;
         readonly Dictionary<uint, Draft> schematics = new Dictionary<uint, Draft>();
         readonly HashSet<uint> requested = new HashSet<uint>();
-        public DraftSchematicCatalog(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send)
+        public DraftSchematicCatalog(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.assets = assets;
             this.names = names;
@@ -71,7 +74,7 @@ namespace Swg.Client.Runtime.Networking
                 send("requestResourceWeightsBatch", crc.ToString(), default);
             }
         }
-        public bool TryGetDetails(uint crc, out DraftSchematicDetails details) => state.DraftDetails.TryGetValue(crc, out details);
+        public bool TryGetDetails(uint crc, out DraftSchematicDetails details) => currentPlayer.DraftDetails.TryGetValue(crc, out details);
         public IReadOnlyList<DraftSchematicDetails.ExperimentGroup> GetExperiments(uint crc) => TryGetDetails(crc, out var details)
             ? details.GroupExperiments(Get(crc).Attributes) : Array.Empty<DraftSchematicDetails.ExperimentGroup>();
 

@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
 
         protected override void Handle(BadgesResponsePacket packet)
         {
-            replication.UpdatePlayer(state => { if (state.PlayerSwgId.Value == packet.PlayerSwgId) state.CharacterSheet.Update(data => data.BadgeMasks = packet.Bitmasks, CharacterSheetChange.Badges); });
+            replication.UpdatePlayer(player => { if (player.SwgId.Value == packet.PlayerSwgId) player.CharacterSheet.Update(data => data.BadgeMasks = packet.Bitmasks, CharacterSheetChange.Badges); });
         }
     }
 }

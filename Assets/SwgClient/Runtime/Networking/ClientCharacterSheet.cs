@@ -19,6 +19,7 @@ namespace Swg.Client.Runtime.Networking
     {
         public static readonly string[] AttributeNames = { "Health", "Strength", "Constitution", "Action", "Quickness", "Stamina", "Mind", "Focus", "Willpower" };
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly Action<string, string, SwgId> send;
         readonly Action<FactionRequestPacket> requestFaction;
         readonly StringTableLocalizer strings;
@@ -28,13 +29,14 @@ namespace Swg.Client.Runtime.Networking
         DataTableFile limits;
         (int Index, string Key, bool Show)[] badges;
         public Task Loading { get; }
-        public CharacterSheetData Data => state.CharacterSheet;
-        public CreatureSceneObject Player => state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player) ? player : null;
+        public CharacterSheetData Data => currentPlayer.CharacterSheet;
+        public CreatureSceneObject Player => currentPlayer.Creature;
         public string SpeciesId => Path.GetFileNameWithoutExtension(Player?.TemplatePath ?? "").Replace("shared_", "").Replace("_female", "").Replace("_male", "");
         public string SpeciesName => Label("species", SpeciesId);
 
-        public ClientCharacterSheet(WorldState state, TreRuntimeAssets assets, StringTableLocalizer strings, Action<string, string, SwgId> send, Action<FactionRequestPacket> requestFaction)
+        public ClientCharacterSheet(WorldState state, TreRuntimeAssets assets, StringTableLocalizer strings, Action<string, string, SwgId> send, Action<FactionRequestPacket> requestFaction, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.send = send;
             this.requestFaction = requestFaction;
@@ -53,9 +55,9 @@ namespace Swg.Client.Runtime.Networking
         }
         public void Open()
         {
-            send("requestCharacterSheetInfo", "", state.PlayerSwgId);
-            send("requestBadges", "", state.PlayerSwgId);
-            send("requestBiography", "", state.PlayerSwgId);
+            send("requestCharacterSheetInfo", "", currentPlayer.SwgId);
+            send("requestBadges", "", currentPlayer.SwgId);
+            send("requestBiography", "", currentPlayer.SwgId);
             requestFaction(new FactionRequestPacket());
         }
         public void RequestMigration()
@@ -69,7 +71,7 @@ namespace Swg.Client.Runtime.Networking
                 return;
             }
             migrationPending = true;
-            send("requestStatMigrationData", "", state.PlayerSwgId);
+            send("requestStatMigrationData", "", currentPlayer.SwgId);
         }
         void MigrationReceived(CharacterSheetChange changes)
         {
@@ -92,7 +94,7 @@ namespace Swg.Client.Runtime.Networking
             state.SceneStarted -= SceneStarted;
             observedData.Changed -= MigrationReceived;
         }
-        public void CancelMigration() => send("requestStatMigrationStop", "", state.PlayerSwgId);
+        public void CancelMigration() => send("requestStatMigrationStop", "", currentPlayer.SwgId);
         public bool SaveMigration(HamAttributes targets, out string error)
         {
             error = null;
@@ -102,7 +104,7 @@ namespace Swg.Client.Runtime.Networking
             for (int i = 0; i < 9; i++)
                 if (targets[i] < minimum[i] || targets[i] > maximum[i]) error = "An attribute is outside your species limits.";
             if (error != null) return false;
-            send("requestSetStatMigrationData", string.Join(" ", targets.ToArray()), state.PlayerSwgId);
+            send("requestSetStatMigrationData", string.Join(" ", targets.ToArray()), currentPlayer.SwgId);
             return true;
         }
         public HamAttributes MigrationLimits(bool maximum)

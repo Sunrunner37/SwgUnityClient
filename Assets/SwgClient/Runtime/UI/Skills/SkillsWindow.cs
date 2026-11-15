@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,6 +56,7 @@ namespace Swg.Client.Runtime.UI.Skills
         public bool Ready { get; private set; }
         public IEnumerable<GameObject> UiPrefabs => new[] { professionPrefab.gameObject, dividerPrefab, detailRowPrefab.gameObject };
         WorldState state;
+        CurrentPlayer currentPlayer;
         ClientSkills skills;
         CommandVisuals visuals;
         SkillCatalog.Skill profession;
@@ -68,6 +70,7 @@ namespace Swg.Client.Runtime.UI.Skills
 
         void Awake()
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             skills = GameServices.Resolve<ClientSkills>();
             visuals = GameServices.Resolve<CommandVisuals>();
@@ -82,9 +85,9 @@ namespace Swg.Client.Runtime.UI.Skills
         IEnumerable<SkillBox> Boxes() => new[] { master, novice }.Concat(branches);
         void OnEnable()
         {
-            state.SceneObjects.Subscribe(state.PlayerSwgId, PlayerChanged);
-            state.ExperienceChanged += MarkDirty;
-            state.Commands.Changed += MarkDirty;
+            state.SceneObjects.Subscribe(currentPlayer.SwgId, PlayerChanged);
+            currentPlayer.ExperienceChanged += MarkDirty;
+            currentPlayer.Commands.Changed += MarkDirty;
             theme.Changed += MarkDirty;
             characterTab.onValueChanged.AddListener(CharacterTab);
             allTab.onValueChanged.AddListener(AllTab);
@@ -102,9 +105,9 @@ namespace Swg.Client.Runtime.UI.Skills
         }
         void OnDisable()
         {
-            state.SceneObjects.Unsubscribe(state.PlayerSwgId, PlayerChanged);
-            state.ExperienceChanged -= MarkDirty;
-            state.Commands.Changed -= MarkDirty;
+            state.SceneObjects.Unsubscribe(currentPlayer.SwgId, PlayerChanged);
+            currentPlayer.ExperienceChanged -= MarkDirty;
+            currentPlayer.Commands.Changed -= MarkDirty;
             theme.Changed -= MarkDirty;
             characterTab.onValueChanged.RemoveListener(CharacterTab);
             allTab.onValueChanged.RemoveListener(AllTab);
@@ -147,7 +150,7 @@ namespace Swg.Client.Runtime.UI.Skills
                 row.Button.colors = colors;
                 row.Label.color = selectedProfession ? theme.onAccent : theme.bodyText;
             }
-            experience.text = string.Join("\n", state.Experience.OrderBy(pair => skills.Catalog.Label("exp_n", pair.Key)).Select(pair => Line(skills.Catalog.Label("exp_n", pair.Key), pair.Value)));
+            experience.text = string.Join("\n", currentPlayer.Experience.OrderBy(pair => skills.Catalog.Label("exp_n", pair.Key)).Select(pair => Line(skills.Catalog.Label("exp_n", pair.Key), pair.Value)));
             modifiers.text = skills.Player == null ? "" : string.Join("\n", skills.Player.SkillModifiers.Where(pair => pair.Value != 0 && !pair.Key.StartsWith("private_", StringComparison.Ordinal)).OrderBy(pair => skills.Catalog.Label("stat_n", pair.Key)).Select(pair => Line(skills.Catalog.Label("stat_n", pair.Key), pair.Value)));
             certifications.text = string.Join("\n", skills.Certifications);
             foreach (var box in Boxes()) Refresh(box);

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +29,8 @@ namespace Swg.Client.Tests.Editor
         sealed class QueueSetup : IDisposable
         {
             public readonly Owner Context = new Owner();
-            public readonly WorldState State = new WorldState(new SceneObjectRegistry());
+            public readonly WorldState State;
+            public readonly CurrentPlayer currentPlayer;
             public readonly List<CommandQueueEnqueuePacket> Sent = new List<CommandQueueEnqueuePacket>();
             public readonly List<CommandQueueDequeuePacket> Cancelled = new List<CommandQueueDequeuePacket>();
             public readonly CommandCatalog Catalog;
@@ -36,17 +38,19 @@ namespace Swg.Client.Tests.Editor
             public readonly ClientCombatQueue Combat;
             public QueueSetup()
             {
-                State.BeginScene(42, Vector3.zero, "terrain/corellia.trn");
+                State = GameServicesForTests.CreateState(out currentPlayer);
+                currentPlayer.BeginScene(42);
+                State.BeginScene(Vector3.zero, "terrain/corellia.trn");
                 State.SceneObjects.Add(new CreatureSceneObject { SwgId = 42, TargetSwgId = 99 });
                 Catalog = new CommandCatalog(new[]
                 {
                     new CommandCatalog.Command { Name = "attack", Label = "Attack", AddToCombatQueue = true },
                     new CommandCatalog.Command { Name = "peace", Label = "Peace", AddToCombatQueue = true, Priority = 0 },
                     new CommandCatalog.Command { Name = "spatialChatInternal", Label = "Chat" }
-                }, State.Commands);
+                }, currentPlayer.Commands);
                 var previous = SynchronizationContext.Current;
                 SynchronizationContext.SetSynchronizationContext(Context);
-                try { Commands = new ClientCommands(Sent.Add, Cancelled.Add, State); }
+                try { Commands = new ClientCommands(Sent.Add, Cancelled.Add, currentPlayer); }
                 finally { SynchronizationContext.SetSynchronizationContext(previous); }
                 Combat = new ClientCombatQueue(Commands, Catalog);
             }

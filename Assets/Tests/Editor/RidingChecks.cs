@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.Assets.Appearances;
 using System.IO;
 using System.Linq;
@@ -27,9 +28,11 @@ namespace Swg.Client.Tests.Editor
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
             var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
             var state = new WorldState(registry);
             var serverPosition = new Vector3(187.23f, 3.58f, -5028.83f);
-            state.BeginScene(1, serverPosition, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(serverPosition, "terrain/corellia.trn");
             state.Terrain = WorldTerrain.Load(loader, state.TerrainPath);
             var vehicle = new CreatureSceneObject { SwgId = 2, Position = serverPosition };
             registry.Add(vehicle);
@@ -88,15 +91,17 @@ namespace Swg.Client.Tests.Editor
             try
             {
                 var registry = new SceneObjectRegistry();
-                var state = new WorldState(registry);
-                state.BeginScene(1, Vector3.zero, "terrain/test.trn");
+                var currentPlayer = new CurrentPlayer(registry);
+            var state = new WorldState(registry);
+                currentPlayer.BeginScene(1);
+                state.BeginScene(Vector3.zero, "terrain/test.trn");
                 var player = new CreatureSceneObject { SwgId = 1 };
                 var vehicle = new CreatureSceneObject { SwgId = 2 };
                 registry.Add(player); registry.Add(vehicle);
                 string command = null;
                 SwgId target = default;
                 int callbacks = 0;
-                using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => callbacks++, (name, arguments, swgId) => { command = name; target = swgId; });
+                using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => callbacks++, (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer);
                 interactions.SelectMenuAction(2, ObjectMenuDefaults.VehicleEnterExitAction, 1);
                 Assert.That(command, Is.EqualTo("mount"));
                 Assert.That(target, Is.EqualTo((SwgId)2));
@@ -116,8 +121,10 @@ namespace Swg.Client.Tests.Editor
         public void MountedCoordinatesAndServerCorrectionsPreserveTheMountUntilDismount()
         {
             var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
             var state = new WorldState(registry);
-            state.BeginScene(1, Vector3.zero, "terrain/test.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/test.trn");
             var player = new CreatureSceneObject { SwgId = 1, Position = new Vector3(100, 5, 200), States = CreatureState.RidingMount };
             var vehicle = new CreatureSceneObject { SwgId = 2, Position = player.Position };
             registry.Add(player); registry.Add(vehicle); registry.Reparent(1, 2);
@@ -125,7 +132,7 @@ namespace Swg.Client.Tests.Editor
             var item = new TangibleSceneObject { SwgId = 3, Position = Vector3.right };
             registry.Add(item); registry.Reparent(3, 1);
             Assert.That(registry.GetServerWorldPose(3).position, Is.EqualTo(player.Position + Vector3.right), "Objects contained by a mounted rider must not add the vehicle position twice either.");
-            var replication = GameServicesForTests.CreateReplication(state);
+            var replication = GameServicesForTests.CreateReplication(state, currentPlayer);
             try
             {
                 var original = vehicle.Position;

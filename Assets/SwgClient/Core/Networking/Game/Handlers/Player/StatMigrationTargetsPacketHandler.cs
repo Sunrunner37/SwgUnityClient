@@ -22,7 +22,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
 
         protected override void Handle(StatMigrationTargetsPacket packet)
         {
-            replication.UpdatePlayer(state => state.CharacterSheet.Update(data => { data.MigrationTargets = HamAttributes.FromArray(packet.Attributes); data.MigrationBudget = data.MigrationTargets.Total + packet.RemainingPoints; data.HasMigrationTargets = true; }, CharacterSheetChange.Migration));
+            replication.UpdatePlayer(player => player.CharacterSheet.Update(data => { data.MigrationTargets = HamAttributes.FromArray(packet.Attributes); data.MigrationBudget = data.MigrationTargets.Total + packet.RemainingPoints; data.HasMigrationTargets = true; }, CharacterSheetChange.Migration));
         }
     }
 }

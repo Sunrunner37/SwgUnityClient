@@ -56,12 +56,12 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 abilitiesReader.U16();
                 var commands = PlayerView9.ReadBaseline(abilitiesReader);
                 replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
-                replication.UpdatePlayer(state =>
+                replication.UpdatePlayer(player =>
                 {
-                    if (commands.Abilities != null) state.Commands.Apply(commands.Abilities);
-                    if (commands.Schematics != null) state.UpdateDraftSchematics(commands.Schematics);
-                    commands.Details?.Invoke(state);
-                });
+                    if (commands.Abilities != null) player.Commands.Apply(commands.Abilities);
+                    if (commands.Schematics != null) player.UpdateDraftSchematics(commands.Schematics);
+                    commands.Details?.Invoke(player);
+                }, commands.Crafting);
                 return;
             }
 

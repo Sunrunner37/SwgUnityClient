@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core;
 using Swg.Client.Core.World.SceneObjects;
@@ -29,8 +30,8 @@ namespace Swg.Client.Tests.Editor
         [TestCase(6)]
         public void TruncatedBaselineNeverCommitsPartialValues(int view)
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             router.Accept(Encode(new SceneCreateObjectPacket(42, Quaternion.identity, new Vector3(1, 2, 3), 123)));
             world.ApplyPending();
             long revision = world.Revision;
@@ -63,8 +64,8 @@ namespace Swg.Client.Tests.Editor
         [TestCase(true)]
         public void InvalidDeltaRollsBackEarlierFields(bool unknownField)
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             router.Accept(Encode(new BaselinesPacket(42, 0x4352454f, 3, GamePacketChecks.Creature3())));
             world.ApplyPending();
             long revision = world.Revision;
@@ -87,8 +88,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ValidDeltaCommitsAllValuesWithOneRevision()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             router.Accept(Encode(new BaselinesPacket(42, 0x4352454f, 3, GamePacketChecks.Creature3())));
             world.ApplyPending();
             long revision = world.Revision;
@@ -115,8 +116,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void TangibleDeltaDoesNotReadCreatureFields()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             byte[] payload = Delta(writer =>
             {
                 writer.Write((ushort)1);
@@ -133,8 +134,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void InvalidSceneStartPreservesPreviousWorld()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             router.Accept(Encode(new CmdStartScenePacket(42, "terrain/t.trn", Vector3.zero, "player", 1)));
             world.ApplyPending();
             long revision = world.Revision;
@@ -148,7 +149,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void DuplicateOpcodeRegistrationFailsImmediately()
         {
-            var handler = new SceneCreateObjectPacketHandler(GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry())));
+            var handler = new SceneCreateObjectPacketHandler(GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer));
             var error = Assert.Throws<InvalidOperationException>(() => PacketHandlerDiscovery.Map(new IGamePacketHandler[] { handler, handler }, item => item.Opcode));
             Assert.That(error.Message, Does.Contain(nameof(SceneCreateObjectPacketHandler)));
             Assert.That(error.Message, Does.Contain(SceneCreateObjectPacket.Opcode.ToString("X8")));
@@ -157,10 +158,10 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ReflectedHandlersHaveSeparateSessionDependencies()
         {
-            var first = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var second = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var firstRouter = new GamePacketRouter(GameServicesForTests.Create(first));
-            var secondRouter = new GamePacketRouter(GameServicesForTests.Create(second));
+            var first = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var second = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var secondPlayer), secondPlayer);
+            var firstRouter = new GamePacketRouter(GameServicesForTests.Create(first, currentPlayer));
+            var secondRouter = new GamePacketRouter(GameServicesForTests.Create(second, secondPlayer));
             firstRouter.Accept(Encode(new SceneCreateObjectPacket(42, Quaternion.identity, Vector3.zero, 123)));
             first.ApplyPending();
             Assert.That(first.CaptureSnapshot().Objects.Single().SwgId, Is.EqualTo(new SwgId(42)));
@@ -174,8 +175,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ReflectedHandlersAndConstructorsArePreservedInPlayerBuilds()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var types = PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world)).Select(handler => handler.GetType()).Concat(PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world)).Select(handler => handler.GetType())).ToArray();
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var types = PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world, currentPlayer)).Select(handler => handler.GetType()).Concat(PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world, currentPlayer)).Select(handler => handler.GetType())).ToArray();
             Assert.That(types, Is.Not.Empty);
             foreach (var type in types)
             {
@@ -188,8 +189,8 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void UnsupportedMessagesDoNotChangeObjects()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             for (uint opcode = 1; opcode <= 40; opcode++)
                 router.Accept(Delta(writer =>
                 {

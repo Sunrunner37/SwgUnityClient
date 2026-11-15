@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Swg.Client.Runtime.Networking.Chat
     {
         readonly GameConnection connection;
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly ChatText text;
         readonly SynchronizationContext context;
         readonly Queue<(string Channel, string Text)> history = new Queue<(string, string)>();
@@ -35,9 +37,10 @@ namespace Swg.Client.Runtime.Networking.Chat
         public IEnumerable<(string Channel, string Text)> History => history;
         public IReadOnlyDictionary<uint, ChatRoomData> Rooms => rooms;
 
-        public ClientChat(GameConnection connection, WorldState state, StringTableLocalizer localizer, ProseFormatter formatter, ClientCommands commands)
+        public ClientChat(GameConnection connection, WorldState state, StringTableLocalizer localizer, ProseFormatter formatter, ClientCommands commands, CurrentPlayer currentPlayer)
         {
             this.connection = connection;
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.commands = commands;
             text = new ChatText(localizer, formatter, state);
@@ -146,7 +149,7 @@ namespace Swg.Client.Runtime.Networking.Chat
             return "Spatial";
         }
 
-        bool IsSelf(string name) => connection.Admission.Characters.Any(c => c.SwgId == state.PlayerSwgId && string.Equals(c.Name.Split(' ')[0], name, StringComparison.OrdinalIgnoreCase));
+        bool IsSelf(string name) => connection.Admission.Characters.Any(c => c.SwgId == currentPlayer.SwgId && string.Equals(c.Name.Split(' ')[0], name, StringComparison.OrdinalIgnoreCase));
         void Post(Action apply) => context.Post(_ =>
         {
             if (!disposed)

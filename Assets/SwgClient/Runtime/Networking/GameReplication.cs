@@ -1,3 +1,5 @@
+using Swg.Client.Core.Characters;
+using Swg.Client.Core.Crafting;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Replication;
@@ -31,7 +33,14 @@ namespace Swg.Client.Runtime.Networking
         public WorldState State { get; private set; }
         public SceneObjectRegistry SceneObjects => State.SceneObjects;
 
-        public void Initialize(WorldState state) => State = state;
+        CurrentPlayer currentPlayer;
+        CraftingProgress craftingProgress;
+        public void Initialize(WorldState state, CurrentPlayer currentPlayer, CraftingProgress craftingProgress)
+        {
+            State = state;
+            this.currentPlayer = currentPlayer;
+            this.craftingProgress = craftingProgress;
+        }
         void Update() => ApplyPending();
         void OnDestroy() => StopReceiving();
         public long Revision => revision;
@@ -66,7 +75,8 @@ namespace Swg.Client.Runtime.Networking
                 return;
             pending.Enqueue(() =>
             {
-                State.BeginScene(start.PlayerSwgId, start.Position, start.TerrainPath);
+                currentPlayer.BeginScene(start.PlayerSwgId);
+                State.BeginScene(start.Position, start.TerrainPath);
                 replication.Clear();
                 startScene = start;
                 sceneReadyAcknowledged = false;
@@ -80,19 +90,19 @@ namespace Swg.Client.Runtime.Networking
         internal void UpdateWaypoints(Action<Dictionary<SwgId, Waypoint>> update)
         {
             if (!disposed)
-                pending.Enqueue(() => State.UpdateWaypoints(update));
+                pending.Enqueue(() => currentPlayer.UpdateWaypoints(update));
         }
 
-        internal void UpdatePlayer(Action<WorldState> update)
+        internal void UpdatePlayer(Action<CurrentPlayer> update, Action<CraftingProgress> updateCrafting = null)
         {
             if (!disposed)
-                pending.Enqueue(() => update(State));
+                pending.Enqueue(() => { update(currentPlayer); updateCrafting?.Invoke(craftingProgress); });
         }
 
         internal void UpdateDraftDetails(uint crc, DraftSchematicDetails details)
         {
             if (!disposed)
-                pending.Enqueue(() => State.UpdateDraftDetails(crc, details));
+                pending.Enqueue(() => currentPlayer.UpdateDraftDetails(crc, details));
         }
 
         internal void AcknowledgeSceneReady()
@@ -137,7 +147,7 @@ namespace Swg.Client.Runtime.Networking
             Enqueue(swgId, () =>
             {
                 // Core3 broadcasts an extrapolated vehicle pose back to its rider. Local input owns this prediction; explicit controller corrections still apply.
-                if (isBroadcast && SceneObjects.TryGet<CreatureSceneObject>(State.PlayerSwgId, out var localPlayer) && localPlayer.Mount?.SwgId == swgId && (localPlayer.States & CreatureState.RidingMount) != 0)
+                if (isBroadcast && SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var localPlayer) && localPlayer.Mount?.SwgId == swgId && (localPlayer.States & CreatureState.RidingMount) != 0)
                     return;
                 var parentSwgId = update.ParentSwgId;
                 // A rider still receives world-space corrections; they do not remove its mount containment.
@@ -212,7 +222,7 @@ namespace Swg.Client.Runtime.Networking
         // Main-thread local prediction shares the registry and targeted pose notifications with replication.
         public uint NextPlayerMovementCounter()
         {
-            return ++replication[State.PlayerSwgId].MovementCounter;
+            return ++replication[currentPlayer.SwgId].MovementCounter;
         }
 
         public void SetTemplates(ObjectTemplateCatalog catalog)

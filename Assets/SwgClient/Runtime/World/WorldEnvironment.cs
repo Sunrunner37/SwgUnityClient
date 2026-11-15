@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Swg.Client.Runtime.World
         [Range(0, 1)]
         public float timeOfDay = .25f;
         WorldState state;
+        CurrentPlayer currentPlayer;
         Material originalSky;
         Material sky;
         float nextSample;
@@ -30,6 +32,7 @@ namespace Swg.Client.Runtime.World
 
         public void Initialize(WorldState state)
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             this.state = state;
             sun.enabled = false;
         }
@@ -60,7 +63,7 @@ namespace Swg.Client.Runtime.World
                 return;
             if (Time.unscaledTime >= nextSample)
             {
-                var position = this.state.SceneObjects.GetServerWorldPose(this.state.PlayerSwgId).position;
+                var position = this.state.SceneObjects.GetServerWorldPose(currentPlayer.SwgId).position;
                 environment = this.state.Terrain.Environments.Get(this.state.Terrain.Sample(position.x, position.z).EnvironmentFamily);
                 nextSample = Time.unscaledTime + .25f;
             }

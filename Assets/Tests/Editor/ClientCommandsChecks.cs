@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace Swg.Client.Tests.Editor
         {
             var previous = SynchronizationContext.Current;
             SynchronizationContext.SetSynchronizationContext(owner);
-            try { return new ClientCommands(_ => { }, _ => { }, new WorldState(new SceneObjectRegistry())); }
+            try { return new ClientCommands(_ => { }, _ => { }, new CurrentPlayer(new SceneObjectRegistry())); }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
         }
 

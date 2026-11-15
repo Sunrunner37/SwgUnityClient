@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.World;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core;
@@ -49,9 +50,9 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void EveryInventoriedServerActionHasOneDiscoveredHandler()
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var packets = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world)), handler => handler.Opcode);
-            var controllers = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world)), handler => handler.ControllerType);
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var packets = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world, currentPlayer)), handler => handler.Opcode);
+            var controllers = PacketHandlerDiscovery.Map(PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world, currentPlayer)), handler => handler.ControllerType);
             var entries = Entries();
             Assert.That(packets.Keys, Is.EquivalentTo(entries.Where(item => item.kind == "Packet").Select(item => item.value)));
             Assert.That(controllers.Keys, Is.EquivalentTo(entries.Where(item => item.kind == "Controller").Select(item => item.value)));
@@ -65,8 +66,8 @@ namespace Swg.Client.Tests.Editor
         [TestCaseSource(nameof(Skeletons))]
         public void SkeletonIsTypedRoundTripsAndReportsWithoutMutatingWorld(Entry entry)
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             var assembly = typeof(GamePacketRouter).Assembly;
             var type = assembly.GetType(entry.packetType, true);
             var read = type.GetMethod("ReadFrom", new[] { typeof(ByteReader) });
@@ -81,12 +82,12 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(stream.ToArray(), Is.EqualTo(bytes), entry.name + " must preserve its parsed fields");
                 if (entry.kind == "Packet")
                 {
-                    var handler = PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world)).Single(item => item.Opcode == entry.value);
+                    var handler = PacketHandlerDiscovery.Create<IGamePacketHandler>(GameServicesForTests.Create(world, currentPlayer)).Single(item => item.Opcode == entry.value);
                     Assert.Throws<NotImplementedException>(() => handler.Handle(new ByteReader(bytes)));
                 }
                 else
                 {
-                    var handler = PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world)).Single(item => item.ControllerType == entry.value);
+                    var handler = PacketHandlerDiscovery.Create<IObjectControllerHandler>(GameServicesForTests.Create(world, currentPlayer)).Single(item => item.ControllerType == entry.value);
                     var envelope = ObjectControllerPacket.ReadFrom(new ByteReader(bytes));
                     Assert.Throws<NotImplementedException>(() => handler.Handle(envelope));
                 }
@@ -108,8 +109,8 @@ namespace Swg.Client.Tests.Editor
         public void UnimplementedActionDoesNotBlockFollowingImplementedPacket()
         {
             var entry = Entries().First(item => item.skeleton && item.kind == "Packet");
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var router = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var router = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             router.Accept(Fixture(entry, (ushort)entry.operands[0]));
             using var writer = new PacketWriter();
             var create = new SceneCreateObjectPacket(42, Quaternion.identity, Vector3.zero, 123);

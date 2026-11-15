@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Swg.Client.Runtime.UI.Combat
         public IEnumerable<GameObject> UiPrefabs { get { yield return rowPrefab.gameObject; } }
         readonly Dictionary<uint, CombatQueueRow> rows = new Dictionary<uint, CombatQueueRow>();
         WorldState state;
+        CurrentPlayer currentPlayer;
         ClientCombatQueue queue;
         CommandCatalog catalog;
         CommandVisuals visuals;
@@ -33,6 +35,7 @@ namespace Swg.Client.Runtime.UI.Combat
         bool ready;
         void Awake()
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             queue = GameServices.Resolve<ClientCombatQueue>();
             catalog = GameServices.Resolve<CommandCatalog>();
@@ -69,7 +72,7 @@ namespace Swg.Client.Runtime.UI.Combat
         void BindPlayer()
         {
             state.SceneObjects.Unsubscribe(playerSwgId, OnPlayerChanged);
-            playerSwgId = state.PlayerSwgId;
+            playerSwgId = currentPlayer.SwgId;
             state.SceneObjects.Subscribe(playerSwgId, OnPlayerChanged);
             OnPlayerChanged(SceneObjectChange.State);
         }

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core;
@@ -11,14 +12,16 @@ namespace Swg.Client.Runtime.World.SceneObjects
     public sealed class ClientTargeting : IDisposable
     {
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly SceneObjectRegistry registry;
         readonly Action<TargetUpdatePacket> send;
         SwgId playerSwgId;
         public SwgId SelectedSwgId { get; private set; }
         public SwgId HoveredSwgId { get; private set; }
 
-        public ClientTargeting(WorldState state, Action<TargetUpdatePacket> send)
+        public ClientTargeting(WorldState state, Action<TargetUpdatePacket> send, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.send = send;
             registry = state.SceneObjects;
@@ -52,7 +55,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void BindPlayer()
         {
             registry.Unsubscribe(playerSwgId, OnPlayerChanged);
-            playerSwgId = state.PlayerSwgId;
+            playerSwgId = currentPlayer.SwgId;
             SetSelection(default);
             if (!playerSwgId.IsNone)
             {

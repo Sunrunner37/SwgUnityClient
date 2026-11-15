@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
@@ -44,8 +45,8 @@ namespace Swg.Client.Tests.Editor
 
         static void CheckState(byte[] malformed)
         {
-            var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
-            var packets = new GamePacketRouter(GameServicesForTests.Create(world));
+            var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
+            var packets = new GamePacketRouter(GameServicesForTests.Create(world, currentPlayer));
             packets.Accept(Encode(new CmdStartScenePacket(42, "terrain/corellia.trn", new Vector3(1, 2, 3), "object/creature/player/shared_human_female.iff", 99)));
             world.ApplyPending();
             Check(world.CaptureSceneStatus().StartScene.HasValue && !world.CaptureSceneStatus().PlayerBaselinesComplete, "Lightweight initial scene status");

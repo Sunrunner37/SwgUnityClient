@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using Swg.Client.Core;
@@ -17,7 +18,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             get
             {
                 if (player == null)
-                    player = objects[GameServices.Resolve<WorldState>().PlayerSwgId];
+                    player = objects[GameServices.Resolve<CurrentPlayer>().SwgId];
                 return player;
             }
 

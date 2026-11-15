@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Reflection;
@@ -18,7 +19,8 @@ namespace Swg.Client.Tests.Editor
             previous = game.GetValue(null);
             var builder = new ContainerBuilder();
             builder.RegisterInstance(registry);
-            builder.RegisterInstance(new WorldState(registry));
+            builder.RegisterInstance(GameServicesForTests.CreateState(registry, out var currentPlayer));
+            builder.RegisterInstance(currentPlayer);
             register?.Invoke(builder);
             scope = builder.Build();
             ManagedSceneObject.ResetPlayerCache();

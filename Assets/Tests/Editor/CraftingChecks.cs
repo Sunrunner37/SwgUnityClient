@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
@@ -88,8 +89,10 @@ namespace Swg.Client.Tests.Editor
             using var assets = new TreRuntimeAssets(settings);
             await assets.Ready;
             var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
             var state = new WorldState(registry) { Templates = new ObjectTemplateCatalog(assets.Loader) };
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             state.Templates = new ObjectTemplateCatalog(assets.Loader);
             registry.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/inventory/shared_character_inventory.iff" });
             var material = new TangibleSceneObject { SwgId = 9, ParentSwgId = 2, ResourceType = "copper_polysteel" };
@@ -100,15 +103,16 @@ namespace Swg.Client.Tests.Editor
             var tool = new TangibleSceneObject { SwgId = 14, Quantity = 0 };
             registry.Add(tool);
             var localizer = new StringTableLocalizer(assets);
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new Swg.Client.Runtime.Networking.Chat.ClientChat(null, state, localizer, new ProseFormatter(), commands);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new Swg.Client.Runtime.Networking.Chat.ClientChat(null, state, localizer, new ProseFormatter(), commands, currentPlayer);
             var messages = new List<string>(); chat.ScreenMessageReceived += messages.Add;
-            using var inventory = new ClientInventory(state, _ => { });
-            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => { }, (name, args, target) => { });
-            using var catalog = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, args, target) => { });
+            using var inventory = new ClientInventory(state, _ => { }, currentPlayer);
+            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => { }, (name, args, target) => { }, currentPlayer);
+            using var catalog = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, args, target) => { }, currentPlayer);
             var sentAdds = new List<CraftingAddIngredientPacket>();
             var sentRemoves = new List<CraftingRemoveIngredientPacket>();
-            using var session = new ClientCrafting(state, catalog, inventory, interactions, localizer, assets, (name, args, target) => { }, sentAdds.Add, _ => { }, _ => { }, sentRemoves.Add, chat);
+            var craftingProgress = new CraftingProgress();
+            using var session = new ClientCrafting(state, catalog, inventory, interactions, localizer, assets, (name, args, target) => { }, sentAdds.Add, _ => { }, _ => { }, sentRemoves.Add, chat, currentPlayer, craftingProgress);
             await session.Loading;
             void Set(string name, object value) => typeof(ClientCrafting).GetProperty(name).SetValue(session, value);
             Set("CurrentPage", ClientCrafting.Page.Ingredients); Set("SchematicSwgId", (SwgId)13); Set("ToolSwgId", (SwgId)14);
@@ -116,7 +120,7 @@ namespace Swg.Client.Tests.Editor
                 Ascii(w, "craft_weapon_ingredients_n"); w.Write(0u); Ascii(w, "cutting_edge"); w.Write((byte)0); w.Write(1u);
                 Ascii(w, ""); w.Write(0u); Ascii(w, ""); PacketFieldCodec.Unicode(w, "metal"); w.Write((byte)4); w.Write(30u);
             }))) });
-            state.UpdateDraftDetails(123, new DraftSchematicDetails { Experiments = new[] { new[] { new DraftSchematicDetails.ExperimentWeight("Shock resistance", 3), new DraftSchematicDetails.ExperimentWeight("Overall quality", 1) } } });
+            currentPlayer.UpdateDraftDetails(123, new DraftSchematicDetails { Experiments = new[] { new[] { new DraftSchematicDetails.ExperimentWeight("Shock resistance", 3), new DraftSchematicDetails.ExperimentWeight("Overall quality", 1) } } });
             session.Select(new ClientCrafting.Choice { Entry = new DraftSchematicCatalog.Draft { SchematicCrc = 123 } });
             interactions.Receive(new AttributeListPacket(9, new[] { new AttributeValue("res_shock_resistance", "900"), new AttributeValue("res_quality", "300") }));
             await Task.Yield();
@@ -200,10 +204,13 @@ namespace Swg.Client.Tests.Editor
                 w.Write((ushort)10); w.Write(42);
             }));
             Assert.That(PlayerView9.TryReadDelta(r, out var update), Is.True);
-            var state = new WorldState(new SceneObjectRegistry()); update.Details(state);
-            Assert.That(state.Crafting.ExperimentationEnabled, Is.True); Assert.That(state.Crafting.ServerStage, Is.EqualTo(3));
-            Assert.That(state.Crafting.ExperimentationPoints, Is.EqualTo(11)); Assert.That(state.Crafting.StationSwgId, Is.EqualTo(new SwgId(91)));
-            Assert.That(state.CharacterSheet.Food, Is.EqualTo(42));
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry); update.Details?.Invoke(currentPlayer);
+            var craftingProgress = new CraftingProgress(); update.Crafting?.Invoke(craftingProgress);
+            Assert.That(craftingProgress.ExperimentationEnabled, Is.True); Assert.That(craftingProgress.ServerStage, Is.EqualTo(3));
+            Assert.That(craftingProgress.ExperimentationPoints, Is.EqualTo(11)); Assert.That(craftingProgress.StationSwgId, Is.EqualTo(new SwgId(91)));
+            Assert.That(currentPlayer.CharacterSheet.Food, Is.EqualTo(42));
         }
         [Test]
         public void SchematicSlotAndExperimentDeltasApplyWithoutSharingSnapshotLists()
@@ -247,11 +254,13 @@ namespace Swg.Client.Tests.Editor
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new TreRuntimeAssets(settings);
             await assets.Ready;
-            var state = new WorldState(new SceneObjectRegistry());
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
             state.Templates = new ObjectTemplateCatalog(assets.Loader);
             var localizer = new StringTableLocalizer(assets);
             var sent = new List<string>();
-            using var catalog = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, args, target) => sent.Add(name));
+            using var catalog = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, args, target) => sent.Add(name), currentPlayer);
             string path = assets.Loader.Catalog().Keys.First(value => value.StartsWith("object/draft_schematic/") && value.Contains("dagger"));
             uint crc = ObjectTemplateNames.TemplateCrc(path);
             var draft = catalog.Get(crc);
@@ -260,7 +269,8 @@ namespace Swg.Client.Tests.Editor
             catalog.RequestDetails(crc);
             catalog.RequestDetails(crc);
             Assert.That(sent, Is.EqualTo(new[] { "requestDraftSlotsBatch", "requestResourceWeightsBatch" }));
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             catalog.RequestDetails(crc);
             Assert.That(sent.Count, Is.EqualTo(4), "Entering a new server scene permits fresh requests.");
         }

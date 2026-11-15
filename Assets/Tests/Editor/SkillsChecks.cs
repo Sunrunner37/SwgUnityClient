@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,19 +96,21 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void PlayerExperienceBaselineAndDeltaNotifyWithoutChangingWaypoints()
         {
-            var state = new WorldState(new SceneObjectRegistry());
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
             int notifications = 0;
-            state.ExperienceChanged += () => notifications++;
+            currentPlayer.ExperienceChanged += () => notifications++;
             var baseline = new ByteReader(Bytes(writer =>
             {
                 writer.Write(1); writer.Write(1);
                 writer.Write((byte)0); Ascii(writer, "crafting_general"); writer.Write(1000);
                 writer.Write(new byte[8 + 8 + 8 + 8 + 8 + 8]); // Waypoints, force, quests and reserved map.
             }));
-            PlayerView8.ReadBaseline(baseline)(state);
+            PlayerView8.ReadBaseline(baseline)(currentPlayer);
             ReplicationReader.RequireEnd(baseline);
             int waypointNotifications = 0;
-            state.WaypointsChanged += () => waypointNotifications++;
+            currentPlayer.WaypointsChanged += () => waypointNotifications++;
             var delta = new ByteReader(Bytes(writer =>
             {
                 writer.Write((ushort)1); writer.Write((ushort)0);
@@ -115,9 +118,9 @@ namespace Swg.Client.Tests.Editor
                 writer.Write((byte)1); Ascii(writer, "crafting_general"); writer.Write(1000);
                 writer.Write((byte)0); Ascii(writer, "combat_general"); writer.Write(0);
             }));
-            PlayerView8.ReadDelta(delta)(state);
-            Assert.That(state.Experience.ContainsKey("crafting_general"), Is.False);
-            Assert.That(state.Experience["combat_general"], Is.Zero);
+            PlayerView8.ReadDelta(delta)(currentPlayer);
+            Assert.That(currentPlayer.Experience.ContainsKey("crafting_general"), Is.False);
+            Assert.That(currentPlayer.Experience["combat_general"], Is.Zero);
             Assert.That(notifications, Is.EqualTo(2));
             Assert.That(waypointNotifications, Is.Zero);
         }
@@ -204,8 +207,10 @@ namespace Swg.Client.Tests.Editor
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
             });
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
             var state = GameServices.Resolve<WorldState>();
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             var player = new CreatureSceneObject { SwgId = 1 };
             player.Skills.Add("crafting_artisan_novice");
             registry.Add(player);
@@ -229,7 +234,7 @@ namespace Swg.Client.Tests.Editor
                 var engineering = service.Catalog.Skills["crafting_artisan_engineering_01"];
                 var box = window.branches.Single(item => item.skill == engineering);
                 Assert.That(box.progress.gameObject.activeSelf, Is.True);
-                state.UpdateExperience(values => values[engineering.ExperienceType] = engineering.ExperienceCost / 2);
+                currentPlayer.UpdateExperience(values => values[engineering.ExperienceType] = engineering.ExperienceCost / 2);
                 Invoke(window, "LateUpdate");
                 Assert.That(box.progress.fillAmount, Is.EqualTo(.5f).Within(.02));
                 window.novice.button.GetComponent<SkillBoxHover>().OnPointerEnter(null);
@@ -287,8 +292,10 @@ namespace Swg.Client.Tests.Editor
                 builder.RegisterInstance(new Action<string, string, SwgId>((name, arguments, target) => sent.Add((name, arguments, target))));
                 builder.RegisterType<CommandCatalog>().SingleInstance();
             });
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
             var state = GameServices.Resolve<WorldState>();
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             var player = new CreatureSceneObject { SwgId = 1 };
             player.Skills.Add("crafting_artisan_survey_04");
             registry.Add(player);
@@ -309,7 +316,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(service.Surrender(service.Catalog.Skills["crafting_artisan_master"]), Is.False);
             Assert.That(sent, Is.Empty);
             Assert.That(service.Surrender(survey), Is.True);
-            Assert.That(sent.Single(), Is.EqualTo(("surrenderSkill", survey.Name, state.PlayerSwgId)));
+            Assert.That(sent.Single(), Is.EqualTo(("surrenderSkill", survey.Name, currentPlayer.SwgId)));
             Assert.That(service.Learned(survey), Is.True, "Only replicated updates remove skills.");
             Assert.That(service.AvailablePoints, Is.EqualTo(before));
             player.Skills.Remove(survey.Name);

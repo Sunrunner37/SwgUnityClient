@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Collections.Generic;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -33,10 +34,12 @@ namespace Swg.Client.Runtime.UI.Navigation
         }
         readonly List<Display> displays = new List<Display>();
         WorldState state;
+        CurrentPlayer currentPlayer;
         StringTableLocalizer localizer;
 
         void Awake()
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             localizer = GameServices.Resolve<StringTableLocalizer>();
         }
@@ -45,14 +48,14 @@ namespace Swg.Client.Runtime.UI.Navigation
         {
             if (worldCamera == null)
                 worldCamera = Camera.main;
-            state.WaypointsChanged += Rebuild;
+            currentPlayer.WaypointsChanged += Rebuild;
             state.SceneStarted += Rebuild;
             Rebuild();
         }
 
         void OnDisable()
         {
-            state.WaypointsChanged -= Rebuild;
+            currentPlayer.WaypointsChanged -= Rebuild;
             state.SceneStarted -= Rebuild;
         }
 
@@ -66,7 +69,7 @@ namespace Swg.Client.Runtime.UI.Navigation
                 Destroy(display.Arrow.gameObject);
             }
             displays.Clear();
-            foreach (var waypoint in state.NavigationWaypoints)
+            foreach (var waypoint in currentPlayer.NavigationWaypoints)
             {
                 if (!waypoint.Active || waypoint.PlanetCrc != state.PlanetCrc)
                     continue;
@@ -83,14 +86,14 @@ namespace Swg.Client.Runtime.UI.Navigation
 
         void LateUpdate()
         {
-            if (!state.SceneObjects.TryGet<SpatialSceneObject>(state.PlayerSwgId, out _))
+            if (!state.SceneObjects.TryGet<SpatialSceneObject>(currentPlayer.SwgId, out _))
                 return;
-            var playerPosition = state.SceneObjects.GetServerWorldPose(state.PlayerSwgId).position - state.RenderOrigin;
-            if (ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player))
+            var playerPosition = state.SceneObjects.GetServerWorldPose(currentPlayer.SwgId).position - state.RenderOrigin;
+            if (ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var player))
                 playerPosition = player.transform.position;
             foreach (var display in displays)
             {
-                display.Arrow.gameObject.SetActive(state.ShowWaypointIndicators);
+                display.Arrow.gameObject.SetActive(currentPlayer.ShowWaypointIndicators);
                 var destination = display.Waypoint.Position - state.RenderOrigin;
                 var delta = Vector3.ProjectOnPlane(destination - playerPosition, Vector3.up);
                 var bearing = worldCamera != null ? NavigationArrow.Bearing(worldCamera, playerPosition, destination) : Vector2.up;

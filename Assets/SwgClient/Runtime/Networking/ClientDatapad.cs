@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace Swg.Client.Runtime.Networking
             public string Appearance;
         }
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly TreRuntimeAssets assets;
         readonly SceneObjectNameResolver names;
         readonly StringTableLocalizer localizer;
@@ -63,16 +65,17 @@ namespace Swg.Client.Runtime.Networking
             _ => 1
         });
 
-        public ClientDatapad(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send, DraftSchematicCatalog schematics)
+        public ClientDatapad(WorldState state, TreRuntimeAssets assets, SceneObjectNameResolver names, StringTableLocalizer localizer, Action<string, string, SwgId> send, DraftSchematicCatalog schematics, CurrentPlayer currentPlayer)
         {
             this.schematics = schematics;
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.assets = assets;
             this.names = names;
             this.localizer = localizer;
             this.send = send;
-            state.WaypointsChanged += Refresh;
-            state.DraftSchematicsChanged += Refresh;
+            currentPlayer.WaypointsChanged += Refresh;
+            currentPlayer.DraftSchematicsChanged += Refresh;
             state.SceneStarted += SceneStarted;
             state.SceneObjects.ObjectChanged += ObjectChanged;
             state.SceneObjects.Removed += Removed;
@@ -89,7 +92,7 @@ namespace Swg.Client.Runtime.Networking
                 return (entries, planets: planetTable.Rows.Select(row => (name: row.Get<string>("name"), appearance: row.Get<string>("appearance"))).ToArray());
             });
             pois.AddRange(metadata.entries);
-            state.SetPoiWaypoints(pois.Select(point => new Waypoint(default, point.Position, ObjectTemplateNames.TemplateCrc(point.Planet), point.Name, WaypointColor.Yellow, false, point.Key)));
+            currentPlayer.SetPoiWaypoints(pois.Select(point => new Waypoint(default, point.Position, ObjectTemplateNames.TemplateCrc(point.Planet), point.Name, WaypointColor.Yellow, false, point.Key)));
             foreach (var planet in metadata.planets)
             {
                 uint crc = ObjectTemplateNames.TemplateCrc(planet.name);
@@ -104,14 +107,14 @@ namespace Swg.Client.Runtime.Networking
         void SceneStarted() => Refresh();
         void Refresh()
         {
-            var container = state.SceneObjects.ChildrenOf(state.PlayerSwgId).FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) == true);
+            var container = state.SceneObjects.ChildrenOf(currentPlayer.SwgId).FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) == true);
             ContainerSwgId = container?.SwgId ?? default;
             Changed?.Invoke();
         }
         void ObjectChanged(SceneObject item, SceneObjectChange changes)
         {
             if ((changes & (SceneObjectChange.Appearance | SceneObjectChange.Containment | SceneObjectChange.Inventory | SceneObjectChange.Replaced)) != 0
-                && (item.SwgId == ContainerSwgId || item.ParentSwgId == ContainerSwgId || item.ParentSwgId == state.PlayerSwgId))
+                && (item.SwgId == ContainerSwgId || item.ParentSwgId == ContainerSwgId || item.ParentSwgId == currentPlayer.SwgId))
                 Refresh();
         }
         void Removed(SceneObject item)
@@ -128,7 +131,7 @@ namespace Swg.Client.Runtime.Networking
             switch (tab)
             {
                 case Tab.Waypoints:
-                    return state.Waypoints.Values.Where(w => !OnlyCurrentPlanet || w.PlanetCrc == state.PlanetCrc).Select(w => new Entry
+                    return currentPlayer.Waypoints.Values.Where(w => !OnlyCurrentPlanet || w.PlanetCrc == state.PlanetCrc).Select(w => new Entry
                     {
                         Key = "waypoint:" + w.SwgId, Name = localizer.Localize(w.Name), Kind = "Waypoint", Waypoint = w,
                         PreviewPath = PlanetAppearance(w.PlanetCrc), Planet = PlanetName(w.PlanetCrc)
@@ -139,11 +142,11 @@ namespace Swg.Client.Runtime.Networking
                     return pois.Where(p => ObjectTemplateNames.TemplateCrc(p.Planet) == state.PlanetCrc).Select(p => new Entry
                     {
                         Key = p.Key, Name = localizer.Localize(p.Name), Description = localizer.Localize(p.Description),
-                        Waypoint = state.PoiWaypoints[p.Key], Planet = PlanetName(ObjectTemplateNames.TemplateCrc(p.Planet)),
+                        Waypoint = currentPlayer.PoiWaypoints[p.Key], Planet = PlanetName(ObjectTemplateNames.TemplateCrc(p.Planet)),
                         PreviewPath = string.IsNullOrEmpty(p.Appearance) ? PlanetAppearance(state.PlanetCrc) : "appearance/" + p.Appearance
                     }).ToArray();
                 default:
-                    return state.DraftSchematics.Select(Schematic).Where(entry => entry != null).ToArray();
+                    return currentPlayer.DraftSchematics.Select(Schematic).Where(entry => entry != null).ToArray();
             }
         }
         Entry Schematic(uint crc)
@@ -161,21 +164,21 @@ namespace Swg.Client.Runtime.Networking
         public void ToggleWaypoint(Waypoint waypoint)
         {
             if (!waypoint.Active && SingleActiveWaypoint)
-                foreach (var active in state.NavigationWaypoints.Where(point => point.Active).ToArray())
+                foreach (var active in currentPlayer.NavigationWaypoints.Where(point => point.Active).ToArray())
                     SetWaypointActive(active, false);
             SetWaypointActive(waypoint, !waypoint.Active);
         }
         void SetWaypointActive(Waypoint waypoint, bool active)
         {
             if (waypoint.PoiKey != null)
-                state.SetPoiWaypointActive(waypoint.PoiKey, active);
+                currentPlayer.SetPoiWaypointActive(waypoint.PoiKey, active);
             else if (waypoint.Active != active)
                 send("setWaypointActiveStatus", "", waypoint.SwgId);
         }
         public void Dispose()
         {
-            state.WaypointsChanged -= Refresh;
-            state.DraftSchematicsChanged -= Refresh;
+            currentPlayer.WaypointsChanged -= Refresh;
+            currentPlayer.DraftSchematicsChanged -= Refresh;
             state.SceneStarted -= SceneStarted;
             state.SceneObjects.ObjectChanged -= ObjectChanged;
             state.SceneObjects.Removed -= Removed;

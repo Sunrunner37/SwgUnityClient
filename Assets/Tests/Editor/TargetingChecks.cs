@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.Assets.Appearances;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +32,7 @@ namespace Swg.Client.Tests.Editor
             registry.Add(new SpatialSceneObject { SwgId = 42 });
             registry.Add(new SceneObject { SwgId = 43 });
             var sent = new List<TargetUpdatePacket>();
-            using var targeting = new ClientTargeting(new WorldState(registry), sent.Add);
+            using var targeting = new ClientTargeting(GameServicesForTests.CreateState(registry, out var currentPlayer), sent.Add, currentPlayer);
             targeting.Select(43); // Intangible objects cannot be world targets.
             Assert.That(targeting.SelectedSwgId.IsNone, Is.True);
             targeting.Select(42);
@@ -51,10 +52,12 @@ namespace Swg.Client.Tests.Editor
         public void ReplicatedSelectionFollowsThePlayerWithoutEchoingRequests()
         {
             var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
             var state = new WorldState(registry);
             int requests = 0;
-            using var targeting = new ClientTargeting(state, _ => requests++);
-            state.BeginScene(7, Vector3.zero, "terrain/test.trn");
+            using var targeting = new ClientTargeting(state, _ => requests++, currentPlayer);
+            currentPlayer.BeginScene(7);
+            state.BeginScene(Vector3.zero, "terrain/test.trn");
             var player = new CreatureSceneObject { SwgId = 7, TargetSwgId = 42 };
             registry.Add(player);
             Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(42));
@@ -62,7 +65,8 @@ namespace Swg.Client.Tests.Editor
             registry.NotifyChanged(player, SceneObjectChange.Target);
             Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(43));
             Assert.That(requests, Is.Zero);
-            state.BeginScene(8, Vector3.zero, "terrain/other.trn");
+            currentPlayer.BeginScene(8);
+            state.BeginScene(Vector3.zero, "terrain/other.trn");
             registry.Add(new CreatureSceneObject { SwgId = 8, TargetSwgId = 44 });
             Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(44));
             targeting.Dispose();
@@ -76,10 +80,12 @@ namespace Swg.Client.Tests.Editor
         public void LocalSelectionUpdatesThePlayerAndSendsOnlyChangedTargets()
         {
             var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
             var state = new WorldState(registry);
             var sent = new List<TargetUpdatePacket>();
-            using var targeting = new ClientTargeting(state, sent.Add);
-            state.BeginScene(7, Vector3.zero, "terrain/test.trn");
+            using var targeting = new ClientTargeting(state, sent.Add, currentPlayer);
+            currentPlayer.BeginScene(7);
+            state.BeginScene(Vector3.zero, "terrain/test.trn");
             var player = new CreatureSceneObject { SwgId = 7 };
             registry.Add(player);
             registry.Add(new SpatialSceneObject { SwgId = 42 });

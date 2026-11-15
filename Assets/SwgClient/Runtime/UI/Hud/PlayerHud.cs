@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.World;
 using Swg.Client.Runtime.Localization;
@@ -14,20 +15,21 @@ namespace Swg.Client.Runtime.UI.Hud
         public HamBars ham;
         [Tooltip("Native posture icons in CreaturePosture enum order.")]
         public GameObject[] postureIcons;
-        WorldState state;
+        CurrentPlayer currentPlayer;
         SceneObjectNameResolver names;
         CreatureSceneObject displayedPlayer;
         string displayedName;
 
         void Awake()
         {
-            state = GameServices.Resolve<WorldState>();
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             names = GameServices.Resolve<SceneObjectNameResolver>();
         }
 
         void LateUpdate()
         {
-            bool available = state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player);
+            var player = currentPlayer.Creature;
+            bool available = player != null;
             panel.SetActive(available);
             if (!available)
                 return;

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using Swg.Client.Runtime.Networking.Chat;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Swg.Client.Runtime.Networking
             public string Category;
         }
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly DraftSchematicCatalog schematics;
         readonly ClientInventory inventory;
         readonly ClientObjectInteractions interactions;
@@ -62,21 +64,23 @@ namespace Swg.Client.Runtime.Networking
         public bool Busy { get; private set; }
         public string Result { get; private set; } = "";
         public string Popup { get; private set; }
-        public CraftingProgress Progress => state.Crafting;
+        public CraftingProgress Progress { get; }
         public ManufactureSchematicSceneObject Schematic => state.SceneObjects.TryGet<ManufactureSchematicSceneObject>(SchematicSwgId, out var value) ? value : null;
         public ClientCrafting(WorldState state, DraftSchematicCatalog schematics, ClientInventory inventory, ClientObjectInteractions interactions, StringTableLocalizer strings,
             TreRuntimeAssets assets, Action<string, string, SwgId> command, Action<CraftingAddIngredientPacket> add,
-            Action<CraftingExperimentPacket> experiment, Action<CraftingCustomizationPacket> customize, Action<CraftingRemoveIngredientPacket> remove, ClientChat chat)
+            Action<CraftingExperimentPacket> experiment, Action<CraftingCustomizationPacket> customize, Action<CraftingRemoveIngredientPacket> remove, ClientChat chat, CurrentPlayer currentPlayer, CraftingProgress progress)
         {
+            Progress = progress;
+            this.currentPlayer = currentPlayer;
             this.state = state; this.schematics = schematics; this.inventory = inventory; this.interactions = interactions;
             this.strings = strings; this.command = command; this.add = add; this.experiment = experiment; this.customize = customize;
             this.remove = remove; this.chat = chat;
             Loading = Load(assets);
             state.SceneObjects.ObjectChanged += ObjectChanged;
-            state.Crafting.Changed += Notify;
+            Progress.Changed += Notify;
             inventory.Changed += Notify;
             interactions.AttributesChanged += AttributesChanged;
-            state.DraftDetailsChanged += DetailsChanged;
+            currentPlayer.DraftDetailsChanged += DetailsChanged;
         }
         async Task Load(TreRuntimeAssets assets) => resources = await assets.ReadAsync(ResourceCraftingCatalog.Load);
         void Notify() => Changed?.Invoke();
@@ -180,14 +184,14 @@ namespace Swg.Client.Runtime.Networking
                 || !Qualifies(item, Slots[slot]) || Quantity(slot) >= Slots[slot].Quantity) return;
             pendingMaterial = item; pendingSlot = slot;
             IngredientOperationStarted?.Invoke(slot);
-            Busy = true; add(new CraftingAddIngredientPacket(state.PlayerSwgId, ingredient, slot, ++counter)); Notify();
+            Busy = true; add(new CraftingAddIngredientPacket(currentPlayer.SwgId, ingredient, slot, ++counter)); Notify();
         }
         public void Remove(int slot)
         {
             if (Busy || CurrentPage != Page.Ingredients || slot < 0 || slot >= Slots.Length || Quantity(slot) == 0 || inventory.ContainerSwgId.IsNone) return;
             pendingMaterial = null; pendingSlot = slot;
             IngredientOperationStarted?.Invoke(slot);
-            Busy = true; remove(new CraftingRemoveIngredientPacket(state.PlayerSwgId, inventory.ContainerSwgId, slot, ++counter)); Notify();
+            Busy = true; remove(new CraftingRemoveIngredientPacket(currentPlayer.SwgId, inventory.ContainerSwgId, slot, ++counter)); Notify();
         }
         public void Assemble()
         {
@@ -222,7 +226,7 @@ namespace Swg.Client.Runtime.Networking
         public void Experiment(IReadOnlyList<(int Row, int Points)> attempts)
         {
             if (Busy || attempts.Count == 0 || attempts.Any(value => value.Points < 1) || attempts.Sum(value => value.Points) > Progress.ExperimentationPoints) return;
-            Busy = true; experiment(new CraftingExperimentPacket(state.PlayerSwgId, ++counter, attempts)); Notify();
+            Busy = true; experiment(new CraftingExperimentPacket(currentPlayer.SwgId, ++counter, attempts)); Notify();
         }
         public void Receive(CraftingExperimentationResultPacket packet)
         {
@@ -240,7 +244,7 @@ namespace Swg.Client.Runtime.Networking
         {
             if (Busy || CurrentPage != Page.Customize) return;
             Busy = true; creating = true; practice = practiceMode;
-            customize(new CraftingCustomizationPacket(state.PlayerSwgId, name, Math.Max(1, Math.Min(1000, runs)))); Notify();
+            customize(new CraftingCustomizationPacket(currentPlayer.SwgId, name, Math.Max(1, Math.Min(1000, runs)))); Notify();
         }
         public void Receive(CraftingResultPacket packet)
         {
@@ -270,8 +274,8 @@ namespace Swg.Client.Runtime.Networking
         public static string Outcome(uint value) => value switch { 0 => "Amazing success!", 1 => "Great success!", 2 => "Good success", 3 => "Moderate success", 4 => "Success", 5 => "Marginal success", 6 => "OK", 7 => "Barely succeeded", 8 => "Critical failure", _ => "Result " + value };
         public void Dispose()
         {
-            state.SceneObjects.ObjectChanged -= ObjectChanged; state.Crafting.Changed -= Notify; inventory.Changed -= Notify;
-            interactions.AttributesChanged -= AttributesChanged; state.DraftDetailsChanged -= DetailsChanged;
+            state.SceneObjects.ObjectChanged -= ObjectChanged; Progress.Changed -= Notify; inventory.Changed -= Notify;
+            interactions.AttributesChanged -= AttributesChanged; currentPlayer.DraftDetailsChanged -= DetailsChanged;
         }
     }
 }

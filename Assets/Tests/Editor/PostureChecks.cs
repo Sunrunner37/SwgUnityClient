@@ -1,3 +1,5 @@
+using Swg.Client.Core.Crafting;
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +59,7 @@ namespace Swg.Client.Tests.Editor
                 var creature = new CreatureSceneObject { SwgId = 42 };
                 registry.Add(creature);
                 var replication = root.AddComponent<GameReplication>();
-                replication.Initialize(new WorldState(registry));
+                replication.Initialize(GameServicesForTests.CreateState(registry, out var currentPlayer), currentPlayer, new CraftingProgress());
                 var changes = SceneObjectChange.None;
                 registry.Subscribe(42, value => changes |= value);
                 IObjectControllerHandler handler = new PostureControllerHandler(replication);

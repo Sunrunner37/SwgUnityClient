@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.UI.Navigation;
 using System;
@@ -34,6 +35,7 @@ namespace Swg.Client.Runtime.UI.Targeting
         public Camera worldCamera;
         ClientTargeting targeting;
         WorldState state;
+        CurrentPlayer currentPlayer;
         SceneObjectNameResolver names;
         SwgId displayedSwgId;
         string displayedName;
@@ -44,6 +46,7 @@ namespace Swg.Client.Runtime.UI.Targeting
         void Awake()
         {
             targeting = GameServices.Resolve<ClientTargeting>();
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             names = GameServices.Resolve<SceneObjectNameResolver>();
         }
@@ -64,7 +67,7 @@ namespace Swg.Client.Runtime.UI.Targeting
             if (!selected)
                 return;
             int distance = -1;
-            if (ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player) && ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var target))
+            if (ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var player) && ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var target))
                 distance = Mathf.RoundToInt(Vector3.Distance(player.transform.position, target.transform.position));
             if (displayedSwgId != sceneObject.SwgId || displayedName != sceneObject.Name || displayedTemplate != sceneObject.TemplatePath)
             {
@@ -105,7 +108,7 @@ namespace Swg.Client.Runtime.UI.Targeting
             // Any visible portion of the selection box suppresses the direction arrow.
             if (selection.gameObject.activeSelf || worldCamera == null
                 || !state.SceneObjects.TryGet<SpatialSceneObject>(targeting.SelectedSwgId, out _)
-                || !ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player))
+                || !ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var player))
             {
                 directionArrow.gameObject.SetActive(false);
                 return;

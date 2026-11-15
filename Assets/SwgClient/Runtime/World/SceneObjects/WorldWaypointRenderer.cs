@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Collections.Generic;
 using Swg.Client.Core.World;
 using UnityEngine;
@@ -12,11 +13,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public float visibilityDistance = 512;
         readonly List<GameObject> pillars = new List<GameObject>();
         WorldState state;
+        CurrentPlayer currentPlayer;
 
         void OnEnable()
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
-            state.WaypointsChanged += Rebuild;
+            currentPlayer.WaypointsChanged += Rebuild;
             state.SceneStarted += Rebuild;
             Rebuild();
         }
@@ -24,7 +27,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void Rebuild()
         {
             ClearPillars();
-            foreach (var waypoint in state.NavigationWaypoints)
+            foreach (var waypoint in currentPlayer.NavigationWaypoints)
             {
                 if (!waypoint.Active || waypoint.PlanetCrc != state.PlanetCrc)
                     continue;
@@ -44,7 +47,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
 
         void UpdateVisibility()
         {
-            if (!ManagedSceneObject.TryGetObjectFrom(state.PlayerSwgId, out var player))
+            if (!ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var player))
                 return;
             float distanceSquared = visibilityDistance * visibilityDistance;
             foreach (var pillar in pillars)
@@ -63,7 +66,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
 
         void OnDisable()
         {
-            state.WaypointsChanged -= Rebuild;
+            currentPlayer.WaypointsChanged -= Rebuild;
             state.SceneStarted -= Rebuild;
             ClearPillars();
         }

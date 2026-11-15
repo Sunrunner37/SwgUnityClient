@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Core;
 using Swg.Client.Runtime.World;
@@ -54,7 +55,7 @@ namespace Swg.Client.Tests.Editor
         [TestCase(0x43454c4cu, typeof(SpatialSceneObject))]
         public void NetworkingConstructsConcreteApplicationTypes(uint wireType, Type expected)
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(wireType)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet<SpatialSceneObject>(1, out var sceneObject), Is.True);
@@ -65,7 +66,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void AssetSnapshotsAreDetachedAndDoNotCarryWorldGameObjects()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.StartScene(new CmdStartScenePacket(1, "terrain/corellia.trn", Vector3.zero, "player.iff", 0));
             world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4352454f), baselinesComplete: true), objectUpdate: new CreatureSceneObjectUpdate { Customization = new byte[] { 1, 0, 255, 3 }, Equipment = new[] { new WorldEquipment(new byte[] { 1, 0, 255, 3 }, 4, 2, 5) } });
             world.ApplyPending();
@@ -87,7 +88,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void BackgroundUpdatesWaitForTheMainThreadAndKeepTypedInstancesStable()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             var bytes = new byte[]
             {
                 1,
@@ -141,7 +142,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void RegistryContainsAllEntitiesWhileNetworkingSnapshotsOnlyItsTrackedObjects()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             var building = new TangibleSceneObject
             {
                 SwgId = 1

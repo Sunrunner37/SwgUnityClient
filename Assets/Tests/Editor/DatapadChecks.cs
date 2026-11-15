@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Core;
 using System;
 using System.IO;
@@ -58,14 +59,16 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ExperimentWeightsSurviveEitherReplyOrder()
         {
-            var state = new WorldState(new SceneObjectRegistry());
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
             var weights = new[] { new[] { new DraftSchematicDetails.ExperimentWeight("Overall quality", 2), new DraftSchematicDetails.ExperimentWeight("Unit toughness", 1) } };
-            state.UpdateDraftExperiments(123, weights);
-            state.UpdateDraftDetails(123, new DraftSchematicDetails { Complexity = 7, Size = 4 });
-            Assert.That(state.DraftDetails[123].Experiments, Is.SameAs(weights));
-            Assert.That(state.DraftDetails[123].Complexity, Is.EqualTo(7));
-            state.UpdateDraftExperiments(123, weights);
-            Assert.That(state.DraftDetails[123].Size, Is.EqualTo(4));
+            currentPlayer.UpdateDraftExperiments(123, weights);
+            currentPlayer.UpdateDraftDetails(123, new DraftSchematicDetails { Complexity = 7, Size = 4 });
+            Assert.That(currentPlayer.DraftDetails[123].Experiments, Is.SameAs(weights));
+            Assert.That(currentPlayer.DraftDetails[123].Complexity, Is.EqualTo(7));
+            currentPlayer.UpdateDraftExperiments(123, weights);
+            Assert.That(currentPlayer.DraftDetails[123].Size, Is.EqualTo(4));
         }
         [Test, Category("NativeAssets")]
         public void NativeDraftAttributesRetainExperimentLabelsAndOrder()
@@ -110,13 +113,16 @@ namespace Swg.Client.Tests.Editor
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new TreRuntimeAssets(settings);
             yield return new WaitUntil(() => assets.Ready.IsCompleted);
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(7, Vector3.zero, "terrain/corellia.trn");
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(7);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             var sent = new List<(string Name, SwgId Target)>();
             var localizer = new StringTableLocalizer(assets);
-            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { });
+            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { }, currentPlayer);
             using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer,
-                (name, arguments, target) => sent.Add((name, target)), schematics);
+                (name, arguments, target) => sent.Add((name, target)), schematics, currentPlayer);
             yield return new WaitUntil(() => datapad.Loading.IsCompleted);
             Assert.That(datapad.Loading.IsFaulted, Is.False);
             var entry = datapad.Entries(ClientDatapad.Tab.PointsOfInterest).First();
@@ -126,23 +132,23 @@ namespace Swg.Client.Tests.Editor
             Assert.That(point.Color, Is.EqualTo(WaypointColor.Yellow));
             Assert.That(point.Active, Is.False);
             datapad.ToggleWaypoint(point);
-            Assert.That(state.PoiWaypoints[entry.Key].Active, Is.True);
-            Assert.That(state.NavigationWaypoints.Any(waypoint => waypoint.PoiKey == entry.Key && waypoint.Active), Is.True);
+            Assert.That(currentPlayer.PoiWaypoints[entry.Key].Active, Is.True);
+            Assert.That(currentPlayer.NavigationWaypoints.Any(waypoint => waypoint.PoiKey == entry.Key && waypoint.Active), Is.True);
             Assert.That(datapad.Entries(ClientDatapad.Tab.PointsOfInterest).First().Waypoint.Value.Active, Is.True);
             Assert.That(sent, Is.Empty);
-            datapad.ToggleWaypoint(state.PoiWaypoints[entry.Key]);
-            Assert.That(state.PoiWaypoints[entry.Key].Active, Is.False);
+            datapad.ToggleWaypoint(currentPlayer.PoiWaypoints[entry.Key]);
+            Assert.That(currentPlayer.PoiWaypoints[entry.Key].Active, Is.False);
 
-            state.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.one, state.PlanetCrc, "Home", WaypointColor.Blue, true));
+            currentPlayer.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.one, state.PlanetCrc, "Home", WaypointColor.Blue, true));
             datapad.SingleActiveWaypoint = true;
-            datapad.ToggleWaypoint(state.PoiWaypoints[entry.Key]);
+            datapad.ToggleWaypoint(currentPlayer.PoiWaypoints[entry.Key]);
             Assert.That(sent, Is.EqualTo(new[] { ("setWaypointActiveStatus", (SwgId)42) }));
-            Assert.That(state.PoiWaypoints[entry.Key].Active, Is.True);
+            Assert.That(currentPlayer.PoiWaypoints[entry.Key].Active, Is.True);
             // Apply the server's acknowledgement, then switch back to the player waypoint.
-            state.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.one, state.PlanetCrc, "Home", WaypointColor.Blue, false));
+            currentPlayer.UpdateWaypoints(list => list[42] = new Waypoint(42, Vector3.one, state.PlanetCrc, "Home", WaypointColor.Blue, false));
             sent.Clear();
-            datapad.ToggleWaypoint(state.Waypoints[42]);
-            Assert.That(state.PoiWaypoints[entry.Key].Active, Is.False);
+            datapad.ToggleWaypoint(currentPlayer.Waypoints[42]);
+            Assert.That(currentPlayer.PoiWaypoints[entry.Key].Active, Is.False);
             Assert.That(sent, Is.EqualTo(new[] { ("setWaypointActiveStatus", (SwgId)42) }));
             Assert.That(datapad.Entries(ClientDatapad.Tab.Waypoints).Count(), Is.EqualTo(1));
             Assert.That(datapad.UsedCapacity, Is.Zero);
@@ -167,9 +173,11 @@ namespace Swg.Client.Tests.Editor
                 writer.Write(new byte[64]);
             });
             var update = PlayerView9.ReadBaseline(new ByteReader(bytes));
-            var state = new WorldState(new SceneObjectRegistry());
-            state.UpdateDraftSchematics(update.Schematics);
-            Assert.That(state.DraftSchematics, Is.EqualTo(new uint[] { 123, 456 }));
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.UpdateDraftSchematics(update.Schematics);
+            Assert.That(currentPlayer.DraftSchematics, Is.EqualTo(new uint[] { 123, 456 }));
         }
         [Test]
         public void SchematicDeltaPreservesVectorOrderAndDoesNotChangeAbilities()
@@ -184,12 +192,15 @@ namespace Swg.Client.Tests.Editor
             });
             Assert.That(PlayerView9.TryReadDelta(new ByteReader(bytes), out var update), Is.True);
             Assert.That(update.Abilities, Is.Null);
-            var state = new WorldState(new SceneObjectRegistry());
-            state.UpdateDraftSchematics(list => list.AddRange(new uint[] { 10, 20 }));
-            state.UpdateDraftSchematics(update.Schematics);
-            Assert.That(state.DraftSchematics, Is.EqualTo(new uint[] { 40, 30 }));
-            state.BeginScene(1, Vector3.zero, "terrain/tatooine.trn");
-            Assert.That(state.DraftSchematics, Is.Empty);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.UpdateDraftSchematics(list => list.AddRange(new uint[] { 10, 20 }));
+            currentPlayer.UpdateDraftSchematics(update.Schematics);
+            Assert.That(currentPlayer.DraftSchematics, Is.EqualTo(new uint[] { 40, 30 }));
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/tatooine.trn");
+            Assert.That(currentPlayer.DraftSchematics, Is.Empty);
         }
         [Test]
         public void SchematicClearDoesNotConsumeAnIndex()
@@ -253,8 +264,10 @@ namespace Swg.Client.Tests.Editor
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
-            var state = new WorldState(new SceneObjectRegistry()) { Templates = new ObjectTemplateCatalog(loader) };
-            using var replication = GameServicesForTests.CreateReplication(state);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry) { Templates = new ObjectTemplateCatalog(loader) };
+            using var replication = GameServicesForTests.CreateReplication(state, currentPlayer);
             replication.Commit(42, new ReplicationLifecycleUpdate(templateCrc: ObjectTemplateNames.TemplateCrc("object/intangible/pet/shared_r2.iff")),
                 initialMovement: new MovementUpdate(Vector3.one, Quaternion.identity));
             replication.ApplyPending();
@@ -267,19 +280,22 @@ namespace Swg.Client.Tests.Editor
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new TreRuntimeAssets(settings);
             yield return new WaitUntil(() => assets.Ready.IsCompleted);
-            var state = new WorldState(new SceneObjectRegistry());
-            state.BeginScene(1, Vector3.zero, "terrain/corellia.trn");
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
             state.Templates = new ObjectTemplateCatalog(assets.Loader);
             state.SceneObjects.Add(new SceneObject { SwgId = 1 });
             state.SceneObjects.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/datapad/shared_character_datapad.iff" });
             state.SceneObjects.Add(new ManufactureSchematicSceneObject { SwgId = 3, ParentSwgId = 2, DataSize = 4 });
             state.SceneObjects.Add(new SceneObject { SwgId = 4, ParentSwgId = 2 });
             var localizer = new StringTableLocalizer(assets);
-            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { });
-            using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { }, schematics);
+            using var schematics = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { }, currentPlayer);
+            using var datapad = new ClientDatapad(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, arguments, target) => { }, schematics, currentPlayer);
             yield return new WaitUntil(() => datapad.Loading.IsCompleted);
             Assert.That(datapad.Loading.IsFaulted, Is.False);
-            state.UpdateWaypoints(list => list.Add(5, new Waypoint(5, Vector3.zero, state.PlanetCrc, "Home", WaypointColor.Blue, true)));
+            currentPlayer.UpdateWaypoints(list => list.Add(5, new Waypoint(5, Vector3.zero, state.PlanetCrc, "Home", WaypointColor.Blue, true)));
             Assert.That(datapad.Capacity, Is.EqualTo(100));
             Assert.That(datapad.UsedCapacity, Is.EqualTo(5));
             state.SceneObjects.Reparent(3, 1);

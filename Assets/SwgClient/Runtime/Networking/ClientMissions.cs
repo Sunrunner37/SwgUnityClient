@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Swg.Client.Runtime.Networking
     public sealed class ClientMissions : IDisposable
     {
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly StringTableLocalizer strings;
         readonly Action<MissionListRequestPacket> request;
         readonly Action<MissionAcceptPacket> accept;
@@ -28,11 +30,12 @@ namespace Swg.Client.Runtime.Networking
         public bool Accepting => !pendingAccept.IsNone;
         public event Action Changed;
         public MissionSceneObject Selected => state.SceneObjects.TryGet<MissionSceneObject>(SelectedSwgId, out var mission) ? mission : null;
-        SwgId MissionBag => state.SceneObjects.ChildrenOf(state.PlayerSwgId).FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/mission_bag/", StringComparison.Ordinal) == true)?.SwgId ?? default;
+        SwgId MissionBag => state.SceneObjects.ChildrenOf(currentPlayer.SwgId).FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/mission_bag/", StringComparison.Ordinal) == true)?.SwgId ?? default;
         IEnumerable<MissionSceneObject> Offers => state.SceneObjects.ChildrenOf(MissionBag).OfType<MissionSceneObject>();
         public IEnumerable<MissionSceneObject> Available => Offers.Where(mission => mission.RefreshCounter == sequence && mission.MissionTypeCrc != 0 && !string.IsNullOrEmpty(mission.Title));
-        public ClientMissions(WorldState state, StringTableLocalizer strings, Action<MissionListRequestPacket> request, Action<MissionAcceptPacket> accept, Action<MissionAbortPacket> abort)
+        public ClientMissions(WorldState state, StringTableLocalizer strings, Action<MissionListRequestPacket> request, Action<MissionAcceptPacket> accept, Action<MissionAbortPacket> abort, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state; this.strings = strings; this.request = request; this.accept = accept; this.abort = abort;
             state.SceneObjects.ObjectChanged += ObjectChanged;
             state.SceneObjects.Removed += Removed;
@@ -52,7 +55,7 @@ namespace Swg.Client.Runtime.Networking
             SelectedSwgId = default;
             Loading = true;
             Changed?.Invoke();
-            request(new MissionListRequestPacket(state.PlayerSwgId, TerminalSwgId, sequence));
+            request(new MissionListRequestPacket(currentPlayer.SwgId, TerminalSwgId, sequence));
         }
         void ObjectChanged(SceneObject item, SceneObjectChange changes)
         {
@@ -74,13 +77,13 @@ namespace Swg.Client.Runtime.Networking
         }
         public void Select(SwgId id) { SelectedSwgId = id; Changed?.Invoke(); }
         public void ShowDetails(SwgId id) { if (!state.SceneObjects.TryGet<MissionSceneObject>(id, out _)) return; SelectedSwgId = id; DetailsOpen = true; Changed?.Invoke(); }
-        public bool IsAccepted(MissionSceneObject mission) => state.AcceptedMissions.Any(item => item.SwgId == mission.SwgId);
+        public bool IsAccepted(MissionSceneObject mission) => currentPlayer.AcceptedMissions.Any(item => item.SwgId == mission.SwgId);
         public bool CanAccept => !Accepting && Selected != null && Selected.ParentSwgId == MissionBag && !TerminalSwgId.IsNone;
         public void Accept()
         {
             if (!CanAccept) return;
             pendingAccept = SelectedSwgId;
-            accept(new MissionAcceptPacket(state.PlayerSwgId, SelectedSwgId, TerminalSwgId));
+            accept(new MissionAcceptPacket(currentPlayer.SwgId, SelectedSwgId, TerminalSwgId));
             Changed?.Invoke();
         }
         public void Receive(MissionAcceptResponsePacket packet)
@@ -102,7 +105,7 @@ namespace Swg.Client.Runtime.Networking
         {
             if (AbortCandidate.IsNone) return;
             var id = AbortCandidate; AbortCandidate = default;
-            abort(new MissionAbortPacket(state.PlayerSwgId, id)); Changed?.Invoke();
+            abort(new MissionAbortPacket(currentPlayer.SwgId, id)); Changed?.Invoke();
         }
         public void CancelAbort() { AbortCandidate = default; Changed?.Invoke(); }
         public void CloseDetails() { DetailsOpen = false; Changed?.Invoke(); }
@@ -116,7 +119,7 @@ namespace Swg.Client.Runtime.Networking
         };
         public string Location(MissionSceneObject mission)
         {
-            Vector3 player = state.SceneObjects.TryGet<SpatialSceneObject>(state.PlayerSwgId, out _) ? state.SceneObjects.GetServerWorldPose(state.PlayerSwgId).position : Vector3.zero;
+            Vector3 player = state.SceneObjects.TryGet<SpatialSceneObject>(currentPlayer.SwgId, out _) ? state.SceneObjects.GetServerWorldPose(currentPlayer.SwgId).position : Vector3.zero;
             var delta = mission.StartPosition - player;
             var directions = new[] { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
             int direction = Mathf.RoundToInt(Mathf.Atan2(delta.x, delta.z) * Mathf.Rad2Deg / 45 + 8) % 8;

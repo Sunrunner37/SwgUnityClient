@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using NUnit.Framework;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
@@ -17,7 +18,7 @@ namespace Swg.Client.Tests.Editor
         [TestCase("object/tangible/inventory/shared_character_inventory.iff", typeof(TangibleSceneObject))]
         [TestCase("object/tangible/datapad/shared_character_datapad.iff", typeof(TangibleSceneObject))]
         [TestCase("object/waypoint/shared_waypoint.iff", typeof(SceneObject))]
-        [TestCase("object/mission/shared_mission.iff", typeof(SceneObject))]
+        [TestCase("object/mission/shared_mission.iff", typeof(MissionSceneObject))]
         [TestCase("object/intangible/vehicle/shared_speederbike.iff", typeof(IntangibleSceneObject))]
         public void TemplateFamiliesSelectConcreteTypes(string path, Type expected)
         {
@@ -30,7 +31,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void QueuedPacketsApplyAllFieldsBeforePublishingTheRefinedCreature()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             CreatureSceneObject published = null;
             world.SceneObjects.ObjectChanged += (sceneObject, changes) =>
             {
@@ -116,7 +117,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void NonspatialBaselineReplacesAnUnknownSpatialPlaceholder()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.Commit(1, new MovementUpdate(position: Vector3.one));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject1), Is.True);
@@ -124,7 +125,7 @@ namespace Swg.Client.Tests.Editor
             world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4d49534f)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(1, out var foundObject2), Is.True);
-            Assert.That(foundObject2, Is.TypeOf<SceneObject>());
+            Assert.That(foundObject2, Is.TypeOf<MissionSceneObject>());
             Assert.That(world.SceneObjects.TryGet(1, out var mission), Is.True);
             world.Commit(1, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)(0x4d49534f)));
             world.ApplyPending();
@@ -135,7 +136,7 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void LateTypeMetadataPreservesCreateFieldsAndSubsequentReferences()
         {
-            using var world = GameServicesForTests.CreateReplication(new WorldState(new SceneObjectRegistry()));
+            using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);
             world.Commit(10, new ReplicationLifecycleUpdate(templateCrc: 123), initialMovement: new MovementUpdate(position: new Vector3(1, 2, 3)));
             world.ApplyPending();
             Assert.That(world.SceneObjects.TryGet(10, out var foundObject4), Is.True);

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Swg.Client.Runtime.Networking
     public sealed class ClientInventory : IDisposable
     {
         readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
         readonly Action<SwgId> requestContents;
         readonly SynchronizationContext context;
         bool disposed;
@@ -21,10 +23,11 @@ namespace Swg.Client.Runtime.Networking
         public IReadOnlyList<TangibleSceneObject> Items { get; private set; } = Array.Empty<TangibleSceneObject>();
         public int Capacity { get; private set; }
         public int UsedCapacity => state.SceneObjects.ChildrenOf(ContainerSwgId).OfType<TangibleSceneObject>().Sum(item => Math.Max(1, item.Volume));
-        public CreatureSceneObject Player => state.SceneObjects.TryGet<CreatureSceneObject>(state.PlayerSwgId, out var player) ? player : null;
+        public CreatureSceneObject Player => currentPlayer.Creature;
         public event Action Changed;
-        public ClientInventory(WorldState state, Action<SwgId> requestContents)
+        public ClientInventory(WorldState state, Action<SwgId> requestContents, CurrentPlayer currentPlayer)
         {
+            this.currentPlayer = currentPlayer;
             this.state = state;
             this.requestContents = requestContents;
             context = SynchronizationContext.Current ?? throw new InvalidOperationException("Create inventory on Unity's main thread.");
@@ -38,12 +41,12 @@ namespace Swg.Client.Runtime.Networking
             if (!ContainerSwgId.IsNone)
                 requestContents(ContainerSwgId);
         }
-        public bool IsEquipped(TangibleSceneObject item) => item.ParentSwgId == state.PlayerSwgId;
+        public bool IsEquipped(TangibleSceneObject item) => item.ParentSwgId == currentPlayer.SwgId;
         void ObjectChanged(SceneObject sceneObject, SceneObjectChange changes)
         {
             if ((changes & (SceneObjectChange.Appearance | SceneObjectChange.Containment | SceneObjectChange.Inventory | SceneObjectChange.Replaced)) == 0)
                 return;
-            if (sceneObject.SwgId == state.PlayerSwgId || sceneObject.ParentSwgId == state.PlayerSwgId || sceneObject.ParentSwgId == ContainerSwgId || Items.Any(item => item.SwgId == sceneObject.SwgId))
+            if (sceneObject.SwgId == currentPlayer.SwgId || sceneObject.ParentSwgId == currentPlayer.SwgId || sceneObject.ParentSwgId == ContainerSwgId || Items.Any(item => item.SwgId == sceneObject.SwgId))
                 Refresh();
         }
         void Removed(SceneObject sceneObject)
@@ -53,7 +56,7 @@ namespace Swg.Client.Runtime.Networking
         }
         void Refresh()
         {
-            var children = state.SceneObjects.ChildrenOf(state.PlayerSwgId);
+            var children = state.SceneObjects.ChildrenOf(currentPlayer.SwgId);
             var container = children.FirstOrDefault(item => item.TemplatePath?.StartsWith("object/tangible/inventory/", StringComparison.Ordinal) == true);
             ContainerSwgId = container?.SwgId ?? default;
             Capacity = container == null ? 0 : state.Templates.ContainerCapacity(container.TemplatePath);

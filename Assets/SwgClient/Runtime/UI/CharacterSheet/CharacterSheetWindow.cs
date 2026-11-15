@@ -46,6 +46,7 @@ namespace Swg.Client.Runtime.UI.CharacterSheet
         public StatMigrationWindow migration;
         public bool Ready { get; private set; }
         WorldState state;
+        CurrentPlayer currentPlayer;
         ClientCharacterSheet sheet;
         SceneObjectNameResolver names;
         CharacterSheetChange dirty;
@@ -53,14 +54,15 @@ namespace Swg.Client.Runtime.UI.CharacterSheet
 
         void Awake()
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             sheet = GameServices.Resolve<ClientCharacterSheet>();
             names = GameServices.Resolve<SceneObjectNameResolver>();
         }
         void OnEnable()
         {
-            state.CharacterSheet.Changed += Changed;
-            state.SceneObjects.Subscribe(state.PlayerSwgId, PlayerChanged);
+            currentPlayer.CharacterSheet.Changed += Changed;
+            state.SceneObjects.Subscribe(currentPlayer.SwgId, PlayerChanged);
             statusTab.onValueChanged.AddListener(SelectStatus);
             personalTab.onValueChanged.AddListener(SelectPersonal);
             dirty = CharacterSheetChange.All & ~CharacterSheetChange.Migration;
@@ -77,8 +79,8 @@ namespace Swg.Client.Runtime.UI.CharacterSheet
         }
         void OnDisable()
         {
-            state.CharacterSheet.Changed -= Changed;
-            state.SceneObjects.Unsubscribe(state.PlayerSwgId, PlayerChanged);
+            currentPlayer.CharacterSheet.Changed -= Changed;
+            state.SceneObjects.Unsubscribe(currentPlayer.SwgId, PlayerChanged);
             statusTab.onValueChanged.RemoveListener(SelectStatus);
             personalTab.onValueChanged.RemoveListener(SelectPersonal);
             StopAllCoroutines();

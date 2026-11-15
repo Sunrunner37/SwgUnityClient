@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using System.Collections;
 using System.Collections.Generic;
 using Swg.Client.Runtime.World.SceneObjects;
@@ -67,10 +68,12 @@ namespace Swg.Client.Tests.Editor
             var settings = Swg.Client.Core.Configuration.ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
             using var assets = new Swg.Client.Runtime.Assets.Tre.TreRuntimeAssets(settings);
             await assets.Ready;
-            var state = new WorldState(new SceneObjectRegistry());
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
             var localizer = new StringTableLocalizer(assets);
-            using var chat = new ClientChat(null, state, localizer, new ProseFormatter(), commands);
+            using var chat = new ClientChat(null, state, localizer, new ProseFormatter(), commands, currentPlayer);
             var received = new System.Threading.Tasks.TaskCompletionSource<string>();
             chat.ScreenMessageReceived += message => received.TrySetResult(message);
             using var body = new MemoryStream();
@@ -99,9 +102,11 @@ namespace Swg.Client.Tests.Editor
         [UnityTest]
         public IEnumerator SystemMessagesRespectServerScreenDisplayFlag()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
             var messages = new List<string>();
             chat.ScreenMessageReceived += messages.Add;
             ChatSystemPacket Packet(byte display, string message)
@@ -186,15 +191,17 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void ProductionDispatcherReturnsSyntaxAndAvailabilityErrors()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            state.Commands.Apply(list => list.Add("flourish+1"));
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.Commands.Apply(list => list.Add("flourish+1"));
             using var catalog = new CommandCatalog(new[]
             {
                 new CommandCatalog.Command { Name = "flourish", Label = "Flourish", Ability = "flourish" }
-            }, state.Commands);
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
+            }, currentPlayer.Commands);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }, currentPlayer), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit("Spatial", "/tell Misty", out string error);
             Assert.That(error, Is.EqualTo("Usage: /tell name message"));
             dispatcher.Submit("Spatial", "/t Misty", out error);
@@ -225,11 +232,13 @@ namespace Swg.Client.Tests.Editor
         [Test]
         public void SharedDispatcherHandlesCommandsWithoutAnyHud()
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), state.Commands);
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), currentPlayer.Commands);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }, currentPlayer), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit("Spatial", "/unknown", out string error);
             Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Submit("Spatial", "/tell Misty", out error);
@@ -243,15 +252,17 @@ namespace Swg.Client.Tests.Editor
         [TestCase("consider")]
         public void UnimplementedClientHooksReturnUnsupportedWithoutEnqueueing(string hook)
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            state.Commands.Apply(list => list.Add("local+1"));
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            currentPlayer.Commands.Apply(list => list.Add("local+1"));
             using var catalog = new CommandCatalog(new[]
             {
                 new CommandCatalog.Command { Name = "local", Label = "Local", ClientHook = hook }
-            }, state.Commands);
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
+            }, currentPlayer.Commands);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }, currentPlayer), new ClientCombatQueue(commands, catalog));
             Assert.That(catalog.Find("local+1").ClientHook, Is.EqualTo(hook));
             dispatcher.Execute("local", "1", out string error);
             Assert.That(error, Does.Contain("not supported yet"));
@@ -279,7 +290,9 @@ namespace Swg.Client.Tests.Editor
             writer.Write(7);
             writer.Write(1.5f);
             writer.Write((byte)0);
-            var state = new WorldState(new SceneObjectRegistry());
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
             state.SceneObjects.Add(new SceneObject { SwgId = 42, Name = "item" });
             var adapter = new ChatText(new StringTableLocalizer(null), new ProseFormatter(), state);
             var values = adapter.ResolveParameters(LocalizedChatString.ReadFrom(new ByteReader(bytes.ToArray())));
@@ -298,13 +311,15 @@ namespace Swg.Client.Tests.Editor
         [TestCase("Planet", "hello", "This chat channel is not available")]
         public void ChatValidationReturnsToTheCallerWithoutPublishingHistory(string channel, string message, string expected)
         {
-            var state = new WorldState(new SceneObjectRegistry());
-            using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), state.Commands);
-            using var commands = new ClientCommands(_ => { }, _ => { }, state);
-            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands);
+            var playerRegistry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(playerRegistry);
+            var state = new WorldState(playerRegistry);
+            using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), currentPlayer.Commands);
+            using var commands = new ClientCommands(_ => { }, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
             int notifications = 0;
             chat.MessageReceived += (receivedChannel, text) => notifications++;
-            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }), new ClientCombatQueue(commands, catalog));
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, new ClientTargeting(state, _ => { }, currentPlayer), new ClientCombatQueue(commands, catalog));
             dispatcher.Submit(channel, message, out string error);
             Assert.That(error, Does.Contain(expected));
             Assert.That(chat.History, Is.Empty);

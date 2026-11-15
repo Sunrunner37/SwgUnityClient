@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World.Terrain;
@@ -26,6 +27,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         readonly HashSet<SwgId> pendingAppearances = new HashSet<SwgId>();
         readonly CancellationTokenSource lifetime = new CancellationTokenSource();
         WorldState state;
+        CurrentPlayer currentPlayer;
         WorldContentLoader content;
         GameReplication source;
         SceneObjectRegistry registry;
@@ -37,6 +39,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
 
         public void Initialize(WorldState state, WorldContentLoader content, WorldLoadingData loading, GameReplication world, WorldAppearanceLibrary appearanceLibrary, int uploadBudget, WorldFloraRenderer flora)
         {
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             this.state = state;
             this.content = content;
             source = world;
@@ -192,7 +195,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 instance.AddComponent<SceneObjectAnimation>().Initialize(creature, animation);
                 if (creature.Mount != null) instance.AddComponent<VehicleRider>().Initialize(creature);
             }
-            if (sceneObject.SwgId == this.state.PlayerSwgId)
+            if (sceneObject.SwgId == currentPlayer.SwgId)
             {
                 var movement = instance.AddComponent<PlayerMovement>();
                 movement.Initialize(sceneObject);

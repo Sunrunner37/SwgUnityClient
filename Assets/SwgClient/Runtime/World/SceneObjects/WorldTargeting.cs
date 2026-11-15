@@ -1,3 +1,4 @@
+using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.UI.Interactions;
 using System;
@@ -31,6 +32,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         ClientObjectInteractions interactions;
         ClientTargeting targeting;
         WorldState state;
+        CurrentPlayer currentPlayer;
         Texture2D cursor;
         ClientCursor cursors;
         int targetMask;
@@ -40,6 +42,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             targeting = GameServices.Resolve<ClientTargeting>();
             cursors = GameServices.Resolve<ClientCursor>();
             interactions = GameServices.Resolve<ClientObjectInteractions>();
+            currentPlayer = GameServices.Resolve<CurrentPlayer>();
             state = GameServices.Resolve<WorldState>();
             targetMask = LayerMask.GetMask(TargetableSceneObject.LayerName);
         }
@@ -78,7 +81,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 {
                     var hit = hits[i];
                     var candidate = hit.collider.GetComponentInParent<TargetableSceneObject>();
-                    if (candidate != null && candidate.SwgId != state.PlayerSwgId && hit.distance < closest)
+                    if (candidate != null && candidate.SwgId != currentPlayer.SwgId && hit.distance < closest)
                     {
                         closest = hit.distance;
                         hovered = candidate.SwgId;
