@@ -65,7 +65,8 @@ namespace Swg.Client.Core.Assets.Formats.Sht
         }
 
         public static bool TryGetMainTexture(byte[] bytes, out string texturePath) => TryGetMainTexture(IffNode.Parse(bytes), out texturePath);
-        public static bool TryGetMainTexture(IEnumerable<IffNode> nodes, out string texturePath)
+        public static bool TryGetMainTexture(IEnumerable<IffNode> nodes, out string texturePath) => TryGetTexture(nodes, "MAIN", out texturePath);
+        public static bool TryGetTexture(IEnumerable<IffNode> nodes, string slot, out string texturePath)
         {
             texturePath = null;
             var textures = IffNode.Form(nodes, "TXMS");
@@ -78,7 +79,7 @@ namespace Swg.Client.Core.Assets.Formats.Sht
                     continue;
                 var data = version.Children.FirstOrDefault(n => n.Tag == "DATA")?.Data;
                 var name = version.Children.FirstOrDefault(n => n.Tag == "NAME")?.Data;
-                if (data != null && data.Length >= 4 && name != null && data[0] == 'N' && data[1] == 'I' && data[2] == 'A' && data[3] == 'M')
+                if (data != null && data.Length >= 4 && name != null && slot.Length == 4 && data[0] == slot[3] && data[1] == slot[2] && data[2] == slot[1] && data[3] == slot[0])
                 {
                     texturePath = new ByteReader(name).CString().Replace('\\', '/').ToLowerInvariant();
                     return true;

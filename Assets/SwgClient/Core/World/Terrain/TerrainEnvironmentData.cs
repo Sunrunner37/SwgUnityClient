@@ -8,6 +8,16 @@ namespace Swg.Client.Core.World.Terrain
     {
         public string Name;
         public TextureData ColorRamp;
+        public TextureData SkyGradient;
+        public CloudLayer BottomClouds;
+        public CloudLayer TopClouds;
+        public sealed class CloudLayer
+        {
+            public TextureData Diffuse;
+            public TextureData Normal;
+            public float Size;
+            public float Speed;
+        }
         public bool FogEnabled;
         public float MinimumFogDensity;
         public float MaximumFogDensity;

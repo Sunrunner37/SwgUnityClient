@@ -15,7 +15,7 @@ namespace Swg.Client.Runtime.Assets.Tre
         readonly Task<TreAssetLoader> mounting;
         readonly HashSet<Task> reads = new HashSet<Task>();
         readonly object readGate = new object ();
-        readonly Dictionary<(TextureData Source, TextureWrapMode WrapMode), Texture2D> textures = new Dictionary<(TextureData Source, TextureWrapMode WrapMode), Texture2D>();
+        readonly Dictionary<(TextureData Source, TextureWrapMode WrapMode, bool Linear), Texture2D> textures = new Dictionary<(TextureData Source, TextureWrapMode WrapMode, bool Linear), Texture2D>();
         readonly Dictionary<TreVisual, Texture2D> visuals = new Dictionary<TreVisual, Texture2D>();
         bool disposed;
         public Task Ready => mounting;
@@ -69,12 +69,12 @@ namespace Swg.Client.Runtime.Assets.Tre
             return texture;
         }
 
-        public Texture2D Texture(TextureData source, TextureWrapMode wrapMode = TextureWrapMode.Clamp)
+        public Texture2D Texture(TextureData source, TextureWrapMode wrapMode = TextureWrapMode.Clamp, bool linear = false)
         {
-            if (textures.TryGetValue((source, wrapMode), out var texture))
+            if (textures.TryGetValue((source, wrapMode, linear), out var texture))
                 return texture;
             bool mipmaps = wrapMode == TextureWrapMode.Repeat;
-            texture = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, mipmaps)
+            texture = new Texture2D(source.Width, source.Height, TextureFormat.RGBA32, mipmaps, linear)
             {
                 filterMode = mipmaps ? FilterMode.Trilinear : FilterMode.Bilinear,
                 anisoLevel = mipmaps ? 4 : 1,
@@ -85,7 +85,7 @@ namespace Swg.Client.Runtime.Assets.Tre
                 Buffer.BlockCopy(source.Pixels, y * source.Width * 4, raw, (source.Height - 1 - y) * source.Width * 4, source.Width * 4);
             texture.SetPixelData(raw, 0);
             texture.Apply(mipmaps, true);
-            textures.Add((source, wrapMode), texture);
+            textures.Add((source, wrapMode, linear), texture);
             return texture;
         }
 

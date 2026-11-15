@@ -70,6 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.World.WorldEnvironment
   sun: {fileID: 2602753223389229086}
   cameraView: {fileID: 6689891359604919237}
+  skyShader: {fileID: 4800000, guid: 6916bfdcf75f4d9295c90aa4e41344eb, type: 3}
   timeOfDay: 0.25
 --- !u!1 &3835399749626775641
 GameObject:

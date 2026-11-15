@@ -11,6 +11,13 @@ namespace Swg.Client.Runtime.Assets.Particles
         ParticleSystem.Particle[] particles;
         float clock;
         float playbackRate;
+        // One stable sample per waveform and emitter loop, shared by all mesh shader parts via the system seed.
+        internal static float MotionSample(uint seed, int axis, int loop)
+        {
+            uint value = seed ^ ((uint)axis + 1) * 0x9e3779b9u ^ ((uint)loop + 1) * 0x85ebca6bu;
+            value ^= value >> 16; value *= 0x7feb352du; value ^= value >> 15; value *= 0x846ca68bu; value ^= value >> 16;
+            return (value & 0xffffff) / 16777216f;
+        }
         public void Initialize(ParticleSystem system, PeftEmitter definition, float playbackRate)
         {
             this.system = system;
@@ -25,9 +32,13 @@ namespace Swg.Client.Runtime.Assets.Particles
         {
             clock += Time.deltaTime * playbackRate;
             float duration = Mathf.Max(.01f, (definition.LifetimeMinimum + definition.LifetimeMaximum) * .5f);
-            float age = Mathf.Repeat(Mathf.Max(0, clock - definition.Delay) / duration, 1);
-            transform.localPosition = new Vector3(definition.Waves[0].Value(age), definition.Waves[1].Value(age), definition.Waves[2].Value(age));
-            transform.localRotation = Quaternion.Euler(definition.Waves[3].Value(age) * 360, definition.Waves[4].Value(age) * 360, definition.Waves[5].Value(age) * 360);
+            float time = Mathf.Max(0, clock - definition.Delay);
+            float cycle = duration + definition.LoopDelay;
+            int loop = Mathf.FloorToInt(time / Mathf.Max(.01f, cycle));
+            float age = Mathf.Clamp01((time - loop * cycle) / duration);
+            float Wave(int axis) => definition.Waves[axis].Value(age, MotionSample(system.randomSeed, axis, loop));
+            transform.localPosition = new Vector3(Wave(0), Wave(1), Wave(2));
+            transform.localRotation = Quaternion.Euler(Wave(3) * 360, Wave(4) * 360, Wave(5) * 360);
         }
 
         void LateUpdate()

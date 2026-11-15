@@ -1,4 +1,5 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.Terrain;
 using UnityEngine;
@@ -11,16 +12,19 @@ namespace Swg.Client.Runtime.World
     public sealed class WorldEnvironment : MonoBehaviour
     {
         static readonly int EnvironmentLightingId = Shader.PropertyToID("_SwgEnvironmentLighting");
-        static readonly int SkyTintId = Shader.PropertyToID("_SkyTint");
+
         [SerializeField]
         Light sun;
         [SerializeField]
         Camera cameraView;
+        [SerializeField]
+        Shader skyShader;
         [Tooltip("Native lighting-ramp phase: 0.25 is midday; 0.75 is midnight.")]
         [Range(0, 1)]
         public float timeOfDay = .25f;
         WorldState state;
         CurrentPlayer currentPlayer;
+        TreRuntimeAssets assets;
         Material originalSky;
         Material sky;
         float nextSample;
@@ -34,6 +38,7 @@ namespace Swg.Client.Runtime.World
         {
             currentPlayer = GameServices.Resolve<CurrentPlayer>();
             this.state = state;
+            assets = GameServices.Resolve<TreRuntimeAssets>();
             sun.enabled = false;
         }
 
@@ -44,11 +49,8 @@ namespace Swg.Client.Runtime.World
             sun.enabled = true;
             RenderSettings.sun = sun;
             originalSky = RenderSettings.skybox;
-            if (originalSky != null)
-            {
-                sky = new Material(originalSky);
-                RenderSettings.skybox = sky;
-            }
+            sky = new Material(skyShader);
+            RenderSettings.skybox = sky;
 
             Shader.SetGlobalFloat(EnvironmentLightingId, 1);
             nextSample = 0;
@@ -74,10 +76,27 @@ namespace Swg.Client.Runtime.World
             float farClip = cameraView.farClipPlane;
             if (environment == appliedEnvironment && column == appliedColumn && farClip == appliedFarClip)
                 return;
+            if (environment != appliedEnvironment)
+            {
+                sky.SetTexture("_Gradient", environment.SkyGradient == null ? null : assets.Texture(environment.SkyGradient, TextureWrapMode.Clamp));
+                sky.SetFloat("_HasGradient", environment.SkyGradient == null ? 0 : 1);
+                SetClouds("_Bottom", environment.BottomClouds);
+                SetClouds("_Top", environment.TopClouds);
+            }
+            sky.SetFloat("_DayPhase", timeOfDay);
             Apply(environment.SampleColumn(column), farClip);
             appliedEnvironment = environment;
             appliedColumn = column;
             appliedFarClip = farClip;
+        }
+
+        void SetClouds(string prefix, TerrainEnvironmentData.CloudLayer clouds)
+        {
+            sky.SetFloat(prefix + "Enabled", clouds == null ? 0 : 1);
+            if (clouds == null) return;
+            sky.SetTexture(prefix + "Map", assets.Texture(clouds.Diffuse, TextureWrapMode.Repeat));
+            sky.SetTexture(prefix + "Normal", clouds.Normal == null ? null : assets.Texture(clouds.Normal, TextureWrapMode.Repeat, linear: true));
+            sky.SetVector(prefix + "Motion", new Vector4(clouds.Size, clouds.Speed, 0, 0));
         }
 
         void Apply(EnvironmentLighting lighting, float farClip)
@@ -95,8 +114,10 @@ namespace Swg.Client.Runtime.World
             // Native GroundEnvironment scales fog between its 512m and 2048m view distances.
             RenderSettings.fogDensity = Mathf.Lerp(environment.MinimumFogDensity, environment.MaximumFogDensity, Mathf.InverseLerp(512, 2048, farClip));
             cameraView.backgroundColor = lighting.Clear;
-            if (sky != null && sky.HasProperty(SkyTintId))
-                sky.SetColor(SkyTintId, lighting.Clear);
+            sky.SetColor("_Fallback", lighting.Clear);
+            sky.SetColor("_CloudAmbient", lighting.AmbientEquator);
+            sky.SetColor("_CloudSun", lighting.Sun * lighting.SunIntensity);
+            sky.SetVector("_SunDirection", -sun.transform.forward);
         }
 
         void OnDisable()
