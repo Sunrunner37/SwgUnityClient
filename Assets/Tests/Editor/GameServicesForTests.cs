@@ -43,6 +43,8 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterType<ClientFlyText>().SingleInstance();
             builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>(), currentPlayer)).SingleInstance();
             // Crafting handlers resolve their session only when a crafting reply is applied on the main thread.
+            builder.RegisterType<ClientCombat>().SingleInstance();
+            builder.Register(_ => new Swg.Client.Runtime.Assets.Tre.TreRuntimeAssets(Swg.Client.Core.Configuration.ClientSettings.From(System.IO.Path.Combine(Application.dataPath, "../client.ini")))).SingleInstance();
             builder.RegisterType<ClientCrafting>().SingleInstance();
             builder.RegisterType<ClientMissions>().SingleInstance();
             builder.RegisterInstance(new System.Action<Swg.Client.Core.Networking.Game.Packets.Mission.MissionListRequestPacket>(_ => { }));

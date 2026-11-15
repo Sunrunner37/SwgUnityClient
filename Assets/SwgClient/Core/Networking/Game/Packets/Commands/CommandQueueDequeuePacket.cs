@@ -23,8 +23,7 @@ namespace Swg.Client.Core.Networking.Game.Packets.Commands
             writer.Write(0x23u);
             writer.Write(ControllerType);
             writer.Write(PlayerSwgId);
-            writer.Write(0u);
-            writer.Write(1u);
+            writer.Write(1u); // The controller's reserved word is the callback's pair count.
             writer.Write(ActionCounter);
             writer.Write(CommandCrc);
         }

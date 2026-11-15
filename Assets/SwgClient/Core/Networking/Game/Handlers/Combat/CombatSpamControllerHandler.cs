@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Combat;
-using System;
+using Swg.Client.Runtime.Networking.Chat;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Combat
@@ -10,14 +10,9 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Combat
     {
         public override uint ControllerType => CombatSpamPacket.ControllerType;
 
+        readonly ClientChat chat;
         [Preserve]
-        public CombatSpamControllerHandler() : base(CombatSpamPacket.ReadFrom)
-        {
-        }
-
-        protected override void Handle(CombatSpamPacket packet)
-        {
-            throw new NotImplementedException($"CombatSpam (controller 0x{ControllerType:X8})");
-        }
+        public CombatSpamControllerHandler(ClientChat chat) : base(CombatSpamPacket.ReadFrom) => this.chat = chat;
+        protected override void Handle(CombatSpamPacket packet) => chat.Receive(packet);
     }
 }

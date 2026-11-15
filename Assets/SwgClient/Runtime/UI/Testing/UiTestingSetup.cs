@@ -43,6 +43,7 @@ namespace Swg.Client.Runtime.UI.Testing
     public sealed class UiTestingSetup : MonoBehaviour
     {
         public bool previewCombatQueue = true;
+        public CombatTestingSetup combatTesting;
         public string[] sampleAbilities = Array.Empty<string>();
         CurrentPlayer currentPlayer;
         ILifetimeScope scope;
@@ -113,11 +114,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<ClientSkills>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<DraftSchematicCatalog>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
+                builder.RegisterType<ClientCombat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCombatQueue>().SingleInstance();
                 builder.RegisterType<CommandCatalog>().SingleInstance();
                 builder.RegisterType<CommandVisuals>().SingleInstance();
                 builder.RegisterType<ClientFlyText>().SingleInstance();
                 builder.RegisterType<OfflineCommandDispatcher>().As<ICommandDispatcher>().SingleInstance();
+                if (combatTesting != null) combatTesting.Register(builder);
             });
             currentPlayer = scope.Resolve<CurrentPlayer>();
             var state = scope.Resolve<WorldState>();

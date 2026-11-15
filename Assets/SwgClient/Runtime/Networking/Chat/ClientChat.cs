@@ -1,4 +1,6 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.Networking.Game.Packets.Combat;
+using Swg.Client.Runtime.Localization;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -9,7 +11,6 @@ using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Chat;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.World;
-using Swg.Client.Runtime.Localization;
 
 namespace Swg.Client.Runtime.Networking.Chat
 {
@@ -164,6 +165,12 @@ namespace Swg.Client.Runtime.Networking.Chat
         }
 
         public void ShowScreenMessage(string message) => ScreenMessageReceived?.Invoke(message);
+
+        public void Receive(CombatSpamPacket packet) => Post(() =>
+        {
+            string message = string.IsNullOrEmpty(packet.Text) ? text.Combat(packet) : packet.Text;
+            Add("Combat", message);
+        });
 
         public void Receive(SpatialChatPacket packet) => Post(() => Add("Spatial", text.Name(packet.SenderSwgId) + ": " + text.Format(packet.Message, packet.Parameters)));
         public void Receive(ChatSystemPacket packet) => Post(() =>

@@ -111,6 +111,7 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<ClientSkills>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<DraftSchematicCatalog>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
+                builder.RegisterType<ClientCombat>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCombatQueue>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterType<ClientCommands>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<ObjectMenuRequestPacket>(packet => connection.Send(packet)));

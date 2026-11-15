@@ -12,6 +12,7 @@ using System.IO;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
+using Swg.Client.Core.Networking.Game.Packets.Combat;
 
 namespace Swg.Client.Runtime.Networking
 {
@@ -84,6 +85,24 @@ namespace Swg.Client.Runtime.Networking
                 SceneObjects.Add(player);
                 revision++;
                 replication.Add(start.PlayerSwgId, new ReplicationState());
+            });
+        }
+
+        internal void UpdateCombatPostures(CombatActionPacket packet)
+        {
+            if (disposed) return;
+            pending.Enqueue(() =>
+            {
+                // Non-creature defenders (buildings, terminals, etc.) also occur in combat packets.
+                void ApplyPosture(SwgId swgId, byte posture)
+                {
+                    if (!SceneObjects.TryGet<CreatureSceneObject>(swgId, out var creature) || (byte)creature.Posture == posture) return;
+                    creature.Apply(new CreatureSceneObjectUpdate { Posture = posture });
+                    SceneObjects.NotifyChanged(creature, SceneObjectChange.Posture);
+                    revision++;
+                }
+                ApplyPosture(packet.AttackerSwgId, packet.AttackerPosture);
+                foreach (var defender in packet.Defenders) ApplyPosture(defender.SwgId, defender.Posture);
             });
         }
 

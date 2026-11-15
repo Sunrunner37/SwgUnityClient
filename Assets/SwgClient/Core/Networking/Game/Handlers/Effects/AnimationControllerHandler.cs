@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Effects;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Effects
@@ -10,14 +10,9 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Effects
     {
         public override uint ControllerType => AnimationPacket.ControllerType;
 
+        readonly ClientCombat combat;
         [Preserve]
-        public AnimationControllerHandler() : base(AnimationPacket.ReadFrom)
-        {
-        }
-
-        protected override void Handle(AnimationPacket packet)
-        {
-            throw new NotImplementedException($"Animation (controller 0x{ControllerType:X8})");
-        }
+        public AnimationControllerHandler(ClientCombat combat) : base(AnimationPacket.ReadFrom) => this.combat = combat;
+        protected override void Handle(AnimationPacket packet) => combat.Receive(packet);
     }
 }

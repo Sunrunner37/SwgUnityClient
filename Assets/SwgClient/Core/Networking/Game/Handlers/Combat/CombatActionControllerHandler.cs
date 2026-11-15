@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Combat;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Combat
@@ -10,14 +10,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Combat
     {
         public override uint ControllerType => CombatActionPacket.ControllerType;
 
+        readonly ClientCombat combat;
+        readonly GameReplication replication;
         [Preserve]
-        public CombatActionControllerHandler() : base(CombatActionPacket.ReadFrom)
+        public CombatActionControllerHandler(ClientCombat combat, GameReplication replication) : base(CombatActionPacket.ReadFrom)
         {
+            this.combat = combat;
+            this.replication = replication;
         }
-
         protected override void Handle(CombatActionPacket packet)
         {
-            throw new NotImplementedException($"CombatAction (controller 0x{ControllerType:X8})");
+            replication.UpdateCombatPostures(packet);
+            combat.Receive(packet);
         }
     }
 }

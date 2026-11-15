@@ -3,6 +3,8 @@ using Swg.Client.Core;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using UnityEngine;
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Runtime.Assets.Tre;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
@@ -14,14 +16,22 @@ namespace Swg.Client.Runtime.World.SceneObjects
         CreatureSceneObject creature;
         SwgId swgId;
         CharacterAnimation animation;
+        ClientCombat combat;
+        TreRuntimeAssets assets;
+        void Play(string name, string weapon, bool reaction) => animation.PlayAction(assets, name, weapon, reaction);
+        void RefreshStance() => animation.SetCombatStance(assets, combat.WeaponStance(creature), creature.IsInCombat);
         public void Initialize(CreatureSceneObject creature, CharacterAnimation animation)
         {
             this.creature = creature;
             swgId = creature.SwgId;
             this.animation = animation;
             registry = GameServices.Resolve<WorldState>().SceneObjects;
+            combat = GameServices.Resolve<ClientCombat>();
+            assets = GameServices.Resolve<TreRuntimeAssets>();
+            combat.Subscribe(swgId, Play);
             registry.Subscribe(swgId, OnChanged);
             animation.SetPosture(creature.Posture, true);
+            RefreshStance();
         }
         void OnChanged(SceneObjectChange changes)
         {
@@ -29,10 +39,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 registry.TryGet<CreatureSceneObject>(swgId, out creature);
             if (creature != null && (changes & (SceneObjectChange.Posture | SceneObjectChange.Replaced)) != 0)
                 animation.SetPosture(creature.Posture);
+            if (creature != null && (changes & (SceneObjectChange.State | SceneObjectChange.Posture | SceneObjectChange.Replaced)) != 0)
+                RefreshStance();
         }
         void OnDestroy()
         {
             registry?.Unsubscribe(swgId, OnChanged);
+            combat?.Unsubscribe(swgId, Play);
         }
     }
 }

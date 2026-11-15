@@ -179,7 +179,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(packet.SwgId, Is.EqualTo(42));
             Assert.That(packet.ControllerType, Is.EqualTo(CommandQueueDequeuePacket.ControllerType));
             var payload = new ByteReader(packet.Payload);
-            Assert.That(payload.U32(), Is.EqualTo(1));
+            Assert.That(packet.Reserved, Is.EqualTo(1), "Core3 reads the pair count directly after the player id.");
             Assert.That(payload.U32(), Is.EqualTo(7));
             Assert.That(payload.U32(), Is.EqualTo(123));
             Assert.That(payload.Remaining, Is.Zero);

@@ -44,6 +44,14 @@ namespace Swg.Client.Editor
             EditorApplication.isPlaying = true;
         }
 
+        [MenuItem("SWG/Play Combat Test Scene")]
+        public static void PlayCombatTesting()
+        {
+            if (EditorApplication.isPlaying) return;
+            EditorSceneManager.playModeStartScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SwgProjectPaths.Scenes + "/CombatTesting.unity");
+            EditorApplication.isPlaying = true;
+        }
+
         [MenuItem("SWG/Preview Current Screen")]
         public static void PreviewCurrentScreen()
         {

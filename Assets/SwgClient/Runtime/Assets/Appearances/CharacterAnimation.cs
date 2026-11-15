@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.Characters.Animation;
 using UnityEngine;
 using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
@@ -17,6 +20,8 @@ namespace Swg.Client.Runtime.Assets.Appearances
             public readonly List<SkeletalAnimation> Transitions = new List<SkeletalAnimation>();
             public int TransitionIndex;
             public float PostureTime;
+            public SkeletalAnimation Action;
+            public SkeletalAnimation CombatIdle;
         }
 
         readonly List<Rig> rigs = new List<Rig>();
@@ -26,6 +31,67 @@ namespace Swg.Client.Runtime.Assets.Appearances
         float idleTime;
         float locomotionTime;
         float postureAge = 1;
+        float actionAge;
+        float actionDuration;
+        Coroutine actionLoading;
+        Coroutine stanceLoading;
+        bool actionPending;
+        bool UnableToAct => Posture == CreaturePosture.Dead || Posture == CreaturePosture.Incapacitated || Posture == CreaturePosture.KnockedDown;
+        public bool IsPlayingAction => actionAge < actionDuration;
+        public string LastAction { get; private set; }
+        public void PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction)
+        {
+            if (UnableToAct || reaction && (actionPending || IsPlayingAction)) return;
+            if (actionLoading != null) StopCoroutine(actionLoading);
+            actionLoading = StartCoroutine(LoadAction(assets, name, weapon));
+        }
+        internal IEnumerator LoadAction(TreRuntimeAssets assets, string name, string weapon)
+        {
+            var posture = Posture;
+            var actionRigs = rigs.ToArray();
+            actionPending = true;
+            var read = assets.ReadAsync(_ => actionRigs.Select(rig => rig.Skeleton.ResolveAction(name, weapon, posture)).ToArray());
+            yield return new WaitUntil(() => read.IsCompleted);
+            actionPending = false;
+            if (Posture != posture || UnableToAct) yield break;
+            if (read.IsFaulted) { Debug.LogException(read.Exception.GetBaseException(), this); yield break; }
+            if (read.Result.All(clip => clip == null)) { Debug.LogWarning("No native animation for " + name, this); yield break; }
+            for (int i = 0; i < actionRigs.Length; i++) actionRigs[i].Action = read.Result[i];
+            actionAge = 0;
+            actionDuration = read.Result.Where(clip => clip != null).Max(clip => clip.Duration);
+            LastAction = name;
+        }
+        public void SetCombatStance(TreRuntimeAssets assets, string weapon, bool combat)
+        {
+            if (stanceLoading != null) StopCoroutine(stanceLoading);
+            if (!combat || UnableToAct)
+            {
+                foreach (var rig in rigs) rig.CombatIdle = null;
+                return;
+            }
+            stanceLoading = StartCoroutine(LoadStance(assets, weapon));
+        }
+        internal IEnumerator LoadStance(TreRuntimeAssets assets, string weapon)
+        {
+            var posture = Posture;
+            var stanceRigs = rigs.ToArray();
+            var read = assets.ReadAsync(_ => stanceRigs.Select(rig => rig.Skeleton.ResolveAction(null, weapon, posture)).ToArray());
+            yield return new WaitUntil(() => read.IsCompleted);
+            if (Posture != posture || UnableToAct) yield break;
+            if (read.IsFaulted) { Debug.LogException(read.Exception.GetBaseException(), this); yield break; }
+            for (int i = 0; i < stanceRigs.Length; i++) stanceRigs[i].CombatIdle = read.Result[i];
+        }
+        void StopCombatAnimation()
+        {
+            if (actionLoading != null) StopCoroutine(actionLoading);
+            if (stanceLoading != null) StopCoroutine(stanceLoading);
+            actionLoading = null;
+            stanceLoading = null;
+            actionPending = false;
+            actionDuration = 0;
+            foreach (var rig in rigs) { rig.Action = null; rig.CombatIdle = null; }
+        }
+        void OnDisable() => StopCombatAnimation();
         public CreaturePosture Posture { get; private set; } = CreaturePosture.Upright;
         [Tooltip("Infer locomotion from world movement. Disable for UI previews, which always idle.")]
         public bool detectMovement = true;
@@ -67,6 +133,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 return;
             var previous = Posture;
             Posture = posture;
+            StopCombatAnimation();
             locomotionTime = 0;
             LocomotionBlend = 0;
             postureAge = snap ? 1 : 0;
@@ -111,6 +178,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         internal void Advance(float speed, float seconds)
         {
             Speed = speed;
+            actionAge += seconds;
             idleTime += seconds;
             postureAge += seconds;
             LocomotionBlend = Mathf.MoveTowards(LocomotionBlend, ridingPose == null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.Prone) && speed > .05f ? 1 : 0, seconds / .12f);
@@ -149,6 +217,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 }
                 var transition = rig.TransitionIndex < rig.Transitions.Count ? rig.Transitions[rig.TransitionIndex] : null;
                 var idleClip = ridingPose != null && rig.Skeleton.RidingPoses.TryGetValue(ridingPose, out var ridingClip) ? ridingClip
+                    : rig.CombatIdle != null ? rig.CombatIdle
                     : rig.Skeleton.Postures.TryGetValue(Posture, out var postureClip) ? postureClip : rig.Skeleton.Idle;
                 for (int i = 0; i < rig.Bones.Length; i++)
                 {
@@ -173,6 +242,16 @@ namespace Swg.Client.Runtime.Assets.Appearances
                         {
                             Rotation = Quaternion.Slerp(sample.Rotation, moving.Rotation, LocomotionBlend),
                             Translation = Vector3.Lerp(sample.Translation, moving.Translation, LocomotionBlend)
+                        };
+                    }
+                    if (rig.Action != null && IsPlayingAction)
+                    {
+                        var action = rig.Action.Sample(joint.Name, actionAge, false);
+                        float weight = Mathf.Min(Mathf.Clamp01(actionAge / .1f), Mathf.Clamp01((actionDuration - actionAge) / .12f));
+                        sample = new JointSample
+                        {
+                            Rotation = Quaternion.Slerp(sample.Rotation, action.Rotation, weight),
+                            Translation = Vector3.Lerp(sample.Translation, action.Translation, weight)
                         };
                     }
                     var pose = joint.Sample(sample);

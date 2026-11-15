@@ -182,7 +182,11 @@ namespace Swg.Client.Core.Networking.Soe
             if (depth > 8 || b.Length < 2)
                 throw new InvalidDataException("Invalid nested UDP packet");
             if (b[0] != 0)
+            {
+                // StandaloneBaseMessage (combat actions/spam) bypasses the reliable data channel.
+                messages.AddRange(SoeCodec.SplitMessages(b));
                 return;
+            }
             switch (b[1])
             {
                 case 3:
@@ -192,6 +196,9 @@ namespace Swg.Client.Core.Networking.Soe
                     };
                     while (r.Remaining > 0)
                         Handle(r.Take(r.Byte()), messages, depth + 1);
+                    break;
+                case 25:
+                    messages.AddRange(SoeCodec.SplitMessages(b));
                     break;
                 case 9:
                 case 13:

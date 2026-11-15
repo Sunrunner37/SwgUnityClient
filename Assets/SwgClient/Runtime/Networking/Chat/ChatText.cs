@@ -1,4 +1,5 @@
 using System;
+using Swg.Client.Core.Networking.Game.Packets.Combat;
 using System.Text.RegularExpressions;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.World;
@@ -37,6 +38,9 @@ namespace Swg.Client.Runtime.Networking.Chat
 
         internal ProseParameters ResolveParameters(LocalizedChatString prose)
             => new ProseParameters(Token(prose.User), Token(prose.Target), Token(prose.Object), prose.IntegerParameter, prose.FloatParameter);
+
+        internal string Combat(CombatSpamPacket packet) => formatter.Format(localizer.Lookup(packet.StringId.File, packet.StringId.Key),
+            new ProseParameters(Name(packet.AttackerSwgId), Name(packet.DefenderSwgId), Name(packet.ItemSwgId), (int)packet.Damage));
 
         public string Name(ulong swgId)
         {

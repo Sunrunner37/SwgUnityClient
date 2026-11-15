@@ -2957,7 +2957,7 @@
       "group": "Combat",
       "packet": "CombatActionPacket",
       "handler": "CombatActionControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "CombatAction",
@@ -3133,7 +3133,7 @@
       "group": "Effects",
       "packet": "AnimationPacket",
       "handler": "AnimationControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "Animation",
@@ -3388,7 +3388,7 @@
       "group": "Combat",
       "packet": "CombatSpamPacket",
       "handler": "CombatSpamControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "CombatSpam",

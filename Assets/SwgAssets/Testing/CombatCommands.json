@@ -1,0 +1,1869 @@
+{
+  "source": "Core3 MMOCoreORB/bin/scripts/commands - offline simulation snapshot; live animation selection remains server-authoritative.",
+  "commands": [
+    {
+      "name": "actionshot1",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.0
+    },
+    {
+      "name": "actionshot2",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "animalattack",
+      "animation": "mind_trick_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "animalcalm",
+      "animation": "mind_trick_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "animalscare",
+      "animation": "mind_trick_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "bleedingshot",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "blindattack",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "bodyshot1",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.0,
+      "damage": 2.0
+    },
+    {
+      "name": "bodyshot2",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.0,
+      "damage": 3.0
+    },
+    {
+      "name": "bodyshot3",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.0,
+      "damage": 4.0
+    },
+    {
+      "name": "burstshot1",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "burstshot2",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "chargeshot1",
+      "animation": "charge",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "chargeshot2",
+      "animation": "charge",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "concealshot",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "confusionshot",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.3,
+      "damage": 3.0
+    },
+    {
+      "name": "creatureareaattack",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 1.5
+    },
+    {
+      "name": "creatureareableeding",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "creatureareacombo",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 1.0
+    },
+    {
+      "name": "creatureareadisease",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "creatureareaknockdown",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 0.5
+    },
+    {
+      "name": "creatureareapoison",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "creaturerangedattack",
+      "animation": "creature_attack_ranged",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 1.0
+    },
+    {
+      "name": "cripplingshot",
+      "animation": "fire_5_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 5.0
+    },
+    {
+      "name": "defaultdroidattack",
+      "animation": "droid_attack",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 1.0
+    },
+    {
+      "name": "disarmingshot1",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "disarmingshot2",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.75
+    },
+    {
+      "name": "diveshot",
+      "animation": "fire_acrobatic",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "dizzyattack",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "doubletap",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.1,
+      "damage": 2.8
+    },
+    {
+      "name": "drainforce",
+      "animation": "force_drain_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "eyeshot",
+      "animation": "fire_3_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "fanshot",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "fastblast",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.05,
+      "damage": 6.0
+    },
+    {
+      "name": "fireacidcone1",
+      "animation": "fire_acid_rifle_single_1",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 5.0
+    },
+    {
+      "name": "fireacidcone2",
+      "animation": "fire_acid_rifle_single_2",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 6.0
+    },
+    {
+      "name": "fireacidsingle1",
+      "animation": "fire_acid_rifle_single_1",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 5.0
+    },
+    {
+      "name": "fireacidsingle2",
+      "animation": "fire_acid_rifle_single_2",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 8.0
+    },
+    {
+      "name": "firelightningcone1",
+      "animation": "fire_area",
+      "generated": true,
+      "range": 16.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "firelightningcone2",
+      "animation": "fire_area",
+      "generated": true,
+      "range": 16.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "firelightningsingle1",
+      "animation": "fire_lightning_rifle_single_1",
+      "generated": true,
+      "range": 16.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "firelightningsingle2",
+      "animation": "fire_lightning_rifle_single_2",
+      "generated": true,
+      "range": 16.0,
+      "speed": 2.0,
+      "damage": 5.0
+    },
+    {
+      "name": "flamecone1",
+      "animation": "fire_flame_thrower_cone_1",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 5.0
+    },
+    {
+      "name": "flamecone2",
+      "animation": "fire_flame_thrower_cone_2",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 6.0
+    },
+    {
+      "name": "flamesingle1",
+      "animation": "fire_flame_thrower_single_1",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 5.0
+    },
+    {
+      "name": "flamesingle2",
+      "animation": "fire_flame_thrower_single_2",
+      "generated": true,
+      "range": 16.0,
+      "speed": 4.0,
+      "damage": 8.0
+    },
+    {
+      "name": "flurryshot1",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "flurryshot2",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "flushingshot1",
+      "animation": "fire_3_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "flushingshot2",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "forcechoke",
+      "animation": "force_choke_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forceintimidate1",
+      "animation": "force_intimidate",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forceintimidate2",
+      "animation": "force_intimidate",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forceknockdown1",
+      "animation": "force_knockdown_1_particle_level_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forceknockdown2",
+      "animation": "force_knockdown_1_arc_particle_level_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forceknockdown3",
+      "animation": "force_knockdown_1_arc_particle_level_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forcelightningcone1",
+      "animation": "force_lightning_1_arc_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forcelightningcone2",
+      "animation": "force_lightning_1_arc_particle_level_3",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forcelightningsingle1",
+      "animation": "force_lightning_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forcelightningsingle2",
+      "animation": "force_lightning_1_particle_level_3",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forcethrow1",
+      "animation": "force_throw_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forcethrow2",
+      "animation": "force_throw_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "forceweaken1",
+      "animation": "force_weaken_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "forceweaken2",
+      "animation": "force_weaken_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "fullautoarea1",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "fullautoarea2",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "fullautosingle1",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "fullautosingle2",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 3.5
+    },
+    {
+      "name": "headshot1",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "headshot2",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "headshot3",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "healthshot1",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.5
+    },
+    {
+      "name": "healthshot2",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "intimidate1",
+      "animation": "intimidate",
+      "generated": false,
+      "range": 24.0,
+      "speed": 1.0,
+      "damage": 0.0
+    },
+    {
+      "name": "intimidate2",
+      "animation": "intimidate",
+      "generated": false,
+      "range": 24.0,
+      "speed": 1.0,
+      "damage": 0.0
+    },
+    {
+      "name": "intimidationattack",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "jedimindtrick",
+      "animation": "mind_trick_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 0.0
+    },
+    {
+      "name": "kipupshot",
+      "animation": "fire_acrobatic",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "knockdownattack",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "knockdownfire",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "lastditch",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 4.0,
+      "damage": 6.0
+    },
+    {
+      "name": "legshot1",
+      "animation": "test_homing",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.0
+    },
+    {
+      "name": "legshot2",
+      "animation": "test_homing",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "legshot3",
+      "animation": "test_homing",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "lowblow",
+      "animation": "fire_5_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee1hblindhit1",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee1hblindhit2",
+      "animation": "combo_2b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 2.5
+    },
+    {
+      "name": "melee1hbodyhit1",
+      "animation": "counter_high_right",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "melee1hbodyhit2",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "melee1hbodyhit3",
+      "animation": "combo_3a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 3.5
+    },
+    {
+      "name": "melee1hdizzyhit1",
+      "animation": "combo_2b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee1hdizzyhit2",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 3.5
+    },
+    {
+      "name": "melee1hhealthhit1",
+      "animation": "counter_low_left",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "melee1hhealthhit2",
+      "animation": "combo_3c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "melee1hhit1",
+      "animation": "counter_high_center",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "melee1hhit2",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 3.5
+    },
+    {
+      "name": "melee1hhit3",
+      "animation": "combo_5a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 5.0
+    },
+    {
+      "name": "melee1hlunge1",
+      "animation": "lower_posture_1hmelee_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee1hlunge2",
+      "animation": "knockdown_1hmelee_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 2.5,
+      "damage": 3.0
+    },
+    {
+      "name": "melee1hscatterhit1",
+      "animation": "combo_3b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 3.0
+    },
+    {
+      "name": "melee1hscatterhit2",
+      "animation": "combo_5b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 4.0
+    },
+    {
+      "name": "melee1hspinattack1",
+      "animation": "attack_high_right_medium_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee1hspinattack2",
+      "animation": "lower_posture_2hmelee_6",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 3.0
+    },
+    {
+      "name": "melee2harea1",
+      "animation": "lower_posture_2hmelee_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee2harea2",
+      "animation": "lower_posture_2hmelee_4",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "melee2harea3",
+      "animation": "lower_posture_2hmelee_5",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 3.0
+    },
+    {
+      "name": "melee2hheadhit1",
+      "animation": "combo_2d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.5
+    },
+    {
+      "name": "melee2hheadhit2",
+      "animation": "combo_2d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.75,
+      "damage": 2.5
+    },
+    {
+      "name": "melee2hheadhit3",
+      "animation": "combo_2d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 3.5
+    },
+    {
+      "name": "melee2hhit1",
+      "animation": "combo_2c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee2hhit2",
+      "animation": "combo_2a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "melee2hhit3",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 4.0
+    },
+    {
+      "name": "melee2hlunge1",
+      "animation": "lower_posture_2hmelee_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 1.5,
+      "damage": 1.0
+    },
+    {
+      "name": "melee2hlunge2",
+      "animation": "knockdown_2hmelee_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 2.5,
+      "damage": 1.0
+    },
+    {
+      "name": "melee2hmindhit1",
+      "animation": "combo_2b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.0
+    },
+    {
+      "name": "melee2hmindhit2",
+      "animation": "combo_3c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "melee2hspinattack1",
+      "animation": "attack_high_right_light_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "melee2hspinattack2",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 3.0
+    },
+    {
+      "name": "melee2hsweep1",
+      "animation": "lower_posture_2hmelee_3",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "melee2hsweep2",
+      "animation": "lower_posture_2hmelee_6",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.0
+    },
+    {
+      "name": "mindblast1",
+      "animation": "force_mind_blast_1_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "mindblast2",
+      "animation": "force_mind_blast_1_arc_particle_level_1",
+      "generated": true,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "mindshot1",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.0,
+      "damage": 1.5
+    },
+    {
+      "name": "mindshot2",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "multitargetpistolshot",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.5,
+      "damage": 4.2
+    },
+    {
+      "name": "overchargeshot1",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 2.75
+    },
+    {
+      "name": "overchargeshot2",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.75
+    },
+    {
+      "name": "panicshot",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 2.0
+    },
+    {
+      "name": "pistolmeleedefense1",
+      "animation": "ranged_melee",
+      "generated": true,
+      "range": 10.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "pistolmeleedefense2",
+      "animation": "ranged_melee",
+      "generated": true,
+      "range": 10.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "pointblankarea1",
+      "animation": "fire_area_no_trails",
+      "generated": true,
+      "range": 12.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "pointblankarea2",
+      "animation": "fire_area_no_trails",
+      "generated": true,
+      "range": 12.0,
+      "speed": 1.5,
+      "damage": 4.0
+    },
+    {
+      "name": "pointblanksingle1",
+      "animation": "fire_3_single",
+      "generated": true,
+      "range": 12.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "pointblanksingle2",
+      "animation": "fire_5_single",
+      "generated": true,
+      "range": 10.0,
+      "speed": 1.8,
+      "damage": 3.0
+    },
+    {
+      "name": "polearmactionhit1",
+      "animation": "attack_low_right_medium_0",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.0
+    },
+    {
+      "name": "polearmactionhit2",
+      "animation": "lower_posture_2hmelee_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmarea1",
+      "animation": "combo_2c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.75,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmarea2",
+      "animation": "lower_posture_2hmelee_6",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.75
+    },
+    {
+      "name": "polearmhit1",
+      "animation": "combo_2b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmhit2",
+      "animation": "combo_3a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "polearmhit3",
+      "animation": "combo_5a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 4.0
+    },
+    {
+      "name": "polearmleghit1",
+      "animation": "attack_low_left_medium_0",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.5
+    },
+    {
+      "name": "polearmleghit2",
+      "animation": "combo_3c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.75,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmleghit3",
+      "animation": "combo_3b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 2.5
+    },
+    {
+      "name": "polearmlunge1",
+      "animation": "lower_posture_polearm_2",
+      "generated": false,
+      "range": 20.0,
+      "speed": 1.5,
+      "damage": 1.0
+    },
+    {
+      "name": "polearmlunge2",
+      "animation": "lower_posture_polearm_2",
+      "generated": false,
+      "range": 20.0,
+      "speed": 2.5,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmspinattack1",
+      "animation": "attack_high_left_light_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "polearmspinattack2",
+      "animation": "combo_2c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "polearmstun1",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "polearmstun2",
+      "animation": "lower_posture_2hmelee_5",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmsweep1",
+      "animation": "knockdown_polearm_1",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "polearmsweep2",
+      "animation": "knockdown_polearm_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "posturedownattack",
+      "animation": "creature_attack_special_1",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "postureupattack",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "rollshot",
+      "animation": "fire_acrobatic",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "saber1hcombohit1",
+      "animation": "combo_3b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.5
+    },
+    {
+      "name": "saber1hcombohit2",
+      "animation": "combo_5b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "saber1hcombohit3",
+      "animation": "showoff_1",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 3.5
+    },
+    {
+      "name": "saber1hflurry",
+      "animation": "showoff_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 3.5
+    },
+    {
+      "name": "saber1hflurry2",
+      "animation": "combo_jedi_4",
+      "generated": true,
+      "range": -1.0,
+      "speed": 4.0,
+      "damage": 4.0
+    },
+    {
+      "name": "saber1hheadhit1",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.25
+    },
+    {
+      "name": "saber1hheadhit2",
+      "animation": "combo_4c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.75,
+      "damage": 1.75
+    },
+    {
+      "name": "saber1hheadhit3",
+      "animation": "combo_5a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 2.25
+    },
+    {
+      "name": "saber1hhit1",
+      "animation": "combo_jedi_1",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.25
+    },
+    {
+      "name": "saber1hhit2",
+      "animation": "combo_jedi_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "saber1hhit3",
+      "animation": "combo_jedi_3",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "saber2hbodyhit1",
+      "animation": "combo_3b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "saber2hbodyhit2",
+      "animation": "combo_3d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.25
+    },
+    {
+      "name": "saber2hbodyhit3",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 2.25
+    },
+    {
+      "name": "saber2hfrenzy",
+      "animation": "showoff_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.5,
+      "damage": 3.5
+    },
+    {
+      "name": "saber2hhit1",
+      "animation": "combo_2c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.25
+    },
+    {
+      "name": "saber2hhit2",
+      "animation": "combo_jedi_1",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "saber2hhit3",
+      "animation": "showoff_3",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "saber2hphantom",
+      "animation": "combo_jedi_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 4.0,
+      "damage": 4.5
+    },
+    {
+      "name": "saber2hsweep1",
+      "animation": "lower_posture_2hmelee_3",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.25
+    },
+    {
+      "name": "saber2hsweep2",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "saber2hsweep3",
+      "animation": "lower_posture_2hmelee_3",
+      "generated": false,
+      "range": -1.0,
+      "speed": 3.5,
+      "damage": 3.0
+    },
+    {
+      "name": "saberpolearmdervish",
+      "animation": "showoff_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 3.5
+    },
+    {
+      "name": "saberpolearmdervish2",
+      "animation": "combo_jedi_2",
+      "generated": true,
+      "range": -1.0,
+      "speed": 4.0,
+      "damage": 4.5
+    },
+    {
+      "name": "saberpolearmhit1",
+      "animation": "combo_3a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.25
+    },
+    {
+      "name": "saberpolearmhit2",
+      "animation": "combo_5a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "saberpolearmhit3",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 2.5
+    },
+    {
+      "name": "saberpolearmleghit1",
+      "animation": "combo_3a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "saberpolearmleghit2",
+      "animation": "combo_3b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 1.5
+    },
+    {
+      "name": "saberpolearmleghit3",
+      "animation": "combo_3d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.25,
+      "damage": 2.25
+    },
+    {
+      "name": "saberpolearmspinattack1",
+      "animation": "counter_low_left",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.25,
+      "damage": 0.75
+    },
+    {
+      "name": "saberpolearmspinattack2",
+      "animation": "showoff_1",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.25
+    },
+    {
+      "name": "saberpolearmspinattack3",
+      "animation": "showoff_1",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "saberthrow1",
+      "animation": "saberthrow",
+      "generated": true,
+      "range": 32.0,
+      "speed": 2.0,
+      "damage": 1.5
+    },
+    {
+      "name": "saberthrow2",
+      "animation": "saberthrow_posture_change",
+      "generated": false,
+      "range": 32.0,
+      "speed": 3.0,
+      "damage": 2.0
+    },
+    {
+      "name": "saberthrow3",
+      "animation": "saberthrow_posture_change",
+      "generated": false,
+      "range": 32.0,
+      "speed": 4.5,
+      "damage": 2.0
+    },
+    {
+      "name": "scattershot1",
+      "animation": "fire_5_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.25
+    },
+    {
+      "name": "scattershot2",
+      "animation": "fire_5_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 5.0
+    },
+    {
+      "name": "snipershot",
+      "animation": "fire_1_special_single_medium_face",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "sprayshot",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.5,
+      "damage": 4.0
+    },
+    {
+      "name": "startleshot1",
+      "animation": "fire_defender_posture_change_up",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "startleshot2",
+      "animation": "fire_defender_posture_change_up",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 4.0
+    },
+    {
+      "name": "stoppingshot",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 5.0
+    },
+    {
+      "name": "strafeshot1",
+      "animation": "fire_5_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "strafeshot2",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 5.0
+    },
+    {
+      "name": "stunattack",
+      "animation": "creature_attack_special_2",
+      "generated": true,
+      "range": -1,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "suppressionfire1",
+      "animation": "fire_defender_posture_change_down",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.5
+    },
+    {
+      "name": "suppressionfire2",
+      "animation": "fire_defender_posture_change_down",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.5
+    },
+    {
+      "name": "surpriseshot",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 3.0
+    },
+    {
+      "name": "threatenshot",
+      "animation": "fire_1_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 0.25
+    },
+    {
+      "name": "throwgrenade",
+      "animation": "throw_grenade",
+      "generated": false,
+      "range": 64.0,
+      "speed": 1.0,
+      "damage": 1.0
+    },
+    {
+      "name": "torsoshot",
+      "animation": "fire_3_special_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.3,
+      "damage": 3.0
+    },
+    {
+      "name": "transferforce",
+      "animation": "force_transfer_1",
+      "generated": false,
+      "range": 32.0,
+      "speed": 1,
+      "damage": 1
+    },
+    {
+      "name": "turretfire",
+      "animation": "fire_turret",
+      "generated": true,
+      "range": -1,
+      "speed": 1.0,
+      "damage": 1.0
+    },
+    {
+      "name": "unarmedblind1",
+      "animation": "attack_high_center_light_1",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.5
+    },
+    {
+      "name": "unarmedbodyhit1",
+      "animation": "attack_special_shoulder_bash",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "unarmedcombo1",
+      "animation": "combo_4b",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "unarmedcombo2",
+      "animation": "combo_4a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 4.0,
+      "damage": 3.0
+    },
+    {
+      "name": "unarmeddizzy1",
+      "animation": "attack_special_wookiee_slap",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.5
+    },
+    {
+      "name": "unarmedheadhit1",
+      "animation": "knockdown_unarmed_1",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "unarmedhit1",
+      "animation": "combo_2d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "unarmedhit2",
+      "animation": "combo_3a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.5,
+      "damage": 3.0
+    },
+    {
+      "name": "unarmedhit3",
+      "animation": "combo_5a",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 4.0
+    },
+    {
+      "name": "unarmedknockdown1",
+      "animation": "knockdown_unarmed_2",
+      "generated": false,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 1.0
+    },
+    {
+      "name": "unarmedknockdown2",
+      "animation": "knockdown_unarmed_3",
+      "generated": false,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.5
+    },
+    {
+      "name": "unarmedleghit1",
+      "animation": "attack_special_foot_stomp",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.5
+    },
+    {
+      "name": "unarmedlunge1",
+      "animation": "lower_posture_unarmed_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 1.5,
+      "damage": 2.0
+    },
+    {
+      "name": "unarmedlunge2",
+      "animation": "knockdown_unarmed_1",
+      "generated": false,
+      "range": 20.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "unarmedspinattack1",
+      "animation": "combo_3c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.0
+    },
+    {
+      "name": "unarmedspinattack2",
+      "animation": "combo_3d",
+      "generated": true,
+      "range": -1.0,
+      "speed": 3.0,
+      "damage": 3.0
+    },
+    {
+      "name": "unarmedstun1",
+      "animation": "combo_4c",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 1.25
+    },
+    {
+      "name": "underhandshot",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 1.5,
+      "damage": 3.0
+    },
+    {
+      "name": "warcry1",
+      "animation": "warcry",
+      "generated": false,
+      "range": 24.0,
+      "speed": 1.0,
+      "damage": 0.0
+    },
+    {
+      "name": "warcry2",
+      "animation": "warcry",
+      "generated": false,
+      "range": 24.0,
+      "speed": 1.0,
+      "damage": 0.0
+    },
+    {
+      "name": "warningshot",
+      "animation": "fire_area",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 0.25
+    },
+    {
+      "name": "wildshot1",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 2.25
+    },
+    {
+      "name": "wildshot2",
+      "animation": "fire_7_single",
+      "generated": true,
+      "range": -1.0,
+      "speed": 2.0,
+      "damage": 3.0
+    },
+    {
+      "name": "wookieeroar",
+      "animation": "intimidate",
+      "generated": false,
+      "range": 15.0,
+      "speed": 1.0,
+      "damage": 0.0
+    }
+  ]
+}
