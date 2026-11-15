@@ -1,4 +1,5 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Crafting;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using Swg.Client.Core.World.Terrain;
 namespace Swg.Client.Core.World
 {
     /// <summary>Stable session-owned state. Native world assets are populated during world entry.</summary>
-    public sealed class WorldState
+    public sealed class WorldState : IDisposable
     {
         public SceneObjectRegistry SceneObjects { get; }
         public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
@@ -56,7 +57,32 @@ namespace Swg.Client.Core.World
         public IReadOnlyDictionary<SwgId, Waypoint> Waypoints => waypoints;
         readonly Dictionary<string, Waypoint> poiWaypoints = new Dictionary<string, Waypoint>();
         public IReadOnlyDictionary<string, Waypoint> PoiWaypoints => poiWaypoints;
-        public IEnumerable<Waypoint> NavigationWaypoints => waypoints.Values.Concat(poiWaypoints.Values);
+        static bool IsDatapad(SceneObject sceneObject) => sceneObject.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) == true;
+        public IEnumerable<MissionSceneObject> AcceptedMissions => SceneObjects.ChildrenOf(PlayerSwgId)
+            .Where(IsDatapad)
+            .SelectMany(item => item.Children).OfType<MissionSceneObject>();
+        IEnumerable<Waypoint> MissionWaypoints => AcceptedMissions
+            .Where(mission => mission.Waypoint.HasValue && !waypoints.ContainsKey(mission.Waypoint.Value.SwgId))
+            .Select(mission => mission.Waypoint.Value);
+        public IEnumerable<Waypoint> NavigationWaypoints => waypoints.Values.Concat(poiWaypoints.Values).Concat(MissionWaypoints);
+        void MissionObjectChanged(SceneObject sceneObject, SceneObjectChange changes)
+        {
+            if (sceneObject is MissionSceneObject mission)
+            {
+                bool containmentChanged = (changes & SceneObjectChange.Containment) != 0 && mission.Waypoint.HasValue;
+                bool waypointUpdated = (changes & SceneObjectChange.Waypoint) != 0
+                    && AcceptedMissions.Any(item => item.SwgId == mission.SwgId);
+                if (containmentChanged || waypointUpdated)
+                    WaypointsChanged?.Invoke();
+            }
+            else if (IsDatapad(sceneObject) && (changes & SceneObjectChange.Containment) != 0)
+                WaypointsChanged?.Invoke();
+        }
+        void MissionObjectRemoved(SceneObject sceneObject)
+        {
+            if (sceneObject is MissionSceneObject mission && mission.Waypoint.HasValue || IsDatapad(sceneObject))
+                WaypointsChanged?.Invoke();
+        }
         internal void SetPoiWaypoints(IEnumerable<Waypoint> points)
         {
             poiWaypoints.Clear();
@@ -84,7 +110,17 @@ namespace Swg.Client.Core.World
         public WorldTerrain Terrain { get; internal set; }
         public ObjectTemplateCatalog Templates { get; internal set; }
 
-        public WorldState(SceneObjectRegistry sceneObjects) => SceneObjects = sceneObjects;
+        public WorldState(SceneObjectRegistry sceneObjects)
+        {
+            SceneObjects = sceneObjects;
+            SceneObjects.ObjectChanged += MissionObjectChanged;
+            SceneObjects.Removed += MissionObjectRemoved;
+        }
+        public void Dispose()
+        {
+            SceneObjects.ObjectChanged -= MissionObjectChanged;
+            SceneObjects.Removed -= MissionObjectRemoved;
+        }
         internal void BeginScene(SwgId playerSwgId, Vector3 renderOrigin, string terrainPath)
         {
             CharacterSheet = new CharacterSheetData();

@@ -16,6 +16,10 @@ namespace Swg.Client.Runtime.Networking
         public const byte VehicleEnterExitAction = 205;
         public const byte ExamineAction = 7;
         public const byte UseAction = 20;
+        public const byte MissionListAction = 33;
+        public const byte MissionDetailsAction = 34;
+        public const byte MissionAbortAction = 62;
+        public static bool IsMissionTerminal(int objectType) => objectType == 0x4006;
         public const byte LootAction = 35;
         public const byte LootAllAction = 36;
         public const byte PetCallAction = 44;
@@ -42,6 +46,8 @@ namespace Swg.Client.Runtime.Networking
                 entries.Add(new RadialMenuEntry((byte)(entries.Count + 1), 0, LootAction, 3, "@ui_radial:loot"));
                 entries.Add(new RadialMenuEntry((byte)(entries.Count + 1), 0, LootAllAction, 3, "@ui_radial:loot_all"));
             }
+            if (sceneObject is MissionSceneObject && sceneObject.Parent?.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) == true)
+                entries.Add(new RadialMenuEntry((byte)(entries.Count + 1), 0, MissionAbortAction, 1, "@ui_radial:mission_abort"));
             return entries.ToArray();
         }
 
@@ -49,6 +55,8 @@ namespace Swg.Client.Runtime.Networking
         {
             switch (objectType)
             {
+                case 0x4006: action = MissionListAction; return true;
+                case 0x803: action = MissionDetailsAction; return true;
                 // VehicleControlDevice.idl and PetControlDeviceImplementation.cpp handle selection only.
                 case VehicleControlDevice:
                     action = sceneObject is IntangibleSceneObject vehicle && vehicle.IsActive ? VehicleStoreAction : VehicleGenerateAction;
@@ -128,6 +136,9 @@ namespace Swg.Client.Runtime.Networking
                 case PetStoreAction: return "@pet/pet_menu:menu_store";
                 case VehicleGenerateAction: return "@pet/pet_menu:menu_generate";
                 case VehicleStoreAction: return "@pet/pet_menu:menu_store";
+                case MissionListAction: return "@ui_radial:terminal_mission_list";
+                case MissionDetailsAction: return "@ui_radial:mission_details";
+                case MissionAbortAction: return "@ui_radial:mission_abort";
                 case UseAction: return "@ui_radial:item_use";
                 default: return "";
             }

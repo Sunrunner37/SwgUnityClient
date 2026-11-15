@@ -63,7 +63,13 @@ namespace Swg.Client.Runtime.Networking
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (radialId == ObjectMenuDefaults.UseAction && ObjectMenuDefaults.IsCrafting(ObjectType(sceneObject)))
+            if (ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)) && radialId == ObjectMenuDefaults.MissionListAction)
+                GameServices.Resolve<ClientMissions>().Open(swgId);
+            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionDetailsAction)
+                GameServices.Resolve<ClientMissions>().ShowDetails(swgId);
+            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionAbortAction)
+                GameServices.Resolve<ClientMissions>().RequestAbort(swgId);
+            else if (radialId == ObjectMenuDefaults.UseAction && ObjectMenuDefaults.IsCrafting(ObjectType(sceneObject)))
                 enqueueCommand("requestCraftingSession", "", swgId);
             else if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
             {

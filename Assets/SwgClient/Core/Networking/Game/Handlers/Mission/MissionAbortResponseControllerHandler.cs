@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Networking.Game.Packets.Mission;
 using System;
 using UnityEngine.Scripting;
@@ -8,16 +9,20 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Mission
     [Preserve]
     internal sealed class MissionAbortResponseControllerHandler : ObjectControllerHandler<MissionAbortResponsePacket>
     {
+        readonly Lazy<ClientMissions> missions;
+        readonly GameReplication replication;
         public override uint ControllerType => MissionAbortResponsePacket.ControllerType;
 
         [Preserve]
-        public MissionAbortResponseControllerHandler() : base(MissionAbortResponsePacket.ReadFrom)
+        public MissionAbortResponseControllerHandler(Lazy<ClientMissions> missions, GameReplication replication) : base(MissionAbortResponsePacket.ReadFrom)
         {
+            this.missions = missions;
+            this.replication = replication;
         }
 
         protected override void Handle(MissionAbortResponsePacket packet)
         {
-            throw new NotImplementedException($"MissionAbortResponse (controller 0x{ControllerType:X8})");
+            replication.UpdatePlayer(_ => missions.Value.Receive(packet));
         }
     }
 }

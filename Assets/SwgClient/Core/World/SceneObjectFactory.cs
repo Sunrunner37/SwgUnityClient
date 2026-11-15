@@ -9,6 +9,8 @@ namespace Swg.Client.Core.World
         internal static Type TypeForTemplate(string templatePath)
         {
             string path = templatePath ?? "";
+            if (path.StartsWith("object/mission/", StringComparison.OrdinalIgnoreCase))
+                return typeof(MissionSceneObject);
             if (path.StartsWith("object/manufacture_schematic/", StringComparison.OrdinalIgnoreCase))
                 return typeof(ManufactureSchematicSceneObject);
             if (path.StartsWith("object/creature/", StringComparison.OrdinalIgnoreCase))
@@ -17,7 +19,7 @@ namespace Swg.Client.Core.World
                 return typeof(SpatialSceneObject);
             if (path.StartsWith("object/intangible/", StringComparison.OrdinalIgnoreCase))
                 return typeof(IntangibleSceneObject);
-            if (path.StartsWith("object/mission/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/waypoint/", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith("object/waypoint/", StringComparison.OrdinalIgnoreCase))
                 return typeof(SceneObject);
             if (path.StartsWith("object/building/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("object/tangible/", StringComparison.OrdinalIgnoreCase))
                 return typeof(TangibleSceneObject);
@@ -44,6 +46,8 @@ namespace Swg.Client.Core.World
 
         internal static SceneObject CreateInstance(Type type)
         {
+            if (type == typeof(MissionSceneObject))
+                return new MissionSceneObject();
             if (type == typeof(ManufactureSchematicSceneObject))
                 return new ManufactureSchematicSceneObject();
             if (type == typeof(IntangibleSceneObject))

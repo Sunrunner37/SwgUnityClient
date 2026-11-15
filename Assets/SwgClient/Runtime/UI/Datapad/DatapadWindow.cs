@@ -275,6 +275,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             selectedKind.text = entry?.Kind ?? "";
             details.enabled = entry?.SceneObject != null;
             if (entry == null) { details.text.text = ""; return; }
+            if (entry.SceneObject is MissionSceneObject mission) { details.enabled = false; details.text.text = GameServices.Resolve<ClientMissions>().DetailText(mission) + "\n\n" + entry.Description; return; }
             if (entry.SceneObject != null) { details.Show(entry.SceneObject.SwgId); return; }
             var text = new StringBuilder();
             if (entry.Waypoint.HasValue)

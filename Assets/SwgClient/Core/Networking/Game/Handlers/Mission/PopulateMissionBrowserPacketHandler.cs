@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Mission;
@@ -8,16 +9,20 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Mission
     [Preserve]
     internal sealed class PopulateMissionBrowserPacketHandler : GamePacketHandler<PopulateMissionBrowserPacket>
     {
+        readonly Lazy<ClientMissions> missions;
+        readonly GameReplication replication;
         public override uint Opcode => PopulateMissionBrowserPacket.Opcode;
 
         [Preserve]
-        public PopulateMissionBrowserPacketHandler() : base(PopulateMissionBrowserPacket.ReadFrom)
+        public PopulateMissionBrowserPacketHandler(Lazy<ClientMissions> missions, GameReplication replication) : base(PopulateMissionBrowserPacket.ReadFrom)
         {
+            this.missions = missions;
+            this.replication = replication;
         }
 
         protected override void Handle(PopulateMissionBrowserPacket packet)
         {
-            throw new NotImplementedException($"PopulateMissionBrowserMessage (opcode 0x{Opcode:X8})");
+            replication.UpdatePlayer(_ => missions.Value.Receive(packet));
         }
     }
 }

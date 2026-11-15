@@ -74,7 +74,7 @@ namespace Swg.Client.Runtime.UI.Navigation
                 var arrow = Instantiate(arrowPrefab, arrows);
                 var color = ColorFor(waypoint.Color);
                 row.Bind(localizer.Localize(waypoint.Name), color);
-                if (waypoint.PoiKey != null) row.waypointName.color = color;
+                if (waypoint.PoiKey != null || waypoint.Color == WaypointColor.Orange || waypoint.Color == WaypointColor.Yellow) row.waypointName.color = color;
                 arrow.image.color = color;
                 displays.Add(new Display { Waypoint = waypoint, Row = row, Arrow = arrow });
             }

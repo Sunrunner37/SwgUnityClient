@@ -153,6 +153,8 @@ namespace Swg.Client.Runtime.Networking
         }
         Entry DataEntry(SceneObject item)
         {
+            if (item is MissionSceneObject mission)
+                return new Entry { Key = "data:" + item.SwgId, Name = localizer.Localize(mission.Title), Kind = "Mission", Description = localizer.Localize(mission.Description), SceneObject = item, PreviewPath = state.Templates.Resolve(mission.TargetTemplateCrc) ?? item.TemplatePath };
             var draft = item is ManufactureSchematicSceneObject schematic && schematic.DraftSchematicCrc != 0 ? Schematic(schematic.DraftSchematicCrc) : null;
             return new Entry { Key = "data:" + item.SwgId, Name = names.Resolve(item), Kind = names.Resolve(new SceneObject { TemplatePath = item.TemplatePath }), Description = names.Description(item), SceneObject = item, PreviewPath = draft?.PreviewPath ?? item.TemplatePath };
         }

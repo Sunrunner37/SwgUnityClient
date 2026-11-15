@@ -18,6 +18,7 @@ using Swg.Client.Runtime.Networking.Chat;
 using Swg.Client.Core.Networking.Game.Handlers;
 using System.IO;
 using System;
+using Swg.Client.Core.Networking.Game.Packets.Mission;
 using Swg.Client.Core.Networking.Game.Packets.Crafting;
 using System.Threading;
 using Swg.Client.Runtime.UI.Screens;
@@ -94,6 +95,10 @@ namespace Swg.Client.Runtime
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterType<ClientMissions>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterInstance(new Action<MissionListRequestPacket>(packet => connection.Send(packet)));
+                builder.RegisterInstance(new Action<MissionAcceptPacket>(packet => connection.Send(packet)));
+                builder.RegisterInstance(new Action<MissionAbortPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientCrafting>().AsSelf().SingleInstance();
                 builder.RegisterInstance(new Action<CraftingRemoveIngredientPacket>(packet => connection.Send(packet)));
                 builder.RegisterInstance(new Action<CraftingAddIngredientPacket>(packet => connection.Send(packet)));

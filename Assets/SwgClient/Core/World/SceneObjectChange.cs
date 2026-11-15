@@ -16,6 +16,7 @@ namespace Swg.Client.Core.World
         Posture = 128,
         State = 256,
         Skills = 512,
-        All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture | State | Skills
+        Waypoint = 1024,
+        All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture | State | Skills | Waypoint
     }
 }

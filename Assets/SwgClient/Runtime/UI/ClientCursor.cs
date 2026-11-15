@@ -10,6 +10,7 @@ namespace Swg.Client.Runtime.UI
     {
         readonly TreRuntimeAssets assets;
         Texture2D activation;
+        Texture2D use;
         Texture2D world;
         Texture2D shown;
         UnityEngine.Object activationOwner;
@@ -31,10 +32,11 @@ namespace Swg.Client.Runtime.UI
             activationOwner = null;
             Refresh();
         }
-        public void SetWorldHover(bool hovered, Texture2D texture, Vector2 hotspot)
+        public void SetWorldHover(bool hovered, Texture2D texture, Vector2 hotspot, bool useAction = false)
         {
             worldHovered = hovered;
-            world = texture;
+            if (useAction && use == null) use = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_use.dds"));
+            world = useAction ? use : texture;
             worldHotspot = hotspot;
             Refresh();
         }
@@ -59,6 +61,7 @@ namespace Swg.Client.Runtime.UI
         {
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             if (activation != null) UnityEngine.Object.Destroy(activation);
+            if (use != null) UnityEngine.Object.Destroy(use);
         }
     }
 }

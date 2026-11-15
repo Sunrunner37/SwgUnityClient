@@ -74,7 +74,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicatedObjectType.ManufactureSchematic => typeof(ManufactureSchematicSceneObject),
             ReplicatedObjectType.ResourceContainer => typeof(TangibleSceneObject),
             ReplicatedObjectType.Intangible => typeof(IntangibleSceneObject),
-            ReplicatedObjectType.Mission => typeof(SceneObject),
+            ReplicatedObjectType.Mission => typeof(MissionSceneObject),
             _ => null
         };
     }

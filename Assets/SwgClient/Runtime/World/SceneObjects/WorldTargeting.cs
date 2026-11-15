@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.UI.Interactions;
 using System;
 using System.Collections;
@@ -25,6 +26,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public Vector2 cursorHotspot = new Vector2(16, 16);
         public float maximumDistance = 256;
         readonly RaycastHit[] hits = new RaycastHit[64];
+        SwgId lastClicked;
+        float lastClickTime = float.NegativeInfinity;
+        ClientObjectInteractions interactions;
         ClientTargeting targeting;
         WorldState state;
         Texture2D cursor;
@@ -35,6 +39,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         {
             targeting = GameServices.Resolve<ClientTargeting>();
             cursors = GameServices.Resolve<ClientCursor>();
+            interactions = GameServices.Resolve<ClientObjectInteractions>();
             state = GameServices.Resolve<WorldState>();
             targetMask = LayerMask.GetMask(TargetableSceneObject.LayerName);
         }
@@ -88,6 +93,12 @@ namespace Swg.Client.Runtime.World.SceneObjects
                     heldSwgId = hovered;
                     holdPosition = mouse.position.ReadValue();
                     holdStart = Time.unscaledTime;
+                    if (!hovered.IsNone && hovered == lastClicked && Time.unscaledTime - lastClickTime < .3f)
+                    {
+                        interactions.ActivateDefault(hovered);
+                        heldSwgId = default;
+                    }
+                    lastClicked = hovered; lastClickTime = Time.unscaledTime;
                 }
                 if (!heldSwgId.IsNone && mouse.leftButton.isPressed && hovered == heldSwgId && Vector2.Distance(holdPosition, mouse.position.ReadValue()) <= holdMovementTolerance && Time.unscaledTime - holdStart >= holdSeconds)
                 {
@@ -98,7 +109,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (mouse == null || !mouse.leftButton.isPressed || overUi || hovered != heldSwgId || Vector2.Distance(holdPosition, mouse.position.ReadValue()) > holdMovementTolerance)
                 heldSwgId = default;
             targeting.Hover(hovered);
-            cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot);
+            cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot, !hovered.IsNone && interactions.HasDefaultAction(hovered));
             if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 targeting.Select(default);
         }

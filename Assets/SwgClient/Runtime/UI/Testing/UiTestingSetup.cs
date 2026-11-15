@@ -27,6 +27,7 @@ using Swg.Client.Core.Networking.Game.Packets.Targeting;
 using Swg.Client.Runtime.World.SceneObjects;
 using Swg.Client.Core.Commands;
 using System;
+using Swg.Client.Core.Networking.Game.Packets.Mission;
 using Swg.Client.Core.Networking.Game.Packets.Crafting;
 using Autofac;
 using UnityEngine;
@@ -97,6 +98,10 @@ namespace Swg.Client.Runtime.UI.Testing
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterType<ClientMissions>().AsSelf().SingleInstance().AutoActivate();
+                builder.Register(context => { var world = context.Resolve<WorldState>(); return new Action<MissionListRequestPacket>(packet => StartCoroutine(DownloadMissions(world, packet))); }).SingleInstance();
+                builder.Register(context => { var world = context.Resolve<WorldState>(); return new Action<MissionAcceptPacket>(packet => { world.SceneObjects.Reparent(packet.MissionSwgId, 9800); }); }).SingleInstance();
+                builder.Register(context => { var world = context.Resolve<WorldState>(); return new Action<MissionAbortPacket>(packet => world.SceneObjects.Remove(packet.MissionSwgId)); }).SingleInstance();
                 builder.RegisterType<ClientCrafting>().AsSelf().SingleInstance();
                 builder.RegisterInstance(new Action<CraftingRemoveIngredientPacket>(packet => Debug.Log("Offline crafting remove: " + packet.Slot)));
                 builder.RegisterInstance(new Action<CraftingAddIngredientPacket>(packet => Debug.Log("Offline crafting: " + packet)));
@@ -167,6 +172,22 @@ namespace Swg.Client.Runtime.UI.Testing
             state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9801, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2.iff", Name = "A helper R2 unit" });
             state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9802, ParentSwgId = 9800, TemplatePath = "object/intangible/pet/shared_r2_crafted.iff", Name = "R2 crafting assistant" });
             state.SceneObjects.Add(new IntangibleSceneObject { SwgId = 9803, ParentSwgId = 9800, TemplatePath = "object/intangible/vehicle/shared_landspeeder_x31_pcd.iff", Name = "Landspeeder" });
+            state.SceneObjects.Add(new SceneObject { SwgId = 9850, ParentSwgId = 9000, TemplatePath = "object/tangible/mission_bag/shared_mission_bag.iff" });
+            state.SceneObjects.Add(new TangibleSceneObject { SwgId = 9851, Name = "Mission terminal", TemplatePath = "object/tangible/terminal/shared_terminal_mission.iff" });
+            string[] authors = { "Wedofee Agame", "Waclome Hesri", "Trisloayo Liani", "Taseke Tye", "Fitoe Lightingdust", "Fifa Kriosoto" };
+            string[] titles = { "Overland Migration Menaces Mandracor", "Professor Seeks Specimen", "Destroy one of Valarian's strongholds", "Take out criminal hospital", "Dispatch Breeding Colonies", "Shistavanen Requires Carcass" };
+            string target = "object/tangible/lair/ronto/shared_lair_ronto_desert.iff";
+            for (int i = 0; i < 12; i++)
+                state.SceneObjects.Add(new MissionSceneObject
+                {
+                    SwgId = (ulong)(9860 + i), ParentSwgId = 9850, TemplatePath = "object/mission/shared_mission_object.iff",
+                    Title = titles[i % 6], Creator = authors[i % 6], Reward = 12000 - i * 233,
+                    Difficulty = 56, StartPosition = new Vector3(i * 130, 0, 866 - i * 28),
+                    StartPlanetCrc = state.PlanetCrc, MissionTypeCrc = i < 6 ? 0x74ef9be3u : 0xe5c27ec6u,
+                    TargetName = "a ronto nest", TargetTemplateCrc = ObjectTemplateNames.TemplateCrc(target),
+                    Description = "A dangerous breeding colony has appeared near our settlement. We are offering a substantial reward to anyone who can destroy the nest before it threatens the local population.",
+                    Waypoint = new Waypoint((ulong)(9880 + i), new Vector3(i * 130, 0, 866 - i * 28), state.PlanetCrc, titles[i % 6], WaypointColor.Orange, true)
+                });
             state.UpdateDraftSchematics(list => list.AddRange(new[]
             {
                 ObjectTemplateNames.TemplateCrc("object/draft_schematic/weapon/shared_rifle_t21.iff"),
@@ -210,6 +231,19 @@ namespace Swg.Client.Runtime.UI.Testing
             RefreshAbilities();
         }
 
+
+        IEnumerator DownloadMissions(WorldState state, MissionListRequestPacket packet)
+        {
+            yield return new WaitForSecondsRealtime(.8f);
+            foreach (var mission in state.SceneObjects.ChildrenOf(9850).OfType<MissionSceneObject>().ToArray())
+            {
+                mission.RefreshCounter = packet.Sequence;
+                state.SceneObjects.NotifyChanged(mission, SceneObjectChange.Inventory);
+            }
+        }
+
+        [ContextMenu("Preview mission terminal")]
+        public void ShowSampleMissions() => scope.Resolve<ClientMissions>().Open(9851);
 
         static void ApplyOfflineMenuSelection(WorldState world, ObjectMenuSelectPacket packet)
         {
