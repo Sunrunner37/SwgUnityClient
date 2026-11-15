@@ -16,7 +16,7 @@ namespace Swg.Client.Core.World
             if (path.StartsWith("object/creature/", StringComparison.OrdinalIgnoreCase))
                 return typeof(CreatureSceneObject);
             if (path.StartsWith("object/cell/", StringComparison.OrdinalIgnoreCase) || path.EndsWith("/shared_cell.iff", StringComparison.OrdinalIgnoreCase))
-                return typeof(SpatialSceneObject);
+                return typeof(CellSceneObject);
             if (path.StartsWith("object/intangible/", StringComparison.OrdinalIgnoreCase))
                 return typeof(IntangibleSceneObject);
             if (path.StartsWith("object/waypoint/", StringComparison.OrdinalIgnoreCase))
@@ -38,6 +38,7 @@ namespace Swg.Client.Core.World
         {
             var result = (SpatialSceneObject)Create(entry.SwgId, entry.TemplatePath);
             result.ParentSwgId = entry.ParentSwgId;
+            if (result is CellSceneObject cell) cell.Number = (int)entry.CellSwgId;
             result.Name = entry.TemplatePath;
             result.Position = entry.Position;
             result.Rotation = entry.Rotation;
@@ -54,6 +55,8 @@ namespace Swg.Client.Core.World
                 return new IntangibleSceneObject();
             if (type == typeof(SceneObject))
                 return new SceneObject();
+            if (type == typeof(CellSceneObject))
+                return new CellSceneObject();
             if (type == typeof(SpatialSceneObject))
                 return new SpatialSceneObject();
             if (type == typeof(TangibleSceneObject))

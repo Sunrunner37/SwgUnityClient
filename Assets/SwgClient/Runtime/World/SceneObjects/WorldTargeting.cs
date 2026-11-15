@@ -88,8 +88,11 @@ namespace Swg.Client.Runtime.World.SceneObjects
                     }
                 }
                 // Terrain hides targets behind a hill. Pick volumes themselves are on a separate layer.
-                if (!hovered.IsNone && Physics.Raycast(ray, closest, ~targetMask, QueryTriggerInteraction.Ignore))
-                    hovered = default;
+                if (!hovered.IsNone && Physics.Raycast(ray, out var obstruction, closest, ~targetMask, QueryTriggerInteraction.Ignore))
+                {
+                    var owner = obstruction.collider.GetComponentInParent<ManagedSceneObject>();
+                    if (owner == null || owner.SwgId != hovered) hovered = default;
+                }
                 if (mouse.leftButton.wasPressedThisFrame)
                 {
                     targeting.Select(hovered);

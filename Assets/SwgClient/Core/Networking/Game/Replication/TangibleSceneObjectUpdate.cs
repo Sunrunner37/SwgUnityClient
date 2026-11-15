@@ -9,11 +9,14 @@ namespace Swg.Client.Core.Networking.Game.Replication
     {
         public string ResourceType;
         public int? Volume;
+        public int? ConditionDamage;
+        public int? MaximumCondition;
         public int? Quantity;
         public byte[] Customization;
         public string AlternateAppearance;
         public override SceneObjectChange Changes => base.Changes
             | (ResourceType != null || Customization != null || AlternateAppearance != null ? SceneObjectChange.Appearance : SceneObjectChange.None)
+            | (ConditionDamage.HasValue || MaximumCondition.HasValue ? SceneObjectChange.Vitals : SceneObjectChange.None)
             | (Volume.HasValue || Quantity.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None);
         internal override Type RequiredType => typeof(TangibleSceneObject);
         internal override void ApplyTo(SceneObject sceneObject) => ((TangibleSceneObject)sceneObject).Apply(this);

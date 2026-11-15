@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Pob;
 using UnityEngine;
 using System;
 using Swg.Client.Core.Assets.Particles;
@@ -9,6 +10,7 @@ namespace Swg.Client.Core.Assets.Appearances
     public sealed class AppearanceData
     {
         public string Key;
+        public PortalLayout PortalLayout;
         public readonly Dictionary<string, Matrix4x4> Hardpoints = new Dictionary<string, Matrix4x4>(StringComparer.OrdinalIgnoreCase);
         public List<ParticleAppearance> Particles = new List<ParticleAppearance>();
         public RiderSeatData? RiderSeat;

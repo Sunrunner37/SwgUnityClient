@@ -83,6 +83,29 @@ namespace Swg.Client.Tests.Editor
             registry.Remove(4);Assert.That(inventory.Items, Is.Empty);
         }
         [Test]
+        public void RoomTransitionsDoNotRefreshInventoryForEveryCarriedItem()
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var assets = new TreRuntimeAssets(settings);
+            var registry = new SceneObjectRegistry();
+            using var currentPlayer = new CurrentPlayer(registry);
+            var state = new WorldState(registry) { Templates = new ObjectTemplateCatalog(assets.Loader) };
+            currentPlayer.BeginScene(1);
+            registry.Add(new CellSceneObject { SwgId = 10 });
+            registry.Add(new CreatureSceneObject { SwgId = 1 });
+            registry.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/inventory/shared_character_inventory.iff" });
+            for (ulong id = 100; id < 180; id++) registry.Add(new TangibleSceneObject { SwgId = id, ParentSwgId = 2 });
+            using var inventory = new ClientInventory(state, _ => { }, currentPlayer);
+            int refreshes = 0;
+            inventory.Changed += () => refreshes++;
+            registry.SetServerWorldPose(1, 10, new Pose(Vector3.right, Quaternion.identity));
+            Assert.That(refreshes, Is.EqualTo(1));
+            Assert.That(inventory.Items.Count, Is.EqualTo(80));
+            registry.Reparent(100, default);
+            Assert.That(inventory.Items.Count, Is.EqualTo(79));
+        }
+
+        [Test]
         public void ResourceDisplayNamesUseNativeParentClasses()
         {
             var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));

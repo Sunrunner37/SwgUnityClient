@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Pob;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,25 +112,10 @@ namespace Swg.Client.Core.Assets.Appearances
                     }));
                 else if (root.Kind == "PRTO")
                 {
-                    var version = root.Children.First(n => n.Tag == "FORM");
-                    var cells = version.Children.Single(n => n.Kind == "CELS");
-                    foreach (var cell in cells.Children.Where(n => n.Kind == "CELL"))
-                    {
-                        var cellVersion = cell.Children.First(n => n.Tag == "FORM");
-                        if (cellVersion.Kind != "0004" && cellVersion.Kind != "0005")
-                        {
-                            Warn(result, "Unsupported portal cell version " + cellVersion.Kind);
-                            continue;
-                        }
-
-                        var reader = new ByteReader(cellVersion.Chunk("DATA"));
-                        reader.U32();
-                        reader.Byte();
-                        reader.CString();
-                        string appearance = reader.CString();
-                        if (!string.IsNullOrEmpty(appearance))
-                            LoadChild(loader, AppearancePath(appearance), transform, result, stack, depth + 1, detailLevel, customization);
-                    }
+                    result.PortalLayout = PortalLayout.Parse(root, loader.Read);
+                    foreach (var cell in result.PortalLayout.Cells)
+                        if (!string.IsNullOrEmpty(cell.AppearancePath))
+                            LoadChild(loader, AppearancePath(cell.AppearancePath), transform, result, stack, depth + 1, detailLevel, customization);
                 }
                 else if (root.Kind == "CMPA")
                 {

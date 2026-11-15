@@ -81,6 +81,7 @@ namespace Swg.Client.Runtime.World.Terrain
             public Bounds Bounds;
         }
 
+        readonly Dictionary<Vector2Int, GameObject> collisionTiles = new Dictionary<Vector2Int, GameObject>();
         readonly Dictionary<Vector2Int, Tile> tiles = new Dictionary<Vector2Int, Tile>();
         readonly Dictionary<string, Resources> resources = new Dictionary<string, Resources>();
         readonly Dictionary<SwgId, FloraClearance[]> exclusions = new Dictionary<SwgId, FloraClearance[]>();
@@ -120,6 +121,10 @@ namespace Swg.Client.Runtime.World.Terrain
 
         public void AddOrReplace(Vector2Int key, TerrainFloraTile tile)
         {
+            if (collisionTiles.TryGetValue(key, out var previousColliders)) Destroy(previousColliders);
+            var collisions = new GameObject("Flora collision " + key);
+            collisions.transform.SetParent(transform, false);
+            collisionTiles[key] = collisions;
             var groups = new Dictionary<(string Resource, int X, int Z), List<Matrix4x4>>();
             var colors = new Dictionary<(string Resource, int X, int Z), List<Vector4>>();
             var effectInstances = new List<EffectInstance>();
@@ -141,6 +146,21 @@ namespace Swg.Client.Runtime.World.Terrain
                 var rotation = Quaternion.FromToRotation(Vector3.up, placement.Normal) * Quaternion.Euler(0, placement.Yaw, 0);
                 if (resources[resourceKey].Particles.Length > 0)
                     effectInstances.Add(new EffectInstance { Key = resourceKey, Position = position, Rotation = rotation, Scale = scale });
+                if (placement.Kind == TerrainFloraKind.StaticCollidable)
+                {
+                    // Native collidable flora gets a trunk capsule; visual leaf cards never block the player.
+                    var appearance = tile.Appearances[placement.AppearanceKey];
+                    var bounds = new Bounds((appearance.BoundsMin + appearance.BoundsMax) * .5f, appearance.BoundsMax - appearance.BoundsMin);
+                    var trunk = new GameObject("Trunk");
+                    trunk.transform.SetParent(collisions.transform, false);
+                    trunk.transform.SetPositionAndRotation(position, rotation);
+                    trunk.transform.localScale = scale;
+                    var collider = trunk.AddComponent<CapsuleCollider>();
+                    collider.radius = Mathf.Clamp(Mathf.Min(bounds.size.x, bounds.size.z) * .12f, .15f, .8f);
+                    collider.height = Mathf.Max(collider.radius * 2, bounds.size.y * .65f);
+                    collider.center = new Vector3(0, bounds.min.y + collider.height * .5f, 0);
+                    trunk.SetActive(!clearanceIndex.Contains(position, true));
+                }
                 instances.Add(Matrix4x4.TRS(position, rotation, scale));
                 colors[groupKey].Add(placement.Color);
                 if (item.Radial && item.Crossed)
@@ -207,6 +227,9 @@ namespace Swg.Client.Runtime.World.Terrain
                 foreach (var tile in tiles.Values)
                     foreach (var batch in tile.Batches)
                         Filter(batch);
+                foreach (var collisionTile in collisionTiles.Values)
+                    foreach (Transform trunk in collisionTile.transform)
+                        trunk.gameObject.SetActive(!clearanceIndex.Contains(trunk.position, true));
                 exclusionsChanged = false;
             }
 
@@ -393,6 +416,7 @@ namespace Swg.Client.Runtime.World.Terrain
                 foreach (var effect in effects[key])
                     if (effect.Object != null)
                         Destroy(effect.Object);
+                if (collisionTiles.Remove(key, out var colliders)) Destroy(colliders);
                 effects.Remove(key);
                 tiles.Remove(key);
             }
@@ -417,6 +441,8 @@ namespace Swg.Client.Runtime.World.Terrain
         {
             foreach (var appearance in resources.Values)
                 Release(appearance);
+            foreach (var colliders in collisionTiles.Values) Destroy(colliders);
+            collisionTiles.Clear();
             resources.Clear();
             tiles.Clear();
         }

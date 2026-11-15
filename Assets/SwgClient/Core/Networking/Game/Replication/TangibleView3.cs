@@ -24,7 +24,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             ReplicationReader.SkipVector(reader, sizeof(uint)); // Visible components.
             reader.U32(); // Options.
             update.Quantity = unchecked((int)reader.U32());
-            reader.Skip(2 * sizeof(uint)); // Damage and maximum condition.
+            update.ConditionDamage = unchecked((int)reader.U32());
+            update.MaximumCondition = unchecked((int)reader.U32());
             reader.Byte(); // Visibility.
         }
 
@@ -49,9 +50,13 @@ namespace Swg.Client.Core.Networking.Game.Replication
                 case 4:
                     update.Customization = ReplicationReader.Customization(reader);
                     break;
-                case 6:
                 case 8:
+                    update.ConditionDamage = unchecked((int)reader.U32());
+                    break;
                 case 9:
+                    update.MaximumCondition = unchecked((int)reader.U32());
+                    break;
+                case 6:
                     reader.U32();
                     break;
                 case 7:

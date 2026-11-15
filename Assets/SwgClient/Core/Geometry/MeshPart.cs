@@ -13,6 +13,11 @@ namespace Swg.Client.Core.Geometry
         public TextureData Diffuse;
         public byte[] Tint;
         public bool AlphaCutout;
+        public bool AlphaBlend;
+        public bool Fullbright;
+        public TextureData[] DiffuseFrames;
+        public float MinimumFrameSeconds;
+        public float MaximumFrameSeconds;
         public byte[] VertexColors;
         public bool UseCharacterShader;
         public SkeletalMeshData Skinning;

@@ -16,6 +16,57 @@ namespace Swg.Client.Tests.Editor
     public sealed class SceneObjectNotificationChecks
     {
         [Test]
+        public void ReparentingAnAncestorUpdatesPosesWithoutReparentingItsDescendants()
+        {
+            var registry = new SceneObjectRegistry();
+            registry.Add(new CellSceneObject { SwgId = 10, Position = Vector3.right * 100 });
+            registry.Add(new SpatialSceneObject { SwgId = 1, Position = Vector3.right });
+            registry.Add(new SpatialSceneObject { SwgId = 2, ParentSwgId = 1, Position = Vector3.right * 2 });
+            registry.Add(new SpatialSceneObject { SwgId = 3, ParentSwgId = 2, Position = Vector3.right * 3 });
+            var changes = new Dictionary<SwgId, SceneObjectChange>();
+            registry.ObjectChanged += (sceneObject, flags) => changes[sceneObject.SwgId] = flags;
+            registry.Reparent(1, 10);
+            Assert.That(changes[(SwgId)1], Is.EqualTo(SceneObjectChange.Containment));
+            Assert.That(changes[(SwgId)2], Is.EqualTo(SceneObjectChange.Transform));
+            Assert.That(changes[(SwgId)3], Is.EqualTo(SceneObjectChange.Transform));
+            Assert.That(registry.GetServerWorldPose(3).position.x, Is.EqualTo(106));
+        }
+
+        [Test]
+        public void ParentReplacementStillNotifiesDirectChildrenOfTheirNewParentInstance()
+        {
+            var registry = new SceneObjectRegistry();
+            registry.Add(new SpatialSceneObject { SwgId = 1 });
+            var child = new CreatureSceneObject { SwgId = 2, ParentSwgId = 1 };
+            registry.Add(child);
+            SceneObjectChange changes = SceneObjectChange.None;
+            registry.Subscribe(2, flags => changes |= flags);
+            var parent = new CreatureSceneObject { SwgId = 1 };
+            registry.Replace(parent);
+            Assert.That(child.Parent, Is.SameAs(parent));
+            Assert.That(changes.HasFlag(SceneObjectChange.Containment), Is.True);
+        }
+
+        [Test]
+        public void CrossingAnEmptyRoomDoesNotRepublishMissionWaypoints()
+        {
+            var registry = new SceneObjectRegistry();
+            using var player = new CurrentPlayer(registry);
+            player.BeginScene(1);
+            registry.Add(new CellSceneObject { SwgId = 10 });
+            registry.Add(new CreatureSceneObject { SwgId = 1 });
+            registry.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/datapad/shared_character_datapad.iff" });
+            registry.Add(new MissionSceneObject { SwgId = 3, ParentSwgId = 2,
+                Waypoint = new Waypoint(4, Vector3.zero, 1, "Mission", WaypointColor.Orange, true) });
+            int refreshes = 0;
+            player.WaypointsChanged += () => refreshes++;
+            registry.SetServerWorldPose(1, 10, new Pose(Vector3.right, Quaternion.identity));
+            Assert.That(refreshes, Is.Zero);
+            registry.Reparent(3, default);
+            Assert.That(refreshes, Is.EqualTo(1), "A real mission removal must still update waypoints.");
+        }
+
+        [Test]
         public void MovementNotifiesOnlyTheObjectAndItsDescendantsWithoutAppearanceWork()
         {
             using var world = GameServicesForTests.CreateReplication(GameServicesForTests.CreateState(out var currentPlayer), currentPlayer);

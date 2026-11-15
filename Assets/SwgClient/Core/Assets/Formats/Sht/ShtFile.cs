@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Collections.Generic;
 using Swg.Client.Core.Assets.Tre;
 using System.Linq;
@@ -27,6 +29,39 @@ namespace Swg.Client.Core.Assets.Formats.Sht
             reader.Byte(); // Source factor; particle alpha is supplied by the effect.
             byte destination = reader.Byte();
             return enabled && operation == 0 && destination == 1; // Add with destination One.
+        }
+
+        /// <summary>SWTS replaces a texture on a base shader, advancing frames with the native DTST/DRTS interval.</summary>
+        public sealed class TextureSwitcher
+        {
+            public string BaseShader;
+            public string[] Frames;
+            public float MinimumSeconds;
+            public float MaximumSeconds;
+        }
+
+        public static TextureSwitcher ReadTextureSwitcher(IEnumerable<IffNode> nodes)
+        {
+            var root = IffNode.Form(nodes, "SWTS");
+            if (root == null) return null;
+            var version = root.Children.Single(node => node.Kind == "0000");
+            var timing = version.Children.First(node => node.Kind == "DTST" || node.Kind == "DRTS");
+            var reader = new ByteReader(timing.Chunk("0000"));
+            int states = checked((int)reader.U32());
+            float minimum = reader.Float();
+            float maximum = timing.Kind == "DRTS" ? reader.Float() : minimum;
+            var frames = version.Children.Where(node => node.Tag == "TEXT").Select(node =>
+            {
+                var entry = new ByteReader(node.Data);
+                if (entry.U32() != 0x4d41494e) throw new InvalidDataException("Unsupported SWTS texture slot");
+                return TreAssetLoader.Normalize(entry.CString());
+            }).ToArray();
+            if (states != frames.Length || states == 0 || minimum <= 0 || maximum <= 0)
+                throw new InvalidDataException("Invalid SWTS frame count or interval");
+            // Some exporters stored an absolute authoring path; shader members live at shader/<filename> in TRE.
+            string baseShader = new ByteReader(version.Chunk("NAME")).CString().Replace('\\', '/');
+            return new TextureSwitcher { BaseShader = "shader/" + Path.GetFileName(baseShader).ToLowerInvariant(), Frames = frames,
+                MinimumSeconds = Math.Min(minimum, maximum), MaximumSeconds = Math.Max(minimum, maximum) };
         }
 
         public static bool TryGetMainTexture(byte[] bytes, out string texturePath) => TryGetMainTexture(IffNode.Parse(bytes), out texturePath);

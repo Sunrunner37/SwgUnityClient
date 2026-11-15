@@ -4,6 +4,12 @@ Shader "SWG/World"
     {
         _SwgPreview("UI preview lighting", Float) = 0
         _BaseMap("Diffuse", 2D) = "white" {}
+        _Fullbright("Native full emissive", Float) = 0
+        [HideInInspector] _SrcBlend("Source blend", Float) = 1
+        [HideInInspector] _DstBlend("Destination blend", Float) = 0
+        [HideInInspector] _ZWrite("Depth write", Float) = 1
+        [HideInInspector] _AlphaBlend("Alpha blend", Float) = 0
+        [HideInInspector] _AlphaToMask("Alpha to coverage", Float) = 1
         _TerrainBlend("Terrain layer blending", Float) = 0
         _TerrainMap1("Terrain layer 1", 2D) = "white" {}
         _TerrainMap2("Terrain layer 2", 2D) = "white" {}
@@ -42,6 +48,8 @@ Shader "SWG/World"
             float4 _TerrainMap1_ST;
             float4 _TerrainMap2_ST;
             float _TerrainBlend;
+            float _Fullbright;
+            float _AlphaBlend;
             half4 _Tint;
             half _Cutoff;
             float _SwgPreview;
@@ -126,7 +134,9 @@ Shader "SWG/World"
         Pass
         {
             Tags { "LightMode"="UniversalForward" }
-            AlphaToMask On
+            Blend [_SrcBlend] [_DstBlend]
+            ZWrite [_ZWrite]
+            AlphaToMask [_AlphaToMask]
             Cull Off
             HLSLPROGRAM
             #pragma vertex Vert
@@ -144,13 +154,15 @@ Shader "SWG/World"
                     half4 layer2 = SAMPLE_TEXTURE2D(_TerrainMap2, sampler_TerrainMap2, input.terrainUv * _TerrainMap2_ST.xy + _TerrainMap2_ST.zw);
                     surface = surface * input.blend.x + layer1 * input.blend.y + layer2 * input.blend.z;
                 }
-                half coverage = SurfaceCoverage(surface.a, input.worldPosition);
+                if (_AlphaBlend > .5) clip(surface.a - _Cutoff);
+                half coverage = _AlphaBlend > .5 ? surface.a : SurfaceCoverage(surface.a, input.worldPosition);
                 ClipFloraFade(input.worldPosition, input.positionCS.xy, input.floraSeed, false);
                 Light sun = SwgMainLight(input.worldPosition);
                 half3 normal = normalize(input.normalWS);
                 half3 lighting = max(SampleSH(normal), half3(0,0,0)) + sun.color * saturate(dot(normal, sun.direction)) * sun.shadowAttenuation * .75;
                 half previewBrightness = .55 + .45 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
                 lighting = lerp(lighting, previewBrightness.xxx, _SwgPreview);
+                lighting = lerp(lighting, half3(1,1,1), _Fullbright);
                 half3 color = surface.rgb * _Tint.rgb * input.floraTint * lerp(half3(1,1,1), input.color.rgb, _UseVertexColor) * lighting;
                 return half4(lerp(MixFog(color, input.fog), color, _SwgPreview), coverage);
             }

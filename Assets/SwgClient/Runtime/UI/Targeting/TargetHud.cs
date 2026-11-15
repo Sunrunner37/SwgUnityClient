@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Core.Characters;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.UI.Navigation;
@@ -30,6 +31,9 @@ namespace Swg.Client.Runtime.UI.Targeting
         public RectTransform hover;
         public NavigationArrow directionArrow;
         public HamBars ham;
+        public RectTransform vehicleOverhead;
+        public UnityEngine.UI.Image vehicleHealth;
+        public TMP_Text vehicleName;
         public GameObject posture;
         public PostureVisual[] postureIcons;
         public Camera worldCamera;
@@ -64,6 +68,7 @@ namespace Swg.Client.Runtime.UI.Targeting
             UpdateIndicator(selection, targeting.SelectedSwgId);
             UpdateIndicator(hover, targeting.HoveredSwgId == targeting.SelectedSwgId ? default : targeting.HoveredSwgId);
             UpdateDirectionArrow();
+            if (vehicleOverhead != null) vehicleOverhead.gameObject.SetActive(false);
             if (!selected)
                 return;
             int distance = -1;
@@ -83,9 +88,25 @@ namespace Swg.Client.Runtime.UI.Targeting
                 targetName.text = localizedName + (distance >= 0 ? " (" + distance + "m)" : "");
             }
             var creature = sceneObject as CreatureSceneObject;
-            bool hasHam = creature != null && creature.Ham.HasAnAttackableElement;
+            bool vehicle = ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var rendered) && rendered.GetComponentInChildren<VehicleSeat>() != null;
+            bool hasHam = vehicle || creature != null && creature.Ham.HasAnAttackableElement;
             ham.gameObject.SetActive(hasHam);
-            UpdatePosture(creature);
+            UpdatePosture(vehicle ? null : creature);
+            if (vehicle && sceneObject is TangibleSceneObject tangible)
+            {
+                ham.ShowCondition(tangible.ConditionFraction);
+                if (vehicleOverhead != null && worldCamera != null && rendered.TryGetComponent<TargetableSceneObject>(out var selectable))
+                {
+                    var top = selectable.LocalBounds.center + Vector3.up * selectable.LocalBounds.extents.y;
+                    var screen = worldCamera.WorldToScreenPoint(rendered.transform.TransformPoint(top));
+                    vehicleOverhead.gameObject.SetActive(screen.z > worldCamera.nearClipPlane);
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)vehicleOverhead.parent, screen, null, out var local);
+                    vehicleOverhead.anchoredPosition = local + Vector2.up * 18;
+                    vehicleHealth.fillAmount = tangible.ConditionFraction;
+                    vehicleName.text = localizedName;
+                }
+                return;
+            }
             if (!hasHam)
                 return;
             ham.Show(creature.Ham);

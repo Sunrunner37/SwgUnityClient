@@ -130,6 +130,7 @@ namespace Swg.Client.Runtime.World.Terrain
             var terrain = new GameObject("Native terrain");
             terrain.transform.SetParent(parent, false);
             terrain.AddComponent<MeshFilter>().sharedMesh = mesh;
+            terrain.AddComponent<MeshCollider>().sharedMesh = mesh;
             terrain.AddComponent<MeshRenderer>().sharedMaterials = materials;
             return new Tile
             {

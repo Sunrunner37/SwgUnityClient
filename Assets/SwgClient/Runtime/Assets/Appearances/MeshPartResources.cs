@@ -17,6 +17,9 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public Material Material { get; }
         public Bounds Bounds { get; }
         public SkeletalMeshData Skinning { get; }
+        public Texture[] AnimationFrames { get; private set; }
+        public float MinimumFrameSeconds { get; private set; }
+        public float MaximumFrameSeconds { get; private set; }
 
         public MeshPartResources(string name, MeshPart source, Material material, byte[] colors = null)
         {
@@ -69,8 +72,24 @@ namespace Swg.Client.Runtime.Assets.Appearances
             var colors = source.VertexColors;
             bool hasColors = colors != null && colors.Length == source.Vertices.Length * 4;
             bool cutout = source.AlphaCutout;
-            var material = factory.Create(shader, source.Diffuse, source.Tint, cutout ? .35f : 0, hasColors, wrapMode);
-            return new MeshPartResources(appearance.Key + " part " + index, source, material, colors);
+            var material = factory.Create(shader, source.Diffuse, source.Tint, cutout ? (source.AlphaBlend ? 1f / 255f : .35f) : 0, hasColors, wrapMode);
+            if (material.HasProperty("_Fullbright")) material.SetFloat("_Fullbright", source.Fullbright ? 1 : 0);
+            if (source.AlphaBlend)
+            {
+                material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
+                material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
+                material.SetFloat("_ZWrite", 0);
+                material.SetFloat("_AlphaBlend", 1);
+                material.SetFloat("_AlphaToMask", 0);
+                material.renderQueue = (int)RenderQueue.Transparent;
+                material.SetShaderPassEnabled("ShadowCaster", false);
+            }
+            return new MeshPartResources(appearance.Key + " part " + index, source, material, colors)
+            {
+                AnimationFrames = source.DiffuseFrames?.Select(frame => factory.Texture(frame, wrapMode)).ToArray(),
+                MinimumFrameSeconds = source.MinimumFrameSeconds,
+                MaximumFrameSeconds = source.MaximumFrameSeconds
+            };
         }
 
         public void Dispose()

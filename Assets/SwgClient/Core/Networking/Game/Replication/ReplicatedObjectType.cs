@@ -5,7 +5,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         Tangible = 0x54414e4f,
         Creature = 0x4352454f,
         Building = 0x4255494f,
-        Cell = 0x43454c4c,
+        Cell = 0x53434c54,
         Player = 0x504c4159,
         Guild = 0x47494c44,
         ManufactureSchematic = 0x4d53434f,

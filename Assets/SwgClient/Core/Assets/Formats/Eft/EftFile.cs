@@ -11,20 +11,22 @@ namespace Swg.Client.Core.Assets.Formats.Eft
     public sealed class EftFile
     {
         public bool AlphaTestEnabled { get; private set; }
+        public bool AlphaBlendEnabled { get; private set; }
 
         public static EftFile Parse(byte[] bytes)
         {
             var roots = IffNode.Parse(bytes);
             if (IffNode.Form(roots, "EFCT") == null)
                 throw new InvalidDataException("Expected an EFT shader effect");
-            var passes = BasePasses(roots).ToArray();
+            var passes = BasePasses(roots).Select(ReadAlphaState).ToArray();
             if (passes.Length == 0)
                 throw new InvalidDataException("Effect has no inline render pass");
             // Programmable variants can clip in their pixel shader with alpha testing disabled.
             // Their fixed-function alternatives expose the equivalent cutout state explicitly.
             return new EftFile
             {
-                AlphaTestEnabled = passes.Any(ReadAlphaTest)
+                AlphaTestEnabled = passes.Any(pass => pass.Test),
+                AlphaBlendEnabled = passes.Any(pass => pass.Blend)
             };
         }
 
@@ -44,7 +46,7 @@ namespace Swg.Client.Core.Assets.Formats.Eft
             }
         }
 
-        static bool ReadAlphaTest(IffNode pass)
+        static (bool Test, bool Blend) ReadAlphaState(IffNode pass)
         {
             var version = pass.Children.First(node => node.Tag == "FORM");
             if (!int.TryParse(version.Kind, out int number) || number < 0 || number > 10)
@@ -62,8 +64,9 @@ namespace Swg.Client.Core.Assets.Formats.Eft
             if (number == 10)
                 reader.Byte(); // Heat effect enabled.
             reader.Skip(3); // Depth enabled, write enabled, comparison.
-            reader.Skip(4); // Alpha blending enabled, operation, source and destination factors.
-            return reader.Byte() != 0;
+            bool blend = reader.Byte() != 0;
+            reader.Skip(3); // Alpha operation, source and destination factors.
+            return (reader.Byte() != 0, blend);
         }
     }
 }

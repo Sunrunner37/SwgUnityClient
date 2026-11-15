@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Assets.Tre;
@@ -25,7 +26,7 @@ namespace Swg.Client.Core.Characters.Appearance
         {
             if (!template.StartsWith("object/", StringComparison.OrdinalIgnoreCase))
                 return new CharacterClientData();
-            string path = FindClientData(loader, template, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            string path = FindTemplateString(loader, template, "clientDataFile", new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             return path == null || path.Length == 0 ? new CharacterClientData() : FromRawData(loader.Read(path));
         }
 
@@ -63,26 +64,36 @@ namespace Swg.Client.Core.Characters.Appearance
             settings[name] = checked((short)unchecked((int)reader.U32()));
         }
 
-        static string FindClientData(TreAssetLoader loader, string template, HashSet<string> seen)
+        // ARGD lists the slots occupied by a wearable, including inherited pants/skirt/dress arrangements.
+        internal static IEnumerable<string> OccupiedSlots(TreAssetLoader loader, string template)
+        {
+            string path = FindTemplateString(loader, template, "arrangementDescriptorFilename", new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            if (string.IsNullOrEmpty(path)) return Array.Empty<string>();
+            var root = IffNode.Form(IffNode.Parse(loader.Read(path)), "ARGD") ?? throw new InvalidDataException("Expected ARGD arrangement");
+            return root.Children.Single(node => node.Kind == "0000").Children.Where(node => node.Tag == "ARG ")
+                .SelectMany(node => Encoding.ASCII.GetString(node.Data).Split(new[] { '\0' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+        }
+
+        static string FindTemplateString(TreAssetLoader loader, string template, string fieldName, HashSet<string> seen)
         {
             if (!seen.Add(template))
                 throw new InvalidDataException("Cyclic character template inheritance: " + template);
             var nodes = IffNode.Parse(loader.Read(template));
-            // clientDataFile belongs to SHOT; other template forms contain XXXX chunks with unrelated layouts.
+            // These inherited string fields belong to SHOT; other template forms have unrelated XXXX layouts.
             var shot = IffNode.Form(nodes, "SHOT");
             if (shot != null)
                 foreach (var field in shot.Children.SelectMany(version => version.Children).Where(node => node.Tag == "XXXX"))
                 {
                     var reader = new ByteReader(field.Data);
-                    if (reader.CString() != "clientDataFile" || reader.Byte() != 1)
+                    if (reader.CString() != fieldName || reader.Byte() != 1)
                         continue;
-                    string clientDataPath = reader.CString();
-                    // An explicit empty value means this template has no client-data file.
-                    return clientDataPath.Length == 0 ? clientDataPath : TreAssetLoader.Normalize(clientDataPath);
+                    string value = reader.CString();
+                    // An explicit empty value overrides the inherited string.
+                    return value.Length == 0 ? value : TreAssetLoader.Normalize(value);
                 }
             var parent = IffNode.Form(nodes, "DERV");
             string inherited = parent == null ? null : IffNode.References(parent.Data, "object/", ".iff").FirstOrDefault();
-            return inherited == null ? null : FindClientData(loader, inherited, seen);
+            return inherited == null ? null : FindTemplateString(loader, inherited, fieldName, seen);
         }
     }
 }

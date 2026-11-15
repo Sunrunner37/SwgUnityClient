@@ -37,15 +37,16 @@ namespace Swg.Client.Core.Assets.Appearances
             var owner = new Dictionary<string, short>(appearance.Customization.ResolveNames(ids));
             var clientData = CharacterClientData.Load(loader, appearance.TemplatePath);
             foreach (var setting in clientData.Customization)
-                owner[setting.Key] = setting.Value;
+                if (!owner.ContainsKey(setting.Key)) owner[setting.Key] = setting.Value;
             var textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
             string ownerAppearance = FindSkeletalAppearance(loader, appearance.TemplatePath, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
             if (!LoadObject(loader, appearance.TemplatePath, owner, owner, textures, result, ownerAppearance))
                 throw new InvalidDataException("Template has no supported skeletal appearance");
+            var occupiedSlots = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var wearable in clientData.Wearables)
             {
-                if (wearable.ObjectTemplate != null)
-                    LoadObject(loader, wearable.ObjectTemplate, wearable.Customization, owner, textures, result, ownerAppearance);
+                if (wearable.ObjectTemplate != null && LoadObject(loader, wearable.ObjectTemplate, wearable.Customization, owner, textures, result, ownerAppearance))
+                    occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, wearable.ObjectTemplate));
                 foreach (string mesh in wearable.Meshes)
                     LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, mesh, wearable.Customization, owner, textures, result, ownerAppearance);
             }
@@ -54,6 +55,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 try
                 {
                     bool loaded = LoadObject(loader, item.TemplatePath, item.Customization.ResolveNames(ids), owner, textures, result, ownerAppearance);
+                    if (loaded) occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, item.TemplatePath));
                     if (!loaded && IsVisibleWearable(item.TemplatePath))
                         Debug.LogWarning("Unsupported wearable appearance: " + item.TemplatePath);
                 }
@@ -64,6 +66,16 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
             }
 
+            // Modesty is a fallback, not equipment: omit each mesh when clothing occupies its slot.
+            if (ownerAppearance != null && appearance.TemplatePath.StartsWith("object/creature/player/", StringComparison.OrdinalIgnoreCase))
+            {
+                bool female = ownerAppearance.EndsWith("_f.sat", StringComparison.OrdinalIgnoreCase);
+                bool male = ownerAppearance.EndsWith("_m.sat", StringComparison.OrdinalIgnoreCase);
+                if ((female || male) && !occupiedSlots.Contains("pants1") && !occupiedSlots.Contains("pants2"))
+                    LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, female ? "appearance/mesh/underwear_bottom_f.lmg" : "appearance/mesh/underwear_bottom_m.lmg", owner, owner, textures, result, ownerAppearance);
+                if (female && !occupiedSlots.Contains("chest1") && !occupiedSlots.Contains("chest2"))
+                    LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, "appearance/mesh/underwear_top_f.lmg", owner, owner, textures, result, ownerAppearance);
+            }
             CharacterMeshOcclusion.Apply(result);
             if (VehicleBodyAppearance.TryLoad(loader, ownerAppearance, owner, out var body))
             {
@@ -152,6 +164,13 @@ namespace Swg.Client.Core.Assets.Appearances
                         textures.Add(diffusePath, diffuse);
                     }
                     tint = CharacterMaterialLoader.TextureRendererBaseTint(loader, version, shaderIndex, own, owner) ?? CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, own, owner);
+                }
+                var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, own, owner, "HUEB");
+                string effect = IffNode.References(shaderBytes, "effect/", ".eft").FirstOrDefault();
+                if (trim != null && effect != null && Path.GetFileName(effect).StartsWith("h_color2_", StringComparison.OrdinalIgnoreCase))
+                {
+                    diffuse = CharacterMaterialLoader.ApplyTwoColor(diffuse, tint ?? new byte[] { 255, 255, 255 }, trim);
+                    tint = null;
                 }
                 shaderIndex++;
                 var pidx = new ByteReader(psdt.Chunk("PIDX"));

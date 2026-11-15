@@ -32,6 +32,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
                 [(ReplicatedObjectType.ResourceContainer, 3)] = ResourceContainerView.ReadBaseline3,
                 [(ReplicatedObjectType.ResourceContainer, 6)] = ResourceContainerView.ReadBaseline6,
                 [(ReplicatedObjectType.Tangible, 3)] = TangibleView3.ReadBaseline,
+                [(ReplicatedObjectType.Building, 3)] = TangibleView3.ReadBaseline,
+                [(ReplicatedObjectType.Cell, 3)] = CellSceneObjectUpdate.ReadBaseline,
                 [(ReplicatedObjectType.Creature, 3)] = CreatureView3.ReadBaseline,
                 [(ReplicatedObjectType.Creature, 4)] = CreatureView4.ReadBaseline,
                 [(ReplicatedObjectType.Creature, 6)] = CreatureView6.ReadBaseline

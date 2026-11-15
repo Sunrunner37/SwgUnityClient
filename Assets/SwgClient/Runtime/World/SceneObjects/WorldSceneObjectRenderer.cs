@@ -23,6 +23,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         readonly Dictionary<SwgId, AppearanceRequest> requests = new Dictionary<SwgId, AppearanceRequest>();
         readonly Dictionary<SwgId, string> loadedKeys = new Dictionary<SwgId, string>();
         readonly Dictionary<SwgId, AppearanceData> appearances = new Dictionary<SwgId, AppearanceData>();
+        readonly HashSet<SwgId> initialCreatures = new HashSet<SwgId>();
         readonly HashSet<SwgId> dirtyAppearances = new HashSet<SwgId>();
         readonly HashSet<SwgId> pendingAppearances = new HashSet<SwgId>();
         readonly CancellationTokenSource lifetime = new CancellationTokenSource();
@@ -51,7 +52,10 @@ namespace Swg.Client.Runtime.World.SceneObjects
             registry.ObjectChanged += OnObjectChanged;
             // A single initial pass; subsequent updates identify their affected object IDs.
             foreach (var sceneObject in source.CaptureSnapshot().Objects)
+            {
+                if (sceneObject is CreatureSceneObject) initialCreatures.Add(sceneObject.SwgId);
                 RefreshAppearance(sceneObject.SwgId);
+            }
             foreach (var pair in loading.InitialAppearances)
                 if (registry.TryGet<SpatialSceneObject>(pair.Key, out var sceneObject) && requests.TryGetValue(pair.Key, out var request) && pair.Value.Key == request.Key)
                 {
@@ -74,6 +78,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
         {
             if ((changes & (SceneObjectChange.Containment | SceneObjectChange.Replaced)) != 0 && sceneObject is CreatureSceneObject rider && rider.Mount != null && ManagedSceneObject.TryGetObjectFrom(rider.SwgId, out var instance) && instance.GetComponent<VehicleRider>() == null && instance.TryGetComponent<CharacterAnimation>(out _))
                 instance.AddComponent<VehicleRider>().Initialize(rider);
+            if ((changes & SceneObjectChange.Containment) != 0 && sceneObject is SpatialSceneObject spatial && ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var body))
+                ConfigureCollision(spatial, body);
             if ((changes & (SceneObjectChange.Appearance | SceneObjectChange.Containment)) != 0)
                 dirtyAppearances.Add(sceneObject.SwgId);
         }
@@ -181,12 +187,17 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 instance.transform.localRotation = previous.transform.localRotation;
             }
 
+            bool initiallyPresent = initialCreatures.Remove(sceneObject.SwgId);
+            bool summonedVehicle = previous == null && appearance.RiderSeat.HasValue && !initiallyPresent;
             bool wasMovingPlayer = previous != null && previous.TryGetComponent<PlayerMovement>(out var previousMovement) && previousMovement.enabled;
             RemoveInstance(sceneObject.SwgId);
+            ConfigureCollision(sceneObject, instance);
+            if (appearance.PortalLayout != null)
+                instance.AddComponent<BuildingInterior>().Initialize(sceneObject.SwgId, appearance.PortalLayout);
             var managed = instance.AddComponent<ManagedSceneObject>();
             managed.Bind(sceneObject.SwgId);
             if (this.state.Templates.IsTargetable(sceneObject.TemplatePath))
-                instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject);
+                instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject && !appearance.RiderSeat.HasValue);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
             if (sceneObject is CreatureSceneObject vehicle && instance.TryGetComponent<VehicleExhaust>(out var exhaust))
                 exhaust.Bind(vehicle, state.Templates.CreatureMovement(sceneObject.TemplatePath).RunSpeed);
@@ -205,7 +216,27 @@ namespace Swg.Client.Runtime.World.SceneObjects
             var clearances = content.GetFloraClearance(this.state.Templates.Resolve(sceneObject.TemplateCrc) ?? sceneObject.TemplatePath);
             if (clearances.Length > 0)
                 instance.AddComponent<FloraExclusion>().Initialize(this.state, flora, sceneObject.SwgId, clearances);
+            if (summonedVehicle) instance.AddComponent<VehicleSummon>();
             appearances[sceneObject.SwgId] = appearance;
+        }
+
+        internal static void ConfigureCollision(SpatialSceneObject sceneObject, GameObject instance)
+        {
+            bool solid = sceneObject is not CreatureSceneObject;
+            // Room contents remain pickable, but only the building shell/native floor blocks movement.
+            for (var parent = sceneObject.Parent; parent != null; parent = parent.Parent)
+                if (parent is CellSceneObject) solid = false;
+            foreach (var filter in instance.GetComponentsInChildren<MeshFilter>())
+            {
+                if (filter.sharedMesh == null || filter.GetComponentInParent<ParticleSystem>() != null) continue;
+                filter.TryGetComponent<MeshCollider>(out var collider);
+                if (solid && collider == null)
+                {
+                    collider = filter.gameObject.AddComponent<MeshCollider>();
+                    collider.sharedMesh = filter.sharedMesh;
+                }
+                if (collider != null) collider.enabled = solid;
+            }
         }
 
         void RemoveInstance(SwgId swgId)
@@ -224,6 +255,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void OnObjectRemoved(SceneObject sceneObject)
         {
             RemoveInstance(sceneObject.SwgId);
+            initialCreatures.Remove(sceneObject.SwgId);
             requests.Remove(sceneObject.SwgId);
             loadedKeys.Remove(sceneObject.SwgId);
             dirtyAppearances.Remove(sceneObject.SwgId);

@@ -1,3 +1,4 @@
+using Swg.Client.Core.Assets.Formats.Dds;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
@@ -27,9 +28,7 @@ namespace Swg.Client.Core.Characters.Materials
         internal static byte[] PaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, string slot)
         {
             var factors = IffNode.Form(nodes, "TFAC");
-            if (factors == null)
-                return null;
-            foreach (var pal in factors.Children.Where(n => n.Tag == "PAL "))
+            foreach (var pal in factors?.Children.Where(n => n.Tag == "PAL ") ?? Enumerable.Empty<IffNode>())
             {
                 var r = new ByteReader(pal.Data);
                 string variable = r.CString();
@@ -50,6 +49,18 @@ namespace Swg.Client.Core.Characters.Materials
                 return PaletteColor(loader, path, index);
             }
 
+            // SSHT/TFNS holds fixed factors for channels without customization (e.g. the paralope's white HUEB).
+            var fixedFactors = IffNode.Form(nodes, "TFNS")?.Children.FirstOrDefault(node => node.Tag == "0000");
+            if (fixedFactors != null)
+            {
+                var reader = new ByteReader(fixedFactors.Data);
+                while (reader.Remaining >= 8)
+                {
+                    string target = Tag(reader.Take(4), 0);
+                    uint color = reader.U32();
+                    if (target == slot) return new[] { (byte)(color >> 16), (byte)(color >> 8), (byte)color };
+                }
+            }
             return null;
         }
 
@@ -124,6 +135,19 @@ namespace Swg.Client.Core.Characters.Materials
                 bytes[p + 1],
                 bytes[p + 2]
             };
+        }
+
+        internal static TextureData ApplyTwoColor(TextureData source, byte[] main, byte[] trim)
+        {
+            var texture = new TextureData(source.Width, source.Height);
+            for (int i = 0; i < source.Pixels.Length; i += 4)
+            {
+                float mask = source.Pixels[i + 3] / 255f;
+                for (int channel = 0; channel < 3; channel++)
+                    texture.Pixels[i + channel] = (byte)Mathf.RoundToInt(source.Pixels[i + channel] * Mathf.Lerp(main[channel], trim[channel], mask) / 255f);
+                texture.Pixels[i + 3] = 255;
+            }
+            return texture;
         }
 
         static string Tag(byte[] bytes, int offset) => new string (new[] { (char)bytes[offset + 3], (char)bytes[offset + 2], (char)bytes[offset + 1], (char)bytes[offset] });

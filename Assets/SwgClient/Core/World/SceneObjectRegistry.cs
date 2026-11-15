@@ -82,6 +82,10 @@ namespace Swg.Client.Core.World
             }
 
             NotifyChanged(value, SceneObjectChange.All);
+            // These direct links just resolved; grandchildren still have the same parent.
+            if (children != null)
+                foreach (var child in children)
+                    Dispatch(child, SceneObjectChange.Containment);
         }
 
         public void Reparent(SwgId swgId, SwgId parentSwgId)
@@ -90,14 +94,42 @@ namespace Swg.Client.Core.World
                 throw new KeyNotFoundException("Unknown scene object " + swgId);
             if (value.ParentSwgId == parentSwgId)
                 return;
-            ValidateParent(swgId, parentSwgId);
             var previousParent = value.Parent;
-            Detach(value);
-            value.ParentSwgId = parentSwgId;
-            Attach(value);
+            ChangeParent(value, parentSwgId);
             NotifyChanged(value, SceneObjectChange.Containment);
             if (previousParent != null)
                 Dispatch(previousParent, SceneObjectChange.Appearance);
+        }
+
+        /// <summary>Commits an absolute SWG pose and containment together; observers never see coordinates from the previous parent frame.</summary>
+        public void SetServerWorldPose(SwgId swgId, SwgId parentSwgId, Pose serverPose)
+        {
+            if (!TryGet<SpatialSceneObject>(swgId, out var sceneObject))
+                throw new InvalidOperationException("This scene object has no spatial pose.");
+            var pose = serverPose;
+            bool mountedRider = sceneObject is CreatureSceneObject && TryGet<CreatureSceneObject>(parentSwgId, out _);
+            if (!parentSwgId.IsNone && !mountedRider)
+            {
+                var parentPose = GetServerWorldPose(parentSwgId);
+                var inverse = Quaternion.Inverse(parentPose.rotation);
+                pose = new Pose(inverse * (serverPose.position - parentPose.position), inverse * serverPose.rotation);
+            }
+            bool reparented = sceneObject.ParentSwgId != parentSwgId;
+            var previousParent = sceneObject.Parent;
+            if (reparented) ChangeParent(sceneObject, parentSwgId);
+            sceneObject.Position = pose.position;
+            sceneObject.Rotation = pose.rotation;
+            NotifyChanged(sceneObject, SceneObjectChange.Transform | (reparented ? SceneObjectChange.Containment : SceneObjectChange.None));
+            if (reparented && previousParent != null)
+                Dispatch(previousParent, SceneObjectChange.Appearance);
+        }
+
+        void ChangeParent(SceneObject sceneObject, SwgId parentSwgId)
+        {
+            ValidateParent(sceneObject.SwgId, parentSwgId);
+            Detach(sceneObject);
+            sceneObject.ParentSwgId = parentSwgId;
+            Attach(sceneObject);
         }
 
         void ValidateParent(SwgId swgId, SwgId parentSwgId)
@@ -162,6 +194,8 @@ namespace Swg.Client.Core.World
 
             previous.ClearChildren();
             NotifyChanged(value, SceneObjectChange.All | SceneObjectChange.Replaced);
+            foreach (var child in value.Children)
+                Dispatch(child, SceneObjectChange.Containment);
         }
 
         public void NotifyChanged(SceneObject value, SceneObjectChange changes)
@@ -177,8 +211,10 @@ namespace Swg.Client.Core.World
         void Publish(SceneObject value, SceneObjectChange changes)
         {
             Dispatch(value, changes);
-            // Parent-relative poses and visibility can change without a packet for each child.
-            var inherited = changes & (SceneObjectChange.Transform | SceneObjectChange.Containment);
+            // Reparenting changes descendant world poses, not their own containment.
+            // Forward pose changes without making inventory, missions and UI rebuild unchanged contents.
+            var inherited = (changes & (SceneObjectChange.Transform | SceneObjectChange.Containment)) != 0
+                ? SceneObjectChange.Transform : SceneObjectChange.None;
             if (inherited != SceneObjectChange.None)
                 foreach (var child in value.Children)
                     Publish(child, inherited);

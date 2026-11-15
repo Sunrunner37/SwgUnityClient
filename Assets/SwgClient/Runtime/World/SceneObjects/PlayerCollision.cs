@@ -1,0 +1,78 @@
+using Swg.Client.Core;
+using Swg.Client.Core.World;
+using UnityEngine;
+
+namespace Swg.Client.Runtime.World.SceneObjects
+{
+    /// <summary>Owns the controlled body's capsule, grounding and native room-floor queries. Positions returned are Unity world coordinates.</summary>
+    [DisallowMultipleComponent, RequireComponent(typeof(CharacterController))]
+    public sealed class PlayerCollision : MonoBehaviour
+    {
+        readonly RaycastHit[] hits = new RaycastHit[64];
+        CharacterController controller;
+        WorldState state;
+        bool mounted;
+        int mask;
+        public SwgId CellSwgId { get; private set; }
+
+        public void Initialize(WorldState state, bool mounted)
+        {
+            this.state = state;
+            this.mounted = mounted;
+            controller = GetComponent<CharacterController>();
+            controller.height = mounted ? 1.6f : 1.7f;
+            controller.radius = mounted ? .65f : .25f;
+            controller.center = Vector3.up * (controller.height * .5f + .03f);
+            controller.skinWidth = .025f;
+            controller.slopeLimit = 55;
+            mask = ~(1 << LayerMask.NameToLayer(TargetableSceneObject.LayerName));
+            enabled = true;
+            controller.enabled = true;
+        }
+
+        void OnEnable() { if (controller != null) controller.enabled = true; }
+        void OnDisable() { if (controller != null) controller.enabled = false; }
+
+        public Vector3 Move(Vector3 heading, float distance, float seconds)
+        {
+            Physics.SyncTransforms();
+            float step = mounted ? .1f : .45f;
+            int count = Physics.RaycastNonAlloc(transform.position + heading * (distance + controller.radius) + Vector3.up * 1.25f,
+                Vector3.down, hits, 1.5f, mask, QueryTriggerInteraction.Ignore);
+            if (!mounted && FindBuildingFloor(hits, count) != null)
+                step = 1.2f;
+            controller.stepOffset = Mathf.Min(controller.height - .05f, step / transform.lossyScale.y);
+            controller.Move(heading * distance + Vector3.down * (9.81f * seconds));
+
+            // Room membership is independent of the prop or stair tread supporting the capsule.
+            count = Physics.RaycastNonAlloc(transform.position + Vector3.up * .6f, Vector3.down, hits, controller.height * transform.lossyScale.y + .6f, mask, QueryTriggerInteraction.Ignore);
+            var floor = FindBuildingFloor(hits, count);
+            CellSwgId = !mounted && floor != null ? floor.building.CellSwgId(floor.cellNumber) : default;
+            if (floor == null && state.Terrain != null)
+            {
+                var serverPosition = transform.position + state.RenderOrigin;
+                float ground = state.Terrain.SampleHeight(serverPosition.x, serverPosition.z) - state.RenderOrigin.y;
+                if (transform.position.y < ground)
+                    transform.position = new Vector3(transform.position.x, ground, transform.position.z);
+            }
+            return transform.position;
+        }
+
+        internal static BuildingFloor FindBuildingFloor(RaycastHit[] hits, int count)
+        {
+            BuildingFloor floor = null;
+            float closest = float.MaxValue;
+            for (int i = 0; i < count; i++)
+            {
+                if (!hits[i].collider.TryGetComponent<BuildingFloor>(out var candidate))
+                    continue;
+                if (hits[i].distance < closest - .02f || Mathf.Abs(hits[i].distance - closest) <= .02f && candidate.cellNumber > 0 && (floor == null || floor.cellNumber == 0))
+                {
+                    closest = hits[i].distance;
+                    floor = candidate;
+                }
+            }
+            return floor;
+        }
+    }
+}

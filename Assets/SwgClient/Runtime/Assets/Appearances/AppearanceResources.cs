@@ -53,6 +53,8 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     // Include arm swings and hip bob beyond the static bind-pose box.
                     renderer.localBounds = new Bounds(resource.Bounds.center, resource.Bounds.size + Vector3.one);
                 }
+                if (resource.AnimationFrames != null)
+                    part.AddComponent<AnimatedTexture>().Initialize(part.GetComponent<Renderer>(), resource.AnimationFrames, resource.MinimumFrameSeconds, resource.MaximumFrameSeconds);
             }
 
             foreach (var hardpoint in hardpoints)

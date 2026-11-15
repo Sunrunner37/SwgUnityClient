@@ -27,12 +27,15 @@ namespace Swg.Client.Runtime.UI.Commands
         [SerializeField]
         string bindingKey = "";
         public string BindingKey => bindingKey;
+        public event System.Action BindingChanged;
+        public void SetBindingKey(string key) { bindingKey = key ?? ""; }
         public CommandCatalog.Command Command { get; private set; }
 
         public void Bind(CommandCatalog.Command command)
         {
             bindingKey = command?.Key ?? "";
             Display(command);
+            BindingChanged?.Invoke();
         }
 
         public void RefreshBinding() => Display(catalog.Find(bindingKey));

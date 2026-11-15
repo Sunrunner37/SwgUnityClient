@@ -128,19 +128,37 @@ namespace Swg.Client.Core.Assets.Appearances
                     BuildNormals(positions, normals, indices);
                 string diffuse = null;
                 bool cutout = false;
+                bool alphaBlend = false;
+                bool fullbright = false;
+                ShtFile.TextureSwitcher switcher = null;
+                TextureData[] frames = null;
                 byte[] tint = null;
                 TextureData texture = null;
                 try
                 {
                     var shaderBytes = loader.Read(shader);
                     var shaderNodes = IffNode.Parse(shaderBytes);
+                    switcher = ShtFile.ReadTextureSwitcher(shaderNodes);
+                    if (switcher != null)
+                    {
+                        frames = switcher.Frames.Select(frame => Texture(loader, frame)).ToArray();
+                        shaderBytes = loader.Read(switcher.BaseShader);
+                        shaderNodes = IffNode.Parse(shaderBytes);
+                    }
                     if (!ShtFile.TryGetMainTexture(shaderNodes, out diffuse))
                         diffuse = References(shaderBytes, "texture/", new[] { ".dds" }).FirstOrDefault(p => !p.EndsWith("_n.dds") && !p.EndsWith("_cn.dds") && !p.EndsWith("_spec.dds") && !p.EndsWith("_sm.dds"));
-                    if (diffuse != null)
+                    if (frames != null)
+                    {
+                        diffuse = switcher.Frames[0];
+                        texture = frames[0];
+                    }
+                    else if (diffuse != null)
                         texture = Texture(loader, diffuse);
                     tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, customization, customization);
                     var effect = References(shaderBytes, "effect/", new[] { ".eft" }).FirstOrDefault();
                     cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
+                    alphaBlend = effect != null && Effect(loader, effect).AlphaBlendEnabled;
+                    fullbright = effect != null && Path.GetFileName(effect).Contains("emis_full");
                     var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, customization, customization, "HUEB");
                     if (texture != null && trim != null && effect != null && Path.GetFileName(effect).StartsWith("h_color2_", StringComparison.OrdinalIgnoreCase))
                     {
@@ -159,7 +177,8 @@ namespace Swg.Client.Core.Assets.Appearances
                     Warn(result, "No supported MAIN texture: " + shader);
                 }
 
-                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, VertexColors = colors });
+                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, AlphaBlend = alphaBlend, Fullbright = fullbright, VertexColors = colors,
+                    DiffuseFrames = frames, MinimumFrameSeconds = switcher?.MinimumSeconds ?? 0, MaximumFrameSeconds = switcher?.MaximumSeconds ?? 0 });
                 result.Sources.Add(new StaticMeshSource { AppearancePath = path, ShaderPath = shader, DiffusePath = diffuse });
             }
         }
@@ -172,14 +191,7 @@ namespace Swg.Client.Core.Assets.Appearances
             lock (cache)
             {
                 if (cache.ColoredTextures.TryGetValue(key, out var texture)) return texture;
-                texture = new TextureData(source.Width, source.Height);
-                for (int i = 0; i < source.Pixels.Length; i += 4)
-                {
-                    float mask = source.Pixels[i + 3] / 255f;
-                    for (int channel = 0; channel < 3; channel++)
-                        texture.Pixels[i + channel] = (byte)Mathf.RoundToInt(source.Pixels[i + channel] * Mathf.Lerp(main[channel], trim[channel], mask) / 255f);
-                    texture.Pixels[i + 3] = 255;
-                }
+                texture = CharacterMaterialLoader.ApplyTwoColor(source, main, trim);
                 cache.ColoredTextures.Add(key, texture);
                 return texture;
             }

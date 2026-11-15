@@ -1,3 +1,4 @@
+using Swg.Client.Core;
 using Swg.Client.Core.Networking.Game.Packets.Movement;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.World;
@@ -34,6 +35,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         bool pendingMovement;
         bool wasMoving;
         CreatureSceneObject lastMount;
+        PlayerCollision collision;
         float vehicleAcceleration;
         public void Initialize(SpatialSceneObject player)
         {
@@ -47,6 +49,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
             animation = GetComponent<CharacterAnimation>();
             worldCamera.GetComponent<WorldOrbitCamera>().target = transform;
         }
+
+        void OnDestroy() { if (collision != null) collision.enabled = false; }
 
         void Update()
         {
@@ -71,6 +75,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (player.Mount != lastMount)
             {
                 lastMount = player.Mount;
+                if (collision != null) collision.enabled = false;
+                collision = null;
                 CurrentSpeed = 0;
                 vehicleAcceleration = mounted ? state.Templates.CreatureMovement(controlled.TemplatePath).RunAcceleration : 0;
             }
@@ -104,24 +110,26 @@ namespace Swg.Client.Runtime.World.SceneObjects
                     : targetSpeed;
                 float distance = (mounted ? (previousSpeed + CurrentSpeed) * .5f : CurrentSpeed) * seconds;
                 var serverPosition = serverPose.position + heading * distance;
-                // Terrain samples and network positions are absolute SWG world coordinates.
-                serverPosition.y = this.state.Terrain.SampleHeight(serverPosition.x, serverPosition.z);
-                if (!mounted && !player.ParentSwgId.IsNone)
+                var cellSwgId = player.ParentSwgId;
+                if (ManagedSceneObject.TryGetObjectFrom(controlled.SwgId, out var body))
                 {
-                    var parent = this.state.SceneObjects.GetServerWorldPose(player.ParentSwgId);
-                    var inverse = Quaternion.Inverse(parent.rotation);
-                    player.Position = inverse * (serverPosition - parent.position);
-                    player.Rotation = inverse * serverRotation;
+                    if (collision == null || collision.gameObject != body)
+                    {
+                        if (collision != null) collision.enabled = false;
+                        if (!body.TryGetComponent(out collision)) collision = body.AddComponent<PlayerCollision>();
+                        collision.Initialize(state, mounted);
+                    }
+                    serverPosition = collision.Move(heading, distance, seconds) + state.RenderOrigin;
+                    if (!mounted) cellSwgId = collision.CellSwgId;
                 }
-                else
+                if (mounted)
                 {
+                    // Core3 retains absolute player coordinates while contained by a mount.
                     player.Position = serverPosition;
                     player.Rotation = serverRotation;
                 }
-
-                controlled.Position = mounted ? serverPosition : player.Position;
-                controlled.Rotation = mounted ? serverRotation : player.Rotation;
-                this.state.SceneObjects.NotifyChanged(controlled, SceneObjectChange.Transform);
+                state.SceneObjects.SetServerWorldPose(controlled.SwgId, mounted ? controlled.ParentSwgId : cellSwgId,
+                    new Pose(serverPosition, serverRotation));
                 if (mounted)
                 {
                     if (ManagedSceneObject.TryGetObjectFrom(controlled.SwgId, out var vehicle) && vehicle.TryGetComponent<SceneObjectMovement>(out var vehicleMovement))
