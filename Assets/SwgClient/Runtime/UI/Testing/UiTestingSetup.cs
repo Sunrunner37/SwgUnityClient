@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Packets.Trade;
 using Swg.Client.Runtime.Assets.Particles;
 using Swg.Client.Core.Crafting;
 using Swg.Client.Core.Characters;
@@ -56,6 +57,7 @@ namespace Swg.Client.Runtime.UI.Testing
             {
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance();
                 builder.RegisterType<CurrentPlayer>().SingleInstance();
+                builder.RegisterInstance(new Action<TradeRequestPacket>(packet => Debug.Log("Offline trade request: " + packet.TargetSwgId)));
                 builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => Debug.Log("Offline target: " + packet.TargetSwgId)));
@@ -169,6 +171,15 @@ namespace Swg.Client.Runtime.UI.Testing
                     Mind = new HamElement(current: 900, maximum: 1000, wounds: 0)
                 }
             });
+            state.SceneObjects.TryGet<CreatureSceneObject>(9000, out var groupPlayer);
+            groupPlayer.GroupSwgId = 9900;
+            var sampleGroup = new GroupSceneObject { SwgId = 9900 };
+            sampleGroup.Apply(new GroupSceneObjectUpdate { Members = list =>
+            {
+                list.Add(new GroupMember(9000, "Misty"));
+                list.Add(new GroupMember(9901, "Unavailable group member"));
+            } });
+            state.SceneObjects.Add(sampleGroup);
             state.SceneObjects.Add(new SpatialSceneObject
             {
                 SwgId = 9002,

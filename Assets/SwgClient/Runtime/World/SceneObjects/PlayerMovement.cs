@@ -34,6 +34,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
         float nextSend;
         bool pendingMovement;
         bool wasMoving;
+        SwgId followTarget;
+        public void Follow(SwgId target) => followTarget = target;
         CreatureSceneObject lastMount;
         PlayerCollision collision;
         float vehicleAcceleration;
@@ -62,6 +64,21 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 input.y = (keyboard.wKey.isPressed ? 1 : 0) - (keyboard.sKey.isPressed ? 1 : 0);
             }
 
+            if (input.sqrMagnitude > 0 || Keyboard.current?.escapeKey.wasPressedThisFrame == true) followTarget = default;
+            if (!followTarget.IsNone && !UiInput.TextInputFocused && Application.isFocused)
+            {
+                if (ManagedSceneObject.TryGetObjectFrom(followTarget, out var target))
+                {
+                    var delta = Vector3.ProjectOnPlane(target.transform.position - transform.position, Vector3.up);
+                    if (delta.magnitude > 3)
+                    {
+                        var forward = Vector3.ProjectOnPlane(worldCamera.transform.forward, Vector3.up).normalized;
+                        var right = Vector3.Cross(Vector3.up, forward);
+                        input = new Vector2(Vector3.Dot(delta.normalized, right), Vector3.Dot(delta.normalized, forward));
+                    }
+                }
+                else followTarget = default;
+            }
             Move(input, Time.deltaTime);
         }
 

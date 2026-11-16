@@ -12,9 +12,7 @@ namespace Swg.Client.Runtime.UI.Hud
     {
         public GameObject panel;
         public TMP_Text playerName;
-        public HamBars ham;
-        [Tooltip("Native posture icons in CreaturePosture enum order.")]
-        public GameObject[] postureIcons;
+        public CreatureStatusDisplay statusDisplay;
         CurrentPlayer currentPlayer;
         SceneObjectNameResolver names;
         CreatureSceneObject displayedPlayer;
@@ -39,9 +37,7 @@ namespace Swg.Client.Runtime.UI.Hud
                 displayedName = player.Name;
                 playerName.text = names.Resolve(player);
             }
-            ham.Show(player.Ham);
-            for (int i = 0; i < postureIcons.Length; i++)
-                postureIcons[i].SetActive(i == (int)player.Posture);
+            statusDisplay.Show(player);
         }
     }
 }

@@ -1,4 +1,6 @@
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.Assets;
 using System.Collections;
 using System.Collections.Generic;
 using Swg.Client.Runtime.World.SceneObjects;
@@ -207,7 +209,7 @@ namespace Swg.Client.Tests.Editor
             dispatcher.Submit("Spatial", "/t Misty", out error);
             Assert.That(error, Is.EqualTo("Usage: /tell name message"));
             dispatcher.Submit("Spatial", "/unknown", out error);
-            Assert.That(error, Does.Contain("Unknown or unavailable"));
+            ssert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Execute("flourish", "10", out error);
             Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Submit("Spatial", "", out error);
@@ -215,6 +217,39 @@ namespace Swg.Client.Tests.Editor
             dispatcher.Submit("Spatial", "/RTEL hello", out error);
             Assert.That(error, Does.Contain("No one has sent you a tell yet"));
             Assert.That(chat.History, Is.Empty);
+        }
+
+        [TestCase("/invite", 12UL, "invite", 12UL, "")]
+        [TestCase("/INVITE Tom", 0UL, "invite", 0UL, "Tom")]
+        [TestCase("/join", 12UL, "join", 0UL, "")]
+        public void GroupSlashCommandsUseCore3QueueWithoutAbilityGrants(string input, ulong selection, string command, ulong target, string arguments)
+        {
+            var registry = new SceneObjectRegistry();
+            var currentPlayer = new CurrentPlayer(registry);
+            currentPlayer.BeginScene(11);
+            registry.Add(new CreatureSceneObject { SwgId = 11 });
+            registry.Add(new CreatureSceneObject { SwgId = 12 });
+            var state = new WorldState(registry);
+            using var catalog = new CommandCatalog(System.Array.Empty<CommandCatalog.Command>(), currentPlayer.Commands);
+            var sent = new List<CommandQueueEnqueuePacket>();
+            using var commands = new ClientCommands(sent.Add, _ => { }, currentPlayer);
+            using var chat = new ClientChat(null, state, new StringTableLocalizer(null), new ProseFormatter(), commands, currentPlayer);
+            using var targeting = new ClientTargeting(state, _ => { }, currentPlayer);
+            targeting.Select(selection);
+            using var combat = new ClientCombatQueue(commands, catalog);
+            var dispatcher = new CommandDispatcher(catalog, chat, commands, targeting, combat);
+            dispatcher.Submit("Spatial", input, out string error);
+            Assert.That(error, Is.Null);
+            Assert.That(sent.Count, Is.EqualTo(1));
+            var envelope = ObjectControllerPacket.ReadFrom(Encode(sent.Single()));
+            var payload = new ByteReader(envelope.Payload);
+            Assert.That(envelope.SwgId, Is.EqualTo(11UL));
+            Assert.That(payload.U32(), Is.EqualTo(1u));
+            Assert.That(payload.U32(), Is.EqualTo(ObjectTemplateNames.TemplateCrc(command)));
+            Assert.That(payload.U64(), Is.EqualTo(target));
+            Assert.That(payload.Unicode(), Is.EqualTo(arguments));
+            Assert.That(payload.Remaining, Is.Zero);
+            Assert.That(commands.QueuedCommands.Count, Is.EqualTo(1));
         }
 
         [Test]

@@ -228,7 +228,7 @@ namespace Swg.Client.Runtime.Assets.Particles
         {
             if (disposed) return;
             disposed = true;
-            combat.PlaybackRequested -= PlayCombat;
+            if (combat != null) combat.PlaybackRequested -= PlayCombat;
             StopAllCoroutines();
             foreach (var task in effects.Values.Where(t => t.Status == TaskStatus.RanToCompletion))
                 if (task.Result.Resources != null) foreach (var resource in task.Result.Resources) resource.Dispose();

@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Swg.Client.Core.Commands;
+using Swg.Client.Core;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.Networking.Chat;
 
@@ -61,6 +62,9 @@ namespace Swg.Client.Runtime.Commands
             arguments = (arguments ?? "").Trim();
             switch (name.ToLowerInvariant())
             {
+                // Group membership is validated by Core3; these commands need no ability grant.
+                case "invite": Enqueue("invite", arguments, targeting.SelectedSwgId, "Invite"); return;
+                case "join": Enqueue("join", "", default, "Join"); return;
                 case "say": chat.SendSpatial(arguments); return;
                 case "planet": chat.SendRoom("Planet", arguments, out error); return;
                 case "auction": chat.SendRoom("Auction", arguments, out error); return;
@@ -102,10 +106,15 @@ namespace Swg.Client.Runtime.Commands
                     error = "Command is not supported yet: /" + command.Name;
                     return;
             }
-            commands.Enqueue(serverCommand, arguments, targetSwgId: targeting.SelectedSwgId, completed: result =>
+            Enqueue(serverCommand, arguments, targeting.SelectedSwgId, command.Label);
+        }
+
+        void Enqueue(string name, string arguments, SwgId target, string label)
+        {
+            commands.Enqueue(name, arguments, targetSwgId: target, completed: result =>
             {
                 if (result.ErrorType != 0)
-                    Debug.LogWarning(command.Label + " failed (server error " + result.ErrorType + ":" + result.ErrorCode + ").");
+                    Debug.LogWarning(label + " failed (server error " + result.ErrorType + ":" + result.ErrorCode + ").");
             });
         }
     }

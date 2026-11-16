@@ -12,6 +12,7 @@ namespace Swg.Client.Core.Characters
     public sealed class CurrentPlayer : IDisposable
     {
         readonly SceneObjectRegistry sceneObjects;
+        public GroupSceneObject Group => Creature != null && sceneObjects.TryGet<GroupSceneObject>(Creature.GroupSwgId, out var group) ? group : null;
         public CreatureSceneObject Creature => sceneObjects.TryGet<CreatureSceneObject>(SwgId, out var creature) ? creature : null;
         public CurrentPlayer(SceneObjectRegistry sceneObjects)
         {

@@ -18,6 +18,7 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public bool IsInCombat => (States & CreatureState.Combat) != 0;
         public SwgId TargetSwgId;
         public SwgId WeaponSwgId;
+        public SwgId GroupSwgId;
         public HamPool Ham;
         public int BattleFatigue;
         public List<string> Skills = new List<string>();
@@ -41,6 +42,7 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
                 CashCredits = update.CashCredits.Value;
             if (update.BankCredits.HasValue)
                 BankCredits = update.BankCredits.Value;
+            if (update.GroupSwgId.HasValue) GroupSwgId = update.GroupSwgId.Value;
             if (update.WeaponSwgId.HasValue) WeaponSwgId = update.WeaponSwgId.Value;
             if (update.TargetSwgId.HasValue)
                 TargetSwgId = update.TargetSwgId.Value;

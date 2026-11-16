@@ -24,6 +24,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public float? TurnScale;
         public SwgId? TargetSwgId;
         public SwgId? WeaponSwgId;
+        public SwgId? GroupSwgId;
         public int? BattleFatigue;
         public HamPoolUpdate Ham;
         public Action<List<string>> Skills;
@@ -36,6 +37,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             | (CashCredits.HasValue || BankCredits.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None)
             | (States.HasValue || WeaponSwgId.HasValue ? SceneObjectChange.State : SceneObjectChange.None)
             | (Posture.HasValue ? SceneObjectChange.Posture : SceneObjectChange.None)
+            | (GroupSwgId.HasValue ? SceneObjectChange.Group : SceneObjectChange.None)
             | (TargetSwgId.HasValue ? SceneObjectChange.Target : SceneObjectChange.None);
         internal override Type RequiredType => typeof(CreatureSceneObject);
         internal override void ApplyTo(SceneObject sceneObject) => ((CreatureSceneObject)sceneObject).Apply(this);

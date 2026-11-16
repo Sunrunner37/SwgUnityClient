@@ -1,3 +1,4 @@
+using Swg.Client.Core.Networking.Game.Packets.Trade;
 using Swg.Client.Runtime.Assets.Particles;
 using Swg.Client.Core.Crafting;
 using Swg.Client.Core.Characters;
@@ -87,6 +88,7 @@ namespace Swg.Client.Runtime
                 builder.RegisterInstance(connection.Admission);
                 builder.RegisterType<SceneObjectRegistry>().SingleInstance().OnRelease(value => value.Clear());
                 builder.RegisterType<CurrentPlayer>().SingleInstance();
+                builder.RegisterInstance(new Action<TradeRequestPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => connection.Send(packet)));

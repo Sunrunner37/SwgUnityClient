@@ -1,3 +1,5 @@
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using Swg.Client.Runtime.Assets.Particles;
 using Swg.Client.Runtime.Assets.Tre;
 using Swg.Client.Core.Characters;
@@ -15,6 +17,21 @@ namespace Swg.Client.Tests.Editor
 {
     internal static class GameServicesForTests
     {
+        static Scene helperScene;
+        static GameObject CreateHelper(string name)
+        {
+            if (!helperScene.IsValid()) helperScene = EditorSceneManager.NewPreviewScene();
+            var helper = new GameObject(name) { hideFlags = HideFlags.HideAndDontSave };
+            SceneManager.MoveGameObjectToScene(helper, helperScene);
+            return helper;
+        }
+
+        internal static void DestroyHelpers()
+        {
+            if (helperScene.IsValid()) EditorSceneManager.ClosePreviewScene(helperScene);
+            helperScene = default;
+        }
+
         internal static WorldState CreateState(out CurrentPlayer player) => CreateState(new SceneObjectRegistry(), out player);
         internal static WorldState CreateState(SceneObjectRegistry registry, out CurrentPlayer player)
         {
@@ -23,7 +40,7 @@ namespace Swg.Client.Tests.Editor
         }
         internal static GameReplication CreateReplication(WorldState state, CurrentPlayer currentPlayer)
         {
-            var replication = new GameObject("Test replication").AddComponent<GameReplication>();
+            var replication = CreateHelper("Test replication").AddComponent<GameReplication>();
             replication.Initialize(state, currentPlayer, new CraftingProgress());
             replication.gameObject.SetActive(false);
             return replication;
@@ -50,7 +67,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterType<ClientCombat>().SingleInstance();
             builder.Register(context =>
             {
-                var effects = new GameObject("Test client effects").AddComponent<ClientEffects>();
+                var effects = CreateHelper("Test client effects").AddComponent<ClientEffects>();
                 effects.Initialize(context.Resolve<TreRuntimeAssets>(), replication.State, context.Resolve<ClientCombat>());
                 return effects;
             }).SingleInstance();

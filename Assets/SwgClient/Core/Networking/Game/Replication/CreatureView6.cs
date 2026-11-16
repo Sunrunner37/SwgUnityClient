@@ -13,7 +13,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Ascii(); // Performance animation.
             reader.Ascii(); // Mood.
             SwgId weaponSwgId = reader.U64();
-            reader.Skip(3 * sizeof(ulong)); // Group, inviter, invite counter.
+            SwgId groupSwgId = reader.U64();
+            reader.Skip(2 * sizeof(ulong)); // Inviter and invite counter.
             reader.U32(); // Guild.
             SwgId targetSwgId = reader.U64();
             reader.Byte(); // Mood ID.
@@ -31,6 +32,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             return new CreatureSceneObjectUpdate
             {
                 WeaponSwgId = weaponSwgId,
+                GroupSwgId = groupSwgId,
                 TargetSwgId = targetSwgId,
                 Ham = new HamPoolUpdate { Current = ham, Maximum = maxHam },
                 Equipment = equipment,
@@ -60,8 +62,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     update.WeaponSwgId = reader.U64();
                     break;
                 case 6:
-                    reader.U64();
-                    break; // Weapon, group.
+                    update.GroupSwgId = reader.U64();
+                    break;
                 case 9:
                     update.TargetSwgId = reader.U64();
                     break;

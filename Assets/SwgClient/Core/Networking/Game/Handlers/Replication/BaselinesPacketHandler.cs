@@ -22,6 +22,8 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
             this.replication = replication;
             baselines = new Dictionary<(ReplicatedObjectType, byte), Func<ByteReader, SceneObjectUpdate>>
             {
+                [(ReplicatedObjectType.Group, 3)] = GroupSceneObjectUpdate.ReadBaseline3,
+                [(ReplicatedObjectType.Group, 6)] = GroupSceneObjectUpdate.ReadBaseline6,
                 [(ReplicatedObjectType.Mission, 3)] = MissionView3.ReadBaseline,
                 [(ReplicatedObjectType.Mission, 6)] = MissionView3.ReadBaseline6,
                 [(ReplicatedObjectType.ManufactureSchematic, 3)] = ManufactureSchematicView.ReadBaseline3,

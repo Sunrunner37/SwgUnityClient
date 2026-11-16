@@ -20,7 +20,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(player.playerName, Is.Not.Null);
             var panel = (RectTransform)player.panel.transform;
             Assert.That(panel.anchorMin, Is.EqualTo(Vector2.up));
-            Assert.That(player.ham.currentBars.Length, Is.EqualTo(3));
+            Assert.That(player.statusDisplay.ham.currentBars.Length, Is.EqualTo(3));
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Swg.Client.Tests.Editor
             var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/UI/Hud/PlayerHud.prefab");
             try
             {
-                var bars = root.GetComponent<PlayerHud>().ham;
+                var bars = root.GetComponent<PlayerHud>().statusDisplay.ham;
                 var creature = new CreatureSceneObject();
                 creature.Apply(new CreatureSceneObjectUpdate { Ham = new HamPoolUpdate { Current = new[] { 800, 0, 0, 450, 0, 0, 900, 0, 0 }, Maximum = new[] { 1000, 0, 0, 750, 0, 0, 1000, 0, 0 }, Wounds = new[] { 100, 0, 0, 0, 0, 0, 0, 0, 0 } } });
                 bars.Show(creature.Ham);

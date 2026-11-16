@@ -9,6 +9,8 @@ namespace Swg.Client.Core.World
         internal static Type TypeForTemplate(string templatePath)
         {
             string path = templatePath ?? "";
+            if (path.StartsWith("object/group/", StringComparison.OrdinalIgnoreCase))
+                return typeof(GroupSceneObject);
             if (path.StartsWith("object/mission/", StringComparison.OrdinalIgnoreCase))
                 return typeof(MissionSceneObject);
             if (path.StartsWith("object/manufacture_schematic/", StringComparison.OrdinalIgnoreCase))
@@ -53,6 +55,8 @@ namespace Swg.Client.Core.World
                 return new ManufactureSchematicSceneObject();
             if (type == typeof(IntangibleSceneObject))
                 return new IntangibleSceneObject();
+            if (type == typeof(GroupSceneObject))
+                return new GroupSceneObject();
             if (type == typeof(SceneObject))
                 return new SceneObject();
             if (type == typeof(CellSceneObject))
