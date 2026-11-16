@@ -132,6 +132,7 @@ namespace Swg.Client.Runtime
                     return new Action<SwgId>(swgId => commands.Enqueue("getAttributesBatch", swgId.ToString()));
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<ObjectMenuSelectPacket>(packet => connection.Send(packet)));
+                builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
                 builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientConversation>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<SuiEventNotificationPacket>(packet => connection.Send(packet)));

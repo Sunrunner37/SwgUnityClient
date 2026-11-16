@@ -30,15 +30,37 @@ namespace Swg.Client.Tests.Editor
     {
         [TestCase(0x2005)] [TestCase(0x2015)] [TestCase(0x2027)] [TestCase(0x2034)] public void ContainerTypesOfferOpenAndTheBlueUseCursor(int type)
         {
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
+            Assert.That(GameServicesForTests.CreateMenuDefaults().TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
             Assert.That(action, Is.SameAs(ObjectMenuAction.Open));
             Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), (ObjectTypeId)type, true), Is.EqualTo(ClientCursor.WorldCursor.Use));
         }
         [TestCase(0x200a)] [TestCase(0x2018)] public void FoodAndDrinkKeepServerUseAndUseTheEatCursor(int type)
         {
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
+            Assert.That(GameServicesForTests.CreateMenuDefaults().TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
             Assert.That(action, Is.SameAs(ObjectMenuAction.Use));
             Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), (ObjectTypeId)type, true), Is.EqualTo(ClientCursor.WorldCursor.Eat));
+        }
+        [TestCase("object/tangible/datapad/shared_character_datapad.iff", false)]
+        [TestCase("object/tangible/wearables/backpack/shared_backpack_s01.iff", true)]
+        public async Task DatapadAcknowledgmentsDoNotOpenGenericContainerWindows(string templatePath, bool opensWindow)
+        {
+            var state = GameServicesForTests.CreateState(out var player);
+            player.BeginScene(1);
+            state.SceneObjects.Add(new CreatureSceneObject { SwgId = 1 });
+            state.SceneObjects.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = templatePath });
+            using var inventory = new ClientInventory(state, _ => { }, player);
+            bool opened = false;
+            inventory.ContainerOpened += _ => opened = true;
+            using var stream = new MemoryStream();
+            using var writer = new BinaryWriter(stream);
+            writer.Write((ushort)4);
+            writer.Write(ClientOpenContainerPacket.Opcode);
+            writer.Write(2UL);
+            writer.Write(0u);
+            writer.Write((ushort)0);
+            inventory.Receive(ClientOpenContainerPacket.ReadFrom(new ByteReader(stream.ToArray())));
+            await Task.Delay(30);
+            Assert.That(opened, Is.EqualTo(opensWindow));
         }
         [Test] public async Task ContainerRepliesOpenIndependentViewsWithoutReplacingThePlayerInventory()
         {
@@ -111,7 +133,7 @@ namespace Swg.Client.Tests.Editor
             {
                 command=name;target=id;
             }
-            ,player);
+            ,player, new ObjectMenuDefaults(state, player));
             interactions.ExamineRequested += id => target=id;
             interactions.ActivateDefault(3);
             Assert.That(target, Is.EqualTo(new SwgId(3)));

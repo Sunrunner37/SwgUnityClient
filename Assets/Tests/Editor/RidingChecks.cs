@@ -104,7 +104,7 @@ namespace Swg.Client.Tests.Editor
                 string command = null;
                 SwgId target = default;
                 using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => Assert.Fail("Vehicle default must not send a radial selection packet"),
-                    (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer);
+                    (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer, new ObjectMenuDefaults(state, currentPlayer));
                 interactions.ActivateDefault(2);
                 Assert.That(command, Is.EqualTo("mount"));
                 Assert.That(target, Is.EqualTo((SwgId)2));
@@ -135,7 +135,7 @@ namespace Swg.Client.Tests.Editor
                 string command = null;
                 SwgId target = default;
                 int callbacks = 0;
-                using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => callbacks++, (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer);
+                using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => callbacks++, (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer, new ObjectMenuDefaults(state, currentPlayer));
                 interactions.SelectMenuAction(2, ObjectMenuAction.VehicleEnterExit.Id, 1);
                 Assert.That(command, Is.EqualTo("mount"));
                 Assert.That(target, Is.EqualTo((SwgId)2));

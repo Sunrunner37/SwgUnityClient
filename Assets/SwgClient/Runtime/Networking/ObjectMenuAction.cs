@@ -13,6 +13,7 @@ namespace Swg.Client.Runtime.Networking
         public static readonly ObjectMenuAction ConverseStart = Define(25, "@ui_radial:converse_start", 1);
         public static readonly ObjectMenuAction ConverseStop = Define(28, "@ui_radial:converse_stop", 1);
         public static readonly ObjectMenuAction Use = Define(20, "@ui_radial:item_use", 3);
+        public static readonly ObjectMenuAction Destroy = Define(14, "@ui_radial:item_destroy", 1);
         public static readonly ObjectMenuAction Open = Define(16, "@ui_radial:item_open", 1);
         public static readonly ObjectMenuAction MissionList = Define(33, "@ui_radial:terminal_mission_list", 3);
         public static readonly ObjectMenuAction MissionDetails = Define(34, "@ui_radial:mission_details", 3);

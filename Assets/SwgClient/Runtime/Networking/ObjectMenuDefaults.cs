@@ -1,4 +1,6 @@
 using System;
+using Swg.Client.Core.Characters;
+using Swg.Client.Core.World;
 using System.Collections.Generic;
 using Swg.Client.Core.Networking.Game.Packets.Data;
 using Swg.Client.Core.World.SceneObjects;
@@ -11,13 +13,29 @@ namespace Swg.Client.Runtime.Networking
     /// Identifiers come from RadialOptions.h and SceneObjectType.h; types come from SHOT metadata.
     /// Includes server-radial actions, local Examine, and the native crafting Use action.
     /// </summary>
-    public static class ObjectMenuDefaults
+    public sealed class ObjectMenuDefaults
     {
-        public static RadialMenuEntry[] Create(SceneObject sceneObject, ObjectTypeId objectType)
+        readonly WorldState state;
+        readonly CurrentPlayer currentPlayer;
+
+        public ObjectMenuDefaults(WorldState state, CurrentPlayer currentPlayer)
+        {
+            this.state = state;
+            this.currentPlayer = currentPlayer;
+        }
+
+        public ObjectTypeId ObjectType(SceneObject sceneObject) => string.IsNullOrEmpty(sceneObject?.TemplatePath)
+            ? ObjectTypeId.Unknown : (ObjectTypeId)state.Templates.GameObjectType(sceneObject.TemplatePath);
+
+        public RadialMenuEntry[] Create(SceneObject sceneObject) => Create(sceneObject, ObjectType(sceneObject));
+
+        internal RadialMenuEntry[] Create(SceneObject sceneObject, ObjectTypeId objectType)
         {
             var entries = new List<RadialMenuEntry> { ObjectMenuAction.Examine.ToEntry(1) };
             if (TryGetDefaultAction(sceneObject, objectType, out ObjectMenuAction action))
                 entries.Add(action.ToEntry(2));
+            if (CanDestroy(sceneObject))
+                entries.Add(ObjectMenuAction.Destroy.ToEntry((byte)(entries.Count + 1)));
             // CreatureObject/AiAgent handle these without adding them to the response.
             if (objectType.IsCreature() && sceneObject is CreatureSceneObject creature && creature.Posture == CreaturePosture.Dead)
             {
@@ -29,7 +47,20 @@ namespace Swg.Client.Runtime.Networking
             return entries.ToArray();
         }
 
-        public static bool TryGetDefaultAction(SceneObject sceneObject, ObjectTypeId objectType, out ObjectMenuAction action)
+        public bool TryGetDefaultAction(SceneObject sceneObject, out ObjectMenuAction action) => TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out action);
+
+        public bool CanDestroy(SceneObject sceneObject)
+        {
+            if (!(sceneObject is TangibleSceneObject tangible)) return false;
+            // Inventory items include nested bags and equipped wearables/weapons, but not player-owned system slots.
+            if (sceneObject.ParentSwgId == currentPlayer.SwgId && ClientInventory.CanEquip(tangible)) return true;
+            for (var parent = sceneObject.Parent; parent != null; parent = parent.Parent)
+                if (parent.ParentSwgId == currentPlayer.SwgId && parent.TemplatePath?.StartsWith("object/tangible/inventory/", StringComparison.Ordinal) == true)
+                    return true;
+            return false;
+        }
+
+        internal bool TryGetDefaultAction(SceneObject sceneObject, ObjectTypeId objectType, out ObjectMenuAction action)
         {
             if (sceneObject is TangibleSceneObject tangible && tangible.CanConverse)
             {

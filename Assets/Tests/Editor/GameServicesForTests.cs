@@ -32,6 +32,8 @@ namespace Swg.Client.Tests.Editor
             helperScene = default;
         }
 
+        internal static ObjectMenuDefaults CreateMenuDefaults() => new ObjectMenuDefaults(CreateState(out var player), player);
+
         internal static WorldState CreateState(out CurrentPlayer player) => CreateState(new SceneObjectRegistry(), out player);
         internal static WorldState CreateState(SceneObjectRegistry registry, out CurrentPlayer player)
         {
@@ -52,6 +54,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterInstance(replication).ExternallyOwned();
             builder.RegisterInstance(replication.State);
             builder.RegisterInstance(currentPlayer);
+            builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
             var progress = new CraftingProgress();
             replication.Initialize(replication.State, currentPlayer, progress);
             builder.RegisterInstance(progress);
@@ -79,7 +82,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterInstance(new System.Action<Swg.Client.Core.Networking.Game.Packets.Mission.MissionAbortPacket>(_ => { }));
             builder.RegisterInstance(replication.SceneObjects);
             builder.Register(_ => new ClientInventory(replication.State, swgId => { }, currentPlayer)).SingleInstance();
-            builder.Register(_ => new ClientObjectInteractions(replication.State, packet => { }, swgId => { }, packet => { }, (name, arguments, target) => { }, currentPlayer)).SingleInstance();
+            builder.Register(context => new ClientObjectInteractions(replication.State, packet => { }, swgId => { }, packet => { }, (name, arguments, target) => { }, currentPlayer, context.Resolve<ObjectMenuDefaults>())).SingleInstance();
             builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf();
             return builder.Build();
         }

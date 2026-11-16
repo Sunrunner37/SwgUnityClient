@@ -107,7 +107,7 @@ namespace Swg.Client.Tests.Editor
             using var chat = new Swg.Client.Runtime.Networking.Chat.ClientChat(null, state, localizer, new ProseFormatter(), commands, currentPlayer);
             var messages = new List<string>(); chat.ScreenMessageReceived += messages.Add;
             using var inventory = new ClientInventory(state, _ => { }, currentPlayer);
-            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => { }, (name, args, target) => { }, currentPlayer);
+            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => { }, (name, args, target) => { }, currentPlayer, new ObjectMenuDefaults(state, currentPlayer));
             using var catalog = new DraftSchematicCatalog(state, assets, new SceneObjectNameResolver(assets, localizer), localizer, (name, args, target) => { }, currentPlayer);
             var sentAdds = new List<CraftingAddIngredientPacket>();
             var sentRemoves = new List<CraftingRemoveIngredientPacket>();

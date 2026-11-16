@@ -88,7 +88,10 @@ namespace Swg.Client.Runtime.Networking
         {
             if (disposed) return;
             if (packet.SwgId == ContainerSwgId.Value) Refresh();
-            else if (state.SceneObjects.TryGet(packet.SwgId, out var container)) ContainerOpened?.Invoke(packet.SwgId);
+            // Datapad.Open requests contents through the same packet, but its specialized window is already open.
+            else if (state.SceneObjects.TryGet(packet.SwgId, out var container)
+                && container.TemplatePath?.StartsWith("object/tangible/datapad/", StringComparison.Ordinal) != true)
+                ContainerOpened?.Invoke(packet.SwgId);
         }, null);
         public void Dispose()
         {

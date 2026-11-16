@@ -18,6 +18,7 @@ namespace Swg.Client.Runtime.Networking
         readonly Action<ObjectMenuSelectPacket> selectMenu;
         readonly Action<string, string, SwgId> enqueueCommand;
         readonly WorldState state;
+        readonly ObjectMenuDefaults menuDefaults;
         readonly CurrentPlayer currentPlayer;
         readonly Action<ObjectMenuRequestPacket> sendMenu;
         readonly Action<SwgId> requestAttributes;
@@ -30,11 +31,13 @@ namespace Swg.Client.Runtime.Networking
         public IReadOnlyList<AttributeValue> GetAttributes(SwgId swgId) => attributes.TryGetValue(swgId, out var values) ? values : Array.Empty<AttributeValue>();
         public event Action MenuChanged;
         public event Action<SwgId> ExamineRequested;
+        public event Action<SwgId> DestroyRequested;
         public event Action<SwgId> AttributesChanged;
 
-        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand, CurrentPlayer currentPlayer)
+        public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand, CurrentPlayer currentPlayer, ObjectMenuDefaults menuDefaults)
         {
             this.currentPlayer = currentPlayer;
+            this.menuDefaults = menuDefaults;
             this.state = state;
             this.selectMenu = selectMenu;
             this.enqueueCommand = enqueueCommand;
@@ -47,24 +50,24 @@ namespace Swg.Client.Runtime.Networking
         {
             MenuTargetSwgId = swgId;
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            var defaults = ObjectMenuDefaults.Create(sceneObject, ObjectType(sceneObject));
+            var defaults = menuDefaults.Create(sceneObject);
             Menu = defaults;
             MenuChanged?.Invoke();
             sendMenu(new ObjectMenuRequestPacket(currentPlayer.SwgId, swgId, defaults, unchecked(++counter)));
         }
 
-        internal ObjectTypeId ObjectType(SceneObject sceneObject) => sceneObject == null ? ObjectTypeId.Unknown : (ObjectTypeId)state.Templates.GameObjectType(sceneObject.TemplatePath);
+        internal ObjectTypeId ObjectType(SceneObject sceneObject) => menuDefaults.ObjectType(sceneObject);
 
         public bool IsActiveControlDevice(SwgId swgId) => state.SceneObjects.TryGet<IntangibleSceneObject>(swgId, out var device) && device.IsActive && ObjectType(device).IsControlDevice();
 
-        public bool HasDefaultAction(SwgId swgId) => state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out _);
+        public bool HasDefaultAction(SwgId swgId) => state.SceneObjects.TryGet(swgId, out var sceneObject) && menuDefaults.TryGetDefaultAction(sceneObject, out _);
 
         public void ActivateDefault(SwgId swgId)
         {
             if (!state.SceneObjects.TryGet(swgId, out var sceneObject)) return;
             if (ObjectType(sceneObject).IsVehicle())
                 SelectMenuAction(swgId, ObjectMenuAction.VehicleEnterExit);
-            else if (ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out var action))
+            else if (menuDefaults.TryGetDefaultAction(sceneObject, out var action))
                 SelectMenuAction(swgId, action);
             else
                 ExamineRequested?.Invoke(swgId);
@@ -74,7 +77,11 @@ namespace Swg.Client.Runtime.Networking
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (radialId == ObjectMenuAction.Open.Id)
+            if (radialId == ObjectMenuAction.Destroy.Id)
+            {
+                if (menuDefaults.CanDestroy(sceneObject)) DestroyRequested?.Invoke(swgId);
+            }
+            else if (radialId == ObjectMenuAction.Open.Id)
                 enqueueCommand("openContainer", "", swgId);
             else if (radialId == ObjectMenuAction.ConverseStart.Id)
                 GameServices.Resolve<ClientConversation>().Start(swgId);
@@ -95,6 +102,12 @@ namespace Swg.Client.Runtime.Networking
             }
             else
                 selectMenu(new ObjectMenuSelectPacket(swgId, radialId));
+        }
+
+        public void Destroy(SwgId swgId)
+        {
+            if (state.SceneObjects.TryGet(swgId, out var sceneObject) && menuDefaults.CanDestroy(sceneObject))
+                enqueueCommand("serverDestroyObject", "", swgId);
         }
 
         public void RequestExamine(SwgId swgId) => requestAttributes(swgId);

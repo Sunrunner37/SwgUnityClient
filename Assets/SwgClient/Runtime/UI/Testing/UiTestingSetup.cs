@@ -60,6 +60,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterInstance(new Action<TradeRequestPacket>(packet => Debug.Log("Offline trade request: " + packet.TargetSwgId)));
                 builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
+                builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => Debug.Log("Offline target: " + packet.TargetSwgId)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
                 builder.Register(context =>
@@ -72,7 +73,7 @@ namespace Swg.Client.Runtime.UI.Testing
                         new RadialMenuEntry(2, 0, 118, 3, "@player_structure:management"),
                         new RadialMenuEntry(3, 0, 117, 3, "@player_structure:permissions"),
                         new RadialMenuEntry(4, 2, 124, 3, "@player_structure:management_status")
-                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet), context.Resolve<Action<string, string, SwgId>>(), context.Resolve<CurrentPlayer>());
+                    }, request.Counter)), swgId => interactions.Receive(new AttributeListPacket(swgId.Value, swgId.Value >= 9300 ? new[] { new AttributeValue("condition", "1000/1000"), new AttributeValue("volume", "1"), new AttributeValue("crafter", "Misty") } : new[] { new AttributeValue("owner", "Trixie") })), packet => ApplyOfflineMenuSelection(world, packet), context.Resolve<Action<string, string, SwgId>>(), context.Resolve<CurrentPlayer>(), context.Resolve<ObjectMenuDefaults>());
                     return interactions;
                 }).SingleInstance();
                 builder.RegisterInstance(new Admission { Username = "ui-testing", Galaxy = new Galaxy { Name = "Offline" } });
