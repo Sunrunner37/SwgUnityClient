@@ -160,7 +160,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
             bool stopped = CurrentSpeed <= 0 && wasMoving;
             if (stopped)
                 pendingMovement = true;
-            if (pendingMovement && (stopped || Time.unscaledTime >= nextSend))
+            // Core3 rejects transforms less than 200ms apart, including the final stop.
+            // Keep it pending until the next send slot so the server actually leaves running locomotion.
+            if (pendingMovement && Time.unscaledTime >= nextSend)
             {
                 connection.Send(new DataTransformPacket(player.SwgId, mounted ? default : player.ParentSwgId, (uint)(Time.realtimeSinceStartupAsDouble * 1000), replication.NextPlayerMovementCounter(), player.Position, player.Rotation, CurrentSpeed));
                 pendingMovement = false;
@@ -171,3 +173,4 @@ namespace Swg.Client.Runtime.World.SceneObjects
         }
     }
 }
+

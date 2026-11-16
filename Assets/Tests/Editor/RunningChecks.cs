@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.IO;
 using System.Linq;
@@ -24,6 +25,29 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class RunningChecks
     {
+        [Test]
+        public void FinalStopWaitsForTheNextMovementSendSlotAndStaysPending()
+        {
+            var root = new GameObject("Movement send timing check");
+            try
+            {
+                var movement = root.AddComponent<PlayerMovement>();
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                void Set(string name, object value) => typeof(PlayerMovement).GetField(name, flags).SetValue(movement, value);
+                object Get(string name) => typeof(PlayerMovement).GetField(name, flags).GetValue(movement);
+                Set("player", new CreatureSceneObject { RunSpeed = 0 });
+                Set("wasMoving", true);
+                Set("nextSend", Time.unscaledTime + 1);
+                // No connection is supplied: trying to send the stop immediately would fail this check.
+                Assert.DoesNotThrow(() => movement.Move(Vector2.zero, .016f));
+                Assert.That(Get("pendingMovement"), Is.True);
+                Assert.That(Get("wasMoving"), Is.False);
+                Assert.DoesNotThrow(() => movement.Move(Vector2.zero, .016f));
+                Assert.That(Get("pendingMovement"), Is.True, "The following idle frame must retain the unsent stop.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
         [Test]
         public void CharacterPreviewUsesSharedSkinningAndBreathesWithoutMoving()
         {
@@ -193,3 +217,4 @@ namespace Swg.Client.Tests.Editor
         }
     }
 }
+

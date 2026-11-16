@@ -121,6 +121,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<DraftSchematicCatalog>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientDatapad>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientCombat>().AsSelf().SingleInstance().AutoActivate();
+                builder.RegisterType<ClientEntertainment>().AsSelf().SingleInstance().AutoActivate();
                 builder.Register(context =>
                 {
                     var effects = new GameObject("Client effects").AddComponent<ClientEffects>();

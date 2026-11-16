@@ -24,6 +24,7 @@ namespace Swg.Client.Runtime.Networking
         int variation;
         public Task<CbtmFile> Loading => loading;
         public event Action<CombatActionPacket> ActionReceived;
+        public event Action<SwgId> FlourishReceived;
         public event Action<CombatActionPacket, CbtmFile.Playback> PlaybackRequested;
         public ClientCombat(TreRuntimeAssets assets, WorldState state)
         {
@@ -90,10 +91,20 @@ namespace Swg.Client.Runtime.Networking
         }
         public void Receive(FlourishPacket packet) => context.Post(_ =>
         {
-            if (!disposed && packet.FlourishId >= 1 && packet.FlourishId <= 8)
-                Play(packet.ReceiverSwgId, "skill_action_" + packet.FlourishId);
+            if (disposed || packet.FlourishId < 1 || packet.FlourishId > 8) return;
+            Play(packet.ReceiverSwgId, "skill_action_" + packet.FlourishId);
+            FlourishReceived?.Invoke(packet.ReceiverSwgId);
         }, null);
-        public void Receive(AnimationPacket packet) => context.Post(_ => { if (!disposed) Play(packet.ReceiverSwgId, packet.Animation); }, null);
-        public void Dispose() { disposed = true; listeners.Clear(); ActionReceived = null; PlaybackRequested = null; }
+        public void Receive(AnimationPacket packet) => context.Post(_ =>
+        {
+            if (disposed) return;
+            Play(packet.ReceiverSwgId, packet.Animation);
+            // Core3 sends dance flourishes as ordinary animations, and music flourishes as 0x166.
+            string animation = packet.Animation;
+            if (animation != null && animation.Length == 14 && animation.StartsWith("skill_action_", StringComparison.Ordinal)
+                && animation[13] >= '1' && animation[13] <= '8')
+                FlourishReceived?.Invoke(packet.ReceiverSwgId);
+        }, null);
+        public void Dispose() { disposed = true; listeners.Clear(); ActionReceived = null; PlaybackRequested = null; FlourishReceived = null; }
     }
 }
