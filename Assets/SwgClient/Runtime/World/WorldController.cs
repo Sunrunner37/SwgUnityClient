@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.UI.Screens;
 using Swg.Client.Core.Characters;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World.SceneObjects;
@@ -39,6 +40,7 @@ namespace Swg.Client.Runtime.World
         WorldSceneObjectRenderer objectRenderer;
         WorldFloraRenderer flora;
         bool revealed;
+        bool travelling;
         public void Initialize(ILifetimeScope session, WorldLoadingData sceneData, WorldStreamingSettings streamingSettings)
         {
             if (this.state != null)
@@ -47,6 +49,7 @@ namespace Swg.Client.Runtime.World
             this.session = session;
             currentPlayer = session.Resolve<CurrentPlayer>();
             this.state = session.Resolve<WorldState>();
+            this.state.SceneStarted += OnSceneStarted;
             Content = session.Resolve<WorldContentLoader>();
             settings = streamingSettings ?? throw new ArgumentNullException(nameof(streamingSettings));
         }
@@ -116,15 +119,29 @@ namespace Swg.Client.Runtime.World
 
         void Update()
         {
+            if (travelling)
+            {
+                // Run after SceneStarted finishes invoking the old HUD's subscription snapshot.
+                // Disabling it inside that event lets later callbacks resubscribe destroyed views.
+                gameObject.SetActive(false);
+                ScreenChanger.Open(ScreenId.LoadingHorizontal);
+                return;
+            }
             if (!revealed || !IsReady)
                 return;
             if (SceneObjects.TryGet<SpatialSceneObject>(currentPlayer.SwgId, out var player))
                 Streaming.Update(SceneObjects.GetServerWorldPose(player.SwgId).position);
         }
 
+        void OnSceneStarted()
+        {
+            travelling = true;
+            Streaming?.Reset();
+        }
+
         void OnDestroy()
         {
-            GameServices.EndGame(session);
+            if (state != null) state.SceneStarted -= OnSceneStarted;
         }
     }
 }

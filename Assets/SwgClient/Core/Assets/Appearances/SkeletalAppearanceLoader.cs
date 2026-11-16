@@ -1,5 +1,6 @@
 using Swg.Client.Core.Characters.Models;
 using Swg.Client.Core.Assets.Formats.Sht;
+using Swg.Client.Core.Assets.Formats.Eft;
 using Swg.Client.Core.Assets.Formats.Cidm;
 using Swg.Client.Core.Assets.Formats.Customization;
 using UnityEngine;
@@ -89,14 +90,60 @@ namespace Swg.Client.Core.Assets.Appearances
                     if (female && !occupiedSlots.Contains("chest1") && !occupiedSlots.Contains("chest2"))
                         LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, "appearance/mesh/underwear_top_f.lmg", owner, owner, textures, result, ownerAppearance);
                 }
-                CharacterMeshOcclusion.Apply(result);
+                LoadAttachments(loader, clientData, ownerAppearance, owner, result);
                 if (VehicleBodyAppearance.TryLoad(loader, ownerAppearance, owner, out var body))
                 {
                     result.Parts.AddRange(body.Parts);
                     result.Particles.AddRange(body.Particles);
                     result.RiderSeat = body.RiderSeat;
                 }
+                CharacterMeshOcclusion.Apply(result);
                 return result;
+            }
+        }
+
+        // CLDF/HOBJ meshes follow named skeleton joints (transport body, landing gear, door, etc.).
+        static void LoadAttachments(TreAssetLoader loader, CharacterClientData clientData, string satPath,
+            IReadOnlyDictionary<string, short> customization, SkeletalAppearanceData result)
+        {
+            if (clientData.Attachments.Count == 0 || satPath == null) return;
+            var skeleton = SkeletonData.Load(loader, satPath);
+            var posed = new Matrix4x4[skeleton.Joints.Length];
+            for (int i = 0; i < posed.Length; i++)
+            {
+                var joint = skeleton.Joints[i];
+                var pose = joint.Sample(skeleton.Idle.Sample(joint.Name, 0));
+                var local = Matrix4x4.TRS(pose.position, pose.rotation, Vector3.one);
+                posed[i] = joint.Parent < 0 ? local : posed[joint.Parent] * local;
+            }
+            foreach (var attachment in clientData.Attachments)
+            {
+                int bone = Array.FindIndex(skeleton.Joints, joint => joint.Name == attachment.Hardpoint);
+                if (bone < 0)
+                {
+                    Debug.LogWarning("Client-data attachment joint not found: " + attachment.Hardpoint + " in " + satPath);
+                    continue;
+                }
+                var appearance = AppearanceLoader.LoadDetailed(loader, attachment.Appearance, customization: customization);
+                foreach (var warning in appearance.Warnings) Debug.LogWarning(warning);
+                var bind = skeleton.BindGlobals[bone];
+                var bindMatrix = Matrix4x4.TRS(bind.Translation, bind.Rotation, Vector3.one);
+                foreach (var part in appearance.Parts)
+                {
+                    var vertices = part.Vertices;
+                    var normals = part.Normals;
+                    part.Skinning = new SkeletalMeshData
+                    {
+                        Skeleton = skeleton,
+                        Vertices = vertices.Select(bindMatrix.MultiplyPoint3x4).ToArray(),
+                        Normals = normals.Select(bindMatrix.MultiplyVector).ToArray(),
+                        BonesPerVertex = Enumerable.Repeat((byte)1, vertices.Length).ToArray(),
+                        Weights = Enumerable.Repeat(new BoneWeight1 { boneIndex = bone, weight = 1 }, vertices.Length).ToArray()
+                    };
+                    part.Vertices = vertices.Select(posed[bone].MultiplyPoint3x4).ToArray();
+                    part.Normals = normals.Select(posed[bone].MultiplyVector).ToArray();
+                    result.Parts.Add(part);
+                }
             }
         }
 
@@ -187,6 +234,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
                 var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, own, owner, "HUEB");
                 string effect = IffNode.References(shaderBytes, "effect/", ".eft").FirstOrDefault();
+                var renderPass = effect == null ? null : EftFile.Parse(loader.Read(effect));
                 if (trim != null && effect != null && CharacterMaterialLoader.UsesTwoColor(effect))
                 {
                     diffuse = CharacterMaterialLoader.ApplyTwoColor(diffuse, tint ?? new byte[] { 255, 255, 255 }, trim);
@@ -257,8 +305,9 @@ namespace Swg.Client.Core.Assets.Appearances
                     }
                 }
 
-                result.Parts.Add(new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint, Skinning = pose.CreateSkin(bindVertices, bindNormals, sourceIndices), UseCharacterShader = true, AlphaCutout = template.Contains("/hair/") || path.Contains("/hair/") });
-                result.Sources.Add(new CachedMeshPartSource { ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, TriangleOcclusionCombinations = occlusion.ToArray(), MeshVersion = version });
+                var part = new MeshPart { Vertices = vertices, Normals = ns, Uvs = uvs, Triangles = triangles.ToArray(), Diffuse = diffuse, Tint = tint, Skinning = pose.CreateSkin(bindVertices, bindNormals, sourceIndices), UseCharacterShader = true, AlphaBlend = renderPass?.AlphaBlendEnabled == true, AlphaCutout = renderPass?.AlphaTestEnabled == true || template.Contains("/hair/") || path.Contains("/hair/") };
+                result.Parts.Add(part);
+                result.Sources.Add(new CachedMeshPartSource { Part = part, ObjectTemplate = template, MeshPath = path, ShaderPath = shader, PositionIndices = sourceIndices, TriangleOcclusionCombinations = occlusion.ToArray(), MeshVersion = version });
             }
         }
 

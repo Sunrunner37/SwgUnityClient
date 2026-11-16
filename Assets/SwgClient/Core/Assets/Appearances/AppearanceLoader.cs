@@ -44,7 +44,10 @@ namespace Swg.Client.Core.Assets.Appearances
                     var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt", ".sat" });
                     if (appearances.Count > 0)
                     {
-                        LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel, customization);
+                        if (appearances[0].EndsWith(".sat", StringComparison.OrdinalIgnoreCase))
+                            LoadSkeletalAppearance(loader, path, transform, result);
+                        else
+                            LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel, customization);
                         return;
                     }
 
@@ -79,24 +82,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 else if (root.Kind == "MESH")
                     MeshAppearanceReader.Load(loader, path, root, transform, result, customization);
                 else if (root.Kind == "SMAT")
-                {
-                    var skeletal = SkeletalAppearanceLoader.LoadDetailed(loader, path);
-                    if (skeletal.RiderSeat.HasValue)
-                        result.RiderSeat = new RiderSeatData(transform * skeletal.RiderSeat.Value.Transform, skeletal.RiderSeat.Value.PoseName);
-                    result.Particles.AddRange(skeletal.Particles.Select(effect => effect.WithTransform(transform)));
-                    foreach (var part in skeletal.Parts)
-                    {
-                        if (transform != Matrix4x4.identity)
-                        {
-                            // Compound appearances flatten their child transform into the neutral mesh.
-                            part.Vertices = part.Vertices.Select(transform.MultiplyPoint3x4).ToArray();
-                            var normalTransform = transform.inverse.transpose;
-                            part.Normals = part.Normals.Select(normal => normalTransform.MultiplyVector(normal).normalized).ToArray();
-                            part.Skinning = null;
-                        }
-                        result.Parts.Add(part);
-                    }
-                }
+                    LoadSkeletalAppearance(loader, path, transform, result);
                 else if (root.Kind == "PEFT")
                     result.Particles.Add(new ParticleAppearance(loader, path, transform, root, child =>
                     {
@@ -143,6 +129,26 @@ namespace Swg.Client.Core.Assets.Appearances
             finally
             {
                 stack.Remove(path);
+            }
+        }
+
+        static void LoadSkeletalAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result)
+        {
+            var skeletal = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+            if (skeletal.RiderSeat.HasValue)
+                result.RiderSeat = new RiderSeatData(transform * skeletal.RiderSeat.Value.Transform, skeletal.RiderSeat.Value.PoseName);
+            result.Particles.AddRange(skeletal.Particles.Select(effect => effect.WithTransform(transform)));
+            foreach (var part in skeletal.Parts)
+            {
+                if (transform != Matrix4x4.identity)
+                {
+                    // Compound appearances flatten their child transform into the neutral mesh.
+                    part.Vertices = part.Vertices.Select(transform.MultiplyPoint3x4).ToArray();
+                    var normalTransform = transform.inverse.transpose;
+                    part.Normals = part.Normals.Select(normal => normalTransform.MultiplyVector(normal).normalized).ToArray();
+                    part.Skinning = null;
+                }
+                result.Parts.Add(part);
             }
         }
 

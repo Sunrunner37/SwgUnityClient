@@ -62,13 +62,13 @@ namespace Swg.Client.Core.Characters.Models
         public static void Apply(SkeletalAppearanceData model)
         {
             var meshes = model.Sources.Select(source => source.MeshVersion).Distinct().ToDictionary(version => version, version => new MeshZones(version));
-            for (int partIndex = model.Parts.Count - 1; partIndex >= 0; partIndex--)
+            for (int sourceIndex = model.Sources.Count - 1; sourceIndex >= 0; sourceIndex--)
             {
-                var source = model.Sources[partIndex];
+                var source = model.Sources[sourceIndex];
                 var zones = meshes[source.MeshVersion];
                 var covered = new HashSet<string>(meshes.Values.Where(other => other.Layer > zones.Layer).SelectMany(other => other.Occludes), StringComparer.OrdinalIgnoreCase);
                 bool hidden = zones.FullyOccludedBy.Length > 0 && zones.FullyOccludedBy.All(covered.Contains);
-                var part = model.Parts[partIndex];
+                var part = source.Part;
                 var triangles = new List<int>();
                 if (!hidden)
                 {
@@ -84,8 +84,8 @@ namespace Swg.Client.Core.Characters.Models
 
                 if (triangles.Count == 0)
                 {
-                    model.Parts.RemoveAt(partIndex);
-                    model.Sources.RemoveAt(partIndex);
+                    model.Parts.Remove(part);
+                    model.Sources.RemoveAt(sourceIndex);
                 }
                 else
                     part.Triangles = triangles.ToArray();

@@ -15,29 +15,27 @@ namespace Swg.Client.Runtime.World.Streaming
     public sealed class WorldStreamer : IDisposable
     {
         readonly WorldContentLoader content;
-        readonly WorldStreamingSettings settings;
+        readonly WorldRenderingContext context;
+        WorldStreamingSettings settings => context.Streaming;
         readonly WorldAppearanceLibrary appearanceLibrary;
         readonly WorldTerrainRenderer terrainRenderer;
-        readonly WorldFloraRenderer flora;
-        readonly MonoBehaviour owner;
-        readonly WorldSceneObjectRenderer entities;
+        WorldFloraRenderer flora => context.FloraRenderer;
+        MonoBehaviour owner => context.Owner;
+        WorldSceneObjectRenderer entities => context.Renderer;
         readonly HashSet<SwgId> scenery = new HashSet<SwgId>();
-        readonly CancellationTokenSource lifetime = new CancellationTokenSource();
+        CancellationTokenSource lifetime = new CancellationTokenSource();
         Coroutine pending;
         bool disposed;
         public Vector3 ServerCenter { get; private set; }
         public int CompletedRegions { get; private set; }
         public float Progress { get; private set; }
 
-        public WorldStreamer(WorldContentLoader content, WorldStreamingSettings settings, WorldAppearanceLibrary appearanceLibrary, WorldTerrainRenderer terrainRenderer, WorldSceneObjectRenderer entities, MonoBehaviour owner, WorldFloraRenderer flora)
+        public WorldStreamer(WorldContentLoader content, WorldRenderingContext context, WorldAppearanceLibrary appearanceLibrary, WorldTerrainRenderer terrainRenderer)
         {
             this.content = content;
-            this.settings = settings;
+            this.context = context;
             this.appearanceLibrary = appearanceLibrary;
             this.terrainRenderer = terrainRenderer;
-            this.owner = owner;
-            this.flora = flora;
-            this.entities = entities;
         }
 
         public IEnumerator LoadInitial(WorldRegionData initialRegion)
@@ -174,6 +172,20 @@ namespace Swg.Client.Runtime.World.Streaming
             {
                 Debug.LogError(error.Message);
             }
+        }
+
+        public void Reset()
+        {
+            lifetime.Cancel();
+            if (pending != null && owner != null) owner.StopCoroutine(pending);
+            pending = null;
+            lifetime.Dispose();
+            lifetime = new CancellationTokenSource();
+            scenery.Clear();
+            terrainRenderer.Clear();
+            Progress = 0;
+            CompletedRegions = 0;
+            ServerCenter = default;
         }
 
         public void Dispose()

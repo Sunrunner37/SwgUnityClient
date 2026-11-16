@@ -12,15 +12,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Ui
         public override uint Opcode => SuiForceClosePagePacket.Opcode;
 
         readonly ClientVehicleRepairs repairs;
+        readonly ClientTravel travel;
 
         [Preserve]
-        public SuiForceClosePagePacketHandler(ClientVehicleRepairs repairs) : base(SuiForceClosePagePacket.ReadFrom)
+        public SuiForceClosePagePacketHandler(ClientVehicleRepairs repairs, ClientTravel travel) : base(SuiForceClosePagePacket.ReadFrom)
         {
             this.repairs = repairs;
+            this.travel = travel;
         }
 
         protected override void Handle(SuiForceClosePagePacket packet)
         {
+            travel.CloseTickets(packet.PageId);
             repairs.Close(packet.PageId);
         }
     }

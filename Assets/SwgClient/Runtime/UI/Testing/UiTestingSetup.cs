@@ -13,6 +13,7 @@ using System.Collections;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Travel;
 using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Runtime.Assets.Shaders;
 using Swg.Client.Core.Networking.Login;
@@ -60,6 +61,8 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterInstance(new Action<TradeRequestPacket>(packet => Debug.Log("Offline trade request: " + packet.TargetSwgId)));
                 builder.RegisterType<CraftingProgress>().SingleInstance();
                 builder.RegisterType<WorldState>().SingleInstance();
+                builder.RegisterType<ClientTravel>().SingleInstance();
+                builder.RegisterInstance(new Action<PlanetTravelPointListRequestPacket>(packet => Debug.Log("Offline travel list: " + packet.Planet)));
                 builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
                 builder.RegisterInstance(new Action<TargetUpdatePacket>(packet => Debug.Log("Offline target: " + packet.TargetSwgId)));
                 builder.RegisterType<ClientTargeting>().AsSelf().SingleInstance().AutoActivate();
@@ -293,6 +296,7 @@ namespace Swg.Client.Runtime.UI.Testing
         IEnumerator Start()
         {
             yield return FindAnyObjectByType<UiAssetPreloader>().Prewarm();
+            yield return FindAnyObjectByType<TravelWindow>().Prewarm();
             var skills = scope.Resolve<ClientSkills>();
             yield return new WaitUntil(() => skills.Loading.IsCompleted);
             if (skills.Loading.IsFaulted) { Debug.LogException(skills.Loading.Exception.GetBaseException(), this); yield break; }

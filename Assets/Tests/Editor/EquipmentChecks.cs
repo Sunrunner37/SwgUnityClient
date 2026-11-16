@@ -109,15 +109,20 @@ namespace Swg.Client.Tests.Editor
             var result = new SkeletalAppearanceData();
             void Part(IffNode mesh, int[] combinations)
             {
-                result.Parts.Add(new MeshPart { Triangles = new[] { 0, 1, 2, 2, 3, 0 } });
-                result.Sources.Add(new CachedMeshPartSource { MeshVersion = mesh, TriangleOcclusionCombinations = combinations });
+                var part = new MeshPart { Triangles = new[] { 0, 1, 2, 2, 3, 0 } };
+                result.Parts.Add(part);
+                result.Sources.Add(new CachedMeshPartSource { Part = part, MeshVersion = mesh, TriangleOcclusionCombinations = combinations });
             }
 
             Part(Mesh(ushort.MaxValue, false), new[] { 0, -1 });
             Part(Mesh(2, true), new[] { 0, -1 });
+            var attachment = new MeshPart { Triangles = new[] { 7, 8, 9 } };
+            result.Parts.Insert(0, attachment);
             CharacterMeshOcclusion.Apply(result);
-            Assert.That(result.Parts[0].Triangles, Is.EqualTo(new[] { 2, 3, 0 }));
-            Assert.That(result.Parts[1].Triangles.Length, Is.EqualTo(6));
+            Assert.That(result.Parts[0], Is.SameAs(attachment));
+            Assert.That(attachment.Triangles, Is.EqualTo(new[] { 7, 8, 9 }));
+            Assert.That(result.Parts[1].Triangles, Is.EqualTo(new[] { 2, 3, 0 }));
+            Assert.That(result.Parts[2].Triangles.Length, Is.EqualTo(6));
         }
     }
 }

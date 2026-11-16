@@ -9,7 +9,7 @@ using Swg.Client.Core.Assets.Tre;
 
 namespace Swg.Client.Core.Characters.Appearance
 {
-    /// <summary>Character-specific WEAR and CSSI directives from a template's native client-data file.</summary>
+    /// <summary>WEAR, CSSI and skeletal hardpoint attachments from a template's native client-data file.</summary>
     /// <seealso href="https://github.com/SWG-Source/client-tools/blob/master/src/engine/client/library/clientGame/src/shared/objectTemplate/ClientDataFile_Wearable.cpp"/>
     internal sealed class CharacterClientData
     {
@@ -21,6 +21,7 @@ namespace Swg.Client.Core.Characters.Appearance
         }
         public readonly Dictionary<string, short> Customization = new Dictionary<string, short>();
         public readonly List<Wearable> Wearables = new List<Wearable>();
+        public readonly List<(string Appearance, string Hardpoint)> Attachments = new List<(string, string)>();
 
         public static CharacterClientData Load(TreAssetLoader loader, string template)
         {
@@ -37,7 +38,12 @@ namespace Swg.Client.Core.Characters.Appearance
             var version = root.Children.First(node => node.Kind == "0000");
             foreach (var node in version.Children)
             {
-                if (node.Tag == "CSSI")
+                if (node.Tag == "HOBJ")
+                {
+                    var reader = new ByteReader(node.Data);
+                    result.Attachments.Add((TreAssetLoader.Normalize(reader.CString()), reader.CString()));
+                }
+                else if (node.Tag == "CSSI")
                     ReadSetting(node.Data, result.Customization);
                 else if (node.Kind == "WEAR")
                 {

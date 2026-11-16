@@ -1,9 +1,11 @@
 using Swg.Client.Core.Assets.Formats.Iff;
+using Swg.Client.Core.Geometry;
 
 namespace Swg.Client.Core.Characters.Models
 {
     public sealed class CachedMeshPartSource
     {
+        public MeshPart Part;
         public string ObjectTemplate;
         public string MeshPath;
         public string ShaderPath;

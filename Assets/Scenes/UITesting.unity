@@ -1455,7 +1455,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2084670649876057737, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 2105340018756198333, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2299,7 +2299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4273623013777709611, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 4307973337306531491, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2335,7 +2335,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4473653273722221181, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00012207031
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 4486046415268669494, guid: 6956e8bb9852c7f42a0e6e7f010cae36, type: 3}
       propertyPath: m_fontColor32.rgba

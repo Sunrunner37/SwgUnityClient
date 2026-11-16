@@ -132,6 +132,8 @@ namespace Swg.Client.Runtime
                     return new Action<SwgId>(swgId => commands.Enqueue("getAttributesBatch", swgId.ToString()));
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<ObjectMenuSelectPacket>(packet => connection.Send(packet)));
+                builder.RegisterType<ClientTravel>().SingleInstance();
+                builder.RegisterInstance(new Action<PlanetTravelPointListRequestPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
                 builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
                 builder.RegisterType<ClientConversation>().AsSelf().SingleInstance().AutoActivate();
@@ -167,11 +169,7 @@ namespace Swg.Client.Runtime
                 }).SingleInstance();
                 builder.RegisterType<WorldAppearanceLibrary>().SingleInstance();
                 builder.RegisterType<WorldTerrainRenderer>().SingleInstance();
-                builder.Register(context =>
-                {
-                    var rendering = context.Resolve<WorldRenderingContext>();
-                    return new WorldStreamer(context.Resolve<WorldContentLoader>(), rendering.Streaming, context.Resolve<WorldAppearanceLibrary>(), context.Resolve<WorldTerrainRenderer>(), rendering.Renderer, rendering.Owner, rendering.FloraRenderer);
-                }).SingleInstance();
+                builder.RegisterType<WorldStreamer>().SingleInstance();
                 builder.RegisterAssemblyTypes(typeof(GamePacketRouter).Assembly).Where(type => typeof(IGamePacketHandler).IsAssignableFrom(type) || typeof(IObjectControllerHandler).IsAssignableFrom(type)).AsSelf().SingleInstance();
             });
         }

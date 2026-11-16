@@ -1,4 +1,4 @@
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Player;
 
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Player
     [Preserve]
     internal sealed class PlanetTravelPointListResponsePacketHandler : GamePacketHandler<PlanetTravelPointListResponsePacket>
     {
+        readonly ClientTravel travel;
         public override uint Opcode => PlanetTravelPointListResponsePacket.Opcode;
 
         [Preserve]
-        public PlanetTravelPointListResponsePacketHandler() : base(PlanetTravelPointListResponsePacket.ReadFrom)
+        public PlanetTravelPointListResponsePacketHandler(ClientTravel travel) : base(PlanetTravelPointListResponsePacket.ReadFrom)
         {
+            this.travel = travel;
         }
 
         protected override void Handle(PlanetTravelPointListResponsePacket packet)
         {
-            throw new NotImplementedException($"PlanetTravelPointListResponse (opcode 0x{Opcode:X8})");
+            travel.Receive(packet);
         }
     }
 }

@@ -36,72 +36,12 @@ namespace Swg.Client.Core.Characters.Animation
         }
 
         static readonly ConditionalWeakTable<TreAssetLoader, AssetCache> caches = new ConditionalWeakTable<TreAssetLoader, AssetCache>();
-        AssetCache assetCache;
-        Dictionary<string, LatFile.Animation> logicalAnimations;
-        AshFile hierarchy;
-        Func<string, SkeletalAnimation> loadAnimation;
+        SkeletonAnimationResolver animationResolver;
 
-        public SkeletalAnimation ResolveAction(string action, string weapon, CreaturePosture posture, bool combat = true, string performance = "")
-        {
-            lock (assetCache)
-            {
-                string postureState = posture == CreaturePosture.Prone ? "prone" : posture == CreaturePosture.Crouched ? "kneeling"
-                    : posture == CreaturePosture.Dead ? "dead" : posture == CreaturePosture.Incapacitated ? "incapacitated_face_up" : "";
-                foreach (string candidate in ActionCandidates(action))
-                {
-                    string name = hierarchy.Resolve(candidate, weapon, combat ? "combat" : "", postureState, performance.Length > 0 ? "skill" : "");
-                    if (candidate != null && name == "default") continue;
-                    if (!logicalAnimations.TryGetValue(name, out var logical))
-                    {
-                        if (candidate == null || !logicalAnimations.TryGetValue("cbt_" + candidate, out logical) && !logicalAnimations.TryGetValue("rea_" + candidate, out logical))
-                            continue;
-                    }
-                    if (performance.Length > 0 && logical.Selections.TryGetValue(("skill", performance), out var selected) && selected.Length > 0)
-                        return loadAnimation(selected[0]);
-                    string path = (action == null ? logical.IdleClips.FirstOrDefault() : null) ?? logical.Clips.FirstOrDefault();
-                    if (path != null) return loadAnimation(path);
-                }
-                return null;
-            }
-        }
+        public SkeletalAnimation ResolveAction(string action, string weapon, CreaturePosture posture, bool combat = true, string performance = "") =>
+            animationResolver.ResolveAction(action, weapon, posture, combat, performance);
 
-        public SkeletalAnimation ResolveAmbient(string performance, string mood)
-        {
-            lock (assetCache)
-            {
-                string logicalName = hierarchy.Resolve(null, performance.Length > 0 ? "skill" : "");
-                if (!logicalAnimations.TryGetValue(logicalName, out var logical)) return null;
-                string selector = performance.Length > 0 ? "skill" : "mood";
-                string value = performance.Length > 0 ? performance : mood;
-                return logical.Selections.TryGetValue((selector, value), out var clips) && clips.Length > 0 ? loadAnimation(clips[0]) : null;
-            }
-        }
-
-        static IEnumerable<string> ActionCandidates(string action)
-        {
-            yield return action;
-            if (action == null) yield break;
-            // Core3 can request a fourth variant and a center-leg strike that older native hierarchies omit.
-            // Prefer another native variant at the same height, then the adjacent leg's animation.
-            var directions = action.Contains("_low_center") ? new[] { action, action.Replace("_low_center", "_low_left"), action.Replace("_low_center", "_low_right") } : new[] { action };
-            foreach (string direction in directions)
-            {
-                if (direction != action) yield return direction;
-                if (direction.StartsWith("attack_") && char.IsDigit(direction[direction.Length - 1]))
-                    for (int i = 0; i < 3; i++) yield return direction.Substring(0, direction.Length - 1) + i;
-            }
-            if (action.StartsWith("get_hit_"))
-                yield return action.StartsWith("get_hit_medium") ? "get_hit_medium" : "get_hit_light";
-            if (action == "dodge")
-            {
-                yield return "unarmed_standing_ready_dodge_bob_left";
-                yield return "rea_stand_combat_dodge";
-                yield return "rea_stand_dodge";
-            }
-            if (action == "fire_single") yield return "fire_1";
-            if (action == "fire_burst") yield return "fire_3";
-            if (action == "fire_suppress") yield return "fire_5";
-        }
+        public SkeletalAnimation ResolveAmbient(string performance, string mood) => animationResolver.ResolveAmbient(performance, mood);
 
         public Joint[] Joints { get; private set; }
         public Matrix4x4[] BindPoses { get; private set; }
@@ -145,34 +85,26 @@ namespace Swg.Client.Core.Characters.Animation
                 var bind = new List<RigidTransform>();
                 for (int s = 0; s + 1 < skeletons.Length; s += 2)
                 {
-                    var skt = IffNode.Form(IffNode.Parse(loader.Read(skeletons[s])), "SKTM") ?? throw new InvalidDataException("Expected skeleton: " + skeletons[s]);
-                    var sktVersion = skt.Children.First(n => n.Tag == "FORM");
-                    if (sktVersion.Kind != "0002")
-                        throw new NotSupportedException("Skeleton version " + sktVersion.Kind);
-                    var jointNames = Strings(sktVersion.Chunk("NAME"));
-                    var parents = sktVersion.Chunk("PRNT");
-                    var translations = sktVersion.Chunk("BPTR");
-                    var rotations = sktVersion.Chunk("BPRO");
-                    var pre = sktVersion.Chunk("RPRE");
-                    var post = sktVersion.Chunk("RPST");
+                    var skt = SktFile.Parse(loader.Read(skeletons[s]));
                     int offset = joints.Count;
                     int attachment = -1;
                     if (skeletons[s + 1].Length > 0 && !names.TryGetValue(skeletons[s + 1], out attachment))
                         throw new InvalidDataException("Unknown skeleton attachment " + skeletons[s + 1]);
-                    for (int j = 0; j < jointNames.Length; j++)
+                    for (int j = 0; j < skt.Joints.Length; j++)
                     {
-                        int localParent = BitConverter.ToInt32(parents, j * 4);
+                        var source = skt.Joints[j];
+                        int localParent = source.Parent;
                         int parent = localParent < 0 ? attachment : offset + localParent;
                         if (parent >= joints.Count)
                             throw new InvalidDataException("Skeleton parent order");
                         var joint = new Joint
                         {
-                            Name = jointNames[j],
+                            Name = source.Name,
                             Parent = parent,
-                            Translation = new Vector3(BitConverter.ToSingle(translations, j * 12), BitConverter.ToSingle(translations, j * 12 + 4), BitConverter.ToSingle(translations, j * 12 + 8)),
-                            Rotation = Rotation(rotations, j * 16),
-                            PreRotation = Rotation(pre, j * 16),
-                            PostRotation = Rotation(post, j * 16)
+                            Translation = source.Translation,
+                            Rotation = source.Rotation,
+                            PreRotation = source.PreRotation,
+                            PostRotation = source.PostRotation
                         };
                         var pose = joint.Sample(new JointSample { Rotation = Quaternion.identity });
                         var local = new RigidTransform
@@ -212,10 +144,7 @@ namespace Swg.Client.Core.Characters.Animation
             string hierarchyPath = states.ContainsKey("loop_standing") ? "appearance/ash/all_b.ash" : "appearance/ash/creature_base.ash";
             if (!cache.Hierarchies.TryGetValue(hierarchyPath, out var hierarchy))
                 cache.Hierarchies.Add(hierarchyPath, hierarchy = AshFile.Parse(loader.Read(hierarchyPath)));
-            skeleton.assetCache = cache;
-            skeleton.hierarchy = hierarchy;
-            skeleton.logicalAnimations = states;
-            skeleton.loadAnimation = load;
+            skeleton.animationResolver = new SkeletonAnimationResolver(hierarchy, states, load, cache);
             if (states.TryGetValue("loop_riding", out var riding))
                 foreach (var selection in riding.Selections)
                 {
@@ -243,37 +172,9 @@ namespace Swg.Client.Core.Characters.Animation
             skeleton.CrawlAnimationPath = states.TryGetValue("loop_prone", out var prone)
                 ? prone.Clips.FirstOrDefault(path => path.Contains("_crawl")) : null;
             skeleton.Crawl = skeleton.CrawlAnimationPath == null ? null : load(skeleton.CrawlAnimationPath);
-            var postures = new[]
-            {
-                (Posture: CreaturePosture.Upright, State: "standing"),
-                (Posture: CreaturePosture.Crouched, State: "kneeling"),
-                (Posture: CreaturePosture.Prone, State: "prone"),
-                (Posture: CreaturePosture.Sitting, State: "sitting_ground")
-            };
-            string fallen = Clip("loop_incapacitated_face_up") ?? Clip("loop_incapacitated");
-            if (fallen != null)
-                foreach (var posture in new[] { CreaturePosture.Incapacitated, CreaturePosture.Dead, CreaturePosture.KnockedDown })
-                {
-                    skeleton.Postures.Add(posture, load(fallen));
-                    string fall = Clip("trn_combat_standing_hit_to_incapacitated_face_up");
-                    if (fall != null) skeleton.Transitions.Add((CreaturePosture.Upright, posture), load(fall));
-                }
-            skeleton.Postures.Add(CreaturePosture.Upright, skeleton.Idle);
-            foreach (var posture in postures)
-            {
-                string idle = Clip("loop_" + posture.State);
-                if (posture.Posture != CreaturePosture.Upright && idle != null)
-                    skeleton.Postures.Add(posture.Posture, load(idle));
-                foreach (var next in postures)
-                {
-                    string transition = Clip("trn_" + posture.State + "_to_" + next.State);
-                    if (transition != null)
-                        skeleton.Transitions.Add((posture.Posture, next.Posture), load(transition));
-                }
-            }
+            PostureAnimationBindings.Apply(skeleton, Clip, load);
         }
 
-        static Quaternion Rotation(byte[] bytes, int at) => new Quaternion(BitConverter.ToSingle(bytes, at + 4), BitConverter.ToSingle(bytes, at + 8), BitConverter.ToSingle(bytes, at + 12), BitConverter.ToSingle(bytes, at));
         static string[] Strings(byte[] bytes) => Encoding.ASCII.GetString(bytes).Split(new[] { '\0' }, StringSplitOptions.None).SkipLast(1).ToArray();
     }
 }

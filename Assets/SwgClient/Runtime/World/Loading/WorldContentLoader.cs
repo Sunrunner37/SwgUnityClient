@@ -49,6 +49,8 @@ namespace Swg.Client.Runtime.World.Loading
             cacheGalaxy = admission.Galaxy.Name;
         }
 
+        public bool HasWorldMetadata => state.Templates != null;
+
         public async Task OpenAsync(GameWorldSnapshot initial, CancellationToken token)
         {
             var timer = Stopwatch.StartNew();

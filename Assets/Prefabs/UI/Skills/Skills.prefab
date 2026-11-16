@@ -4209,6 +4209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 6953284179980163149}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 2057948334253817371}
   down: {fileID: 6761576915017981365}
 --- !u!114 &5930852677320432472
@@ -5587,6 +5588,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 5296452467133101799}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 2489025128524627546}
   down: {fileID: 4244896092987472857}
 --- !u!114 &2047032813090691578
@@ -7768,6 +7770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 6636699954091684481}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 8652838988538032400}
   down: {fileID: 750221060240936195}
 --- !u!114 &7071084154928577448
@@ -9957,6 +9960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 8543108965780149744}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 8520890496770865272}
   down: {fileID: 3933497348555962921}
 --- !u!114 &8371524694056893759
@@ -11632,6 +11636,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 7141111668897280558}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 8695447121432097635}
   down: {fileID: 2104751747277206477}
 --- !u!114 &1713595191416052560
@@ -15411,6 +15416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollbar
   scrollbar: {fileID: 7384253112255006693}
+  hideHandleWhenNotScrollable: 1
   up: {fileID: 4628905959285627407}
   down: {fileID: 1930721535509581216}
 --- !u!114 &1450943886447769285
@@ -19091,6 +19097,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 188466348369409684}
+  - {fileID: 1343380432776396815}
   - {fileID: 6395610392624032227}
   - {fileID: 8589814236700706052}
   - {fileID: 8179783814793909526}
@@ -19910,6 +19917,108 @@ MonoBehaviour:
   asset: {fileID: 11400000, guid: 5b10ebeb9942b5544ab6ed3f28855373, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
+--- !u!1001 &2055514986085953073
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 497986885342517958}
+    m_Modifications:
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5979939688175573014, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+      propertyPath: m_Name
+      value: Window border
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+--- !u!224 &1343380432776396815 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1018379350178541118, guid: 464ce4c8471280f45b6fcb532c5d8dea, type: 3}
+  m_PrefabInstance: {fileID: 2055514986085953073}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2319852954370258948
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19949,6 +20058,22 @@ PrefabInstance:
     - target: {fileID: 3818909247956156306, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Swg.Client.Runtime.UI.Skills.SkillsWindow, Swg.Client
+      objectReference: {fileID: 0}
+    - target: {fileID: 4502802373396508632, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4502802373396508632, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4502802373396508632, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4502802373396508632, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9
       objectReference: {fileID: 0}
     - target: {fileID: 8389536614682261809, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
       propertyPath: m_AnchoredPosition.x

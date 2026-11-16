@@ -12,6 +12,8 @@ using UnityEngine;
 using Swg.Client.Core.World;
 using Swg.Client.Core.Networking.Game.Handlers;
 using Swg.Client.Core.Networking.Game;
+using Swg.Client.Core.Networking.Game.Packets.Player;
+using Swg.Client.Core.Networking.Game.Packets.Ui;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -55,6 +57,9 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterInstance(replication.State);
             builder.RegisterInstance(currentPlayer);
             builder.RegisterType<ObjectMenuDefaults>().SingleInstance();
+            builder.RegisterInstance(new System.Action<SuiEventNotificationPacket>(_ => { }));
+            builder.RegisterType<ClientTravel>().SingleInstance();
+            builder.RegisterInstance(new System.Action<PlanetTravelPointListRequestPacket>(_ => { }));
             var progress = new CraftingProgress();
             replication.Initialize(replication.State, currentPlayer, progress);
             builder.RegisterInstance(progress);

@@ -29,6 +29,7 @@ namespace Swg.Client.Runtime.Networking
         InsuranceTerminal = 0x4004,
         MissionTerminal = 0x4006,
         NativeTravelTerminal = 0x400a,
+        NativeTicketCollector = 0x400c, // Original SHOT type; Core3 specializes it as 0x4011.
         TicketCollector = 0x4011,
         TravelTerminal = 0x4012,
         CraftingTool = 0x8001,

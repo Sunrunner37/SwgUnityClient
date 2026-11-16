@@ -93,6 +93,7 @@ namespace Swg.Client.Runtime.Networking
                 case ObjectTypeId.PetMedicine:
                 case ObjectTypeId.Firework:
                 case ObjectTypeId.FireworkShow:
+                case ObjectTypeId.NativeTicketCollector:
                 case ObjectTypeId.TicketCollector:
                 case ObjectTypeId.TravelTicket:
                 case ObjectTypeId.Trap:
@@ -129,6 +130,7 @@ namespace Swg.Client.Runtime.Networking
         static readonly HashSet<string> useTemplates = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "object/tangible/terminal/shared_terminal_character_builder.iff",
+            "object/tangible/terminal/shared_terminal_travel.iff",
             "object/tangible/item/shared_droid_customization.iff",
             "object/tangible/item/shared_vehicle_customization.iff",
             "object/tangible/component/droid/shared_droid_interplanetary_survey.iff",

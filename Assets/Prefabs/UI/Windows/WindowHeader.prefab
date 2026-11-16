@@ -354,9 +354,7 @@ MonoBehaviour:
   texts: []
   inputs: []
   surfaces: []
-  effects:
-  - effect: {fileID: 446898070521427876}
-    role: 13
+  effects: []
   children: []
   onApplied:
     m_PersistentCalls:
@@ -389,7 +387,7 @@ RectTransform:
   m_GameObject: {fileID: 5221509466749891220}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.69064, y: 0.69064, z: 0.69064}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7903720153087429954}
@@ -397,8 +395,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.30004883, y: -6.3202}
-  m_SizeDelta: {x: 17, y: 15}
+  m_AnchoredPosition: {x: 1, y: -9}
+  m_SizeDelta: {x: 16, y: 16}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2605038698378711334
 CanvasRenderer:
@@ -602,7 +600,6 @@ GameObject:
   - component: {fileID: 5731718765683555080}
   - component: {fileID: 7278328569771468282}
   - component: {fileID: 715346892545051771}
-  - component: {fileID: 446898070521427876}
   m_Layer: 5
   m_Name: Close icon
   m_TagString: Untagged
@@ -682,21 +679,6 @@ MonoBehaviour:
   asset: {fileID: 11400000, guid: fd48aea78930f994c8d6a515804238c9, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
---- !u!114 &446898070521427876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7805980472013719062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
-  m_EffectColor: {r: 0, g: 0.9, b: 1, a: 0.7}
-  m_EffectDistance: {x: 1, y: -1}
-  m_UseGraphicAlpha: 0
 --- !u!1 &8097820154299718050
 GameObject:
   m_ObjectHideFlags: 0

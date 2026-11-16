@@ -1,5 +1,6 @@
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Travel;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.Networking.Chat;
@@ -214,6 +215,7 @@ namespace Swg.Client.Runtime.World.Loading
         {
             Phase = "Preparing interface";
             yield return world.hud.GetComponent<UiAssetPreloader>().Prewarm();
+            yield return world.hud.GetComponentInChildren<TravelWindow>(true).Prewarm();
         }
 
         IEnumerator AwaitInventoryPreviews()

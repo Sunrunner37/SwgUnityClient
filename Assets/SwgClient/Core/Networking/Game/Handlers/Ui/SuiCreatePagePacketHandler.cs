@@ -12,16 +12,19 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Ui
         public override uint Opcode => SuiCreatePagePacket.Opcode;
 
         readonly ClientVehicleRepairs repairs;
+        readonly ClientTravel travel;
 
         [Preserve]
-        public SuiCreatePagePacketHandler(ClientVehicleRepairs repairs) : base(SuiCreatePagePacket.ReadFrom)
+        public SuiCreatePagePacketHandler(ClientVehicleRepairs repairs, ClientTravel travel) : base(SuiCreatePagePacket.ReadFrom)
         {
             this.repairs = repairs;
+            this.travel = travel;
         }
 
         protected override void Handle(SuiCreatePagePacket packet)
         {
-            repairs.Receive(packet.Page);
+            if (!travel.TryReceive(packet.Page))
+                repairs.Receive(packet.Page);
         }
     }
 }

@@ -2,6 +2,7 @@ using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Appearances;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Swg.Client.Runtime.UI.Containers
 {
@@ -51,14 +52,16 @@ namespace Swg.Client.Runtime.UI.Containers
             previewCamera.transform.SetPositionAndRotation(stage.position + new Vector3(-(columns - 1), -(rows - 1), 40), Quaternion.Euler(0, 180, 0));
             nextRender = 0;
         }
-        public void Show(int index, AppearanceData appearance, AppearanceResources resources, ContainerItem item)
+        public void Show(int index, AppearanceData appearance, AppearanceResources resources, ContainerItem item) => Show(index, appearance, resources, item.image, "Item " + item.SwgId);
+
+        public void Show(int index, AppearanceData appearance, AppearanceResources resources, RawImage image, string name)
         {
             if (pivots[index] != null)
             {
                 pivots[index].gameObject.SetActive(false);
                 Destroy(pivots[index].gameObject);
             }
-            var pivot = new GameObject("Item " + item.SwgId).transform;
+            var pivot = new GameObject(name).transform;
             pivot.SetParent(stage, false);
             pivot.localPosition = new Vector3(-(index % columns) * 2, -(index / columns) * 2, 0);
             var root = resources.Create(pivot, detectMovement: false, previewLighting: true);
@@ -69,8 +72,8 @@ namespace Swg.Client.Runtime.UI.Containers
             foreach (var child in root.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = 30;
             pivots[index] = pivot;
-            item.image.texture = texture;
-            item.image.uvRect = new Rect(index % columns / (float)columns, 1 - (index / columns + 1f) / rows, 1f / columns, 1f / rows);
+            image.texture = texture;
+            image.uvRect = new Rect(index % columns / (float)columns, 1 - (index / columns + 1f) / rows, 1f / columns, 1f / rows);
         }
         void LateUpdate()
         {

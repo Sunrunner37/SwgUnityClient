@@ -81,6 +81,7 @@ namespace Swg.Client.Tests.Editor
         [TestCase(0x201b)]
         [TestCase(0x2019)]
         [TestCase(0x201c)]
+        [TestCase(0x400c)]
         [TestCase(0x4011)]
         [TestCase(0x2012)]
         [TestCase(0x2014)]
@@ -117,6 +118,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(GameServicesForTests.CreateMenuDefaults().TryGetDefaultAction(new SceneObject(), (ObjectTypeId)objectType, out _), Is.False);
         }
 
+        [TestCase("object/tangible/terminal/shared_terminal_travel.iff")]
         [TestCase("object/tangible/item/shared_droid_customization.iff")]
         [TestCase("object/tangible/gambling/slot/shared_standard.iff")]
         [TestCase("object/tangible/skill_buff/shared_skill_buff_unarmed_speed.iff")]

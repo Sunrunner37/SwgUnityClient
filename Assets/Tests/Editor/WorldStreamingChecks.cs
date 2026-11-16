@@ -51,6 +51,29 @@ namespace Swg.Client.Tests.Editor
         }
 
         [Test]
+        public void TerrainRendererClearsAndUsesTheDestinationRenderOrigin()
+        {
+            var parent = new GameObject("Travel terrain test");
+            var context = new WorldRenderingContext();
+            context.Initialize(Shader.Find("SWG/World"), null, null, null, null, null);
+            var state = GameServicesForTests.CreateState(out _);
+            using var renderer = new WorldTerrainRenderer(new SwgMaterialFactory(null), state, context);
+            try
+            {
+                renderer.AddOrReplace(Vector2Int.zero, WorldTerrainPatch.Build(new WorldTerrain(), Vector3.zero, 2, 1), parent.transform);
+                renderer.Clear();
+                Assert.That(renderer.Keys, Is.Empty);
+                var destination = new Vector3(100, 0, 200);
+                state.BeginScene(destination, "terrain/talus.trn");
+                renderer.AddOrReplace(Vector2Int.zero, WorldTerrainPatch.Build(new WorldTerrain(), destination, 2, 1), parent.transform);
+                var mesh = parent.GetComponentInChildren<MeshFilter>().sharedMesh;
+                Assert.That(mesh.vertices.Max(vertex => vertex.x), Is.LessThan(10));
+                Assert.That(mesh.vertices.Max(vertex => vertex.z), Is.LessThan(10));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(parent); }
+        }
+
+        [Test]
         public void MovingOneTileRetainsOverlapAndRequestsOnlyNewTerrain()
         {
             var first = WorldRegionPlanner.TerrainKeys(Vector3.zero, 256, 256).ToHashSet();

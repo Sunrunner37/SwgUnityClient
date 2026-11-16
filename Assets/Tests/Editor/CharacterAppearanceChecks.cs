@@ -97,7 +97,7 @@ namespace Swg.Client.Tests.Editor
             using var loader = Assets();
             var model = SkeletalAppearanceLoader.LoadDetailed(loader, path);
             Assert.That(model.Sources.Select(source => source.MeshPath), Does.Contain(mesh));
-            Assert.That(model.Parts.Single().Skinning.Skeleton.IdleAnimationPath, Is.EqualTo(idle));
+            Assert.That(model.Parts.Select(part => part.Skinning.Skeleton.IdleAnimationPath).Distinct(), Is.EqualTo(new[] { idle }));
             var appearance = AppearanceLoader.LoadDetailed(loader, path);
             Assert.That(appearance.Warnings, Is.Empty);
             Assert.That(appearance.Parts.Count, Is.EqualTo(model.Parts.Count));

@@ -133,6 +133,17 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     continue;
                 }
 
+                if (op == 3)
+                {
+                    // Core3 PlayerList::insertToDeltaMessage refreshes the whole social list.
+                    // Its list counter counts the refresh marker plus every replacement string.
+                    int length = r.U16();
+                    var values = new string[length];
+                    for (int item = 0; item < length; item++) values[item] = r.Ascii();
+                    updates?.Add(list => { list.Clear(); list.AddRange(values); });
+                    i += length;
+                    continue;
+                }
                 int index = r.U16();
                 if (op == 0)
                     updates?.Add(list => list.RemoveAt(index));

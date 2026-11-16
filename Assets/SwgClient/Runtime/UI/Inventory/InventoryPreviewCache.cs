@@ -47,6 +47,9 @@ namespace Swg.Client.Runtime.UI.Inventory
             yield return null;
             while (dirty)
             {
+                // The preloader survives travel; template metadata is temporarily absent between scenes.
+                if (!loader.HasWorldMetadata)
+                    yield return new WaitUntil(() => loader.HasWorldMetadata);
                 dirty = false;
                 var sceneObjects = inventory.Items.Cast<SceneObject>().ToList();
                 if (inventory.Player != null)

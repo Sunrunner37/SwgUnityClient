@@ -34,6 +34,8 @@ namespace Swg.Client.Core.Networking.Game.Packets.Player
             Starports = new byte[PacketFieldCodec.Count(reader, reader.U32(), 1)];
             for (int i = 0; i < Starports.Length; i++)
                 Starports[i] = reader.Byte();
+            if (Names.Length != Positions.Length || Names.Length != Taxes.Length || Names.Length != Starports.Length)
+                throw new InvalidDataException("Travel destination columns have different lengths");
             PacketFieldCodec.End(reader);
         }
 

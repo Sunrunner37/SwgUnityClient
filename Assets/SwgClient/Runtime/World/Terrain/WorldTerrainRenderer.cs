@@ -14,7 +14,8 @@ namespace Swg.Client.Runtime.World.Terrain
     {
         readonly SwgMaterialFactory materialsFactory;
         readonly Shader worldShader;
-        readonly Vector3 renderOrigin;
+        readonly WorldState state;
+        Vector3 renderOrigin => state.RenderOrigin;
         sealed class Tile
         {
             public GameObject Object;
@@ -32,7 +33,7 @@ namespace Swg.Client.Runtime.World.Terrain
         {
             this.materialsFactory = materialsFactory;
             worldShader = context.WorldShader;
-            renderOrigin = state.RenderOrigin;
+            this.state = state;
         }
 
         public void AddOrReplace(Vector2Int key, WorldTerrainPatch source, Transform parent)
@@ -189,14 +190,18 @@ namespace Swg.Client.Runtime.World.Terrain
                 throw new ObjectDisposedException(nameof(WorldTerrainRenderer));
         }
 
+        public void Clear()
+        {
+            foreach (var tile in tiles.Values) Release(tile);
+            tiles.Clear();
+        }
+
         public void Dispose()
         {
             if (disposed)
                 return;
             disposed = true;
-            foreach (var tile in tiles.Values)
-                Release(tile);
-            tiles.Clear();
+            Clear();
         }
     }
 }
