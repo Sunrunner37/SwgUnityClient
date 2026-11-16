@@ -175,9 +175,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 87, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5889265886440450772
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -207,7 +207,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -226,10 +226,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7058282784783605451
 MonoBehaviour:
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 7837409178792325711}
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -298,10 +298,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &179398475505563989
@@ -336,10 +336,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6781786087030361065}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3709010088577253869
 CanvasRenderer:
@@ -359,10 +359,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -371,7 +371,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -419,9 +419,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 343, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8927790642696136170
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -440,7 +440,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -451,7 +451,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -470,10 +470,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8516266685209477764
 MonoBehaviour:
@@ -485,7 +485,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 143843253659330499}
@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -542,10 +542,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1449212219244106336
@@ -558,13 +558,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd446f6c66079c14dbb358a6741d7d6a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Theming.UiThemeBinding
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 3467692273295841693}
-    role: 0
-  - graphic: {fileID: 143843253659330499}
     role: 0
   texts: []
   inputs: []
@@ -629,7 +627,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -689,7 +687,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -766,7 +764,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -886,9 +884,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 407, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4620518656119490305
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -907,7 +905,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -918,7 +916,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -937,10 +935,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8779126344064685837
 MonoBehaviour:
@@ -952,7 +950,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 7033300355470379286}
@@ -969,7 +967,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -1009,10 +1007,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &312949741622776881
@@ -1055,9 +1053,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 23, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1599319388423649833
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1076,7 +1074,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -1087,7 +1085,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1106,10 +1104,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &1517515429352446366
 MonoBehaviour:
@@ -1121,7 +1119,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 4081752033097632695}
@@ -1138,7 +1136,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -1178,10 +1176,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &7940958923781205527
@@ -1199,8 +1197,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 3785457292622242893}
-    role: 0
-  - graphic: {fileID: 4081752033097632695}
     role: 0
   texts: []
   inputs: []
@@ -1250,9 +1246,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7283305801348289885
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1271,7 +1267,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -1282,7 +1278,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1301,10 +1297,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6892687473542502955
 MonoBehaviour:
@@ -1316,7 +1312,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 1747397252238824730}
@@ -1333,7 +1329,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -1373,10 +1369,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &4048125496408279951
@@ -1394,8 +1390,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 6836117784724364821}
-    role: 0
-  - graphic: {fileID: 1747397252238824730}
     role: 0
   texts: []
   inputs: []
@@ -1437,10 +1431,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4215221348757632416}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4676846195059589595
 CanvasRenderer:
@@ -1463,7 +1457,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1472,7 +1466,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1514,9 +1508,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -20}
-  m_SizeDelta: {x: 20, y: 28}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 2, y: -4}
+  m_SizeDelta: {x: 15, y: 20}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4490922027696494701
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1535,7 +1529,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1579,8 +1573,8 @@ MonoBehaviour:
   m_fontSizeMin: 0
   m_fontSizeMax: 0
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 4096
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -1595,7 +1589,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -1672,7 +1666,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1732,7 +1726,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -1786,10 +1780,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7023670739854030320}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7774967431381663402
 CanvasRenderer:
@@ -1809,10 +1803,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1821,7 +1815,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1861,10 +1855,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3010343290454010635}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8724867838210988893
 CanvasRenderer:
@@ -1884,10 +1878,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1896,7 +1890,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1944,9 +1938,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7162251969928106541
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1976,7 +1970,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1997,8 +1991,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3651954213502977000
 MonoBehaviour:
@@ -2089,8 +2083,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 4631715671034083766}
     role: 0
-  - graphic: {fileID: 2110861760994047007}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -2154,7 +2146,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2214,7 +2206,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -2268,10 +2260,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8318062109501194656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3523429904973259435
 CanvasRenderer:
@@ -2294,7 +2286,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2303,7 +2295,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2366,7 +2358,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2426,7 +2418,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -2488,9 +2480,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 375, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1093213271945144255
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2509,7 +2501,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2520,7 +2512,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2541,8 +2533,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8452162311492411086
 MonoBehaviour:
@@ -2632,8 +2624,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 7800302448521754294}
-    role: 0
-  - graphic: {fileID: 1844165122697266085}
     role: 0
   texts: []
   inputs: []
@@ -2820,9 +2810,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 247, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2216637534141516288
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2852,7 +2842,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2873,8 +2863,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &503327395717980116
 MonoBehaviour:
@@ -2965,8 +2955,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 4560613947415858599}
     role: 0
-  - graphic: {fileID: 4790021479775439634}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -3007,10 +2995,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3495264598706950858}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1597115682676067972
 CanvasRenderer:
@@ -3033,7 +3021,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3042,7 +3030,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -3229,10 +3217,10 @@ RectTransform:
   - {fileID: 946213112636610501}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -44}
-  m_SizeDelta: {x: 558, y: 16}
+  m_SizeDelta: {x: 0, y: 16}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1255627570460836971
 GameObject:
@@ -3274,9 +3262,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 279, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4868426994168333963
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3306,7 +3294,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3327,8 +3315,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &4621841547513136192
 MonoBehaviour:
@@ -3419,8 +3407,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 4773654814418749992}
     role: 0
-  - graphic: {fileID: 5740450901266383469}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -3469,9 +3455,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2904332957826847277
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3501,7 +3487,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3522,8 +3508,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5278916942180557118
 MonoBehaviour:
@@ -3614,8 +3600,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 3624920767331395237}
     role: 0
-  - graphic: {fileID: 1361273352316260740}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -3656,10 +3640,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3891958179580809381}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6463489010168845677
 CanvasRenderer:
@@ -3682,7 +3666,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3691,7 +3675,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -3876,9 +3860,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 375, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3661304819823514176
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3908,7 +3892,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3929,8 +3913,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7119197279568728915
 MonoBehaviour:
@@ -4021,8 +4005,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5698378144232489102}
     role: 0
-  - graphic: {fileID: 8785700937580025119}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -4071,9 +4053,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1742631403248198264
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4103,7 +4085,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4124,8 +4106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6030220554962197065
 MonoBehaviour:
@@ -4216,8 +4198,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 4185280995284463976}
     role: 0
-  - graphic: {fileID: 4619271809044785530}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -4268,10 +4248,10 @@ RectTransform:
   - {fileID: 7798666226608639668}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -80}
-  m_SizeDelta: {x: 558, y: 40}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -64}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1668993175639941102
 GameObject:
@@ -4448,9 +4428,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 375, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7922350305643930147
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4480,7 +4460,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4501,8 +4481,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7220909457178074621
 MonoBehaviour:
@@ -4754,9 +4734,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 439, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1060118050331074536
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4786,7 +4766,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4807,8 +4787,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7303829330080259739
 MonoBehaviour:
@@ -4899,8 +4879,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5216599520529143097}
     role: 0
-  - graphic: {fileID: 7850225196108459413}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -4949,9 +4927,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4977169808296729016
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4981,7 +4959,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5002,8 +4980,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &2989081720297305012
 MonoBehaviour:
@@ -5094,8 +5072,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 1672430656996787451}
     role: 0
-  - graphic: {fileID: 6459010080861638687}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -5136,10 +5112,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8622442714048279485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4592349144454126173
 CanvasRenderer:
@@ -5162,7 +5138,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5171,7 +5147,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -5348,10 +5324,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1576193242088054300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9002915110636289306
 CanvasRenderer:
@@ -5374,7 +5350,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5383,7 +5359,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -5429,9 +5405,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 119, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2713017920734741732
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5461,7 +5437,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5482,8 +5458,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5620003367887473498
 MonoBehaviour:
@@ -5598,9 +5574,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 247, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4378984802113802463
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5630,7 +5606,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5651,8 +5627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &4944993175702351832
 MonoBehaviour:
@@ -5743,8 +5719,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 7816390902714986547}
     role: 0
-  - graphic: {fileID: 3637928241592309594}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -5785,10 +5759,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8616316519242585811}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6123281879598502002
 CanvasRenderer:
@@ -5811,7 +5785,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5820,7 +5794,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -5868,9 +5842,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 343, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7023906590844640084
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5900,7 +5874,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5921,8 +5895,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5711498642803439231
 MonoBehaviour:
@@ -6013,8 +5987,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 1708386029325823459}
     role: 0
-  - graphic: {fileID: 3627806787113110780}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -6065,10 +6037,10 @@ RectTransform:
   - {fileID: 5242106595136249306}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -120}
-  m_SizeDelta: {x: 558, y: 40}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -96}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &2548502382861634685
 GameObject:
@@ -6108,9 +6080,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 247, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &6147919630976660775
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6140,7 +6112,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6161,8 +6133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &816178352024900502
 MonoBehaviour:
@@ -6271,7 +6243,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -8}
+  m_AnchoredPosition: {x: 262, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6459263744822854520
@@ -6543,10 +6515,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6571072164065580496}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8106664303997767925
 CanvasRenderer:
@@ -6569,7 +6541,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6578,7 +6550,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -6755,10 +6727,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4617617944548437801}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1477346972481676012
 CanvasRenderer:
@@ -6781,7 +6753,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6790,7 +6762,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -6838,9 +6810,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8074021831901590490
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6870,7 +6842,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6891,8 +6863,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8237275894009346983
 MonoBehaviour:
@@ -6983,8 +6955,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 2609014562530888215}
     role: 0
-  - graphic: {fileID: 7814373579397410188}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -7027,7 +6997,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -8}
+  m_AnchoredPosition: {x: 358, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &290615000804279260
@@ -7301,7 +7271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -8}
+  m_AnchoredPosition: {x: 38, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5273167034127662519
@@ -7436,10 +7406,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5843387576080540216}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1663996477401034979
 CanvasRenderer:
@@ -7462,7 +7432,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7471,7 +7441,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -7511,10 +7481,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3439922941938373914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6548367012598878729
 CanvasRenderer:
@@ -7537,7 +7507,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7546,7 +7516,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -7586,10 +7556,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6394969519520894648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3826139213207071238
 CanvasRenderer:
@@ -7612,7 +7582,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7621,7 +7591,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -7663,7 +7633,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -8}
+  m_AnchoredPosition: {x: 198, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3486108387700761176
@@ -7798,10 +7768,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5581437821263389297}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6362276572834728486
 CanvasRenderer:
@@ -7824,7 +7794,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7833,7 +7803,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -8147,10 +8117,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2908599420689822275}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8642968733591995076
 CanvasRenderer:
@@ -8173,7 +8143,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8182,7 +8152,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -8224,7 +8194,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -8}
+  m_AnchoredPosition: {x: 70, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5845196316412966239
@@ -8367,9 +8337,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5990983026986169228
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8399,7 +8369,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -8420,8 +8390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &1353748509978207440
 MonoBehaviour:
@@ -8511,8 +8481,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 1000069526767566220}
-    role: 0
-  - graphic: {fileID: 6165952035349204704}
     role: 0
   texts: []
   inputs: []
@@ -8693,7 +8661,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -8}
+  m_AnchoredPosition: {x: 454, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8396602710942202460
@@ -8836,9 +8804,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 247, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7870511764310678509
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8868,7 +8836,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -8889,8 +8857,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7607747155186723583
 MonoBehaviour:
@@ -8981,8 +8949,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 8475888065922741769}
     role: 0
-  - graphic: {fileID: 455947319360117831}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -9031,9 +8997,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 439, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &374521045892625819
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9063,7 +9029,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9084,8 +9050,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5646953478137216659
 MonoBehaviour:
@@ -9176,8 +9142,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 3337958667202403328}
     role: 0
-  - graphic: {fileID: 4271046584930473540}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -9218,10 +9182,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7235791858332451659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &85516135405864343
 CanvasRenderer:
@@ -9244,7 +9208,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9253,7 +9217,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -9293,10 +9257,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 166460671797854026}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &506733049201371341
 CanvasRenderer:
@@ -9319,7 +9283,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9328,7 +9292,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -9368,10 +9332,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3225785212759650506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5107881737884462628
 CanvasRenderer:
@@ -9394,7 +9358,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9403,7 +9367,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -9588,9 +9552,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 87, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5234026950407690536
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9620,7 +9584,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9641,8 +9605,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &902978694232365738
 MonoBehaviour:
@@ -9732,8 +9696,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 6709544162006965190}
-    role: 0
-  - graphic: {fileID: 8894179683038518721}
     role: 0
   texts: []
   inputs: []
@@ -9920,9 +9882,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8372250428148298392
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9952,7 +9914,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9973,8 +9935,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7623282838261178022
 MonoBehaviour:
@@ -10064,8 +10026,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 8685785931492393407}
-    role: 0
-  - graphic: {fileID: 7500090194320665902}
     role: 0
   texts: []
   inputs: []
@@ -10381,10 +10341,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6692348585291685809}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7392025095307926182
 CanvasRenderer:
@@ -10407,7 +10367,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10416,7 +10376,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -10456,10 +10416,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7798666226608639668}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &144730001821537574
 CanvasRenderer:
@@ -10482,7 +10442,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10491,7 +10451,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -10679,7 +10639,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 558, y: 64}
+  m_SizeDelta: {x: 480, y: 64}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2801118418289822648
 MonoBehaviour:
@@ -10699,76 +10659,172 @@ MonoBehaviour:
     role: 1
   - graphic: {fileID: 462700192256381604}
     role: 0
-  - graphic: {fileID: 7773665993659434853}
-    role: 0
   - graphic: {fileID: 1790873208125093503}
     role: 1
   - graphic: {fileID: 3730308597073079090}
-    role: 0
-  - graphic: {fileID: 1058979086869042463}
     role: 0
   - graphic: {fileID: 5931959732442435633}
     role: 1
   - graphic: {fileID: 5638993072058994352}
     role: 0
-  - graphic: {fileID: 7837409178792325711}
-    role: 0
   - graphic: {fileID: 7093398242896969895}
     role: 1
   - graphic: {fileID: 7464442668250578891}
-    role: 0
-  - graphic: {fileID: 145333460931909398}
     role: 0
   - graphic: {fileID: 1827977163382359883}
     role: 1
   - graphic: {fileID: 6066162453952644044}
     role: 0
-  - graphic: {fileID: 3459048026008003851}
-    role: 0
   - graphic: {fileID: 3892556983825141485}
     role: 1
   - graphic: {fileID: 2845401508177823390}
-    role: 0
-  - graphic: {fileID: 1140927792439625237}
     role: 0
   - graphic: {fileID: 5605747604155318556}
     role: 1
   - graphic: {fileID: 9130051798123958519}
     role: 0
-  - graphic: {fileID: 1832861743271806043}
-    role: 0
   - graphic: {fileID: 7060948433995074256}
     role: 1
   - graphic: {fileID: 3206141048104613957}
-    role: 0
-  - graphic: {fileID: 300881560030608462}
     role: 0
   - graphic: {fileID: 8827248639021530633}
     role: 1
   - graphic: {fileID: 8842874622696439954}
     role: 0
-  - graphic: {fileID: 3685703388038122680}
-    role: 0
   - graphic: {fileID: 5496365011195682557}
     role: 1
   - graphic: {fileID: 3838293609260201960}
-    role: 0
-  - graphic: {fileID: 8611699848190109529}
     role: 0
   - graphic: {fileID: 7731278576958399175}
     role: 1
   - graphic: {fileID: 709530464526123993}
     role: 0
-  - graphic: {fileID: 7033300355470379286}
-    role: 0
   - graphic: {fileID: 3441723563439844139}
     role: 1
   - graphic: {fileID: 8486065816597803459}
     role: 0
-  - graphic: {fileID: 8767540144778855453}
-    role: 0
   - graphic: {fileID: 3464513493171961554}
     role: 1
+  - graphic: {fileID: 7773665993659434853}
+    role: 19
+  - graphic: {fileID: 1058979086869042463}
+    role: 19
+  - graphic: {fileID: 7837409178792325711}
+    role: 19
+  - graphic: {fileID: 145333460931909398}
+    role: 19
+  - graphic: {fileID: 3459048026008003851}
+    role: 19
+  - graphic: {fileID: 1140927792439625237}
+    role: 19
+  - graphic: {fileID: 1832861743271806043}
+    role: 19
+  - graphic: {fileID: 300881560030608462}
+    role: 19
+  - graphic: {fileID: 3685703388038122680}
+    role: 19
+  - graphic: {fileID: 8611699848190109529}
+    role: 19
+  - graphic: {fileID: 7033300355470379286}
+    role: 19
+  - graphic: {fileID: 8767540144778855453}
+    role: 19
+  - graphic: {fileID: 8681043697651666930}
+    role: 19
+  - graphic: {fileID: 7814373579397410188}
+    role: 19
+  - graphic: {fileID: 8894179683038518721}
+    role: 19
+  - graphic: {fileID: 2495321892187085948}
+    role: 19
+  - graphic: {fileID: 176858307415919548}
+    role: 19
+  - graphic: {fileID: 4528171312720130185}
+    role: 19
+  - graphic: {fileID: 4790021479775439634}
+    role: 19
+  - graphic: {fileID: 7677572610537385478}
+    role: 19
+  - graphic: {fileID: 6396495486643446598}
+    role: 19
+  - graphic: {fileID: 1844165122697266085}
+    role: 19
+  - graphic: {fileID: 3434653032317565308}
+    role: 19
+  - graphic: {fileID: 7850225196108459413}
+    role: 19
+  - graphic: {fileID: 6809953624439603156}
+    role: 19
+  - graphic: {fileID: 5713490351101716154}
+    role: 19
+  - graphic: {fileID: 9067895170636474855}
+    role: 19
+  - graphic: {fileID: 2472656431485495637}
+    role: 19
+  - graphic: {fileID: 1361273352316260740}
+    role: 19
+  - graphic: {fileID: 2110861760994047007}
+    role: 19
+  - graphic: {fileID: 455947319360117831}
+    role: 19
+  - graphic: {fileID: 8684481019454787518}
+    role: 19
+  - graphic: {fileID: 3627806787113110780}
+    role: 19
+  - graphic: {fileID: 8785700937580025119}
+    role: 19
+  - graphic: {fileID: 2096490244216561890}
+    role: 19
+  - graphic: {fileID: 8905138081495059231}
+    role: 19
+  - graphic: {fileID: 4531141422569320211}
+    role: 19
+  - graphic: {fileID: 8766771489177293852}
+    role: 19
+  - graphic: {fileID: 1209447334115183371}
+    role: 19
+  - graphic: {fileID: 945000503752317897}
+    role: 19
+  - graphic: {fileID: 6165952035349204704}
+    role: 19
+  - graphic: {fileID: 1747397252238824730}
+    role: 19
+  - graphic: {fileID: 3637928241592309594}
+    role: 19
+  - graphic: {fileID: 5740450901266383469}
+    role: 19
+  - graphic: {fileID: 143843253659330499}
+    role: 19
+  - graphic: {fileID: 2868989513779251835}
+    role: 19
+  - graphic: {fileID: 622803977939794422}
+    role: 19
+  - graphic: {fileID: 4937297232755279500}
+    role: 19
+  - graphic: {fileID: 4081752033097632695}
+    role: 19
+  - graphic: {fileID: 6459010080861638687}
+    role: 19
+  - graphic: {fileID: 4860429790346119249}
+    role: 19
+  - graphic: {fileID: 3117830054311664540}
+    role: 19
+  - graphic: {fileID: 4619271809044785530}
+    role: 19
+  - graphic: {fileID: 7500090194320665902}
+    role: 19
+  - graphic: {fileID: 452848693998761821}
+    role: 19
+  - graphic: {fileID: 6773123730768272221}
+    role: 19
+  - graphic: {fileID: 8764720221519667190}
+    role: 19
+  - graphic: {fileID: 6884632501529718602}
+    role: 19
+  - graphic: {fileID: 6568571686168212918}
+    role: 19
+  - graphic: {fileID: 4271046584930473540}
+    role: 19
   texts:
   - text: {fileID: 1139146536596112008}
     sizeOffset: 4
@@ -10884,7 +10940,7 @@ MonoBehaviour:
   - {fileID: 8084647884988936691}
   resizeHandle: {fileID: 7839736042804659435}
   shortcutLabels: {fileID: 1225433451709023459}
-  rowHeight: 40
+  rowHeight: 32
   visibleRows: 1
 --- !u!1 &4117255089491203582
 GameObject:
@@ -10920,7 +10976,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -8}
+  m_AnchoredPosition: {x: 422, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5410460321254246726
@@ -11061,9 +11117,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1456630162890987951
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11093,7 +11149,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11114,8 +11170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8778589817238163839
 MonoBehaviour:
@@ -11222,10 +11278,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 206029822177156044}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7068772841720059419
 CanvasRenderer:
@@ -11248,7 +11304,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11257,7 +11313,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -11297,10 +11353,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3960761836741776351}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &476977005350308447
 CanvasRenderer:
@@ -11323,7 +11379,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11332,7 +11388,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -11380,9 +11436,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 407, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &6135449498096481440
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11412,7 +11468,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11433,8 +11489,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &4383155387620632306
 MonoBehaviour:
@@ -11525,8 +11581,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5357077955222611046}
     role: 0
-  - graphic: {fileID: 2096490244216561890}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -11567,10 +11621,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6413404740926968934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9150606208722711744
 CanvasRenderer:
@@ -11593,7 +11647,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11602,7 +11656,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -11787,9 +11841,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 375, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &6850917085811015511
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11819,7 +11873,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11840,8 +11894,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5862028560478485424
 MonoBehaviour:
@@ -11932,8 +11986,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 1588176072713089161}
     role: 0
-  - graphic: {fileID: 2868989513779251835}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -11976,7 +12028,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -8}
+  m_AnchoredPosition: {x: 230, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1633809915062826835
@@ -12393,9 +12445,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 439, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2714861480529046700
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12425,7 +12477,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -12446,8 +12498,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &2155019846501558332
 MonoBehaviour:
@@ -12538,8 +12590,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5637065952873544515}
     role: 0
-  - graphic: {fileID: 8905138081495059231}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -12580,10 +12630,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4915185377718937801}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1579569090634196738
 CanvasRenderer:
@@ -12606,7 +12656,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12615,7 +12665,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -12792,10 +12842,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 9175676051704786939}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8227939922336184755
 CanvasRenderer:
@@ -12818,7 +12868,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12827,7 +12877,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -12877,10 +12927,10 @@ RectTransform:
   - {fileID: 3918097205333748849}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: 558, y: 40}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -32}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &4656481554375033961
 GameObject:
@@ -12914,10 +12964,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6212591371205138616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4024727149340959514
 CanvasRenderer:
@@ -12940,7 +12990,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12949,7 +12999,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -12997,9 +13047,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 119, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1479948106784600087
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13029,7 +13079,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -13050,8 +13100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3147708078390640628
 MonoBehaviour:
@@ -13142,8 +13192,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 3140029661838347324}
     role: 0
-  - graphic: {fileID: 945000503752317897}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -13192,9 +13240,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 439, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1269252843415776872
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13224,7 +13272,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -13245,8 +13293,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6718972857797433015
 MonoBehaviour:
@@ -13337,8 +13385,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5213034417440130354}
     role: 0
-  - graphic: {fileID: 4937297232755279500}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -13387,9 +13433,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 23, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8633853259065216905
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13419,7 +13465,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -13440,8 +13486,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5153126535672726603
 MonoBehaviour:
@@ -13532,8 +13578,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 7893597703209465334}
     role: 0
-  - graphic: {fileID: 8681043697651666930}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -13574,10 +13618,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5851782172500488486}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6842340770724029312
 CanvasRenderer:
@@ -13600,7 +13644,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13609,7 +13653,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -13786,10 +13830,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 9078235186334744488}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1375736775873169675
 CanvasRenderer:
@@ -13812,7 +13856,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13821,7 +13865,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -13861,10 +13905,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8740177442146383533}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4146757818493744528
 CanvasRenderer:
@@ -13887,7 +13931,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13896,7 +13940,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -14081,9 +14125,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 290, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 247, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &392205497943601405
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14113,7 +14157,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -14134,8 +14178,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &2997422449111230740
 MonoBehaviour:
@@ -14226,8 +14270,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 2648788191486790136}
     role: 0
-  - graphic: {fileID: 452848693998761821}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -14268,10 +14310,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4578573150249262760}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1108111426167921686
 CanvasRenderer:
@@ -14294,7 +14336,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14303,7 +14345,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -14343,10 +14385,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4156862501460711914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3321702980771140298
 CanvasRenderer:
@@ -14369,7 +14411,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14378,7 +14420,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -14839,10 +14881,10 @@ RectTransform:
   - {fileID: 8616316519242585811}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 558, y: 40}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &5390529741368725185
 GameObject:
@@ -14882,9 +14924,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8411415397686460909
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14914,7 +14956,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -14935,8 +14977,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7950921424914239564
 MonoBehaviour:
@@ -15051,9 +15093,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 23, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3393980599809208775
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15083,7 +15125,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -15104,8 +15146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &4901718285486856259
 MonoBehaviour:
@@ -15196,8 +15238,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 1717680597380854968}
     role: 0
-  - graphic: {fileID: 4531141422569320211}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -15238,10 +15278,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 528603850652737685}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3295820500392866480
 CanvasRenderer:
@@ -15264,7 +15304,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15273,7 +15313,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -15321,9 +15361,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 407, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &583629179598330927
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -15353,7 +15393,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -15374,8 +15414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7366240921601037332
 MonoBehaviour:
@@ -15466,8 +15506,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 4717935375527974169}
     role: 0
-  - graphic: {fileID: 3434653032317565308}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -15508,10 +15546,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2341802060413127077}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1793027628331142066
 CanvasRenderer:
@@ -15534,7 +15572,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15543,7 +15581,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -15583,10 +15621,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8922611562659595432}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2230461468287282788
 CanvasRenderer:
@@ -15609,7 +15647,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15618,7 +15656,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -15795,10 +15833,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3131903523488259984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5822820871771935957
 CanvasRenderer:
@@ -15821,7 +15859,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15830,7 +15868,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -16015,9 +16053,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 343, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2748367159294734190
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16047,7 +16085,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16068,8 +16106,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &667074351296932221
 MonoBehaviour:
@@ -16160,8 +16198,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 772180672145945807}
     role: 0
-  - graphic: {fileID: 8764720221519667190}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -16202,10 +16238,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 580331133045976524}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2918635368233197958
 CanvasRenderer:
@@ -16228,7 +16264,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16237,7 +16273,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -16277,10 +16313,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1979075564151702498}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8332779539755334739
 CanvasRenderer:
@@ -16303,7 +16339,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16312,7 +16348,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -16352,10 +16388,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3916410724550644216}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6798065316029696495
 CanvasRenderer:
@@ -16378,7 +16414,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16387,7 +16423,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -16427,10 +16463,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5985592036239507309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8251731834183885754
 CanvasRenderer:
@@ -16453,7 +16489,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16462,7 +16498,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -16504,7 +16540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -8}
+  m_AnchoredPosition: {x: 390, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4684483681738507704
@@ -16647,9 +16683,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &530064057894081692
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16679,7 +16715,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16700,8 +16736,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &1227173483248976293
 MonoBehaviour:
@@ -16792,8 +16828,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 2923744335112497459}
     role: 0
-  - graphic: {fileID: 5713490351101716154}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -16842,9 +16876,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 119, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &918390932651934659
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16874,7 +16908,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16895,8 +16929,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6668412454035367444
 MonoBehaviour:
@@ -16987,8 +17021,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 2854020623951054099}
     role: 0
-  - graphic: {fileID: 3117830054311664540}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -17037,9 +17069,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 87, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &180774770242658542
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17069,7 +17101,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -17090,8 +17122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7831630477411671652
 MonoBehaviour:
@@ -17182,8 +17214,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 2446575436094887635}
     role: 0
-  - graphic: {fileID: 1209447334115183371}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -17224,10 +17254,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5616402640904970319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4016640350490460344
 CanvasRenderer:
@@ -17250,7 +17280,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17259,7 +17289,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -17301,7 +17331,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -8}
+  m_AnchoredPosition: {x: 102, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7717942644566591532
@@ -17444,9 +17474,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 279, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1999748877776563116
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17476,7 +17506,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -17497,8 +17527,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6688276759639385642
 MonoBehaviour:
@@ -17589,8 +17619,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 8708796321091018529}
     role: 0
-  - graphic: {fileID: 6773123730768272221}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -17639,9 +17667,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 279, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &573623897897111613
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17671,7 +17699,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -17692,8 +17720,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3786706442783540712
 MonoBehaviour:
@@ -17783,8 +17811,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 8429426833489038025}
-    role: 0
-  - graphic: {fileID: 7677572610537385478}
     role: 0
   texts: []
   inputs: []
@@ -18108,9 +18134,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 87, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &995227385089203333
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18140,7 +18166,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -18161,8 +18187,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5238404389884566326
 MonoBehaviour:
@@ -18253,8 +18279,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 6614417031179239270}
     role: 0
-  - graphic: {fileID: 4860429790346119249}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -18295,10 +18319,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5738806743038956506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3836046834664757090
 CanvasRenderer:
@@ -18321,7 +18345,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18330,7 +18354,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18370,10 +18394,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 784719622804043935}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7182689318650109603
 CanvasRenderer:
@@ -18396,7 +18420,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18405,7 +18429,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18582,10 +18606,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6310966306680018371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8036088574191205723
 CanvasRenderer:
@@ -18608,7 +18632,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18617,7 +18641,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18657,10 +18681,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4469397685319387404}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2832362999366146718
 CanvasRenderer:
@@ -18683,7 +18707,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18692,7 +18716,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18732,10 +18756,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3918097205333748849}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7587212541407344647
 CanvasRenderer:
@@ -18758,7 +18782,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18767,7 +18791,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18807,10 +18831,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1652086592598465948}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8029222676004970289
 CanvasRenderer:
@@ -18833,7 +18857,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18842,7 +18866,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -18890,9 +18914,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 119, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &9222554994202350453
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18922,7 +18946,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -18943,8 +18967,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3546386331944561920
 MonoBehaviour:
@@ -19035,8 +19059,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 8932565373845303872}
     role: 0
-  - graphic: {fileID: 2472656431485495637}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -19077,10 +19099,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3869754172834417150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8050691657363265089
 CanvasRenderer:
@@ -19103,7 +19125,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19112,7 +19134,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -19297,9 +19319,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 215, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2646893494500357991
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19329,7 +19351,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -19350,8 +19372,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8099241906414179049
 MonoBehaviour:
@@ -19442,8 +19464,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 6018488754748608663}
     role: 0
-  - graphic: {fileID: 4528171312720130185}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -19492,9 +19512,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 87, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2607913324254610482
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19524,7 +19544,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -19545,8 +19565,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &6803135043433766400
 MonoBehaviour:
@@ -19637,8 +19657,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 5762064005959127640}
     role: 0
-  - graphic: {fileID: 9067895170636474855}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -19687,9 +19705,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &6977513681833650049
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19719,7 +19737,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -19740,8 +19758,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &403575786283024918
 MonoBehaviour:
@@ -19831,8 +19849,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 7102120056499466343}
-    role: 0
-  - graphic: {fileID: 8766771489177293852}
     role: 0
   texts: []
   inputs: []
@@ -20011,10 +20027,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7993593622652463440}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6318186246713877707
 CanvasRenderer:
@@ -20037,7 +20053,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20046,7 +20062,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -20223,10 +20239,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6214697525744625239}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8047669169158789237
 CanvasRenderer:
@@ -20249,7 +20265,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20258,7 +20274,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -20306,9 +20322,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 279, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3563722364678227009
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20338,7 +20354,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -20359,8 +20375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7869877194135227430
 MonoBehaviour:
@@ -20451,8 +20467,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 7002322016243865114}
     role: 0
-  - graphic: {fileID: 8684481019454787518}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -20499,9 +20513,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 343, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &609606308201170011
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20531,7 +20545,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -20552,8 +20566,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &9164385270654867326
 MonoBehaviour:
@@ -20660,10 +20674,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8618853963610759438}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6972791544793818704
 CanvasRenderer:
@@ -20686,7 +20700,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20695,7 +20709,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -20743,9 +20757,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 380, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 343, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8789307553309450695
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20775,7 +20789,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -20796,8 +20810,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &4317572266617035693
 MonoBehaviour:
@@ -20888,8 +20902,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 8938870414532736846}
     role: 0
-  - graphic: {fileID: 6396495486643446598}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -20930,10 +20942,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5242106595136249306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7164907279703844961
 CanvasRenderer:
@@ -20956,7 +20968,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20965,7 +20977,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -21011,9 +21023,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 439, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3451732463058675792
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21043,7 +21055,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -21064,8 +21076,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3139573437173778032
 MonoBehaviour:
@@ -21311,7 +21323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -8}
+  m_AnchoredPosition: {x: 134, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2187508193991243522
@@ -21448,7 +21460,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -8}
+  m_AnchoredPosition: {x: 294, y: -8}
   m_SizeDelta: {x: 30, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7497205696788004962
@@ -21724,7 +21736,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -54}
-  m_SizeDelta: {x: 500, y: 10}
+  m_SizeDelta: {x: 430, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7601768423777261259
 CanvasRenderer:
@@ -21747,7 +21759,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8, b: 1, a: 0.18}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -21941,9 +21953,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 420, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 375, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &3049486643659496
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21973,7 +21985,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -21994,8 +22006,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5363081059187996471
 MonoBehaviour:
@@ -22086,8 +22098,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 9131679713798584364}
     role: 0
-  - graphic: {fileID: 6884632501529718602}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -22128,10 +22138,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7968337077265512871}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4278604364699700620
 CanvasRenderer:
@@ -22154,7 +22164,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -22163,7 +22173,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -22211,9 +22221,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 407, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4628694376854270968
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22232,7 +22242,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -22243,7 +22253,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -22264,8 +22274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3365943501044801739
 MonoBehaviour:
@@ -22356,8 +22366,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 8291634946402844682}
     role: 0
-  - graphic: {fileID: 622803977939794422}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -22406,9 +22414,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 23, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5517143274331352822
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -22427,7 +22435,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -22438,7 +22446,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -22457,10 +22465,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &5024868812935555046
 MonoBehaviour:
@@ -22472,7 +22480,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 6809953624439603156}
@@ -22489,7 +22497,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -22529,10 +22537,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &5259455990789120226
@@ -22550,8 +22558,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 8021345249760119215}
-    role: 0
-  - graphic: {fileID: 6809953624439603156}
     role: 0
   texts: []
   inputs: []
@@ -22616,7 +22622,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -22753,7 +22759,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -22813,7 +22819,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -22952,10 +22958,10 @@ RectTransform:
   - {fileID: 1586024296195394104}
   m_Father: {fileID: 7166526708074220593}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -160}
-  m_SizeDelta: {x: 558, y: 40}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -128}
+  m_SizeDelta: {x: 0, y: 32}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8148395790554435406
 GameObject:
@@ -22989,10 +22995,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 433766569419812300}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6167442200344231554
 CanvasRenderer:
@@ -23012,10 +23018,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23024,7 +23030,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -23064,10 +23070,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4732122516987628191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7797411989948156398
 CanvasRenderer:
@@ -23087,10 +23093,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23099,7 +23105,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -23147,9 +23153,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 210, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 183, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &262638285928785248
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23168,7 +23174,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -23179,7 +23185,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -23200,8 +23206,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3503572535745369402
 MonoBehaviour:
@@ -23292,8 +23298,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 1633231139345380130}
     role: 0
-  - graphic: {fileID: 176858307415919548}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -23357,7 +23361,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -23417,7 +23421,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -23477,9 +23481,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 330, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 279, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8063952694657023094
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23498,7 +23502,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -23509,7 +23513,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -23528,10 +23532,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &8446280056389515461
 MonoBehaviour:
@@ -23543,7 +23547,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 300881560030608462}
@@ -23560,7 +23564,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -23600,10 +23604,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &8650850745059311202
@@ -23638,10 +23642,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8491586882001077912}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1761458740466009574
 CanvasRenderer:
@@ -23661,10 +23665,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23673,7 +23677,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -23873,7 +23877,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -23933,7 +23937,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 
+  m_ActiveFontFeatures:
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 0
@@ -23993,9 +23997,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 55, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2022043858966356794
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24025,7 +24029,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24046,8 +24050,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &7821816901639152223
 MonoBehaviour:
@@ -24154,10 +24158,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7266393285003187168}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9166757611368379412
 CanvasRenderer:
@@ -24177,10 +24181,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24189,7 +24193,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -24237,9 +24241,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 460, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 407, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &8148051318135370481
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24258,7 +24262,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -24269,7 +24273,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24290,8 +24294,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3894484187241512665
 MonoBehaviour:
@@ -24382,8 +24386,6 @@ MonoBehaviour:
   colors:
   - graphic: {fileID: 7581772228597253609}
     role: 0
-  - graphic: {fileID: 6568571686168212918}
-    role: 0
   texts: []
   inputs: []
   surfaces: []
@@ -24432,9 +24434,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 160, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 119, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &5433062330052183948
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24453,7 +24455,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -24464,7 +24466,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24483,10 +24485,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &3046377190655034476
 MonoBehaviour:
@@ -24498,7 +24500,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 2495321892187085948}
@@ -24515,7 +24517,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -24555,10 +24557,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &93167986085720102
@@ -24576,8 +24578,6 @@ MonoBehaviour:
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
   - graphic: {fileID: 7338522084128906896}
-    role: 0
-  - graphic: {fileID: 2495321892187085948}
     role: 0
   texts: []
   inputs: []
@@ -24625,9 +24625,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -22}
-  m_SizeDelta: {x: 38, y: 38}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 23, y: -2}
+  m_SizeDelta: {x: 30, y: 30}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &6590579128955624796
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -24646,7 +24646,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -24657,7 +24657,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24676,10 +24676,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
-  asset: {fileID: 11400000, guid: 618bd1e06af98cd45bcb3d9a846d39b7, type: 2}
-  spriteBorder: {x: 10, y: 11, z: 10, w: 11}
+  asset: {fileID: 11400000, guid: ac23e23014e261f45ac9e51701f207ff, type: 2}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
 --- !u!114 &552286402206439597
 MonoBehaviour:
@@ -24691,7 +24691,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72696ed703d87c4d87e724bd53b1b45, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Commands.CommandButton
   drag: {fileID: 0}
   icon: {fileID: 7773665993659434853}
@@ -24708,7 +24708,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
   m_Navigation:
     m_Mode: 3
@@ -24748,10 +24748,10 @@ MonoBehaviour:
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName:
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument:
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &9078675233724130508
@@ -24786,10 +24786,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1586024296195394104}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2492743925053748479
 CanvasRenderer:
@@ -24809,10 +24809,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24821,7 +24821,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -24861,10 +24861,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1585906587404152843}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 28, y: 28}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -0.5, y: 0}
+  m_SizeDelta: {x: -3, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2289955393636182752
 CanvasRenderer:
@@ -24884,10 +24884,10 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
+  m_Color: {r: 0.32941177, g: 0.89411765, b: 0.99607843, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24896,7 +24896,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 0}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

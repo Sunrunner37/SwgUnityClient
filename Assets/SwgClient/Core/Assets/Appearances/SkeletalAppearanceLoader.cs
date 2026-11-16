@@ -4,6 +4,7 @@ using Swg.Client.Core.Assets.Formats.Cidm;
 using Swg.Client.Core.Assets.Formats.Customization;
 using UnityEngine;
 using System;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,15 @@ namespace Swg.Client.Core.Assets.Appearances
     /// <summary>Builds native skeletal appearances, including customization, wearables, occlusion, and vehicle bodies.</summary>
     public static class SkeletalAppearanceLoader
     {
+        sealed class SourceAssets
+        {
+            public IReadOnlyDictionary<ushort, string> CustomizationIds;
+            public readonly Dictionary<(string Appearance, string Mesh, string Owner), SkeletalPose> Poses = new Dictionary<(string, string, string), SkeletalPose>();
+            // Only native source pixels are shared. Baked facial details and palette variants stay per appearance.
+            public readonly Dictionary<string, TextureData> Textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
+        }
+        static readonly ConditionalWeakTable<TreAssetLoader, SourceAssets> sources = new ConditionalWeakTable<TreAssetLoader, SourceAssets>();
+
         public static List<MeshPart> Load(TreAssetLoader loader, string objectPath) => LoadDetailed(loader, objectPath).Parts;
         public static SkeletalAppearanceData LoadDetailed(TreAssetLoader loader, string objectPath) => LoadDetailed(loader, new CharacterAppearance { TemplatePath = objectPath, Customization = PackedCustomization.Decode(Array.Empty<byte>()), Wearables = Array.Empty<WearableAppearance>() });
         public static List<MeshPart> Load(TreAssetLoader loader, CharacterAppearance appearance) => LoadDetailed(loader, appearance).Parts;
@@ -33,57 +43,61 @@ namespace Swg.Client.Core.Assets.Appearances
             if (appearance == null)
                 throw new ArgumentNullException(nameof(appearance));
             var result = new SkeletalAppearanceData();
-            var ids = CidmFile.Parse(loader.Read("customization/customization_id_manager.iff"));
-            var owner = new Dictionary<string, short>(appearance.Customization.ResolveNames(ids));
-            var clientData = CharacterClientData.Load(loader, appearance.TemplatePath);
-            foreach (var setting in clientData.Customization)
-                if (!owner.ContainsKey(setting.Key)) owner[setting.Key] = setting.Value;
-            var textures = new Dictionary<string, TextureData>(StringComparer.OrdinalIgnoreCase);
-            string ownerAppearance = FindSkeletalAppearance(loader, appearance.TemplatePath, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
-            if (!LoadObject(loader, appearance.TemplatePath, owner, owner, textures, result, ownerAppearance))
-                throw new InvalidDataException("Template has no supported skeletal appearance");
-            var occupiedSlots = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var wearable in clientData.Wearables)
+            var shared = sources.GetOrCreateValue(loader);
+            lock (shared)
             {
-                if (wearable.ObjectTemplate != null && LoadObject(loader, wearable.ObjectTemplate, wearable.Customization, owner, textures, result, ownerAppearance))
-                    occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, wearable.ObjectTemplate));
-                foreach (string mesh in wearable.Meshes)
-                    LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, mesh, wearable.Customization, owner, textures, result, ownerAppearance);
-            }
-            foreach (var item in appearance.Wearables)
-            {
-                try
+                var ids = shared.CustomizationIds ??= CidmFile.Parse(loader.Read("customization/customization_id_manager.iff"));
+                var owner = new Dictionary<string, short>(appearance.Customization.ResolveNames(ids));
+                var clientData = CharacterClientData.Load(loader, appearance.TemplatePath);
+                foreach (var setting in clientData.Customization)
+                    if (!owner.ContainsKey(setting.Key)) owner[setting.Key] = setting.Value;
+                var textures = shared.Textures;
+                string ownerAppearance = FindSkeletalAppearance(loader, appearance.TemplatePath, new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+                if (!LoadObject(loader, appearance.TemplatePath, owner, owner, textures, result, ownerAppearance))
+                    throw new InvalidDataException("Template has no supported skeletal appearance");
+                var occupiedSlots = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var wearable in clientData.Wearables)
                 {
-                    bool loaded = LoadObject(loader, item.TemplatePath, item.Customization.ResolveNames(ids), owner, textures, result, ownerAppearance);
-                    if (loaded) occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, item.TemplatePath));
-                    if (!loaded && IsVisibleWearable(item.TemplatePath))
-                        Debug.LogWarning("Unsupported wearable appearance: " + item.TemplatePath);
+                    if (wearable.ObjectTemplate != null && LoadObject(loader, wearable.ObjectTemplate, wearable.Customization, owner, textures, result, ownerAppearance))
+                        occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, wearable.ObjectTemplate));
+                    foreach (string mesh in wearable.Meshes)
+                        LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, mesh, wearable.Customization, owner, textures, result, ownerAppearance);
                 }
-                catch (Exception e)when (e is IOException || e is ArgumentException)
+                foreach (var item in appearance.Wearables)
                 {
-                    if (IsVisibleWearable(item.TemplatePath))
-                        Debug.LogWarning("Wearable could not be loaded: " + item.TemplatePath + ": " + e.Message);
+                    try
+                    {
+                        bool loaded = LoadObject(loader, item.TemplatePath, item.Customization.ResolveNames(ids), owner, textures, result, ownerAppearance);
+                        if (loaded) occupiedSlots.UnionWith(CharacterClientData.OccupiedSlots(loader, item.TemplatePath));
+                        if (!loaded && IsVisibleWearable(item.TemplatePath))
+                            Debug.LogWarning("Unsupported wearable appearance: " + item.TemplatePath);
+                    }
+                    catch (Exception e)when (e is IOException || e is ArgumentException)
+                    {
+                        if (IsVisibleWearable(item.TemplatePath))
+                            Debug.LogWarning("Wearable could not be loaded: " + item.TemplatePath + ": " + e.Message);
+                    }
                 }
-            }
 
-            // Modesty is a fallback, not equipment: omit each mesh when clothing occupies its slot.
-            if (ownerAppearance != null && appearance.TemplatePath.StartsWith("object/creature/player/", StringComparison.OrdinalIgnoreCase))
-            {
-                bool female = ownerAppearance.EndsWith("_f.sat", StringComparison.OrdinalIgnoreCase);
-                bool male = ownerAppearance.EndsWith("_m.sat", StringComparison.OrdinalIgnoreCase);
-                if ((female || male) && !occupiedSlots.Contains("pants1") && !occupiedSlots.Contains("pants2"))
-                    LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, female ? "appearance/mesh/underwear_bottom_f.lmg" : "appearance/mesh/underwear_bottom_m.lmg", owner, owner, textures, result, ownerAppearance);
-                if (female && !occupiedSlots.Contains("chest1") && !occupiedSlots.Contains("chest2"))
-                    LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, "appearance/mesh/underwear_top_f.lmg", owner, owner, textures, result, ownerAppearance);
+                // Modesty is a fallback, not equipment: omit each mesh when clothing occupies its slot.
+                if (ownerAppearance != null && appearance.TemplatePath.StartsWith("object/creature/player/", StringComparison.OrdinalIgnoreCase))
+                {
+                    bool female = ownerAppearance.EndsWith("_f.sat", StringComparison.OrdinalIgnoreCase);
+                    bool male = ownerAppearance.EndsWith("_m.sat", StringComparison.OrdinalIgnoreCase);
+                    if ((female || male) && !occupiedSlots.Contains("pants1") && !occupiedSlots.Contains("pants2"))
+                        LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, female ? "appearance/mesh/underwear_bottom_f.lmg" : "appearance/mesh/underwear_bottom_m.lmg", owner, owner, textures, result, ownerAppearance);
+                    if (female && !occupiedSlots.Contains("chest1") && !occupiedSlots.Contains("chest2"))
+                        LoadMeshGenerator(loader, appearance.TemplatePath, ownerAppearance, "appearance/mesh/underwear_top_f.lmg", owner, owner, textures, result, ownerAppearance);
+                }
+                CharacterMeshOcclusion.Apply(result);
+                if (VehicleBodyAppearance.TryLoad(loader, ownerAppearance, owner, out var body))
+                {
+                    result.Parts.AddRange(body.Parts);
+                    result.Particles.AddRange(body.Particles);
+                    result.RiderSeat = body.RiderSeat;
+                }
+                return result;
             }
-            CharacterMeshOcclusion.Apply(result);
-            if (VehicleBodyAppearance.TryLoad(loader, ownerAppearance, owner, out var body))
-            {
-                result.Parts.AddRange(body.Parts);
-                result.Particles.AddRange(body.Particles);
-                result.RiderSeat = body.RiderSeat;
-            }
-            return result;
         }
 
         static bool IsVisibleWearable(string path) => path.StartsWith("object/tangible/hair/", StringComparison.Ordinal) || path.StartsWith("object/tangible/wearables/", StringComparison.Ordinal) || (path.StartsWith("object/weapon/", StringComparison.Ordinal) && !path.Contains("/unarmed/"));
@@ -140,7 +154,13 @@ namespace Swg.Client.Core.Assets.Appearances
             if (positions.Length % 12 != 0 || normals.Length % 12 != 0)
                 throw new InvalidDataException("Invalid skeletal geometry arrays");
             MeshBlendTargets.Apply(version, positions, normals, own, owner);
-            var pose = SkeletalPose.Load(loader, satPath, path, ownerAppearance);
+            var shared = sources.GetOrCreateValue(loader);
+            var poseKey = (satPath, path, ownerAppearance);
+            if (!shared.Poses.TryGetValue(poseKey, out var pose))
+            {
+                pose = SkeletalPose.Load(loader, satPath, path, ownerAppearance);
+                shared.Poses.Add(poseKey, pose);
+            }
             int shaderIndex = 0;
             foreach (var psdt in version.Children.Where(n => n.Kind == "PSDT"))
             {

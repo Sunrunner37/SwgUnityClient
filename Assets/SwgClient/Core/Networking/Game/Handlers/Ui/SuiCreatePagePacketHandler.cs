@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
@@ -10,14 +11,17 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Ui
     {
         public override uint Opcode => SuiCreatePagePacket.Opcode;
 
+        readonly ClientVehicleRepairs repairs;
+
         [Preserve]
-        public SuiCreatePagePacketHandler() : base(SuiCreatePagePacket.ReadFrom)
+        public SuiCreatePagePacketHandler(ClientVehicleRepairs repairs) : base(SuiCreatePagePacket.ReadFrom)
         {
+            this.repairs = repairs;
         }
 
         protected override void Handle(SuiCreatePagePacket packet)
         {
-            throw new NotImplementedException($"SuiCreatePageMessage (opcode 0x{Opcode:X8})");
+            repairs.Receive(packet.Page);
         }
     }
 }

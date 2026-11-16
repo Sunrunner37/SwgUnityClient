@@ -164,11 +164,6 @@ namespace Swg.Client.Runtime.World.Loading
             replication.SetTemplates(state.Templates);
             var data = new WorldLoadingData();
             data.InitialRegion = await content.LoadRegionAsync(state.RenderOrigin, settings, new HashSet<Vector2Int>(), new HashSet<SwgId>(), progress, token);
-            var appearances = AppearanceRequest.Capture(state, initial);
-            foreach (var pair in await content.LoadAppearancesAsync(initial, appearances, token))
-                data.InitialAppearances.Add(pair.Key, pair.Value);
-            if (!data.InitialAppearances.TryGetValue(initial.PlayerSwgId, out var player) || player.Parts.Count == 0)
-                throw new InvalidDataException("The selected player's native appearance could not be loaded.");
             token.ThrowIfCancellationRequested();
             if (!ReferenceEquals(loadingSession, GameServices.GameScope))
                 throw new InvalidOperationException("The world session changed.");
@@ -232,6 +227,7 @@ namespace Swg.Client.Runtime.World.Loading
             Phase = "Preparing world geometry";
             yield return WaitFor(() =>
             {
+                if (world.Failure != null) throw world.Failure;
                 Progress = .6f + .35f * world.Progress;
                 return world.IsReady;
             }, worldBuildTimeout, "World preparation timed out.");

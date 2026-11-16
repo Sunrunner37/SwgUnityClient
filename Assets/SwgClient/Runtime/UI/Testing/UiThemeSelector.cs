@@ -30,6 +30,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 Color Get(string key, Color fallback) => ColorUtility.TryParseHtmlString(palette.Get(key), out var color) ? color : fallback;
                 theme.accent = Get("default", theme.accent);
                 theme.text = Get("textdefault", theme.text);
+                theme.commandIcon = Get("icondefault", theme.commandIcon);
                 theme.surface = Get("back2", theme.surface);
                 theme.input = Get("back3", theme.input);
                 theme.tab = Get("back1", theme.tab);

@@ -24,6 +24,7 @@ namespace Swg.Client.Runtime.World
         public WorldEnvironment environment;
         public WorldWaypointRenderer waypoints;
         public bool IsReady { get; private set; }
+        public Exception Failure { get; private set; }
         public float Progress => IsReady ? 1 : Streaming?.Progress ?? 0;
         public WorldStreamer Streaming { get; private set; }
         public WorldContentLoader Content { get; private set; }
@@ -70,16 +71,24 @@ namespace Swg.Client.Runtime.World
                 session.Resolve<WorldRenderingContext>().Initialize(worldShader, characterShader, particleShader, settings, objectRenderer, this, flora);
                 session.Resolve<WorldRenderingContext>().WorldCamera = orbit.worldCamera;
                 appearanceLibrary = session.Resolve<WorldAppearanceLibrary>();
-                objectRenderer.Initialize(this.state, Content, loadedData, session.Resolve<GameReplication>(), appearanceLibrary, settings.uploadsPerFrame, flora);
+                objectRenderer.Initialize(this.state, Content, session.Resolve<GameReplication>(), appearanceLibrary, settings.uploadsPerFrame, flora);
                 Streaming = session.Resolve<WorldStreamer>();
             }
             catch (Exception error)
             {
+                Failure = error;
                 Debug.LogException(error);
                 yield break;
             }
 
+            var appearances = StartCoroutine(objectRenderer.LoadInitial());
             yield return Streaming.LoadInitial(loadedData.InitialRegion);
+            yield return appearances;
+            if (!ManagedSceneObject.TryGetObjectFrom(currentPlayer.SwgId, out var playerBody) || playerBody.GetComponentInChildren<Renderer>() == null)
+            {
+                Failure = new System.IO.InvalidDataException("The selected player's native appearance could not be loaded.");
+                yield break;
+            }
             loadedData.InitialRegion = null;
             loadedData = null;
             IsReady = true;

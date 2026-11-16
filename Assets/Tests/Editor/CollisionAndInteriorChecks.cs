@@ -1,4 +1,8 @@
 using System;
+using Autofac;
+using Swg.Client.Core.Assets.Tre;
+using Swg.Client.Core.Configuration;
+using Swg.Client.Runtime.World;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -104,6 +108,71 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(distance, Is.GreaterThan(1));
                 Assert.That(distance, Is.LessThan(1.8f));
                 Assert.That(resolved, Is.EqualTo(actor.transform.position));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [TestCase(0, false)]
+        [TestCase(0, true)]
+        [TestCase(1, false)]
+        [TestCase(1, true)]
+        [TestCase(2, false)]
+        [TestCase(2, true)]
+        [Category("NativeAssets")]
+        public void GuildHallMountedBarriersBlockBothApproaches(int entrance, bool reverse)
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            var layout = PortalLayout.Parse(IffNode.Form(IffNode.Parse(loader.Read("appearance/ply_corl_assoc_hall_civ_s01.pob")), "PRTO"), loader.Read);
+            var context = new WorldRenderingContext();
+            context.Initialize(null, null, Shader.Find("Sprites/Default"), null, null, null);
+            using var services = ManagedObjectTestScope.Use(new SceneObjectRegistry(), builder => builder.RegisterInstance(context));
+            var root = new GameObject("Guild hall mounted entrance test");
+            root.transform.position = new Vector3(10000, 0, 10000);
+            try
+            {
+                var building = new GameObject("Guild hall");
+                building.transform.SetParent(root.transform, false);
+                building.AddComponent<BuildingInterior>().Initialize(100, layout);
+                var barriers = building.GetComponentsInChildren<MeshCollider>(true).Where(c => c.name == "Mounted entry barrier").ToArray();
+                Assert.That(barriers.Length, Is.EqualTo(3));
+                foreach (var barrier in barriers) barrier.gameObject.SetActive(true);
+                var polygon = layout.Entrances[entrance];
+                var center = polygon.Aggregate(Vector3.zero, (sum, point) => sum + point) / polygon.Length;
+                var normal = Vector3.Cross(polygon[1] - polygon[0], polygon[2] - polygon[0]).normalized * (reverse ? -1 : 1);
+                var actor = new GameObject("Mounted capsule");
+                actor.transform.SetParent(root.transform, false);
+                actor.transform.localPosition = center + normal * 2 - Vector3.up * .8f;
+                var collision = actor.AddComponent<PlayerCollision>();
+                collision.Initialize(GameServices.Resolve<WorldState>(), true);
+                // No gravity here: isolate the real portal polygon from stair/floor grounding.
+                for (int i = 0; i < 40; i++) collision.Move(-normal, .1f, 0);
+                float side = Vector3.Dot(actor.transform.position - root.transform.position - center, normal);
+                Assert.That(side, Is.GreaterThan(.5f), "The mounted capsule must remain on its approach side of the native doorway.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        public void MountedMovementAllowsExteriorFloorsButRejectsInteriorFloors(int cellNumber)
+        {
+            var root = new GameObject("Mounted floor containment test");
+            root.transform.position = new Vector3(10000, 0, 10000);
+            try
+            {
+                Box(root.transform, "Exterior", new Vector3(0, -.05f, -2), new Vector3(10, .1f, 4));
+                var room = Box(root.transform, "Native building floor", new Vector3(0, -.05f, 2), new Vector3(10, .1f, 4));
+                room.AddComponent<BuildingFloor>().cellNumber = cellNumber;
+                var actor = new GameObject("Mounted capsule");
+                actor.transform.SetParent(root.transform, false);
+                actor.transform.localPosition = Vector3.back;
+                var collision = actor.AddComponent<PlayerCollision>();
+                collision.Initialize(new WorldState(new SceneObjectRegistry()), true);
+                for (int i = 0; i < 40; i++) collision.Move(Vector3.forward, .1f, 1f / 60);
+                float z = actor.transform.localPosition.z;
+                Assert.That(z, cellNumber == 0 ? Is.GreaterThan(2) : Is.LessThan(0), "Only interior floors should block mounted prediction when a portal barrier is missing.");
+                Assert.That(collision.CellSwgId, Is.EqualTo(default(SwgId)));
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }

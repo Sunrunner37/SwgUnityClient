@@ -25,6 +25,7 @@ namespace Swg.Client.Core.Characters
             sceneObjects.Removed -= MissionObjectRemoved;
         }
         public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
+        public WeaponRanges WeaponRanges { get; internal set; }
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId SwgId { get; private set; }
         readonly Dictionary<string, int> experience = new Dictionary<string, int>();
@@ -110,6 +111,7 @@ namespace Swg.Client.Core.Characters
         internal void BeginScene(SwgId swgId)
         {
             CharacterSheet = new CharacterSheetData();
+            WeaponRanges = default;
             experience.Clear();
             draftSchematics.Clear();
             draftDetails.Clear();

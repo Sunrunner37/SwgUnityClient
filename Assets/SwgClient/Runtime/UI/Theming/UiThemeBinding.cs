@@ -30,7 +30,8 @@ namespace Swg.Client.Runtime.UI.Theming
             Skill,
             SkillExperience,
             RowDivider,
-            HeaderBar
+            HeaderBar,
+            CommandIcon
         }
 
         [Serializable]
@@ -142,6 +143,7 @@ namespace Swg.Client.Runtime.UI.Theming
         Color ColorFor(Role role) => role switch
         {
             Role.Accent => theme.accent,
+            Role.CommandIcon => theme.commandIcon,
             Role.Text => theme.text,
             Role.Surface => theme.surface,
             Role.Input => theme.input,

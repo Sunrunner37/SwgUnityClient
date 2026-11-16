@@ -1,4 +1,6 @@
-using System;
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Networking.Game.Replication;
+using Swg.Client.Core.Characters;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 
@@ -8,16 +10,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Scene
     [Preserve]
     internal sealed class UpdateCellPermissionsPacketHandler : GamePacketHandler<UpdateCellPermissionsPacket>
     {
+        readonly GameReplication replication;
         public override uint Opcode => UpdateCellPermissionsPacket.Opcode;
 
         [Preserve]
-        public UpdateCellPermissionsPacketHandler() : base(UpdateCellPermissionsPacket.ReadFrom)
+        public UpdateCellPermissionsPacketHandler(GameReplication replication) : base(UpdateCellPermissionsPacket.ReadFrom)
         {
+            this.replication = replication;
         }
 
         protected override void Handle(UpdateCellPermissionsPacket packet)
         {
-            throw new NotImplementedException($"UpdateCellPermissionsMessage (opcode 0x{Opcode:X8})");
+            replication.Commit(packet.CellSwgId, new CellSceneObjectUpdate { AllowEntry = packet.AllowEntry != 0 });
         }
     }
 }

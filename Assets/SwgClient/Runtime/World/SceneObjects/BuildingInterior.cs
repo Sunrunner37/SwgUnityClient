@@ -46,7 +46,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 var child = new GameObject("Mounted entry barrier");
                 child.transform.SetParent(transform, false);
                 var indices = new List<int>();
-                for (int i = 2; i < polygon.Length; i++) { indices.Add(0); indices.Add(i - 1); indices.Add(i); }
+                // Portals are shared by two cells; their native winding need not face outdoors.
+                // Block mounted entry from either side, independently of that winding.
+                for (int i = 2; i < polygon.Length; i++)
+                {
+                    indices.Add(0); indices.Add(i - 1); indices.Add(i);
+                    indices.Add(0); indices.Add(i); indices.Add(i - 1);
+                }
                 var mesh = new Mesh { name = child.name, vertices = polygon, triangles = indices.ToArray(), colors = polygon.Select(_ => new Color(1, .03f, .01f, .24f)).ToArray() };
                 meshes.Add(mesh);
                 child.AddComponent<MeshFilter>().sharedMesh = mesh;

@@ -103,6 +103,8 @@ namespace Swg.Client.Runtime.UI.Testing
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterInstance(new Action<SuiEventNotificationPacket>(packet => Debug.Log("Offline dialog response: " + packet.PageId)));
+                builder.RegisterType<ClientVehicleRepairs>().SingleInstance();
                 builder.RegisterType<ClientMissions>().AsSelf().SingleInstance().AutoActivate();
                 builder.Register(context => { var world = context.Resolve<WorldState>(); return new Action<MissionListRequestPacket>(packet => StartCoroutine(DownloadMissions(world, packet))); }).SingleInstance();
                 builder.Register(context => { var world = context.Resolve<WorldState>(); return new Action<MissionAcceptPacket>(packet => { world.SceneObjects.Reparent(packet.MissionSwgId, 9800); }); }).SingleInstance();

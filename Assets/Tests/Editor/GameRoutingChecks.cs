@@ -1,4 +1,7 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.Networking.Game.Handlers.Scene;
+using Swg.Client.Core.Networking.Game.Handlers.Combat;
+using Swg.Client.Core.Networking.Game.Packets.Combat;
 using Swg.Client.Core.Networking.Game.Replication;
 using Swg.Client.Core;
 using Swg.Client.Core.World.SceneObjects;
@@ -26,6 +29,69 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class GameRoutingChecks
     {
+        [Test]
+        public void CellPermissionsUpdateWithoutLosingTheNativeCellNumber()
+        {
+            var state = GameServicesForTests.CreateState(out var player);
+            var cell = new CellSceneObject { SwgId = 100, Number = 7 };
+            state.SceneObjects.Add(cell);
+            var replication = GameServicesForTests.CreateReplication(state, player);
+            try
+            {
+                IGamePacketHandler handler = new UpdateCellPermissionsPacketHandler(replication);
+                byte[] Permission(bool allow)
+                {
+                    using var stream = new MemoryStream();
+                    using var writer = new BinaryWriter(stream);
+                    writer.Write((ushort)3); writer.Write(UpdateCellPermissionsPacket.Opcode);
+                    writer.Write((byte)(allow ? 1 : 0)); writer.Write(100ul);
+                    return stream.ToArray();
+                }
+                handler.Handle(new ByteReader(Permission(false)));
+                Assert.That(cell.AllowEntry, Is.True, "Changes wait for the main thread.");
+                replication.ApplyPending();
+                Assert.That(cell.AllowEntry, Is.False);
+                Assert.That(cell.Number, Is.EqualTo(7));
+                handler.Handle(new ByteReader(Permission(true)));
+                replication.ApplyPending();
+                Assert.That(cell.AllowEntry, Is.True);
+                var copy = new CellSceneObject();
+                cell.CopyTo(copy);
+                Assert.That(copy.AllowEntry, Is.True);
+                Assert.That(copy.Number, Is.EqualTo(7));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(replication.gameObject); }
+        }
+
+        [Test]
+        public void WeaponRangesAreRetainedForTheLocalPlayerAndResetOnSceneEntry()
+        {
+            var state = GameServicesForTests.CreateState(out var player);
+            player.BeginScene(42);
+            var replication = GameServicesForTests.CreateReplication(state, player);
+            try
+            {
+                using var stream = new MemoryStream();
+                using var writer = new BinaryWriter(stream);
+                writer.Write(123ul); writer.Write(20f); writer.Write(64f);
+                writer.Write(-10); writer.Write(5); writer.Write(-30);
+                IObjectControllerHandler handler = new WeaponRangesControllerHandler(replication);
+                handler.Handle(new Swg.Client.Core.Networking.Game.Packets.ObjectControllerPacket(0x1b, WeaponRangesPacket.ControllerType, 42, stream.ToArray()));
+                Assert.That(player.WeaponRanges.WeaponSwgId.IsNone, Is.True);
+                replication.ApplyPending();
+                var ranges = player.WeaponRanges;
+                Assert.That(ranges.WeaponSwgId, Is.EqualTo((SwgId)123));
+                Assert.That(ranges.IdealRange, Is.EqualTo(20));
+                Assert.That(ranges.MaximumRange, Is.EqualTo(64));
+                Assert.That(ranges.PointBlankAccuracy, Is.EqualTo(-10));
+                Assert.That(ranges.IdealAccuracy, Is.EqualTo(5));
+                Assert.That(ranges.MaximumRangeAccuracy, Is.EqualTo(-30));
+                player.BeginScene(42);
+                Assert.That(player.WeaponRanges.WeaponSwgId.IsNone, Is.True);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(replication.gameObject); }
+        }
+
         [TestCase(3)]
         [TestCase(6)]
         public void TruncatedBaselineNeverCommitsPartialValues(int view)

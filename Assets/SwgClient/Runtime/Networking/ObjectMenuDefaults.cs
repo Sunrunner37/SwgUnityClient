@@ -19,6 +19,7 @@ namespace Swg.Client.Runtime.Networking
         public const byte MissionListAction = 33;
         public const byte MissionDetailsAction = 34;
         public const byte MissionAbortAction = 62;
+        public static bool IsVehicle(int objectType) => (objectType & ~0xff) == 0x10000;
         public static bool IsMissionTerminal(int objectType) => objectType == 0x4006;
         public const byte LootAction = 35;
         public const byte LootAllAction = 36;

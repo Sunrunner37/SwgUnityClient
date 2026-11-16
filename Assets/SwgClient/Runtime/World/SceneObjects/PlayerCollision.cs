@@ -1,5 +1,6 @@
 using Swg.Client.Core;
 using Swg.Client.Core.World;
+using Swg.Client.Core.World.SceneObjects;
 using UnityEngine;
 
 namespace Swg.Client.Runtime.World.SceneObjects
@@ -42,12 +43,24 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (!mounted && FindBuildingFloor(hits, count) != null)
                 step = 1.2f;
             controller.stepOffset = Mathf.Min(controller.height - .05f, step / transform.lossyScale.y);
+            var previousPosition = transform.position;
             controller.Move(heading * distance + Vector3.down * (9.81f * seconds));
 
             // Room membership is independent of the prop or stair tread supporting the capsule.
             count = Physics.RaycastNonAlloc(transform.position + Vector3.up * .6f, Vector3.down, hits, controller.height * transform.lossyScale.y + .6f, mask, QueryTriggerInteraction.Ignore);
             var floor = FindBuildingFloor(hits, count);
-            CellSwgId = !mounted && floor != null ? floor.building.CellSwgId(floor.cellNumber) : default;
+            // Core3 forbids mounted cell entry. Never predict an interior pose as outdoor movement,
+            // even if a missing portal barrier or a large step lets the capsule cross the doorway.
+            var destinationCell = !mounted && floor != null ? floor.building.CellSwgId(floor.cellNumber) : default;
+            bool denied = state.SceneObjects.TryGet<CellSceneObject>(destinationCell, out var cell) && !cell.AllowEntry;
+            if (denied || mounted && floor != null && floor.cellNumber > 0)
+            {
+                controller.enabled = false;
+                transform.position = previousPosition;
+                controller.enabled = true;
+                return previousPosition;
+            }
+            CellSwgId = destinationCell;
             if (floor == null && state.Terrain != null)
             {
                 var serverPosition = transform.position + state.RenderOrigin;

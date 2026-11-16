@@ -110,8 +110,8 @@ namespace Swg.Client.Runtime.UI.Inventory
                 foreach (var item in items)
                 {
                     var cell = Instantiate(itemPrefab, grid.transform);
-                    cell.Bind(item.SwgId, () => Select(item.SwgId), () => interactions.ActivateDefault(item.SwgId), position => contextMenu.Open(item.SwgId, position));
-                    cell.CanActivate = interactions.HasDefaultAction(item.SwgId);
+                    cell.Bind(item.SwgId, () => Select(item.SwgId), () => inventory.Activate(item.SwgId), position => contextMenu.Open(item.SwgId, position));
+                    cell.CanActivate = ClientInventory.CanEquip(item) || interactions.HasDefaultAction(item.SwgId);
                     cells.Add(cell);
                 }
                 if (!items.Any(item => item.SwgId == selected))

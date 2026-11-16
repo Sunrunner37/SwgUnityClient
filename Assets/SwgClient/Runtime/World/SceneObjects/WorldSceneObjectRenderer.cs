@@ -38,7 +38,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         bool loading;
         public IEnumerable<string> AppearanceKeys => appearances.Values.Select(appearance => appearance.Key);
 
-        public void Initialize(WorldState state, WorldContentLoader content, WorldLoadingData loading, GameReplication world, WorldAppearanceLibrary appearanceLibrary, int uploadBudget, WorldFloraRenderer flora)
+        public void Initialize(WorldState state, WorldContentLoader content, GameReplication world, WorldAppearanceLibrary appearanceLibrary, int uploadBudget, WorldFloraRenderer flora)
         {
             currentPlayer = GameServices.Resolve<CurrentPlayer>();
             this.state = state;
@@ -56,15 +56,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 if (sceneObject is CreatureSceneObject) initialCreatures.Add(sceneObject.SwgId);
                 RefreshAppearance(sceneObject.SwgId);
             }
-            foreach (var pair in loading.InitialAppearances)
-                if (registry.TryGet<SpatialSceneObject>(pair.Key, out var sceneObject) && requests.TryGetValue(pair.Key, out var request) && pair.Value.Key == request.Key)
-                {
-                    Show(sceneObject, pair.Value);
-                    loadedKeys[pair.Key] = request.Key;
-                    pendingAppearances.Remove(pair.Key);
-                }
 
-            loading.InitialAppearances.Clear();
         }
 
         public void ShowScenery(SwgId swgId, AppearanceData appearance)
@@ -86,12 +78,28 @@ namespace Swg.Client.Runtime.World.SceneObjects
 
         void LateUpdate()
         {
+            RefreshDirtyAppearances();
+            if (!loading && pendingAppearances.Count > 0)
+                StartCoroutine(LoadPendingAppearances());
+        }
+
+        void RefreshDirtyAppearances()
+        {
             // Coalesce multiple baseline/delta packets for the same object within this frame.
             foreach (var swgId in dirtyAppearances)
                 RefreshAppearance(swgId);
             dirtyAppearances.Clear();
-            if (!loading && pendingAppearances.Count > 0)
-                StartCoroutine(LoadPendingAppearances());
+        }
+
+        internal IEnumerator LoadInitial()
+        {
+            // The camera remains hidden while this existing load path overlaps terrain uploads.
+            RefreshDirtyAppearances();
+            while (pendingAppearances.Count > 0)
+            {
+                yield return LoadPendingAppearances();
+                RefreshDirtyAppearances();
+            }
         }
 
         void RefreshAppearance(SwgId swgId)

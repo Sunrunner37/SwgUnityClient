@@ -25,6 +25,18 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class TargetingChecks
     {
+        [TestCase("object/mobile/shared_dressed_rebel_atelia.iff")]
+        [TestCase("object/mobile/shared_dressed_imperial_defector.iff")]
+        [TestCase("object/mobile/shared_dressed_gran_thug_male_02.iff")]
+        [Category("NativeAssets")]
+        public void TargetabilitySkipsUnnamedCustomizationListRecords(string template)
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            var catalog = new ObjectTemplateCatalog(loader);
+            Assert.That(catalog.IsTargetable(template), Is.True);
+        }
+
         [Test]
         public void SelectionIsSharedIdempotentAndClearsWhenRemoved()
         {

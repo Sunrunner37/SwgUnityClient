@@ -58,6 +58,23 @@ namespace Swg.Client.Tests.Editor
             Assert.That(attachments.SelectMany(a => a.Emitters).Any(emitter => emitter.Mesh != null && emitter.Mesh.Parts.Count > 0), Is.True);
         }
 
+        [TestCase("object/mobile/shared_dressed_rebel_atelia.iff")]
+        [TestCase("object/mobile/shared_dressed_imperial_defector.iff")]
+        [TestCase("object/mobile/shared_dressed_gran_thug_male_02.iff")]
+        [TestCase("object/tangible/fishing/fish/shared_blackfish.iff")]
+        [TestCase("object/base/shared_base_object.iff")]
+        [TestCase("object/base/shared_soundobject_base.iff")]
+        [Category("NativeAssets")]
+        public void ClearanceIgnoresNestedBinaryRecordsAndNativeAbstractRoots(string path)
+        {
+            var settings = Swg.Client.Core.Configuration.ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var assets = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            var loader = new FloraClearanceLoader();
+            Assert.DoesNotThrow(() => loader.Load(assets, path));
+            Assert.That(loader.GetCached(path), Is.Not.Null);
+            UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        }
+
         [Test]
         public void HarvesterInheritsItsCollidableFloraRadius()
         {

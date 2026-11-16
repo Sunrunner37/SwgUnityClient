@@ -1,3 +1,4 @@
+using TMPro;
 using Swg.Client.Core.Assets.Loading;
 using Swg.Client.Runtime.Assets.Tre;
 using UnityEngine;
@@ -10,11 +11,11 @@ namespace Swg.Client.Runtime.UI.Screens.Loading
         [Tooltip("Original DTII loading content table; {planet} comes from CmdStartScene.")]
         public string contentTable = "datatables/loading/space_{planet}.iff";
         public string fallbackTable = "datatables/loading/general.iff";
-        public Text status;
-        public Text planet;
-        public Text title;
-        public Text description;
-        public Text percent;
+        public TMP_Text status;
+        public TMP_Text planet;
+        public TMP_Text title;
+        public TMP_Text description;
+        public TMP_Text percent;
         public RawImage picture;
         public RawImage planetImage;
         public RawImage flagImage;

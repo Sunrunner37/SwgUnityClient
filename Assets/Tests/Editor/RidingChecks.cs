@@ -83,6 +83,40 @@ namespace Swg.Client.Tests.Editor
             finally { Object.DestroyImmediate(root); }
         }
 
+        [TestCase("object/mobile/vehicle/shared_landspeeder_x31.iff")]
+        [TestCase("object/mobile/vehicle/shared_speederbike_swoop.iff")]
+        [Category("NativeAssets")]
+        public void VehicleDoubleClickUsesMountAndDismountCommands(string template)
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            var previous = SynchronizationContext.Current;
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+            try
+            {
+                var registry = new SceneObjectRegistry();
+                var currentPlayer = new CurrentPlayer(registry);
+                var state = new WorldState(registry) { Templates = new ObjectTemplateCatalog(loader) };
+                currentPlayer.BeginScene(1);
+                var player = new CreatureSceneObject { SwgId = 1 };
+                registry.Add(player);
+                registry.Add(new CreatureSceneObject { SwgId = 2, TemplatePath = template });
+                string command = null;
+                SwgId target = default;
+                using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => Assert.Fail("Vehicle default must not send a radial selection packet"),
+                    (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer);
+                interactions.ActivateDefault(2);
+                Assert.That(command, Is.EqualTo("mount"));
+                Assert.That(target, Is.EqualTo((SwgId)2));
+                Assert.That(player.Mount, Is.Null);
+                registry.Reparent(1, 2); // Server confirms mounting.
+                interactions.ActivateDefault(2);
+                Assert.That(command, Is.EqualTo("dismount"));
+                Assert.That(target, Is.EqualTo((SwgId)2));
+            }
+            finally { SynchronizationContext.SetSynchronizationContext(previous); }
+        }
+
         [Test]
         public void EnterExitQueuesCommandsWithoutOptimisticallyChangingContainment()
         {

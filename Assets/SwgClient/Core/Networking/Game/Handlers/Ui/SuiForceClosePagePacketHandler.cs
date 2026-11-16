@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.Networking;
 using System;
 using UnityEngine.Scripting;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
@@ -10,14 +11,17 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Ui
     {
         public override uint Opcode => SuiForceClosePagePacket.Opcode;
 
+        readonly ClientVehicleRepairs repairs;
+
         [Preserve]
-        public SuiForceClosePagePacketHandler() : base(SuiForceClosePagePacket.ReadFrom)
+        public SuiForceClosePagePacketHandler(ClientVehicleRepairs repairs) : base(SuiForceClosePagePacket.ReadFrom)
         {
+            this.repairs = repairs;
         }
 
         protected override void Handle(SuiForceClosePagePacket packet)
         {
-            throw new NotImplementedException($"SuiForceClosePage (opcode 0x{Opcode:X8})");
+            repairs.Close(packet.PageId);
         }
     }
 }

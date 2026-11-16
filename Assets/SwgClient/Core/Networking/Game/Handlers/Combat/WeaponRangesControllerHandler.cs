@@ -1,5 +1,7 @@
 using Swg.Client.Core.Networking.Game.Packets.Combat;
-using System;
+using Swg.Client.Runtime.Networking;
+using Swg.Client.Core.Networking.Game.Replication;
+using Swg.Client.Core.Characters;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Combat
@@ -8,16 +10,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Combat
     [Preserve]
     internal sealed class WeaponRangesControllerHandler : ObjectControllerHandler<WeaponRangesPacket>
     {
+        readonly GameReplication replication;
         public override uint ControllerType => WeaponRangesPacket.ControllerType;
 
         [Preserve]
-        public WeaponRangesControllerHandler() : base(WeaponRangesPacket.ReadFrom)
+        public WeaponRangesControllerHandler(GameReplication replication) : base(WeaponRangesPacket.ReadFrom)
         {
+            this.replication = replication;
         }
 
         protected override void Handle(WeaponRangesPacket packet)
         {
-            throw new NotImplementedException($"WeaponRanges (controller 0x{ControllerType:X8})");
+            replication.UpdatePlayer(player => player.WeaponRanges = new WeaponRanges(packet.WeaponSwgId, packet.IdealRange, packet.MaximumRange, packet.PointBlankAccuracy, packet.IdealAccuracy, packet.MaximumRangeAccuracy));
         }
     }
 }

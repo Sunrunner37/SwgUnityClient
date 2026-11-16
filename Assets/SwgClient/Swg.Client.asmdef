@@ -1,7 +1,6 @@
 {
  "name":"Swg.Client",
  "rootNamespace":"Swg.Client",
- "references":["UnityEngine.UI","Unity.InputSystem","Unity.Collections","Unity.TextMeshPro"],
+ "references":["UnityEngine.UI","Unity.InputSystem","Unity.Collections","Unity.TextMeshPro","Unity.RenderPipelines.Universal.Runtime"],
  "autoReferenced":true
 }
-

@@ -1,4 +1,9 @@
 using System;
+using System.Collections.Generic;
+using Swg.Client.Core.World.SceneObjects;
+using Swg.Client.Core.World;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
+using Swg.Client.Runtime.Networking;
 using Swg.Client.Core.Assets.Formats.Dds;
 using Swg.Client.Runtime.Assets.Tre;
 using UnityEngine;
@@ -10,7 +15,19 @@ namespace Swg.Client.Runtime.UI
     {
         readonly TreRuntimeAssets assets;
         Texture2D activation;
-        Texture2D use;
+        readonly Dictionary<WorldCursor, Texture2D> worldTextures = new Dictionary<WorldCursor, Texture2D>();
+        public enum WorldCursor { Default, Examine, Attack, Talk, Use }
+
+        public static WorldCursor ForObject(SceneObject sceneObject, int objectType, bool useAction)
+        {
+            if (ObjectMenuDefaults.IsVehicle(objectType)) return WorldCursor.Examine;
+            if (sceneObject is TangibleSceneObject tangible)
+            {
+                if (tangible.CanConverse) return WorldCursor.Talk;
+                if (tangible.CanAttack && !(sceneObject is CreatureSceneObject creature && creature.Posture == CreaturePosture.Dead)) return WorldCursor.Attack;
+            }
+            return useAction ? WorldCursor.Use : WorldCursor.Examine;
+        }
         Texture2D world;
         Texture2D shown;
         UnityEngine.Object activationOwner;
@@ -32,11 +49,19 @@ namespace Swg.Client.Runtime.UI
             activationOwner = null;
             Refresh();
         }
-        public void SetWorldHover(bool hovered, Texture2D texture, Vector2 hotspot, bool useAction = false)
+        public void SetWorldHover(bool hovered, Texture2D texture, Vector2 hotspot, WorldCursor kind = WorldCursor.Default)
         {
             worldHovered = hovered;
-            if (useAction && use == null) use = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_use.dds"));
-            world = useAction ? use : texture;
+            world = texture;
+            if (hovered && kind != WorldCursor.Default)
+            {
+                if (!worldTextures.TryGetValue(kind, out world))
+                {
+                    string name = kind == WorldCursor.Examine ? "info" : kind.ToString().ToLowerInvariant();
+                    world = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_" + name + ".dds"));
+                    worldTextures.Add(kind, world);
+                }
+            }
             worldHotspot = hotspot;
             Refresh();
         }
@@ -61,7 +86,7 @@ namespace Swg.Client.Runtime.UI
         {
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             if (activation != null) UnityEngine.Object.Destroy(activation);
-            if (use != null) UnityEngine.Object.Destroy(use);
+            foreach (var texture in worldTextures.Values) UnityEngine.Object.Destroy(texture);
         }
     }
 }

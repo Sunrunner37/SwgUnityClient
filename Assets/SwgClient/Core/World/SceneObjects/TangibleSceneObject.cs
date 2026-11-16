@@ -5,6 +5,11 @@ namespace Swg.Client.Core.World.SceneObjects
 {
     public class TangibleSceneObject : SpatialSceneObject
     {
+        // Core3 CreatureFlag::ATTACKABLE and OptionBitmask::CONVERSE; both are server supplied.
+        public uint PvpStatus;
+        public uint Options;
+        public bool CanAttack => (PvpStatus & 1) != 0;
+        public bool CanConverse => (Options & 8) != 0;
         public string ResourceType;
         public int Volume = 1;
         public int ConditionDamage;
@@ -16,6 +21,8 @@ namespace Swg.Client.Core.World.SceneObjects
         internal void Apply(TangibleSceneObjectUpdate update)
         {
             base.Apply(update);
+            if (update.PvpStatus.HasValue) PvpStatus = update.PvpStatus.Value;
+            if (update.Options.HasValue) Options = update.Options.Value;
             if (update.ConditionDamage.HasValue) ConditionDamage = update.ConditionDamage.Value;
             if (update.MaximumCondition.HasValue) MaximumCondition = update.MaximumCondition.Value;
             if (update.ResourceType != null)
@@ -35,6 +42,8 @@ namespace Swg.Client.Core.World.SceneObjects
             base.CopyTo(target);
             if (target is TangibleSceneObject tangible)
             {
+                tangible.PvpStatus = PvpStatus;
+                tangible.Options = Options;
                 tangible.ResourceType = ResourceType;
                 tangible.Volume = Volume;
                 tangible.ConditionDamage = ConditionDamage;

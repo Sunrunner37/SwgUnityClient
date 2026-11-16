@@ -15,6 +15,24 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class WorldInteractionChecks
     {
+        [Test]
+        public void WorldInitializationFailureIsAvailableToTheLoadingScreen()
+        {
+            var root = new GameObject("Invalid world scene");
+            try
+            {
+                var world = root.AddComponent<Swg.Client.Runtime.World.WorldController>();
+                world.enabled = false;
+                var start = (System.Collections.IEnumerator)typeof(Swg.Client.Runtime.World.WorldController)
+                    .GetMethod("Start", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(world, null);
+                UnityEngine.TestTools.LogAssert.Expect(LogType.Exception, new System.Text.RegularExpressions.Regex("NullReferenceException"));
+                Assert.That(start.MoveNext(), Is.False);
+                Assert.That(world.Failure, Is.TypeOf<System.NullReferenceException>());
+                Assert.That(world.IsReady, Is.False);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
         [Test] public void CellBaselineRetainsRoomNumberAndUsesTheCore3Type()
         {
             using var bytes = new MemoryStream(); using var writer = new BinaryWriter(bytes);

@@ -41,6 +41,21 @@ namespace Swg.Client.Runtime.Networking
             if (!ContainerSwgId.IsNone)
                 requestContents(ContainerSwgId);
         }
+        public static bool CanEquip(TangibleSceneObject item) => item.TemplatePath != null
+            && (item.TemplatePath.StartsWith("object/tangible/wearables/", StringComparison.Ordinal)
+                || item.TemplatePath.StartsWith("object/weapon/", StringComparison.Ordinal));
+        public void Activate(SwgId swgId)
+        {
+            if (state.SceneObjects.TryGet<TangibleSceneObject>(swgId, out var item)
+                && CanEquip(item))
+            {
+                bool equipped = IsEquipped(item);
+                var destination = equipped ? ContainerSwgId : currentPlayer.SwgId;
+                GameServices.Resolve<ClientCommands>().Enqueue("transferItemMisc", destination + (equipped ? " -1 0 0 0" : " 4 0 0 0"), swgId);
+            }
+            else
+                GameServices.Resolve<ClientObjectInteractions>().ActivateDefault(swgId);
+        }
         public bool IsEquipped(TangibleSceneObject item) => item.ParentSwgId == currentPlayer.SwgId;
         void ObjectChanged(SceneObject sceneObject, SceneObjectChange changes)
         {
@@ -61,7 +76,7 @@ namespace Swg.Client.Runtime.Networking
             ContainerSwgId = container?.SwgId ?? default;
             Capacity = container == null ? 0 : state.Templates.ContainerCapacity(container.TemplatePath);
             Items = state.SceneObjects.ChildrenOf(ContainerSwgId).OfType<TangibleSceneObject>()
-                .Concat(children.OfType<TangibleSceneObject>().Where(item => item.TemplatePath?.StartsWith("object/tangible/wearables/", StringComparison.Ordinal) == true))
+                .Concat(children.OfType<TangibleSceneObject>().Where(CanEquip))
                 .OrderBy(item => item.SwgId.Value).ToArray();
             Changed?.Invoke();
         }

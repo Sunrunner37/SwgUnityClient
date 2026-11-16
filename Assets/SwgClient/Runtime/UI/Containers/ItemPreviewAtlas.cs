@@ -14,7 +14,7 @@ namespace Swg.Client.Runtime.UI.Containers
         public int columns = 9;
         public int pixelsPerItem = 128;
         [Range(-45, 45)]
-        public float tiltDegrees = -15;
+        public float tiltDegrees = 15;
         public float rotationSeconds = 12;
         public float renderFramesPerSecond = 30;
         readonly List<Transform> pivots = new List<Transform>();
@@ -84,7 +84,7 @@ namespace Swg.Client.Runtime.UI.Containers
                 return;
             nextRender = Time.unscaledTime + 1 / renderFramesPerSecond;
             // One complete counter-clockwise turn every twelve seconds, independent of frame rate.
-            var rotation = Quaternion.Euler(tiltDegrees, 45 - Time.unscaledTime * 360 / rotationSeconds, 0);
+            var rotation = Quaternion.Euler(tiltDegrees, 0, 0) * Quaternion.Euler(0, 45 - Time.unscaledTime * 360 / rotationSeconds, 0);
             foreach (var pivot in pivots)
                 if (pivot != null)
                     pivot.localRotation = rotation;

@@ -115,7 +115,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (mouse == null || !mouse.leftButton.isPressed || overUi || hovered != heldSwgId || Vector2.Distance(holdPosition, mouse.position.ReadValue()) > holdMovementTolerance)
                 heldSwgId = default;
             targeting.Hover(hovered);
-            cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot, !hovered.IsNone && interactions.HasDefaultAction(hovered));
+            state.SceneObjects.TryGet(hovered, out var hoveredObject);
+            var cursorKind = ClientCursor.ForObject(hoveredObject, interactions.ObjectType(hoveredObject), !hovered.IsNone && interactions.HasDefaultAction(hovered));
+            cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot, cursorKind);
             if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 targeting.Select(default);
         }

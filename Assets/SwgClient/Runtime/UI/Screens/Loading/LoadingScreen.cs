@@ -1,3 +1,4 @@
+using TMPro;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.Assets.Tre;
 using System;
@@ -15,7 +16,7 @@ namespace Swg.Client.Runtime.UI.Screens.Loading
         public LoadingScreenView view;
         public WorldEntryController entry;
         public string WorldPhase => entry == null ? "Loading..." : entry.Phase;
-        public Text status => view.status;
+        public TMP_Text status => view.status;
         public Slider progress => view.progress;
         public Button cancel => view.cancel;
 

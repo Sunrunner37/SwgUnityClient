@@ -52,7 +52,7 @@ namespace Swg.Client.Runtime.Networking
             sendMenu(new ObjectMenuRequestPacket(currentPlayer.SwgId, swgId, defaults, unchecked(++counter)));
         }
 
-        int ObjectType(SceneObject sceneObject) => sceneObject == null ? 0 : state.Templates.GameObjectType(sceneObject.TemplatePath);
+        internal int ObjectType(SceneObject sceneObject) => sceneObject == null ? 0 : state.Templates.GameObjectType(sceneObject.TemplatePath);
 
         public bool IsActiveControlDevice(SwgId swgId) => state.SceneObjects.TryGet<IntangibleSceneObject>(swgId, out var device) && device.IsActive && ObjectMenuDefaults.IsControlDevice(ObjectType(device));
 
@@ -60,7 +60,10 @@ namespace Swg.Client.Runtime.Networking
 
         public void ActivateDefault(SwgId swgId)
         {
-            if (state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
+            if (!state.SceneObjects.TryGet(swgId, out var sceneObject)) return;
+            if (ObjectMenuDefaults.IsVehicle(ObjectType(sceneObject)))
+                SelectMenuAction(swgId, ObjectMenuDefaults.VehicleEnterExitAction, 1);
+            else if (ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
                 SelectMenuAction(swgId, action);
         }
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)

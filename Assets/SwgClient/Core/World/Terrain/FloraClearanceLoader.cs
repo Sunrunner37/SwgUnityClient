@@ -1,4 +1,5 @@
 using System;
+using Swg.Client.Core.Assets.Formats.ObjectTemplates;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,9 @@ namespace Swg.Client.Core.World.Terrain
         {
             if (cache.TryGetValue(path, out var cached))
                 return cached;
+            // These abstract template roots are supplied by the native engine, not the TREs.
+            if ((path == "object/base/shared_base_object.iff" || path == "object/base/shared_soundobject_base.iff") && !assets.Catalog().ContainsKey(path))
+                return cache[path] = Array.Empty<FloraClearance>();
             if (!visited.Add(path))
                 throw new InvalidDataException("Object-template inheritance cycle: " + path);
             var result = new List<FloraClearance>();
@@ -63,26 +67,12 @@ namespace Swg.Client.Core.World.Terrain
         // FloatParam: data type byte, delta type byte, then the value. NONE inherits.
         static float? ClearCollidableRadius(IEnumerable<IffNode> nodes)
         {
-            foreach (var node in nodes)
-            {
-                if (node.Tag == "XXXX")
-                {
-                    var reader = new ByteReader(node.Data);
-                    if (reader.CString() == "clearFloraRadius")
-                    {
-                        byte type = reader.Byte();
-                        reader.Byte();
-                        if (type == 1)
-                            return reader.Float();
-                        if (type != 0)
-                            throw new InvalidDataException("clearFloraRadius must be a single FloatParam");
-                    }
-                }
-
-                var value = ClearCollidableRadius(node.Children);
-                if (value.HasValue)
-                    return value;
-            }
+            var reader = SharedObjectTemplate.Field(IffNode.Form(nodes, "SHOT"), "clearFloraRadius");
+            if (reader == null) return null;
+            byte type = reader.Byte();
+            reader.Byte();
+            if (type == 1) return reader.Float();
+            if (type != 0) throw new InvalidDataException("clearFloraRadius must be a single FloatParam");
 
             return null;
         }

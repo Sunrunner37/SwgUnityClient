@@ -7,6 +7,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
     /// <summary>Tangible fields; specialized object updates inherit these when their packets include them.</summary>
     internal class TangibleSceneObjectUpdate : SceneObjectUpdate
     {
+        public uint? PvpStatus;
+        public uint? Options;
         public string ResourceType;
         public int? Volume;
         public int? ConditionDamage;
@@ -15,6 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public byte[] Customization;
         public string AlternateAppearance;
         public override SceneObjectChange Changes => base.Changes
+            | (PvpStatus.HasValue || Options.HasValue ? SceneObjectChange.State : SceneObjectChange.None)
             | (ResourceType != null || Customization != null || AlternateAppearance != null ? SceneObjectChange.Appearance : SceneObjectChange.None)
             | (ConditionDamage.HasValue || MaximumCondition.HasValue ? SceneObjectChange.Vitals : SceneObjectChange.None)
             | (Volume.HasValue || Quantity.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None);

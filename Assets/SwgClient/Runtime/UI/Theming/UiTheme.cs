@@ -10,6 +10,7 @@ namespace Swg.Client.Runtime.UI.Theming
         public TMP_FontAsset font;
         [Min(8)]
         public float fontSize = 12;
+        public Color commandIcon = new Color32(84, 228, 254, 255);
         public Color accent = new Color32(0, 214, 251, 255);
         public Color text = new Color32(150, 244, 252, 255);
         public Color surface = new Color32(0, 35, 45, 225);

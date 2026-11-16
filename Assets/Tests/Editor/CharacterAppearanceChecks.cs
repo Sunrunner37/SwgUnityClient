@@ -23,6 +23,27 @@ namespace Swg.Client.Tests.Editor
         }
 
         [Test]
+        public void RepeatedCharactersShareSourceTexturesWithoutSharingCustomizedGeometry()
+        {
+            using var loader = Assets();
+            const string path = "object/mobile/shared_dressed_imperial_captain_m.iff";
+            var first = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+            var pixels = first.Parts.Select(part => (byte[])part.Diffuse.Pixels.Clone()).ToArray();
+            var second = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+            Assert.That(second.Parts.Count, Is.EqualTo(first.Parts.Count));
+            int sharedTextures = 0;
+            for (int i = 0; i < first.Parts.Count; i++)
+            {
+                Assert.That(second.Parts[i].Vertices, Is.EqualTo(first.Parts[i].Vertices));
+                Assert.That(second.Parts[i].Diffuse.Pixels, Is.EqualTo(pixels[i]));
+                Assert.That(first.Parts[i].Diffuse.Pixels, Is.EqualTo(pixels[i]));
+                Assert.That(second.Parts[i].Vertices, Is.Not.SameAs(first.Parts[i].Vertices));
+                if (ReferenceEquals(first.Parts[i].Diffuse, second.Parts[i].Diffuse)) sharedTextures++;
+            }
+            Assert.That(sharedTextures, Is.GreaterThan(0), "Unmodified native textures should be decoded/uploaded once per loader.");
+        }
+
+        [Test]
         public void DressedCaptainLoadsClientAuthoredOutfitAndFaceSettings()
         {
             using var loader = Assets();

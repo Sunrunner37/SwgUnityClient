@@ -80,7 +80,7 @@
       "group": "Combat",
       "packet": "UpdatePVPStatusPacket",
       "handler": "UpdatePVPStatusPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "UpdatePVPStatusMessage",
@@ -943,7 +943,7 @@
       "group": "Ui",
       "packet": "SuiUpdatePagePacket",
       "handler": "SuiUpdatePagePacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "SuiUpdatePageMessage",
@@ -1760,7 +1760,7 @@
       "group": "Ui",
       "packet": "SuiForceClosePagePacket",
       "handler": "SuiForceClosePagePacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "SuiForceClosePage",
@@ -2417,7 +2417,7 @@
       "group": "Ui",
       "packet": "SuiCreatePagePacket",
       "handler": "SuiCreatePagePacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "SuiCreatePageMessage",
@@ -2808,7 +2808,7 @@
       "group": "Scene",
       "packet": "UpdateCellPermissionsPacket",
       "handler": "UpdateCellPermissionsPacketHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "UpdateCellPermissionsMessage",
@@ -3432,7 +3432,7 @@
       "group": "Combat",
       "packet": "WeaponRangesPacket",
       "handler": "WeaponRangesControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "WeaponRanges",
