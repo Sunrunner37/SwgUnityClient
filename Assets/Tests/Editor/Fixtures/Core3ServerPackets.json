@@ -2979,7 +2979,7 @@
       "group": "Conversation",
       "packet": "StartNpcConversationPacket",
       "handler": "StartNpcConversationControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "StartNpcConversation",
@@ -3001,7 +3001,7 @@
       "group": "Conversation",
       "packet": "StopNpcConversationPacket",
       "handler": "StopNpcConversationControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "StopNpcConversation",
@@ -3023,7 +3023,7 @@
       "group": "Conversation",
       "packet": "NpcConversationPacket",
       "handler": "NpcConversationControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "NpcConversationMessage",
@@ -3045,7 +3045,7 @@
       "group": "Conversation",
       "packet": "StringListPacket",
       "handler": "StringListControllerHandler",
-      "skeleton": true,
+      "skeleton": false,
       "sources": [
         {
           "name": "StringList",

@@ -130,6 +130,7 @@ namespace Swg.Client.Runtime
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<ObjectMenuSelectPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientObjectInteractions>().AsSelf().SingleInstance();
+                builder.RegisterType<ClientConversation>().AsSelf().SingleInstance().AutoActivate();
                 builder.RegisterInstance(new Action<SuiEventNotificationPacket>(packet => connection.Send(packet)));
                 builder.RegisterType<ClientVehicleRepairs>().SingleInstance();
                 builder.Register(context =>

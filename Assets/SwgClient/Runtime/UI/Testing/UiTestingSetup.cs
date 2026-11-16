@@ -103,6 +103,7 @@ namespace Swg.Client.Runtime.UI.Testing
                 }).SingleInstance();
                 builder.RegisterInstance(new Action<FactionRequestPacket>(packet => Debug.Log("Offline faction standings requested")));
                 builder.RegisterType<ClientCharacterSheet>().SingleInstance();
+                builder.RegisterType<ClientConversation>().SingleInstance();
                 builder.RegisterInstance(new Action<SuiEventNotificationPacket>(packet => Debug.Log("Offline dialog response: " + packet.PageId)));
                 builder.RegisterType<ClientVehicleRepairs>().SingleInstance();
                 builder.RegisterType<ClientMissions>().AsSelf().SingleInstance().AutoActivate();

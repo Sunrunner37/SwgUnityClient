@@ -69,7 +69,11 @@ namespace Swg.Client.Runtime.Networking
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (radialId == ObjectMenuDefaults.MissionListAction && ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)))
+            if (radialId == ObjectMenuDefaults.ConverseStartAction)
+                GameServices.Resolve<ClientConversation>().Start(swgId);
+            else if (radialId == ObjectMenuDefaults.ConverseStopAction)
+                GameServices.Resolve<ClientConversation>().Stop();
+            else if (radialId == ObjectMenuDefaults.MissionListAction && ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)))
                 GameServices.Resolve<ClientMissions>().Open(swgId);
             else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionDetailsAction)
                 GameServices.Resolve<ClientMissions>().ShowDetails(swgId);

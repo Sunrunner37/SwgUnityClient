@@ -21,6 +21,13 @@ namespace Swg.Client.Runtime.Networking.Chat
             this.state = state;
         }
 
+        internal string Format(ConversationText message)
+        {
+            if (!message.Localized.HasValue) return colors.Replace(localizer.Localize(message.Text ?? ""), "");
+            var prose = message.Localized.Value.StringId;
+            return colors.Replace(formatter.Format(localizer.Lookup(prose.StringId.File, prose.StringId.Key), ResolveParameters(prose)), "");
+        }
+
         public string Format(string message, ChatParameterBlock parameters)
         {
             string text = localizer.Localize(message ?? "");

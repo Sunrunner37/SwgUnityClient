@@ -15,6 +15,8 @@ namespace Swg.Client.Runtime.Networking
     {
         public const byte VehicleEnterExitAction = 205;
         public const byte ExamineAction = 7;
+        public const byte ConverseStartAction = 25;
+        public const byte ConverseStopAction = 28;
         public const byte UseAction = 20;
         public const byte MissionListAction = 33;
         public const byte MissionDetailsAction = 34;
@@ -40,7 +42,7 @@ namespace Swg.Client.Runtime.Networking
         {
             var entries = new List<RadialMenuEntry> { new RadialMenuEntry(1, 0, ExamineAction, 1, "@ui_radial:examine") };
             if (TryGetDefaultAction(sceneObject, objectType, out byte action))
-                entries.Add(new RadialMenuEntry(2, 0, action, objectType == BankTerminal || IsCrafting(objectType) ? (byte)1 : (byte)3, CaptionReference(action)));
+                entries.Add(new RadialMenuEntry(2, 0, action, objectType == BankTerminal || IsCrafting(objectType) || action == ConverseStartAction ? (byte)1 : (byte)3, CaptionReference(action)));
             // CreatureObject/AiAgent handle these without adding them to the response.
             if ((objectType & ~0xff) == 0x400 && sceneObject is CreatureSceneObject creature && creature.Posture == CreaturePosture.Dead)
             {
@@ -54,6 +56,11 @@ namespace Swg.Client.Runtime.Networking
 
         public static bool TryGetDefaultAction(SceneObject sceneObject, int objectType, out byte action)
         {
+            if (sceneObject is TangibleSceneObject tangible && tangible.CanConverse)
+            {
+                action = ConverseStartAction;
+                return true;
+            }
             switch (objectType)
             {
                 case 0x4006: action = MissionListAction; return true;
@@ -133,6 +140,8 @@ namespace Swg.Client.Runtime.Networking
         {
             switch (action)
             {
+                case ConverseStartAction: return "@ui_radial:converse_start";
+                case ConverseStopAction: return "@ui_radial:converse_stop";
                 case PetCallAction: return "@pet/pet_menu:menu_call";
                 case PetStoreAction: return "@pet/pet_menu:menu_store";
                 case VehicleGenerateAction: return "@pet/pet_menu:menu_generate";

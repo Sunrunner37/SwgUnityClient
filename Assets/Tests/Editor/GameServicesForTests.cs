@@ -43,6 +43,7 @@ namespace Swg.Client.Tests.Editor
             builder.Register(_ => new StringTableLocalizer(null)).SingleInstance();
             builder.RegisterType<ProseFormatter>().SingleInstance();
             builder.RegisterType<ClientFlyText>().SingleInstance();
+            builder.Register(context => new ClientConversation((name, arguments, swgId) => { }, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), replication.State)).SingleInstance();
             builder.Register(_ => new ClientVehicleRepairs(packet => { })).SingleInstance();
             builder.Register(context => new ClientChat(null, replication.State, context.Resolve<StringTableLocalizer>(), context.Resolve<ProseFormatter>(), context.Resolve<ClientCommands>(), currentPlayer)).SingleInstance();
             // Crafting handlers resolve their session only when a crafting reply is applied on the main thread.

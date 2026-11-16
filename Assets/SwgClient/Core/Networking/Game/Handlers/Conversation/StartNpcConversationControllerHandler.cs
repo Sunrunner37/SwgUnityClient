@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Conversation;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Conversation
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Conversation
     [Preserve]
     internal sealed class StartNpcConversationControllerHandler : ObjectControllerHandler<StartNpcConversationPacket>
     {
+        readonly ClientConversation conversation;
         public override uint ControllerType => StartNpcConversationPacket.ControllerType;
 
         [Preserve]
-        public StartNpcConversationControllerHandler() : base(StartNpcConversationPacket.ReadFrom)
+        public StartNpcConversationControllerHandler(ClientConversation conversation) : base(StartNpcConversationPacket.ReadFrom)
         {
+            this.conversation = conversation;
         }
 
         protected override void Handle(StartNpcConversationPacket packet)
         {
-            throw new NotImplementedException($"StartNpcConversation (controller 0x{ControllerType:X8})");
+            conversation.Receive(packet);
         }
     }
 }

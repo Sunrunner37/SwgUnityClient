@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Conversation;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Conversation
@@ -8,16 +8,18 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Conversation
     [Preserve]
     internal sealed class StringListControllerHandler : ObjectControllerHandler<StringListPacket>
     {
+        readonly ClientConversation conversation;
         public override uint ControllerType => StringListPacket.ControllerType;
 
         [Preserve]
-        public StringListControllerHandler() : base(StringListPacket.ReadFrom)
+        public StringListControllerHandler(ClientConversation conversation) : base(StringListPacket.ReadFrom)
         {
+            this.conversation = conversation;
         }
 
         protected override void Handle(StringListPacket packet)
         {
-            throw new NotImplementedException($"StringList (controller 0x{ControllerType:X8})");
+            conversation.Receive(packet);
         }
     }
 }
