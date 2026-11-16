@@ -19,6 +19,7 @@ namespace Swg.Client.Runtime.UI.Containers
         public GameObject activeIndicator;
         public SwgId SwgId { get; private set; }
         public bool CanActivate { get; set; }
+        public ClientCursor.WorldCursor ActivationCursor { get; set; }
         ClientCursor cursors;
         Action doubleClick;
         Action<Vector2> hold;
@@ -49,7 +50,7 @@ namespace Swg.Client.Runtime.UI.Containers
         {
             if (!CanActivate) return;
             cursors = GameServices.Resolve<ClientCursor>();
-            cursors.ShowActivation(this);
+            cursors.ShowActivation(this, ActivationCursor);
         }
         public void OnPointerExit(PointerEventData pointer)
         {

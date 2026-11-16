@@ -1,4 +1,7 @@
 using Swg.Client.Runtime.UI.Containers;
+using System.Collections;
+using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Core.Assets.Appearances;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +49,19 @@ namespace Swg.Client.Runtime.UI.Inventory
         SceneObjectNameResolver names;
         InventoryPreviewCache cache;
         SwgId selected;
+        SwgId containerSwgId;
+        bool PlayerInventory => containerSwgId.IsNone;
+        ItemPreviewCache sharedPreviews;
+        WorldContentLoader loader;
+        Coroutine preparing;
+        public void OpenContainer(SwgId swgId)
+        {
+            containerSwgId = swgId;
+            selected = default;
+            gameObject.SetActive(true);
+            dirty = true;
+            transform.SetAsLastSibling();
+        }
         bool dirty;
         readonly Dictionary<SwgId, string> appearanceKeys = new Dictionary<SwgId, string>();
         string playerAppearanceKey;
@@ -57,11 +73,15 @@ namespace Swg.Client.Runtime.UI.Inventory
             inventory = GameServices.Resolve<ClientInventory>();
             names = GameServices.Resolve<SceneObjectNameResolver>();
             cache = GameServices.Resolve<InventoryPreviewCache>();
+            sharedPreviews = GameServices.Resolve<ItemPreviewCache>();
+            loader = GameServices.Resolve<WorldContentLoader>();
         }
         void OnEnable()
         {
-            inventory.Changed += Changed;
-            cache.Changed += Changed;
+            if (PlayerInventory) inventory.Changed += Changed;
+            if (PlayerInventory) cache.Changed += Changed;
+            state.SceneObjects.ObjectChanged += ObjectChanged;
+            state.SceneObjects.Removed += ObjectRemoved;
             examineToggle.onValueChanged.AddListener(SetExamineVisible);
             characterToggle.onValueChanged.AddListener(SetCharacterVisible);
             dirty = true;
@@ -72,8 +92,13 @@ namespace Swg.Client.Runtime.UI.Inventory
         {
             inventory.Changed -= Changed;
             cache.Changed -= Changed;
+            state.SceneObjects.ObjectChanged -= ObjectChanged;
+            state.SceneObjects.Removed -= ObjectRemoved;
+            if (preparing != null) StopCoroutine(preparing);
+            preparing = null;
             examineToggle.onValueChanged.RemoveListener(SetExamineVisible);
             characterToggle.onValueChanged.RemoveListener(SetCharacterVisible);
+            details.Clear();
             previews.Clear();
             characterPreview.Clear();
             foreach (var cell in cells)
@@ -83,6 +108,16 @@ namespace Swg.Client.Runtime.UI.Inventory
             playerAppearanceKey = null;
         }
         void Changed() => dirty = true;
+        void ObjectChanged(SceneObject item, SceneObjectChange changes)
+        {
+            if (!PlayerInventory && (changes & (SceneObjectChange.Inventory | SceneObjectChange.Appearance | SceneObjectChange.Containment | SceneObjectChange.Replaced)) != 0
+                && (item.ParentSwgId == containerSwgId || item.SwgId == containerSwgId || cells.Any(cell => cell.SwgId == item.SwgId))) dirty = true;
+        }
+        void ObjectRemoved(SceneObject item)
+        {
+            if (item.SwgId == containerSwgId) Close();
+            else if (!PlayerInventory && cells.Any(cell => cell.SwgId == item.SwgId)) dirty = true;
+        }
         void LateUpdate()
         {
             if (!dirty)
@@ -92,13 +127,13 @@ namespace Swg.Client.Runtime.UI.Inventory
         }
         void Refresh()
         {
-            int used = inventory.UsedCapacity;
-            int maximum = inventory.Capacity;
+            int used = PlayerInventory ? inventory.UsedCapacity : inventory.Used(containerSwgId);
+            int maximum = PlayerInventory ? inventory.Capacity : inventory.Limit(containerSwgId);
             capacity.text = "Capacity                          " + (maximum > 0 ? Mathf.RoundToInt(used * 100f / maximum) + "% (" + used + "/" + maximum + ")" : used.ToString());
             capacityBar.Fill = maximum > 0 ? used / (float)maximum : 0;
             cash.text = "Cash: " + (inventory.Player?.CashCredits ?? 0).ToString("N0");
             bank.text = "Bank: " + (inventory.Player?.BankCredits ?? 0).ToString("N0");
-            var items = inventory.Items.OrderBy(item => names.Resolve(item), StringComparer.CurrentCultureIgnoreCase).ThenBy(item => item.SwgId.Value).ToArray();
+            var items = (PlayerInventory ? inventory.Items : inventory.Contents(containerSwgId)).OrderBy(item => names.Resolve(item), StringComparer.CurrentCultureIgnoreCase).ThenBy(item => item.SwgId.Value).ToArray();
             bool membershipChanged = cells.Count != items.Length || !cells.Select(cell => cell.SwgId).SequenceEqual(items.Select(item => item.SwgId));
             if (membershipChanged)
             {
@@ -111,19 +146,25 @@ namespace Swg.Client.Runtime.UI.Inventory
                 {
                     var cell = Instantiate(itemPrefab, grid.transform);
                     cell.Bind(item.SwgId, () => Select(item.SwgId), () => inventory.Activate(item.SwgId), position => contextMenu.Open(item.SwgId, position));
-                    cell.CanActivate = ClientInventory.CanEquip(item) || interactions.HasDefaultAction(item.SwgId);
+
                     cells.Add(cell);
                 }
                 if (!items.Any(item => item.SwgId == selected))
                     selected = items.Length > 0 ? items[0].SwgId : default;
                 Select(selected);
             }
+            if (items.Length == 0) Select(default);
             for (int i = 0; i < items.Length; i++)
                 UpdateCell(cells[i], items[i]);
             RefreshPreviews();
         }
         void UpdateCell(ContainerItem cell, TangibleSceneObject item)
         {
+            cell.CanActivate = true; // Examine is the fallback double-click action.
+            int type = interactions.ObjectType(item);
+            cell.ActivationCursor = ObjectMenuDefaults.IsContainer(type) ? ClientCursor.WorldCursor.Use
+                : ObjectMenuDefaults.IsConsumable(type) ? ClientCursor.WorldCursor.Eat
+                : interactions.HasDefaultAction(item.SwgId) || ClientInventory.CanEquip(item) ? ClientCursor.WorldCursor.Default : ClientCursor.WorldCursor.Examine;
             cell.itemName.text = names.Resolve(item);
             cell.quantity.text = item.Quantity > 1 ? (item.Quantity >= 1000 ? (item.Quantity / 1000).ToString() + "k" : item.Quantity.ToString()) : "";
             cell.equipped.SetActive(inventory.IsEquipped(item));
@@ -131,18 +172,29 @@ namespace Swg.Client.Runtime.UI.Inventory
         }
         void RefreshPreviews()
         {
+            var missing = new List<AppearanceRequest>();
             for (int i = 0; i < cells.Count; i++)
             {
                 var cell = cells[i];
-                if (!cache.TryGet(cell.SwgId, out var preview))
-                    continue;
+                ItemPreviewCache.Preview preview;
+                if (PlayerInventory)
+                {
+                    if (!cache.TryGet(cell.SwgId, out preview)) continue;
+                }
+                else
+                {
+                    if (!state.SceneObjects.TryGet(cell.SwgId, out var item)) continue;
+                    var request = loader.DescribeAppearance(item);
+                    if (!sharedPreviews.TryGet(request.Key, out preview)) { missing.Add(request); continue; }
+                }
                 string key = preview.Appearance.Key;
                 if (appearanceKeys.TryGetValue(cell.SwgId, out var previous) && previous == key)
                     continue;
                 previews.Show(i, preview.Appearance, preview.Resources, cell);
                 appearanceKeys[cell.SwgId] = key;
             }
-            var player = inventory.Player;
+            if (missing.Count > 0 && preparing == null) preparing = StartCoroutine(Prepare(missing));
+            var player = PlayerInventory ? inventory.Player : null;
             if (player != null)
             {
                 characterName.text = names.Resolve(player);
@@ -154,6 +206,13 @@ namespace Swg.Client.Runtime.UI.Inventory
             }
             previews.RenderNow();
         }
+        IEnumerator Prepare(List<AppearanceRequest> requests)
+        {
+            yield return null;
+            yield return sharedPreviews.Prepare(requests);
+            preparing = null;
+            dirty = true;
+        }
         public void Select(SwgId swgId)
         {
             selected = swgId;
@@ -163,6 +222,11 @@ namespace Swg.Client.Runtime.UI.Inventory
             {
                 title.text = names.Resolve(item).ToUpperInvariant();
                 details.Show(swgId);
+            }
+            else
+            {
+                details.Clear();
+                if (!PlayerInventory && state.SceneObjects.TryGet(containerSwgId, out var container)) title.text = names.Resolve(container).ToUpperInvariant();
             }
         }
         public void ToggleOpen()

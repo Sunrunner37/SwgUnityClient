@@ -25,6 +25,10 @@ namespace Swg.Client.Runtime.Networking
         public int UsedCapacity => state.SceneObjects.ChildrenOf(ContainerSwgId).OfType<TangibleSceneObject>().Sum(item => Math.Max(1, item.Volume));
         public CreatureSceneObject Player => currentPlayer.Creature;
         public event Action Changed;
+        public event Action<SwgId> ContainerOpened;
+        public IReadOnlyList<TangibleSceneObject> Contents(SwgId container) => state.SceneObjects.ChildrenOf(container).OfType<TangibleSceneObject>().OrderBy(item => item.SwgId.Value).ToArray();
+        public int Used(SwgId container) => Contents(container).Sum(item => Math.Max(1, item.Volume));
+        public int Limit(SwgId container) => state.SceneObjects.TryGet(container, out var item) ? state.Templates.ContainerCapacity(item.TemplatePath) : 0;
         public ClientInventory(WorldState state, Action<SwgId> requestContents, CurrentPlayer currentPlayer)
         {
             this.currentPlayer = currentPlayer;
@@ -47,7 +51,7 @@ namespace Swg.Client.Runtime.Networking
         public void Activate(SwgId swgId)
         {
             if (state.SceneObjects.TryGet<TangibleSceneObject>(swgId, out var item)
-                && CanEquip(item))
+                && !ObjectMenuDefaults.IsContainer(state.Templates.GameObjectType(item.TemplatePath)) && CanEquip(item))
             {
                 bool equipped = IsEquipped(item);
                 var destination = equipped ? ContainerSwgId : currentPlayer.SwgId;
@@ -82,8 +86,9 @@ namespace Swg.Client.Runtime.Networking
         }
         public void Receive(ClientOpenContainerPacket packet) => context.Post(_ =>
         {
-            if (!disposed && packet.SwgId == ContainerSwgId.Value)
-                Refresh();
+            if (disposed) return;
+            if (packet.SwgId == ContainerSwgId.Value) Refresh();
+            else if (state.SceneObjects.TryGet(packet.SwgId, out var container)) ContainerOpened?.Invoke(packet.SwgId);
         }, null);
         public void Dispose()
         {
