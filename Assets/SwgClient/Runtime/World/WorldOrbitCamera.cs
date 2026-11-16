@@ -16,6 +16,7 @@ namespace Swg.Client.Runtime.World
         public float pitch = 18;
         public float yaw = 180;
         public float sensitivity = .18f;
+        readonly RaycastHit[] obstacleHits = new RaycastHit[64];
         WorldState state;
         CurrentPlayer player;
         void Start()
@@ -23,6 +24,25 @@ namespace Swg.Client.Runtime.World
             state = GameServices.Resolve<WorldState>();
             player = GameServices.Resolve<CurrentPlayer>();
         }
+        internal Vector3 ConstrainToObstacles(Vector3 focus, Vector3 desired, Transform mount = null)
+        {
+            var offset = desired - focus;
+            float nearest = float.PositiveInfinity;
+            int mask = ~(1 << LayerMask.NameToLayer(TargetableSceneObject.LayerName));
+            int count = Physics.SphereCastNonAlloc(focus, .18f, offset.normalized, obstacleHits, offset.magnitude, mask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                var hit = obstacleHits[i];
+                // The movement capsule is solid and intentionally isn't on the target-picking layer.
+                // A moving character can briefly sweep against its own capsule near the camera focus.
+                var body = hit.collider.transform;
+                if (body.IsChildOf(target) || mount != null && body.IsChildOf(mount))
+                    continue;
+                nearest = Mathf.Min(nearest, hit.distance);
+            }
+            return focus + offset.normalized * Mathf.Min(offset.magnitude, Mathf.Max(.3f, nearest - .08f));
+        }
+
         void LateUpdate()
         {
             if (target == null || worldCamera == null)
@@ -43,9 +63,10 @@ namespace Swg.Client.Runtime.World
             var rotation = Quaternion.Euler(pitch, yaw, 0);
             var focus = target.position + Vector3.up * 1.4f;
             var desired = focus - rotation * Vector3.forward * distance;
-            int mask = ~(1 << LayerMask.NameToLayer(TargetableSceneObject.LayerName));
-            if (Physics.SphereCast(focus, .18f, (desired - focus).normalized, out var hit, distance, mask, QueryTriggerInteraction.Ignore))
-                desired = focus + (desired - focus).normalized * Mathf.Max(.3f, hit.distance - .08f);
+            Transform mount = null;
+            if (player.Creature?.Mount != null && ManagedSceneObject.TryGetObjectFrom(player.Creature.Mount.SwgId, out var vehicle))
+                mount = vehicle.transform;
+            desired = ConstrainToObstacles(focus, desired, mount);
             if (state.Terrain != null && player.Creature?.Parent is not CellSceneObject)
             {
                 var serverPosition = desired + state.RenderOrigin;

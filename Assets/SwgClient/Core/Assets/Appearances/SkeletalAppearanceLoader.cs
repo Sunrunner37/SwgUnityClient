@@ -187,7 +187,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
                 var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, own, owner, "HUEB");
                 string effect = IffNode.References(shaderBytes, "effect/", ".eft").FirstOrDefault();
-                if (trim != null && effect != null && Path.GetFileName(effect).StartsWith("h_color2_", StringComparison.OrdinalIgnoreCase))
+                if (trim != null && effect != null && CharacterMaterialLoader.UsesTwoColor(effect))
                 {
                     diffuse = CharacterMaterialLoader.ApplyTwoColor(diffuse, tint ?? new byte[] { 255, 255, 255 }, trim);
                     tint = null;

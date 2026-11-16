@@ -33,11 +33,17 @@ namespace Swg.Client.Runtime.Assets.Appearances
             CharacterAnimation animation = parts.Any(part => part.Skinning != null) ? root.AddComponent<CharacterAnimation>() : null;
             if (animation != null)
                 animation.detectMovement = detectMovement;
+            Transform exterior = null;
+            if (parts.Any(part => part.PortalCellNumber == 0))
+            {
+                exterior = new GameObject(BuildingInterior.ExteriorCellName).transform;
+                exterior.SetParent(root.transform, false);
+            }
             for (int i = 0; i < parts.Length; i++)
             {
                 var part = new GameObject("Mesh " + i);
-                part.transform.SetParent(root.transform, false);
                 var resource = parts[i];
+                part.transform.SetParent(resource.PortalCellNumber == 0 ? exterior : root.transform, false);
                 if (resource.Skinning == null)
                 {
                     part.AddComponent<MeshFilter>().sharedMesh = resource.Mesh;

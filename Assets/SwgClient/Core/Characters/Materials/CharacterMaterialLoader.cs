@@ -23,6 +23,14 @@ namespace Swg.Client.Core.Characters.Materials
             return "shader/" + Path.GetFileNameWithoutExtension(ownerAppearance.Replace('\\', '/')) + "_" + material + ".sht";
         }
 
+        // Both the base effect and its named variants use diffuse alpha as a MAIN/HUEB paint mask.
+        internal static bool UsesTwoColor(string effect)
+        {
+            string name = Path.GetFileNameWithoutExtension(effect);
+            return string.Equals(name, "h_color2", System.StringComparison.OrdinalIgnoreCase)
+                || name.StartsWith("h_color2_", System.StringComparison.OrdinalIgnoreCase);
+        }
+
         internal static byte[] MainPaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner) => PaletteTint(loader, nodes, own, owner, "MAIN");
 
         internal static byte[] PaletteTint(TreAssetLoader loader, List<IffNode> nodes, IReadOnlyDictionary<string, short> own, IReadOnlyDictionary<string, short> owner, string slot)

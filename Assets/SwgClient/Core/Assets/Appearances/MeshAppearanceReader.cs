@@ -160,7 +160,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     alphaBlend = effect != null && Effect(loader, effect).AlphaBlendEnabled;
                     fullbright = effect != null && Path.GetFileName(effect).Contains("emis_full");
                     var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, customization, customization, "HUEB");
-                    if (texture != null && trim != null && effect != null && Path.GetFileName(effect).StartsWith("h_color2_", StringComparison.OrdinalIgnoreCase))
+                    if (texture != null && trim != null && effect != null && CharacterMaterialLoader.UsesTwoColor(effect))
                     {
                         texture = TwoColorTexture(loader, shader, texture, tint ?? new byte[] { 255, 255, 255, 255 }, trim);
                         tint = null;

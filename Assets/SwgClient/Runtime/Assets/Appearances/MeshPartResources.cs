@@ -16,6 +16,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public Mesh Mesh { get; }
         public Material Material { get; }
         public Bounds Bounds { get; }
+        public int? PortalCellNumber { get; }
         public SkeletalMeshData Skinning { get; }
         public Texture[] AnimationFrames { get; private set; }
         public float MinimumFrameSeconds { get; private set; }
@@ -33,6 +34,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 indexFormat = IndexFormat.UInt32
             };
             Skinning = source.Skinning;
+            PortalCellNumber = source.PortalCellNumber;
             Mesh.vertices = Skinning?.Vertices ?? source.Vertices;
             bool hasNormals = source.Normals != null && source.Normals.Length == source.Vertices.Length;
             if (hasNormals)

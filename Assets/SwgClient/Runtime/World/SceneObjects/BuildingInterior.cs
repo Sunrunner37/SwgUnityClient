@@ -9,10 +9,12 @@ using UnityEngine;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
-    /// <summary>Native room floor colliders and mounted-entry barriers. Room IDs are resolved from replicated cells.</summary>
+    /// <summary>Native interior visibility, room floor colliders and mounted-entry barriers. Room IDs are resolved from replicated cells.</summary>
     public sealed class BuildingInterior : MonoBehaviour
     {
+        internal const string ExteriorCellName = "Exterior cell";
         public SwgId BuildingSwgId { get; private set; }
+        GameObject exterior;
         readonly List<Mesh> meshes = new List<Mesh>();
         readonly List<GameObject> barriers = new List<GameObject>();
         WorldState state;
@@ -21,6 +23,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public void Initialize(SwgId swgId, PortalLayout layout)
         {
             BuildingSwgId = swgId;
+            exterior = transform.Find(ExteriorCellName)?.gameObject;
             state = GameServices.Resolve<WorldState>();
             player = GameServices.Resolve<CurrentPlayer>();
             foreach (var cell in layout.Cells)
@@ -77,6 +80,10 @@ namespace Swg.Client.Runtime.World.SceneObjects
         void OnPlayerChanged(SceneObjectChange changes)
         {
             if ((changes & SceneObjectChange.Containment) == 0) return;
+            // Native exterior cells can contain closed shell geometry that overlaps the rooms.
+            // Keep it out of both rendering and collision while occupying this building's interior.
+            bool inside = player.Creature?.Parent is CellSceneObject cell && cell.ParentSwgId == BuildingSwgId;
+            if (exterior != null) exterior.SetActive(!inside);
             bool mounted = player.Creature?.Mount != null;
             foreach (var barrier in barriers) barrier.SetActive(mounted);
         }

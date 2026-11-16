@@ -3,6 +3,13 @@ using Autofac;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Runtime.World;
+using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Runtime.Assets.Tre;
+using Swg.Client.Runtime.Assets.Appearances;
+using Swg.Client.Runtime.Assets.Shaders;
+using Swg.Client.Core.Assets.Appearances;
+using Swg.Client.Core.Networking.Game.Replication;
+using Swg.Client.Core.Characters;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,6 +30,142 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class CollisionAndInteriorChecks
     {
+        [Test, Category("NativeAssets")]
+        public void EarlyCellPermissionsDoNotDiscardSnapshotContainmentOrRoomContents()
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            var state = GameServicesForTests.CreateState(out var player);
+            using var replication = GameServicesForTests.CreateReplication(state, player);
+            replication.Commit(1855675, new CellSceneObjectUpdate { AllowEntry = false });
+            replication.ApplyPending();
+            Assert.That(state.SceneObjects.TryGet<CellSceneObject>(1855675, out var earlyCell), Is.True);
+            state.Snapshot = WorldSnapshot.Load(loader, "corellia");
+            WorldContentLoader.PopulateSnapshot(state);
+            Assert.That(state.SceneObjects.TryGet<CellSceneObject>(1855675, out var cell), Is.True);
+            Assert.That(cell, Is.SameAs(earlyCell));
+            Assert.That(cell.AllowEntry, Is.False);
+            Assert.That(cell.ParentSwgId, Is.EqualTo(new SwgId(1855671)));
+            Assert.That(cell.TemplatePath, Is.EqualTo("object/cell/shared_cell.iff"));
+            Assert.That(cell.Number, Is.EqualTo(4));
+            var contents = state.Snapshot.Entries.Where(entry => entry.ParentSwgId == cell.SwgId).ToArray();
+            Assert.That(contents, Is.Not.Empty);
+            foreach (var entry in contents)
+                Assert.That(Vector3.Distance(state.SceneObjects.GetServerWorldPose(entry.SwgId).position, entry.WorldPosition), Is.LessThan(.001f), entry.TemplatePath);
+            WorldContentLoader.PopulateSnapshot(state);
+            Assert.That(cell.AllowEntry, Is.False);
+            Assert.That(cell.Parent.Children.Count(child => child.SwgId == cell.SwgId), Is.EqualTo(1));
+        }
+
+        [Test, Category("NativeAssets")]
+        public void StarportExteriorShellIsInactiveInsideAndReturnsOnExit()
+        {
+            var settings = ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
+            using var assets = new TreRuntimeAssets(settings);
+            assets.Ready.GetAwaiter().GetResult();
+            var appearance = AppearanceLoader.LoadDetailed(assets.Loader, "object/building/corellia/shared_starport_corellia.iff");
+            Assert.That(appearance.Parts.All(part => part.PortalCellNumber.HasValue), Is.True);
+            Assert.That(appearance.Parts.Count(part => part.PortalCellNumber == 0), Is.GreaterThan(0));
+            var registry = new SceneObjectRegistry();
+            var context = new WorldRenderingContext();
+            context.Initialize(null, null, Shader.Find("Sprites/Default"), null, null, null);
+            using var services = ManagedObjectTestScope.Use(registry, builder => builder.RegisterInstance(context));
+            GameServices.Resolve<CurrentPlayer>().BeginScene(1);
+            var building = new TangibleSceneObject { SwgId = 100 };
+            registry.Add(building);
+            registry.Add(new CellSceneObject { SwgId = 101, ParentSwgId = 100, Number = 1 });
+            registry.Add(new CreatureSceneObject { SwgId = 1 });
+            using var resources = new AppearanceResources(appearance, new SwgMaterialFactory(assets), Shader.Find("SWG/World"), Shader.Find("SWG/Character"), Shader.Find("SWG/Particle"));
+            var root = resources.Create(null);
+            try
+            {
+                WorldSceneObjectRenderer.ConfigureCollision(building, root);
+                root.AddComponent<BuildingInterior>().Initialize(100, appearance.PortalLayout);
+                var exterior = root.transform.Find(BuildingInterior.ExteriorCellName).gameObject;
+                Assert.That(exterior.activeSelf, Is.True);
+                Assert.That(exterior.GetComponentsInChildren<MeshFilter>().Length, Is.EqualTo(appearance.Parts.Count(part => part.PortalCellNumber == 0)));
+                registry.Reparent(1, 101);
+                Assert.That(exterior.activeInHierarchy, Is.False);
+                Assert.That(root.GetComponentsInChildren<MeshFilter>().Length, Is.GreaterThan(0), "Room geometry remains visible.");
+                Assert.That(root.GetComponentsInChildren<MeshCollider>().Any(collider => collider.TryGetComponent<BuildingFloor>(out _)), Is.True);
+                Assert.That(root.GetComponentsInChildren<MeshCollider>().Any(collider => collider.transform.IsChildOf(exterior.transform)), Is.False);
+                registry.Reparent(1, 0);
+                Assert.That(exterior.activeSelf, Is.True);
+                Assert.That(exterior.GetComponentsInChildren<MeshCollider>(), Is.Not.Empty);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void OrbitCameraIgnoresTheFollowedCapsuleButStillFindsScenery(bool nestedCapsule)
+        {
+            var actor = new GameObject("Camera followed character");
+            var cameraRoot = new GameObject("Camera collision test");
+            var wall = new GameObject("Camera blocking scenery");
+            GameObject capsuleRoot = nestedCapsule ? new GameObject("Character capsule") : actor;
+            try
+            {
+                actor.transform.position = new Vector3(10000, 10000, 10000);
+                if (nestedCapsule) capsuleRoot.transform.SetParent(actor.transform, false);
+                // Match the movement capsule shape using a collider available to Edit Mode queries.
+                var capsule = capsuleRoot.AddComponent<CapsuleCollider>();
+                capsule.height = 1.7f;
+                capsule.radius = .25f;
+                capsule.center = Vector3.up * .88f;
+                var camera = cameraRoot.AddComponent<WorldOrbitCamera>();
+                camera.target = actor.transform;
+                // Reproduce the focus/capsule offset around a predicted movement update.
+                var focus = actor.transform.position + Vector3.up * 1.4f + Vector3.forward * .5f;
+                var direction = -(Quaternion.Euler(20, 0, 0) * Vector3.forward);
+                var desired = focus + direction * 7;
+                wall.transform.position = focus + direction * 3;
+                wall.AddComponent<BoxCollider>();
+                wall.SetActive(false);
+                Physics.SyncTransforms();
+                Assert.That(Physics.SphereCast(focus, .18f, direction, out var selfHit, 7, ~0, QueryTriggerInteraction.Ignore), Is.True);
+                Assert.That(selfHit.collider, Is.SameAs(capsule));
+                Assert.That(selfHit.distance, Is.LessThan(.1f), "The old camera jumped into the character on this hit.");
+                Assert.That(Vector3.Distance(camera.ConstrainToObstacles(focus, desired), desired), Is.LessThan(.001f));
+                wall.SetActive(true);
+                Physics.SyncTransforms();
+                float constrained = Vector3.Distance(focus, camera.ConstrainToObstacles(focus, desired));
+                Assert.That(constrained, Is.InRange(1.5f, 3f), "Ignoring the capsule must not discard the wall behind it.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(actor);
+                UnityEngine.Object.DestroyImmediate(cameraRoot);
+                UnityEngine.Object.DestroyImmediate(wall);
+            }
+        }
+
+        [Test]
+        public void OrbitCameraIgnoresTheFollowedPlayersMount()
+        {
+            var actor = new GameObject("Mounted camera target");
+            var cameraRoot = new GameObject("Mounted camera collision test");
+            var mount = new GameObject("Camera followed vehicle");
+            try
+            {
+                var camera = cameraRoot.AddComponent<WorldOrbitCamera>();
+                camera.target = actor.transform;
+                var focus = new Vector3(10000, 10000, 10000);
+                var desired = focus + Vector3.back * 7;
+                mount.transform.position = focus + Vector3.back * 2;
+                mount.AddComponent<BoxCollider>();
+                Physics.SyncTransforms();
+                Assert.That(Vector3.Distance(camera.ConstrainToObstacles(focus, desired), desired), Is.GreaterThan(1));
+                Assert.That(Vector3.Distance(camera.ConstrainToObstacles(focus, desired, mount.transform), desired), Is.LessThan(.001f));
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(actor);
+                UnityEngine.Object.DestroyImmediate(cameraRoot);
+                UnityEngine.Object.DestroyImmediate(mount);
+            }
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void CellTransitionsPublishOneConsistentWorldPose(bool entering)

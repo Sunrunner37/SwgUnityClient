@@ -114,8 +114,13 @@ namespace Swg.Client.Core.Assets.Appearances
                 {
                     result.PortalLayout = PortalLayout.Parse(root, loader.Read);
                     foreach (var cell in result.PortalLayout.Cells)
-                        if (!string.IsNullOrEmpty(cell.AppearancePath))
-                            LoadChild(loader, AppearancePath(cell.AppearancePath), transform, result, stack, depth + 1, detailLevel, customization);
+                    {
+                        if (string.IsNullOrEmpty(cell.AppearancePath)) continue;
+                        int firstPart = result.Parts.Count;
+                        LoadChild(loader, AppearancePath(cell.AppearancePath), transform, result, stack, depth + 1, detailLevel, customization);
+                        for (int i = firstPart; i < result.Parts.Count; i++)
+                            result.Parts[i].PortalCellNumber = cell.Number;
+                    }
                 }
                 else if (root.Kind == "CMPA")
                 {

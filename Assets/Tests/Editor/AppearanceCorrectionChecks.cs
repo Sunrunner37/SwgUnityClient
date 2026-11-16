@@ -8,6 +8,8 @@ using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Assets.Formats.Customization;
 using Swg.Client.Core.Assets.Tre;
 using Swg.Client.Core.Characters.Appearance;
+using Swg.Client.Core.Characters.Materials;
+using Swg.Client.Core.Assets.Formats.Dds;
 using Swg.Client.Core.Configuration;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -21,6 +23,38 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class AppearanceCorrectionChecks
     {
+        [TestCase("effect/h_color2.eft", true)]
+        [TestCase("effect/h_color2_phong.eft", true)]
+        [TestCase("effect/H_COLOR2.EFT", true)]
+        [TestCase("effect/h_color.eft", false)]
+        [TestCase("effect/h_color20.eft", false)]
+        public void TwoColorEffectsIncludeTheNativeBaseEffect(string effect, bool expected)
+        {
+            Assert.That(CharacterMaterialLoader.UsesTwoColor(effect), Is.EqualTo(expected));
+        }
+
+        [Test, Category("NativeAssets")]
+        public void MurraPreservesPaleHornsAndTintsOnlyMaskedBodyPixels()
+        {
+            var settings = Settings();
+            using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
+            const string path = "object/static/creature/shared_corellia_murra.iff";
+            var skeletal = SkeletalAppearanceLoader.LoadDetailed(loader, path);
+            var part = skeletal.Parts.Single();
+            Assert.That(part.Tint, Is.Null, "Both native paint channels must be baked instead of tinting the entire creature.");
+            var source = TextureData.Load(loader, "texture/murra_body_hue.dds");
+            var horns = Enumerable.Range(0, source.Width * source.Height)
+                .Where(pixel => source.Pixels[pixel * 4 + 3] > 240 && source.Pixels[pixel * 4] > 150).ToArray();
+            Assert.That(horns.Length, Is.GreaterThan(100));
+            Assert.That(horns.All(pixel => part.Diffuse.Pixels[pixel * 4] >= source.Pixels[pixel * 4] - 12), Is.True,
+                "The white HUEB channel must preserve the bright horn texture.");
+            Assert.That(Enumerable.Range(0, source.Width * source.Height).All(pixel => part.Diffuse.Pixels[pixel * 4 + 3] == 255), Is.True,
+                "Paint mask alpha is not transparency.");
+            var scenery = AppearanceLoader.LoadDetailed(loader, path);
+            Assert.That(scenery.Parts.Single().Tint, Is.Null);
+            Assert.That(scenery.Parts.Single().Diffuse.Pixels, Is.EqualTo(part.Diffuse.Pixels));
+        }
+
         static ClientSettings Settings() => ClientSettings.From(Path.Combine(Directory.GetParent(Application.dataPath).FullName, "client.ini"));
 
         [TestCase("object/tangible/wearables/pants/shared_pants_s01.iff", false, true)]

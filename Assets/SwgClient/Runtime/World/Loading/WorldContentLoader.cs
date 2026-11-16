@@ -66,10 +66,31 @@ namespace Swg.Client.Runtime.World.Loading
             this.state.Templates = loaded.templates;
             this.state.Terrain = loaded.terrain;
             this.state.Snapshot = loaded.snapshot;
-            foreach (var entry in this.state.Snapshot.Entries)
-                if (!this.state.SceneObjects.TryGet(entry.SwgId, out _))
-                    this.state.SceneObjects.Add(SceneObjectFactory.Create(entry));
+            PopulateSnapshot(this.state);
             Debug.Log($"World metadata and snapshot: {timer.Elapsed.TotalSeconds:F2}s");
+        }
+
+        internal static void PopulateSnapshot(WorldState state)
+        {
+            foreach (var entry in state.Snapshot.Entries)
+            {
+                if (!state.SceneObjects.TryGet(entry.SwgId, out var existing))
+                {
+                    state.SceneObjects.Add(SceneObjectFactory.Create(entry));
+                    continue;
+                }
+                // Permission packets can introduce cells before snapshot metadata is available.
+                // Fill their native identity and building transform without losing live permissions.
+                if (existing is not CellSceneObject cell || !AppearanceRequest.IsCell(entry.TemplatePath)) continue;
+                cell.TemplatePath ??= entry.TemplatePath;
+                if (cell.Number == 0) cell.Number = (int)entry.CellSwgId;
+                if (cell.ParentSwgId.IsNone && !entry.ParentSwgId.IsNone)
+                {
+                    cell.Position = entry.Position;
+                    cell.Rotation = entry.Rotation;
+                    state.SceneObjects.Reparent(cell.SwgId, entry.ParentSwgId);
+                }
+            }
         }
 
         async Task<T> ReadAsync<T>(Func<TreAssetLoader, T> read, CancellationToken token)
