@@ -948,96 +948,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowHandle
   window: {fileID: 6915150742534624223}
   edges: 10
---- !u!1 &2030738611588090936
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 454008635465733842}
-  - component: {fileID: 4085468956309232252}
-  - component: {fileID: 6353475568834894351}
-  - component: {fileID: 944100130793325748}
-  m_Layer: 5
-  m_Name: Drag handle
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &454008635465733842
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030738611588090936}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8147997412019658597}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -15, y: 5}
-  m_Pivot: {x: 0, y: 1}
---- !u!222 &4085468956309232252
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030738611588090936}
-  m_CullTransparentMesh: 1
---- !u!114 &6353475568834894351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030738611588090936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!114 &944100130793325748
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2030738611588090936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f6b974411f6e6745914c695819020f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowHandle
-  window: {fileID: 6915150742534624223}
-  edges: 0
 --- !u!1 &2257168493003662875
 GameObject:
   m_ObjectHideFlags: 0
@@ -1501,6 +1411,18 @@ MonoBehaviour:
   - name: medical_enhance_mind
     caption: Mind Enhancement
     icon: {fileID: 11400000, guid: 8166cd0963032274b9921551f5833d7b, type: 2}
+  - name: food.drink_vasarian_brandy
+    caption: Vasarian Brandy
+    icon: {fileID: 11400000, guid: f7d3622729eefbc46b72ea4259fe0c53, type: 2}
+  - name: food.drink_corellian_brandy
+    caption: Corellian Brandy
+    icon: {fileID: 11400000, guid: f7d3622729eefbc46b72ea4259fe0c53, type: 2}
+  - name: spice.muon_gold.up
+    caption: Muon Gold
+    icon: {fileID: 11400000, guid: 5f3cfd053c84bfb41aac15243b4f24cc, type: 2}
+  - name: spice.muon_gold.down
+    caption: Muon Gold (aftereffects)
+    icon: {fileID: 11400000, guid: acf5c25d4dc63d746a95aad497ac6a64, type: 2}
 --- !u!114 &435252202499569239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,6 +1462,7 @@ GameObject:
   - component: {fileID: 8147997412019658597}
   - component: {fileID: 6915150742534624223}
   - component: {fileID: 3779435770172109267}
+  - component: {fileID: 6073192327427465054}
   m_Layer: 5
   m_Name: Buffs
   m_TagString: Untagged
@@ -1561,7 +1484,6 @@ RectTransform:
   m_Children:
   - {fileID: 6922857802138392133}
   - {fileID: 2656984248969446421}
-  - {fileID: 454008635465733842}
   - {fileID: 5915162304876723604}
   - {fileID: 6109666823525525636}
   - {fileID: 3936120988853327022}
@@ -1611,6 +1533,20 @@ MonoBehaviour:
   onApplied:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6073192327427465054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2711883752881429292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6b974411f6e6745914c695819020f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowHandle
+  window: {fileID: 6915150742534624223}
+  edges: 0
 --- !u!1 &2865564490485904722
 GameObject:
   m_ObjectHideFlags: 0
@@ -1623,7 +1559,7 @@ GameObject:
   - component: {fileID: 6835163918164723698}
   - component: {fileID: 6037357683862661075}
   - component: {fileID: 418754568550701395}
-  - component: {fileID: 2404105581681432526}
+  - component: {fileID: 3205550195975698254}
   m_Layer: 5
   m_Name: Viewport
   m_TagString: Untagged
@@ -1703,7 +1639,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2404105581681432526
+--- !u!114 &3205550195975698254
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1712,13 +1648,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2865564490485904722}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c18d0fafcd19ff4aa558bc15dedb2cd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ScrollRect
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowScrollRect
   m_Content: {fileID: 4595125479217599447}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 2
+  m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -1733,6 +1669,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+  window: {fileID: 6915150742534624223}
 --- !u!1 &3647741358482652372
 GameObject:
   m_ObjectHideFlags: 0
@@ -2769,7 +2706,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

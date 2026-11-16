@@ -37,6 +37,12 @@ namespace Swg.Client.Runtime.UI.Interactions
             interactions.AttributesChanged -= OnAttributesChanged;
             theme.Changed -= Refresh;
         }
+        public void Clear()
+        {
+            swgId = default;
+            description = "";
+            text.text = "";
+        }
         public void Show(SwgId target)
         {
             swgId = target;

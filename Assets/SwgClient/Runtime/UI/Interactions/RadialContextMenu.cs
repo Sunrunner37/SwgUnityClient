@@ -49,6 +49,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         void OnEnable()
         {
             interactions.MenuChanged += Refresh;
+            interactions.ExamineRequested += examineWindow.Open;
             StartCoroutine(LoadCaptions());
         }
         IEnumerator LoadCaptions()
@@ -158,6 +159,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         void OnDisable()
         {
             interactions.MenuChanged -= Refresh;
+            interactions.ExamineRequested -= examineWindow.Open;
             Close();
         }
     }

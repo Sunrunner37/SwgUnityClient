@@ -1,4 +1,6 @@
 using Swg.Client.Core.Characters;
+using Swg.Client.Core.World.SceneObjects;
+using Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature;
 using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.UI.Interactions;
 using System;
@@ -27,6 +29,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public Vector2 cursorHotspot = new Vector2(16, 16);
         public float maximumDistance = 256;
         readonly RaycastHit[] hits = new RaycastHit[64];
+        readonly RaycastHit[] obstructions = new RaycastHit[64];
         SwgId lastClicked;
         float lastClickTime = float.NegativeInfinity;
         ClientObjectInteractions interactions;
@@ -73,26 +76,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             SwgId hovered = default;
             if (mouse != null && !overUi && !mouse.rightButton.isPressed)
             {
-                var ray = worldCamera.ScreenPointToRay(mouse.position.ReadValue());
-                Physics.SyncTransforms();
-                int count = Physics.RaycastNonAlloc(ray, hits, maximumDistance, targetMask, QueryTriggerInteraction.Collide);
-                float closest = maximumDistance;
-                for (int i = 0; i < count; i++)
-                {
-                    var hit = hits[i];
-                    var candidate = hit.collider.GetComponentInParent<TargetableSceneObject>();
-                    if (candidate != null && candidate.SwgId != currentPlayer.SwgId && hit.distance < closest)
-                    {
-                        closest = hit.distance;
-                        hovered = candidate.SwgId;
-                    }
-                }
-                // Terrain hides targets behind a hill. Pick volumes themselves are on a separate layer.
-                if (!hovered.IsNone && Physics.Raycast(ray, out var obstruction, closest, ~targetMask, QueryTriggerInteraction.Ignore))
-                {
-                    var owner = obstruction.collider.GetComponentInParent<ManagedSceneObject>();
-                    if (owner == null || owner.SwgId != hovered) hovered = default;
-                }
+                hovered = Pick(worldCamera.ScreenPointToRay(mouse.position.ReadValue()));
                 if (mouse.leftButton.wasPressedThisFrame)
                 {
                     targeting.Select(hovered);
@@ -121,6 +105,48 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
                 targeting.Select(default);
         }
+
+        internal SwgId Pick(Ray ray)
+        {
+            SwgId hovered = default;
+            Physics.SyncTransforms();
+            int count = Physics.RaycastNonAlloc(ray, hits, maximumDistance, targetMask, QueryTriggerInteraction.Collide);
+            float closest = maximumDistance;
+            Collider selectedVolume = null;
+            for (int i = 0; i < count; i++)
+            {
+                var hit = hits[i];
+                var candidate = hit.collider.GetComponentInParent<TargetableSceneObject>();
+                if (candidate == null || candidate.SwgId == currentPlayer.SwgId) continue;
+                bool performer = selectedVolume != null && PerformerOverInstrument(candidate.SwgId, hit.collider.bounds, hovered, selectedVolume.bounds);
+                bool instrument = selectedVolume != null && PerformerOverInstrument(hovered, selectedVolume.bounds, candidate.SwgId, hit.collider.bounds);
+                if (performer || hit.distance < closest && !instrument)
+                {
+                    closest = hit.distance;
+                    hovered = candidate.SwgId;
+                    selectedVolume = hit.collider;
+                }
+            }
+            // Ignore an overlapping performance instrument, but still test the rest of the ray for walls/terrain.
+            if (!hovered.IsNone)
+            {
+                int blocking = Physics.RaycastNonAlloc(ray, obstructions, closest, ~targetMask, QueryTriggerInteraction.Ignore);
+                for (int i = 0; i < blocking; i++)
+                {
+                    var obstruction = obstructions[i].collider;
+                    var owner = obstruction.GetComponentInParent<ManagedSceneObject>();
+                    if (owner != null && (owner.SwgId == hovered || PerformerOverInstrument(hovered, selectedVolume.bounds, owner.SwgId, obstruction.bounds))) continue;
+                    hovered = default;
+                    break;
+                }
+            }
+            return hovered;
+        }
+
+        internal bool PerformerOverInstrument(SwgId performer, Bounds performerBounds, SwgId instrument, Bounds instrumentBounds)
+            => state.SceneObjects.TryGet<CreatureSceneObject>(performer, out var creature) && creature.IsPlayingMusic
+                && state.SceneObjects.TryGet(instrument, out var item) && state.Templates.GameObjectType(item.TemplatePath) == 0x200c
+                && performerBounds.Intersects(instrumentBounds);
 
         void OnDisable()
         {

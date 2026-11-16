@@ -15,11 +15,14 @@ namespace Swg.Client.Runtime.UI
     {
         readonly TreRuntimeAssets assets;
         Texture2D activation;
+        Texture2D itemCursor;
         readonly Dictionary<WorldCursor, Texture2D> worldTextures = new Dictionary<WorldCursor, Texture2D>();
-        public enum WorldCursor { Default, Examine, Attack, Talk, Use }
+        public enum WorldCursor { Default, Examine, Attack, Talk, Use, Eat }
 
         public static WorldCursor ForObject(SceneObject sceneObject, int objectType, bool useAction)
         {
+            if (ObjectMenuDefaults.IsContainer(objectType)) return WorldCursor.Use;
+            if (ObjectMenuDefaults.IsConsumable(objectType)) return WorldCursor.Eat;
             if (ObjectMenuDefaults.IsVehicle(objectType)) return WorldCursor.Examine;
             if (sceneObject is TangibleSceneObject tangible)
             {
@@ -36,10 +39,11 @@ namespace Swg.Client.Runtime.UI
 
         public ClientCursor(TreRuntimeAssets assets) => this.assets = assets;
 
-        public void ShowActivation(UnityEngine.Object owner)
+        public void ShowActivation(UnityEngine.Object owner, WorldCursor kind = WorldCursor.Default)
         {
             if (activation == null)
                 activation = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_activate.dds"));
+            itemCursor = kind == WorldCursor.Default ? activation : WorldTexture(kind);
             activationOwner = owner;
             Refresh();
         }
@@ -55,19 +59,24 @@ namespace Swg.Client.Runtime.UI
             world = texture;
             if (hovered && kind != WorldCursor.Default)
             {
-                if (!worldTextures.TryGetValue(kind, out world))
-                {
-                    string name = kind == WorldCursor.Examine ? "info" : kind.ToString().ToLowerInvariant();
-                    world = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_" + name + ".dds"));
-                    worldTextures.Add(kind, world);
-                }
+                world = WorldTexture(kind);
             }
             worldHotspot = hotspot;
             Refresh();
         }
+        Texture2D WorldTexture(WorldCursor kind)
+        {
+            if (!worldTextures.TryGetValue(kind, out var texture))
+            {
+                string name = kind == WorldCursor.Examine ? "info" : kind.ToString().ToLowerInvariant();
+                texture = Create(TextureData.Load(assets.Loader, "texture/ui_cursor_" + name + ".dds"));
+                worldTextures.Add(kind, texture);
+            }
+            return texture;
+        }
         void Refresh()
         {
-            var texture = activationOwner != null ? activation : worldHovered ? world : null;
+            var texture = activationOwner != null ? itemCursor : worldHovered ? world : null;
             if (texture == shown) return;
             shown = texture;
             Cursor.SetCursor(texture, texture == null ? Vector2.zero : activationOwner != null ? new Vector2(16, 16) : worldHotspot, CursorMode.Auto);

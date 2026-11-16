@@ -29,6 +29,7 @@ namespace Swg.Client.Runtime.Networking
         readonly Dictionary<SwgId, IReadOnlyList<AttributeValue>> attributes = new Dictionary<SwgId, IReadOnlyList<AttributeValue>>();
         public IReadOnlyList<AttributeValue> GetAttributes(SwgId swgId) => attributes.TryGetValue(swgId, out var values) ? values : Array.Empty<AttributeValue>();
         public event Action MenuChanged;
+        public event Action<SwgId> ExamineRequested;
         public event Action<SwgId> AttributesChanged;
 
         public ClientObjectInteractions(WorldState state, Action<ObjectMenuRequestPacket> sendMenu, Action<SwgId> requestAttributes, Action<ObjectMenuSelectPacket> selectMenu, Action<string, string, SwgId> enqueueCommand, CurrentPlayer currentPlayer)
@@ -65,11 +66,15 @@ namespace Swg.Client.Runtime.Networking
                 SelectMenuAction(swgId, ObjectMenuDefaults.VehicleEnterExitAction, 1);
             else if (ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
                 SelectMenuAction(swgId, action);
+            else
+                ExamineRequested?.Invoke(swgId);
         }
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (radialId == ObjectMenuDefaults.ConverseStartAction)
+            if (radialId == ObjectMenuDefaults.OpenAction)
+                enqueueCommand("openContainer", "", swgId);
+            else if (radialId == ObjectMenuDefaults.ConverseStartAction)
                 GameServices.Resolve<ClientConversation>().Start(swgId);
             else if (radialId == ObjectMenuDefaults.ConverseStopAction)
                 GameServices.Resolve<ClientConversation>().Stop();
