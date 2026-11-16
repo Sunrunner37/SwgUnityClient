@@ -41,7 +41,7 @@ namespace Swg.Client.Core.Characters.Animation
         AshFile hierarchy;
         Func<string, SkeletalAnimation> loadAnimation;
 
-        public SkeletalAnimation ResolveAction(string action, string weapon, CreaturePosture posture, bool combat = true)
+        public SkeletalAnimation ResolveAction(string action, string weapon, CreaturePosture posture, bool combat = true, string performance = "")
         {
             lock (assetCache)
             {
@@ -49,17 +49,31 @@ namespace Swg.Client.Core.Characters.Animation
                     : posture == CreaturePosture.Dead ? "dead" : posture == CreaturePosture.Incapacitated ? "incapacitated_face_up" : "";
                 foreach (string candidate in ActionCandidates(action))
                 {
-                    string name = hierarchy.Resolve(candidate, weapon, combat ? "combat" : "", postureState);
+                    string name = hierarchy.Resolve(candidate, weapon, combat ? "combat" : "", postureState, performance.Length > 0 ? "skill" : "");
                     if (candidate != null && name == "default") continue;
                     if (!logicalAnimations.TryGetValue(name, out var logical))
                     {
                         if (candidate == null || !logicalAnimations.TryGetValue("cbt_" + candidate, out logical) && !logicalAnimations.TryGetValue("rea_" + candidate, out logical))
                             continue;
                     }
+                    if (performance.Length > 0 && logical.Selections.TryGetValue(("skill", performance), out var selected) && selected.Length > 0)
+                        return loadAnimation(selected[0]);
                     string path = (action == null ? logical.IdleClips.FirstOrDefault() : null) ?? logical.Clips.FirstOrDefault();
                     if (path != null) return loadAnimation(path);
                 }
                 return null;
+            }
+        }
+
+        public SkeletalAnimation ResolveAmbient(string performance, string mood)
+        {
+            lock (assetCache)
+            {
+                string logicalName = hierarchy.Resolve(null, performance.Length > 0 ? "skill" : "");
+                if (!logicalAnimations.TryGetValue(logicalName, out var logical)) return null;
+                string selector = performance.Length > 0 ? "skill" : "mood";
+                string value = performance.Length > 0 ? performance : mood;
+                return logical.Selections.TryGetValue((selector, value), out var clips) && clips.Length > 0 ? loadAnimation(clips[0]) : null;
             }
         }
 
@@ -115,7 +129,11 @@ namespace Swg.Client.Core.Characters.Animation
                 SkeletalAnimation Animation(string path)
                 {
                     if (!cache.Animations.TryGetValue(path, out var clip))
-                        cache.Animations.Add(path, clip = CompressedAnimationReader.Read(loader.Read(path)));
+                    {
+                        var bytes = loader.Read(path);
+                        clip = Encoding.ASCII.GetString(bytes, 8, 4) == "KFAT" ? KeyframeAnimationReader.Read(bytes) : CompressedAnimationReader.Read(bytes);
+                        cache.Animations.Add(path, clip);
+                    }
                     return clip;
                 }
 

@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             update.SkillModifiers = SkillReplication.ReadValues(reader, true, true);
             reader.Float(); // Speed multiplier base (Core3 validates run speed against its mod value).
             update.SpeedMultiplier = reader.Float();
-            reader.U64(); // Listen ID.
+            update.ListenSwgId = reader.U64();
             update.RunSpeed = reader.Float();
             reader.Skip(8); // Slope angle / percent.
             update.TurnScale = reader.Float();
@@ -53,7 +53,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     update.SpeedMultiplier = reader.Float();
                     break;
                 case 6:
-                    reader.U64();
+                    update.ListenSwgId = reader.U64();
                     break;
                 case 7:
                     update.RunSpeed = reader.Float();

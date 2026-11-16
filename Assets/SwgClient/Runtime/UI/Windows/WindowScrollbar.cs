@@ -7,6 +7,7 @@ namespace Swg.Client.Runtime.UI.Windows
     public sealed class WindowScrollbar : MonoBehaviour
     {
         public Scrollbar scrollbar;
+        public bool hideHandleWhenNotScrollable = true;
         public Button up;
         public Button down;
         public void ScrollUp() => Step(1);
@@ -17,8 +18,9 @@ namespace Swg.Client.Runtime.UI.Windows
             bool canScroll = scrollbar.size < .999f;
             up.interactable = canScroll;
             down.interactable = canScroll;
-            if (scrollbar.handleRect.gameObject.activeSelf != canScroll)
-                scrollbar.handleRect.gameObject.SetActive(canScroll);
+            bool showHandle = canScroll || !hideHandleWhenNotScrollable;
+            if (scrollbar.handleRect.gameObject.activeSelf != showHandle)
+                scrollbar.handleRect.gameObject.SetActive(showHandle);
         }
     }
 }

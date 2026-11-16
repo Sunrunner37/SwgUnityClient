@@ -209,7 +209,7 @@ namespace Swg.Client.Tests.Editor
             dispatcher.Submit("Spatial", "/t Misty", out error);
             Assert.That(error, Is.EqualTo("Usage: /tell name message"));
             dispatcher.Submit("Spatial", "/unknown", out error);
-            ssert.That(error, Does.Contain("Unknown or unavailable"));
+            Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Execute("flourish", "10", out error);
             Assert.That(error, Does.Contain("Unknown or unavailable"));
             dispatcher.Submit("Spatial", "", out error);

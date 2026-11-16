@@ -22,6 +22,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             public float PostureTime;
             public SkeletalAnimation Action;
             public SkeletalAnimation CombatIdle;
+            public SkeletalAnimation Ambient;
         }
 
         readonly List<Rig> rigs = new List<Rig>();
@@ -40,26 +41,44 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public float ActionPlaybackRate => actionPlaybackRate;
         Coroutine actionLoading;
         Coroutine stanceLoading;
+        Coroutine ambientLoading;
+        public void SetAmbient(TreRuntimeAssets assets, string performance, string mood)
+        {
+            if (ambientLoading != null) StopCoroutine(ambientLoading);
+            foreach (var rig in rigs) rig.Ambient = null;
+            if (performance.Length > 0 || mood.Length > 0)
+                ambientLoading = StartCoroutine(LoadAmbient(assets, performance, mood));
+        }
+        IEnumerator LoadAmbient(TreRuntimeAssets assets, string performance, string mood)
+        {
+            var ambientRigs = rigs.ToArray();
+            var read = assets.ReadAsync(_ => ambientRigs.Select(rig => rig.Skeleton.ResolveAmbient(performance, mood)).ToArray());
+            yield return new WaitUntil(() => read.IsCompleted);
+            if (read.IsFaulted) { Debug.LogException(read.Exception.GetBaseException(), this); yield break; }
+            for (int i = 0; i < ambientRigs.Length; i++) ambientRigs[i].Ambient = read.Result[i];
+            idleTime = 0;
+            foreach (var rig in ambientRigs) rig.PostureTime = 0;
+        }
         bool actionPending;
         bool UnableToAct => Posture == CreaturePosture.Dead || Posture == CreaturePosture.Incapacitated || Posture == CreaturePosture.KnockedDown;
         public bool IsPlayingAction => actionAge < actionDuration;
         public string LastAction { get; private set; }
         public event System.Action<SkeletalAnimation> ActionStarted;
-        public bool PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction, double? endsAt = null)
+        public bool PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction, double? endsAt = null, string performance = "")
         {
             if (UnableToAct || reaction && (actionPending || IsPlayingAction)) return false;
             if (actionLoading != null) StopCoroutine(actionLoading);
             ActionId++;
             actionDeadline = endsAt;
-            actionLoading = StartCoroutine(LoadAction(assets, name, weapon));
+            actionLoading = StartCoroutine(LoadAction(assets, name, weapon, performance));
             return true;
         }
-        internal IEnumerator LoadAction(TreRuntimeAssets assets, string name, string weapon)
+        internal IEnumerator LoadAction(TreRuntimeAssets assets, string name, string weapon, string performance = "")
         {
             var posture = Posture;
             var actionRigs = rigs.ToArray();
             actionPending = true;
-            var read = assets.ReadAsync(_ => actionRigs.Select(rig => rig.Skeleton.ResolveAction(name, weapon, posture)).ToArray());
+            var read = assets.ReadAsync(_ => actionRigs.Select(rig => rig.Skeleton.ResolveAction(name, weapon, posture, performance: performance)).ToArray());
             yield return new WaitUntil(() => read.IsCompleted);
             actionPending = false;
             if (Posture != posture || UnableToAct) yield break;
@@ -240,6 +259,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
                 var transition = rig.TransitionIndex < rig.Transitions.Count ? rig.Transitions[rig.TransitionIndex] : null;
                 var idleClip = ridingPose != null && rig.Skeleton.RidingPoses.TryGetValue(ridingPose, out var ridingClip) ? ridingClip
                     : rig.CombatIdle != null ? rig.CombatIdle
+                    : rig.Ambient != null && (Posture == CreaturePosture.Upright || Posture == CreaturePosture.SkillAnimating) ? rig.Ambient
                     : rig.Skeleton.Postures.TryGetValue(Posture, out var postureClip) ? postureClip : rig.Skeleton.Idle;
                 for (int i = 0; i < rig.Bones.Length; i++)
                 {

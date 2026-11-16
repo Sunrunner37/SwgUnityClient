@@ -32,7 +32,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 endsAt = recovery.EndsAt;
                 counter = recovery.ActionCounter;
             }
-            if (!animation.PlayAction(assets, name, weapon, reaction, endsAt)) return;
+            if (!animation.PlayAction(assets, name, weapon, reaction, endsAt, creature.PerformanceType > 0 ? creature.PerformanceAnimation : "")) return;
             awaitingDuration = !reaction && queue != null && !endsAt.HasValue;
             if (counter.HasValue) appliedRecovery = counter;
         }
@@ -43,6 +43,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             appliedRecovery = counter;
             awaitingDuration = false;
         }
+        void RefreshPerformance() => animation.SetAmbient(assets, creature.PerformanceType > 0 ? creature.PerformanceAnimation : "", creature.MoodAnimation);
         void RefreshStance() => animation.SetCombatStance(assets, combat.WeaponStance(creature), creature.IsInCombat);
         public void Initialize(CreatureSceneObject creature, CharacterAnimation animation)
         {
@@ -61,6 +62,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             registry.Subscribe(swgId, OnChanged);
             animation.SetPosture(creature.Posture, true);
             RefreshStance();
+            RefreshPerformance();
         }
         void OnChanged(SceneObjectChange changes)
         {
@@ -68,6 +70,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 registry.TryGet<CreatureSceneObject>(swgId, out creature);
             if (creature != null && (changes & (SceneObjectChange.Posture | SceneObjectChange.Replaced)) != 0)
                 animation.SetPosture(creature.Posture);
+            if (creature != null && (changes & (SceneObjectChange.Performance | SceneObjectChange.Replaced)) != 0)
+                RefreshPerformance();
             if (creature != null && (changes & (SceneObjectChange.State | SceneObjectChange.Posture | SceneObjectChange.Replaced)) != 0)
                 RefreshStance();
         }

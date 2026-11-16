@@ -64,6 +64,8 @@ namespace Swg.Client.Runtime.Commands
             {
                 // Group membership is validated by Core3; these commands need no ability grant.
                 case "invite": Enqueue("invite", arguments, targeting.SelectedSwgId, "Invite"); return;
+                case "listen": case "watch": case "stoplistening": case "stopwatching":
+                    Enqueue(name, arguments, targeting.SelectedSwgId, name); return;
                 case "join": Enqueue("join", "", default, "Join"); return;
                 case "say": chat.SendSpatial(arguments); return;
                 case "planet": chat.SendRoom("Planet", arguments, out error); return;

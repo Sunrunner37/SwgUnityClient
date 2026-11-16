@@ -25,6 +25,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public SwgId? TargetSwgId;
         public SwgId? WeaponSwgId;
         public SwgId? GroupSwgId;
+        public string PerformanceAnimation;
+        public string MoodAnimation;
+        public int? PerformanceType;
+        public SwgId? ListenSwgId;
         public int? BattleFatigue;
         public HamPoolUpdate Ham;
         public Action<List<string>> Skills;
@@ -37,6 +41,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             | (CashCredits.HasValue || BankCredits.HasValue ? SceneObjectChange.Inventory : SceneObjectChange.None)
             | (States.HasValue || WeaponSwgId.HasValue ? SceneObjectChange.State : SceneObjectChange.None)
             | (Posture.HasValue ? SceneObjectChange.Posture : SceneObjectChange.None)
+            | (PerformanceAnimation != null || MoodAnimation != null || PerformanceType.HasValue || ListenSwgId.HasValue ? SceneObjectChange.Performance : SceneObjectChange.None)
             | (GroupSwgId.HasValue ? SceneObjectChange.Group : SceneObjectChange.None)
             | (TargetSwgId.HasValue ? SceneObjectChange.Target : SceneObjectChange.None);
         internal override Type RequiredType => typeof(CreatureSceneObject);

@@ -27,6 +27,11 @@ namespace Swg.Client.Core.Characters
         }
         public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
         public WeaponRanges WeaponRanges { get; internal set; }
+        readonly Dictionary<uint, double> buffs = new Dictionary<uint, double>();
+        public IReadOnlyDictionary<uint, double> Buffs => buffs;
+        public event Action BuffsChanged;
+        internal void AddBuff(uint crc, double expiresAt) { buffs[crc] = expiresAt; BuffsChanged?.Invoke(); }
+        internal void RemoveBuff(uint crc) { if (buffs.Remove(crc)) BuffsChanged?.Invoke(); }
         public PlayerCommands Commands { get; } = new PlayerCommands();
         public SwgId SwgId { get; private set; }
         readonly Dictionary<string, int> experience = new Dictionary<string, int>();
@@ -111,6 +116,8 @@ namespace Swg.Client.Core.Characters
         }
         internal void BeginScene(SwgId swgId)
         {
+            buffs.Clear();
+            BuffsChanged?.Invoke();
             CharacterSheet = new CharacterSheetData();
             WeaponRanges = default;
             experience.Clear();

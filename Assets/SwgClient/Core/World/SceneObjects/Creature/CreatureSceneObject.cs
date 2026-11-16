@@ -20,6 +20,12 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public SwgId WeaponSwgId;
         public SwgId GroupSwgId;
         public HamPool Ham;
+        public string PerformanceAnimation = "";
+        public string MoodAnimation = "";
+        public int PerformanceType;
+        public SwgId ListenSwgId;
+        public bool IsPlayingMusic => PerformanceType > 0 && PerformanceAnimation.StartsWith("music_", StringComparison.Ordinal);
+        public bool IsDancing => PerformanceType > 0 && PerformanceAnimation.StartsWith("dance_", StringComparison.Ordinal);
         public int BattleFatigue;
         public List<string> Skills = new List<string>();
         public Dictionary<string, int> SkillModifiers = new Dictionary<string, int>();
@@ -42,6 +48,10 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
                 CashCredits = update.CashCredits.Value;
             if (update.BankCredits.HasValue)
                 BankCredits = update.BankCredits.Value;
+            if (update.PerformanceAnimation != null) PerformanceAnimation = update.PerformanceAnimation;
+            if (update.MoodAnimation != null) MoodAnimation = update.MoodAnimation;
+            if (update.PerformanceType.HasValue) PerformanceType = update.PerformanceType.Value;
+            if (update.ListenSwgId.HasValue) ListenSwgId = update.ListenSwgId.Value;
             if (update.GroupSwgId.HasValue) GroupSwgId = update.GroupSwgId.Value;
             if (update.WeaponSwgId.HasValue) WeaponSwgId = update.WeaponSwgId.Value;
             if (update.TargetSwgId.HasValue)

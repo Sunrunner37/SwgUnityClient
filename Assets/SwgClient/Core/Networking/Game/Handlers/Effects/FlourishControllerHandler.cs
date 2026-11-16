@@ -1,5 +1,5 @@
 using Swg.Client.Core.Networking.Game.Packets.Effects;
-using System;
+using Swg.Client.Runtime.Networking;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Effects
@@ -10,14 +10,13 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Effects
     {
         public override uint ControllerType => FlourishPacket.ControllerType;
 
+        readonly ClientCombat combat;
         [Preserve]
-        public FlourishControllerHandler() : base(FlourishPacket.ReadFrom)
-        {
-        }
+        public FlourishControllerHandler(ClientCombat combat) : base(FlourishPacket.ReadFrom) => this.combat = combat;
 
         protected override void Handle(FlourishPacket packet)
         {
-            throw new NotImplementedException($"Flourish (controller 0x{ControllerType:X8})");
+            combat.Receive(packet);
         }
     }
 }

@@ -10,8 +10,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.U32();
             ReplicationReader.SkipVector(reader, sizeof(ulong)); // Tangible defenders.
             reader.U16(); // Level.
-            reader.Ascii(); // Performance animation.
-            reader.Ascii(); // Mood.
+            string performance = reader.Ascii();
+            string mood = reader.Ascii();
             SwgId weaponSwgId = reader.U64();
             SwgId groupSwgId = reader.U64();
             reader.Skip(2 * sizeof(ulong)); // Inviter and invite counter.
@@ -19,7 +19,7 @@ namespace Swg.Client.Core.Networking.Game.Replication
             SwgId targetSwgId = reader.U64();
             reader.Byte(); // Mood ID.
             reader.U32(); // Performance start time.
-            reader.U32(); // Performance type.
+            int performanceType = unchecked((int)reader.U32());
             var ham = ReplicationReader.ReadIntVector(reader);
             var maxHam = ReplicationReader.ReadIntVector(reader);
             int count = reader.Count();
@@ -31,6 +31,9 @@ namespace Swg.Client.Core.Networking.Game.Replication
             reader.Byte(); // Frozen.
             return new CreatureSceneObjectUpdate
             {
+                PerformanceAnimation = performance,
+                MoodAnimation = mood,
+                PerformanceType = performanceType,
                 WeaponSwgId = weaponSwgId,
                 GroupSwgId = groupSwgId,
                 TargetSwgId = targetSwgId,
@@ -55,9 +58,11 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     reader.U16();
                     break; // Level.
                 case 3:
+                    update.PerformanceAnimation = reader.Ascii();
+                    break;
                 case 4:
-                    reader.Ascii();
-                    break; // Performance and mood.
+                    update.MoodAnimation = reader.Ascii();
+                    break;
                 case 5:
                     update.WeaponSwgId = reader.U64();
                     break;
@@ -72,8 +77,10 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     break; // Group invitation.
                 case 8:
                 case 11:
-                case 12:
                     reader.U32();
+                    break;
+                case 12:
+                    update.PerformanceType = unchecked((int)reader.U32());
                     break;
                 case 10:
                 case 17:

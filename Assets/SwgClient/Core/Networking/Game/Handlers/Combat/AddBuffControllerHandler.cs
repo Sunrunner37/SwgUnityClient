@@ -1,23 +1,21 @@
 using Swg.Client.Core.Networking.Game.Packets.Combat;
-using System;
+using Swg.Client.Runtime.Networking;
+using UnityEngine;
 using UnityEngine.Scripting;
 
 namespace Swg.Client.Core.Networking.Game.Handlers.Combat
 {
-    // Core3/MMOCoreORB/src/server/zone/packets/object/Buffs.h:10 (AddBuffMessage).
     [Preserve]
     internal sealed class AddBuffControllerHandler : ObjectControllerHandler<AddBuffPacket>
     {
+        readonly GameReplication replication;
         public override uint ControllerType => AddBuffPacket.ControllerType;
-
         [Preserve]
-        public AddBuffControllerHandler() : base(AddBuffPacket.ReadFrom)
+        public AddBuffControllerHandler(GameReplication replication) : base(AddBuffPacket.ReadFrom) => this.replication = replication;
+        protected override void Handle(AddBuffPacket packet) => replication.UpdatePlayer(player =>
         {
-        }
-
-        protected override void Handle(AddBuffPacket packet)
-        {
-            throw new NotImplementedException($"AddBuffMessage (controller 0x{ControllerType:X8})");
-        }
+            if (player.SwgId.Value == packet.ReceiverSwgId)
+                player.AddBuff(packet.BuffCrc, Time.realtimeSinceStartupAsDouble + packet.Duration);
+        });
     }
 }

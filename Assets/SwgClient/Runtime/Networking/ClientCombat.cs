@@ -88,6 +88,11 @@ namespace Swg.Client.Runtime.Networking
             }
             catch (Exception error) { Debug.LogException(error); }
         }
+        public void Receive(FlourishPacket packet) => context.Post(_ =>
+        {
+            if (!disposed && packet.FlourishId >= 1 && packet.FlourishId <= 8)
+                Play(packet.ReceiverSwgId, "skill_action_" + packet.FlourishId);
+        }, null);
         public void Receive(AnimationPacket packet) => context.Post(_ => { if (!disposed) Play(packet.ReceiverSwgId, packet.Animation); }, null);
         public void Dispose() { disposed = true; listeners.Clear(); ActionReceived = null; PlaybackRequested = null; }
     }
