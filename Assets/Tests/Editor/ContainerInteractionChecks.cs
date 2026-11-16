@@ -30,15 +30,15 @@ namespace Swg.Client.Tests.Editor
     {
         [TestCase(0x2005)] [TestCase(0x2015)] [TestCase(0x2027)] [TestCase(0x2034)] public void ContainerTypesOfferOpenAndTheBlueUseCursor(int type)
         {
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), type, out byte action), Is.True);
-            Assert.That(action, Is.EqualTo(ObjectMenuDefaults.OpenAction));
-            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), type, true), Is.EqualTo(ClientCursor.WorldCursor.Use));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
+            Assert.That(action, Is.SameAs(ObjectMenuAction.Open));
+            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), (ObjectTypeId)type, true), Is.EqualTo(ClientCursor.WorldCursor.Use));
         }
         [TestCase(0x200a)] [TestCase(0x2018)] public void FoodAndDrinkKeepServerUseAndUseTheEatCursor(int type)
         {
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), type, out byte action), Is.True);
-            Assert.That(action, Is.EqualTo(ObjectMenuDefaults.UseAction));
-            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), type, true), Is.EqualTo(ClientCursor.WorldCursor.Eat));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)type, out var action), Is.True);
+            Assert.That(action, Is.SameAs(ObjectMenuAction.Use));
+            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), (ObjectTypeId)type, true), Is.EqualTo(ClientCursor.WorldCursor.Eat));
         }
         [Test] public async Task ContainerRepliesOpenIndependentViewsWithoutReplacingThePlayerInventory()
         {
@@ -115,7 +115,7 @@ namespace Swg.Client.Tests.Editor
             interactions.ExamineRequested += id => target=id;
             interactions.ActivateDefault(3);
             Assert.That(target, Is.EqualTo(new SwgId(3)));
-            interactions.SelectMenuAction(3,ObjectMenuDefaults.OpenAction,1);
+            interactions.SelectMenuAction(3, ObjectMenuAction.Open);
             Assert.That(command, Is.EqualTo("openContainer"));
             Assert.That(target, Is.EqualTo(new SwgId(3)));
         }

@@ -83,7 +83,7 @@ namespace Swg.Client.Tests.Editor
         {
             using var stream = new MemoryStream();
             using var writer = new BinaryWriter(stream);
-            new ObjectMenuSelectPacket(123, ObjectMenuDefaults.VehicleGenerateAction).WriteTo(writer);
+            new ObjectMenuSelectPacket(123, ObjectMenuAction.VehicleGenerate.Id).WriteTo(writer);
             var reader = new ByteReader(stream.ToArray());
             Assert.That(reader.U16(), Is.EqualTo(3));
             Assert.That(reader.U32(), Is.EqualTo(0x7ca18726u));
@@ -131,7 +131,7 @@ namespace Swg.Client.Tests.Editor
             interactions.ActivateDefault(10);
             Assert.That(sent.RadialId, Is.EqualTo(61));
             Assert.That(device.IsActive, Is.True);
-            interactions.SelectMenuAction(11, ObjectMenuDefaults.VehicleStoreAction);
+            interactions.SelectMenuAction(11, ObjectMenuAction.VehicleStore.Id);
             Assert.That(sent.TargetSwgId, Is.EqualTo((SwgId)11));
             Assert.That(sent.RadialId, Is.EqualTo(61));
         }
@@ -146,11 +146,11 @@ namespace Swg.Client.Tests.Editor
             ObjectMenuRequestPacket request = default;
             using var interactions = new ClientObjectInteractions(state, packet => request = packet, _ => { }, _ => { }, (name, arguments, target) => { }, currentPlayer);
             interactions.RequestMenu(10);
-            Assert.That(request.Items[0].RadialId, Is.EqualTo(ObjectMenuDefaults.ExamineAction));
-            Assert.That(request.Items[1].RadialId, Is.EqualTo(ObjectMenuDefaults.VehicleGenerateAction));
+            Assert.That(request.Items[0].RadialId, Is.EqualTo(ObjectMenuAction.Examine.Id));
+            Assert.That(request.Items[1].RadialId, Is.EqualTo(ObjectMenuAction.VehicleGenerate.Id));
             device.Apply(new IntangibleSceneObjectUpdate { Status = 1 });
             interactions.RequestMenu(10);
-            Assert.That(request.Items[1].RadialId, Is.EqualTo(ObjectMenuDefaults.VehicleStoreAction));
+            Assert.That(request.Items[1].RadialId, Is.EqualTo(ObjectMenuAction.VehicleStore.Id));
         }
     }
 }

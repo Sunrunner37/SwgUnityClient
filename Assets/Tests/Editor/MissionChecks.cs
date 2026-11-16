@@ -213,9 +213,9 @@ namespace Swg.Client.Tests.Editor
         [Test] public void AcceptedMissionReusesTheDatapadRadialWithDetailsAndAbort()
         {
             var state = State(out var currentPlayer); var mission = Offer(state, 10); state.SceneObjects.Reparent(10,3);
-            var menu = ObjectMenuDefaults.Create(mission, 0x803);
-            Assert.That(menu.Any(entry => entry.RadialId == ObjectMenuDefaults.MissionDetailsAction), Is.True);
-            Assert.That(menu.Any(entry => entry.RadialId == ObjectMenuDefaults.MissionAbortAction), Is.True);
+            var menu = ObjectMenuDefaults.Create(mission, (ObjectTypeId)0x803);
+            Assert.That(menu.Any(entry => entry.RadialId == ObjectMenuAction.MissionDetails.Id), Is.True);
+            Assert.That(menu.Any(entry => entry.RadialId == ObjectMenuAction.MissionAbort.Id), Is.True);
         }
         [Test] public void MissionHudUsesEditableWindowsAndOriginalArtBindings()
         {
@@ -224,7 +224,7 @@ namespace Swg.Client.Tests.Editor
             Assert.That(((RectTransform)view.details.transform).sizeDelta, Is.EqualTo(new Vector2(795,494)));
             Assert.That(view.downloadBlocks.Length, Is.EqualTo(9)); Assert.That(view.UiPrefabs.Count(), Is.EqualTo(2));
             Assert.That(view.detailAccept.onClick.GetPersistentEventCount(), Is.EqualTo(1));
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), 0x4006, out var action), Is.True); Assert.That(action, Is.EqualTo(ObjectMenuDefaults.MissionListAction));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(new TangibleSceneObject(), (ObjectTypeId)0x4006, out var action), Is.True); Assert.That(action, Is.SameAs(ObjectMenuAction.MissionList));
         }
     }
 }

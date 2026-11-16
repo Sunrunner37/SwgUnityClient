@@ -19,11 +19,11 @@ namespace Swg.Client.Runtime.UI
         readonly Dictionary<WorldCursor, Texture2D> worldTextures = new Dictionary<WorldCursor, Texture2D>();
         public enum WorldCursor { Default, Examine, Attack, Talk, Use, Eat }
 
-        public static WorldCursor ForObject(SceneObject sceneObject, int objectType, bool useAction)
+        public static WorldCursor ForObject(SceneObject sceneObject, ObjectTypeId objectType, bool useAction)
         {
-            if (ObjectMenuDefaults.IsContainer(objectType)) return WorldCursor.Use;
-            if (ObjectMenuDefaults.IsConsumable(objectType)) return WorldCursor.Eat;
-            if (ObjectMenuDefaults.IsVehicle(objectType)) return WorldCursor.Examine;
+            if (objectType.IsContainer()) return WorldCursor.Use;
+            if (objectType.IsConsumable()) return WorldCursor.Eat;
+            if (objectType.IsVehicle()) return WorldCursor.Examine;
             if (sceneObject is TangibleSceneObject tangible)
             {
                 if (tangible.CanConverse) return WorldCursor.Talk;

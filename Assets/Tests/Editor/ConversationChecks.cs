@@ -120,9 +120,9 @@ namespace Swg.Client.Tests.Editor
         public void ConversableObjectsSupplyTheSameDefaultAndRadialAction()
         {
             var npc = new TangibleSceneObject { Options = 8 };
-            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(npc, 0x400, out var action), Is.True);
-            Assert.That(action, Is.EqualTo(ObjectMenuDefaults.ConverseStartAction));
-            Assert.That(ObjectMenuDefaults.Create(npc, 0x400)[1].Callback, Is.EqualTo(1));
+            Assert.That(ObjectMenuDefaults.TryGetDefaultAction(npc, (ObjectTypeId)0x400, out var action), Is.True);
+            Assert.That(action, Is.SameAs(ObjectMenuAction.ConverseStart));
+            Assert.That(ObjectMenuDefaults.Create(npc, (ObjectTypeId)0x400)[1].Callback, Is.EqualTo(1));
         }
 
         [Test]

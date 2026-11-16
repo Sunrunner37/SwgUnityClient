@@ -136,16 +136,16 @@ namespace Swg.Client.Tests.Editor
                 SwgId target = default;
                 int callbacks = 0;
                 using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, _ => callbacks++, (name, arguments, swgId) => { command = name; target = swgId; }, currentPlayer);
-                interactions.SelectMenuAction(2, ObjectMenuDefaults.VehicleEnterExitAction, 1);
+                interactions.SelectMenuAction(2, ObjectMenuAction.VehicleEnterExit.Id, 1);
                 Assert.That(command, Is.EqualTo("mount"));
                 Assert.That(target, Is.EqualTo((SwgId)2));
                 Assert.That(player.Mount, Is.Null);
                 registry.Reparent(1, 2);
-                interactions.SelectMenuAction(2, ObjectMenuDefaults.VehicleEnterExitAction, 1);
+                interactions.SelectMenuAction(2, ObjectMenuAction.VehicleEnterExit.Id, 1);
                 Assert.That(command, Is.EqualTo("dismount"));
                 Assert.That(player.Mount, Is.SameAs(vehicle));
                 Assert.That(callbacks, Is.Zero, "Core3 does not handle action 205 as ObjectMenuSelect.");
-                interactions.SelectMenuAction(2, ObjectMenuDefaults.VehicleEnterExitAction, 3);
+                interactions.SelectMenuAction(2, ObjectMenuAction.VehicleEnterExit.Id, 3);
                 Assert.That(callbacks, Is.EqualTo(1), "An explicitly server-owned callback is still forwarded unchanged.");
             }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }

@@ -51,7 +51,7 @@ namespace Swg.Client.Runtime.Networking
         public void Activate(SwgId swgId)
         {
             if (state.SceneObjects.TryGet<TangibleSceneObject>(swgId, out var item)
-                && !ObjectMenuDefaults.IsContainer(state.Templates.GameObjectType(item.TemplatePath)) && CanEquip(item))
+                && !((ObjectTypeId)state.Templates.GameObjectType(item.TemplatePath)).IsContainer() && CanEquip(item))
             {
                 bool equipped = IsEquipped(item);
                 var destination = equipped ? ContainerSwgId : currentPlayer.SwgId;

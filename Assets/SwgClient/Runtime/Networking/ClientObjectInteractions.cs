@@ -53,40 +53,42 @@ namespace Swg.Client.Runtime.Networking
             sendMenu(new ObjectMenuRequestPacket(currentPlayer.SwgId, swgId, defaults, unchecked(++counter)));
         }
 
-        internal int ObjectType(SceneObject sceneObject) => sceneObject == null ? 0 : state.Templates.GameObjectType(sceneObject.TemplatePath);
+        internal ObjectTypeId ObjectType(SceneObject sceneObject) => sceneObject == null ? ObjectTypeId.Unknown : (ObjectTypeId)state.Templates.GameObjectType(sceneObject.TemplatePath);
 
-        public bool IsActiveControlDevice(SwgId swgId) => state.SceneObjects.TryGet<IntangibleSceneObject>(swgId, out var device) && device.IsActive && ObjectMenuDefaults.IsControlDevice(ObjectType(device));
+        public bool IsActiveControlDevice(SwgId swgId) => state.SceneObjects.TryGet<IntangibleSceneObject>(swgId, out var device) && device.IsActive && ObjectType(device).IsControlDevice();
 
         public bool HasDefaultAction(SwgId swgId) => state.SceneObjects.TryGet(swgId, out var sceneObject) && ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out _);
 
         public void ActivateDefault(SwgId swgId)
         {
             if (!state.SceneObjects.TryGet(swgId, out var sceneObject)) return;
-            if (ObjectMenuDefaults.IsVehicle(ObjectType(sceneObject)))
-                SelectMenuAction(swgId, ObjectMenuDefaults.VehicleEnterExitAction, 1);
-            else if (ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out byte action))
+            if (ObjectType(sceneObject).IsVehicle())
+                SelectMenuAction(swgId, ObjectMenuAction.VehicleEnterExit);
+            else if (ObjectMenuDefaults.TryGetDefaultAction(sceneObject, ObjectType(sceneObject), out var action))
                 SelectMenuAction(swgId, action);
             else
                 ExamineRequested?.Invoke(swgId);
         }
+        public void SelectMenuAction(SwgId swgId, ObjectMenuAction action) => SelectMenuAction(swgId, action.Id, action.Callback);
+
         public void SelectMenuAction(SwgId swgId, byte radialId, byte callback = 3)
         {
             state.SceneObjects.TryGet(swgId, out var sceneObject);
-            if (radialId == ObjectMenuDefaults.OpenAction)
+            if (radialId == ObjectMenuAction.Open.Id)
                 enqueueCommand("openContainer", "", swgId);
-            else if (radialId == ObjectMenuDefaults.ConverseStartAction)
+            else if (radialId == ObjectMenuAction.ConverseStart.Id)
                 GameServices.Resolve<ClientConversation>().Start(swgId);
-            else if (radialId == ObjectMenuDefaults.ConverseStopAction)
+            else if (radialId == ObjectMenuAction.ConverseStop.Id)
                 GameServices.Resolve<ClientConversation>().Stop();
-            else if (radialId == ObjectMenuDefaults.MissionListAction && ObjectMenuDefaults.IsMissionTerminal(ObjectType(sceneObject)))
+            else if (radialId == ObjectMenuAction.MissionList.Id && ObjectType(sceneObject).IsMissionTerminal())
                 GameServices.Resolve<ClientMissions>().Open(swgId);
-            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionDetailsAction)
+            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuAction.MissionDetails.Id)
                 GameServices.Resolve<ClientMissions>().ShowDetails(swgId);
-            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuDefaults.MissionAbortAction)
+            else if (sceneObject is MissionSceneObject && radialId == ObjectMenuAction.MissionAbort.Id)
                 GameServices.Resolve<ClientMissions>().RequestAbort(swgId);
-            else if (radialId == ObjectMenuDefaults.UseAction && ObjectMenuDefaults.IsCrafting(ObjectType(sceneObject)))
+            else if (radialId == ObjectMenuAction.Use.Id && ObjectType(sceneObject).IsCrafting())
                 enqueueCommand("requestCraftingSession", "", swgId);
-            else if (callback == 1 && radialId == ObjectMenuDefaults.VehicleEnterExitAction)
+            else if (callback == 1 && radialId == ObjectMenuAction.VehicleEnterExit.Id)
             {
                 state.SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var player);
                 enqueueCommand(player?.Mount != null ? "dismount" : "mount", "", swgId);

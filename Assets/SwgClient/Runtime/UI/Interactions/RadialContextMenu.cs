@@ -108,7 +108,7 @@ namespace Swg.Client.Runtime.UI.Interactions
             }
             Close();
             if (localSelection != null) { localSelection(entry); return; }
-            if (entry.RadialId == ObjectMenuDefaults.ExamineAction)
+            if (entry.RadialId == ObjectMenuAction.Examine.Id)
                 examineWindow.Open(interactions.MenuTargetSwgId);
             else
                 interactions.SelectMenuAction(interactions.MenuTargetSwgId, entry.RadialId, entry.Callback);
@@ -117,7 +117,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         {
             if (!string.IsNullOrEmpty(entry.Text))
                 return localizer.Localize(entry.Text);
-            string reference = ObjectMenuDefaults.CaptionReference(entry.RadialId);
+            string reference = ObjectMenuAction.TryGet(entry.RadialId, out var action) ? action.Caption : "";
             if (!string.IsNullOrEmpty(reference))
                 return localizer.Localize(reference);
             return entry.RadialId < captions.Length ? localizer.Lookup("ui_radial", captions[entry.RadialId].ToLowerInvariant()) : "Option " + entry.RadialId;

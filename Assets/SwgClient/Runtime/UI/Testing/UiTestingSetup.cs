@@ -278,10 +278,10 @@ namespace Swg.Client.Runtime.UI.Testing
         void ApplyOfflineMenuSelection(WorldState world, ObjectMenuSelectPacket packet)
         {
             Debug.Log("Offline radial: " + packet.RadialId + " on " + packet.TargetSwgId);
-            bool activate = packet.RadialId == ObjectMenuDefaults.VehicleGenerateAction || packet.RadialId == ObjectMenuDefaults.PetCallAction;
-            bool store = packet.RadialId == ObjectMenuDefaults.VehicleStoreAction || packet.RadialId == ObjectMenuDefaults.PetStoreAction;
+            bool activate = packet.RadialId == ObjectMenuAction.VehicleGenerate.Id || packet.RadialId == ObjectMenuAction.PetCall.Id;
+            bool store = packet.RadialId == ObjectMenuAction.VehicleStore.Id || packet.RadialId == ObjectMenuAction.PetStore.Id;
             if (!activate && !store) return;
-            if (!world.SceneObjects.TryGet<IntangibleSceneObject>(packet.TargetSwgId, out var device) || !ObjectMenuDefaults.IsControlDevice(world.Templates.GameObjectType(device.TemplatePath))) return;
+            if (!world.SceneObjects.TryGet<IntangibleSceneObject>(packet.TargetSwgId, out var device) || !((ObjectTypeId)world.Templates.GameObjectType(device.TemplatePath)).IsControlDevice()) return;
             var update = new IntangibleSceneObjectUpdate { Status = activate ? 1 : 0 };
             device.Apply(update);
             world.SceneObjects.NotifyChanged(device, update.Changes);

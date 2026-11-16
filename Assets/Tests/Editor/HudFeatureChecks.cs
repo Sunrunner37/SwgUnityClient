@@ -31,16 +31,16 @@ namespace Swg.Client.Tests.Editor
         public void HoverCursorUsesServerCapabilitiesAndKeepsVehiclesExaminable()
         {
             var npc = new CreatureSceneObject();
-            Assert.That(ClientCursor.ForObject(npc, 0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
+            Assert.That(ClientCursor.ForObject(npc, (ObjectTypeId)0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
             npc.PvpStatus = 1;
-            Assert.That(ClientCursor.ForObject(npc, 0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Attack));
+            Assert.That(ClientCursor.ForObject(npc, (ObjectTypeId)0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Attack));
             npc.Options = 8;
-            Assert.That(ClientCursor.ForObject(npc, 0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Talk));
-            Assert.That(ClientCursor.ForObject(npc, 0x10001, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
+            Assert.That(ClientCursor.ForObject(npc, (ObjectTypeId)0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Talk));
+            Assert.That(ClientCursor.ForObject(npc, (ObjectTypeId)0x10001, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
             npc.Options = 0;
             npc.Posture = CreaturePosture.Dead;
-            Assert.That(ClientCursor.ForObject(npc, 0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
-            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), 0x4006, true), Is.EqualTo(ClientCursor.WorldCursor.Use));
+            Assert.That(ClientCursor.ForObject(npc, (ObjectTypeId)0x400, false), Is.EqualTo(ClientCursor.WorldCursor.Examine));
+            Assert.That(ClientCursor.ForObject(new TangibleSceneObject(), (ObjectTypeId)0x4006, true), Is.EqualTo(ClientCursor.WorldCursor.Use));
         }
 
         [Test]

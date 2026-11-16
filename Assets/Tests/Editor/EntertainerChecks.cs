@@ -55,16 +55,16 @@ namespace Swg.Client.Tests.Editor
             Assert.That(creature.IsPlayingMusic, Is.False);
             Assert.That(creature.ListenSwgId.IsNone, Is.True);
         }
-        [TestCase(ObjectMenuDefaults.ListenAction)]
-        [TestCase(ObjectMenuDefaults.WatchAction)]
-        [TestCase(ObjectMenuDefaults.StopListenAction)]
-        [TestCase(ObjectMenuDefaults.StopWatchAction)]
+        [TestCase((byte)113)]
+        [TestCase((byte)114)]
+        [TestCase((byte)115)]
+        [TestCase((byte)116)]
         public void EntertainerRadialActionsStayServerOwned(byte action)
         {
             var state = GameServicesForTests.CreateState(out var player); player.BeginScene(11);
             var performer = new CreatureSceneObject { SwgId = 42, PerformanceType = 1, PerformanceAnimation = "music_2" };
             state.SceneObjects.Add(performer);
-            Assert.That(ObjectMenuDefaults.Create(performer, 0x409).Any(entry => entry.RadialId >= 113 && entry.RadialId <= 116), Is.False);
+            Assert.That(ObjectMenuDefaults.Create(performer, (ObjectTypeId)0x409).Any(entry => entry.RadialId >= 113 && entry.RadialId <= 116), Is.False);
             var selections = new List<(ulong Target, byte Action)>();
             using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { }, packet => selections.Add((packet.TargetSwgId.Value, packet.RadialId)), (_, _, _) => Assert.Fail("Core3 handles the server-provided radial action"), player);
             interactions.SelectMenuAction(42, action, 3);

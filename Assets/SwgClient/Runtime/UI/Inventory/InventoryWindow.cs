@@ -161,9 +161,9 @@ namespace Swg.Client.Runtime.UI.Inventory
         void UpdateCell(ContainerItem cell, TangibleSceneObject item)
         {
             cell.CanActivate = true; // Examine is the fallback double-click action.
-            int type = interactions.ObjectType(item);
-            cell.ActivationCursor = ObjectMenuDefaults.IsContainer(type) ? ClientCursor.WorldCursor.Use
-                : ObjectMenuDefaults.IsConsumable(type) ? ClientCursor.WorldCursor.Eat
+            ObjectTypeId type = interactions.ObjectType(item);
+            cell.ActivationCursor = type.IsContainer() ? ClientCursor.WorldCursor.Use
+                : type.IsConsumable() ? ClientCursor.WorldCursor.Eat
                 : interactions.HasDefaultAction(item.SwgId) || ClientInventory.CanEquip(item) ? ClientCursor.WorldCursor.Default : ClientCursor.WorldCursor.Examine;
             cell.itemName.text = names.Resolve(item);
             cell.quantity.text = item.Quantity > 1 ? (item.Quantity >= 1000 ? (item.Quantity / 1000).ToString() + "k" : item.Quantity.ToString()) : "";
