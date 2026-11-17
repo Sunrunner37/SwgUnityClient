@@ -140,6 +140,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 else if (root.Kind == "PRTO")
                 {
                     result.PortalLayout = PortalLayout.Parse(root, loader.Read);
+                    result.Doors.AddRange(DoorAppearance.Load(loader, result.PortalLayout, detailLevel, customization));
                     foreach (var cell in result.PortalLayout.Cells)
                     {
                         if (string.IsNullOrEmpty(cell.AppearancePath)) continue;

@@ -20,13 +20,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
             foreach (var light in cell.Lights)
             {
                 if (light.Type == PortalLayout.LightType.Ambient)
-                    ambient += ToLinear(light.Diffuse);
+                    ambient += light.Diffuse;
                 else if (light.Type == PortalLayout.LightType.Directional)
                 {
                     // Native K is the light's outgoing direction (D3D9 Direction); shading uses -K.
                     Vector3 direction = -(Vector3)(building * light.Transform).GetColumn(2);
                     direction.Normalize();
-                    direct.Add((new Vector4(direction.x, direction.y, direction.z, 0), ToLinear(light.Diffuse), Vector3.right, Vector4.zero));
+                    direct.Add((new Vector4(direction.x, direction.y, direction.z, 0), light.Diffuse, Vector3.right, Vector4.zero));
                 }
             }
             foreach (var light in pointLights)
@@ -38,18 +38,13 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 // This keeps a display's pool below it; un-oriented point lights stay omnidirectional.
                 Vector3 down = -(Vector3)building.GetColumn(1).normalized;
                 var emission = Vector3.Dot(direction, down) > .5f ? new Vector4(direction.x, direction.y, direction.z, 1) : Vector4.zero;
-                direct.Add((new Vector4(position.x, position.y, position.z, 1), ToLinear(light.Diffuse), light.Attenuation, emission));
+                direct.Add((new Vector4(position.x, position.y, position.z, 1), light.Diffuse, light.Attenuation, emission));
             }
             lights = direct.ToArray();
         }
 
-        // Legacy authored colors are display-space. Preserve HDR intensity separately from hue.
-        internal static Color ToLinear(Color color)
-        {
-            float intensity = Mathf.Max(1, color.maxColorComponent);
-            return (color / intensity).linear * intensity;
-        }
-
+        // Keep authored lighting in display space until after the shader applies its legacy
+        // attenuation and accumulates it. Converting each source first brightens distant lights.
         public void Apply(GameObject body)
         {
             var properties = new MaterialPropertyBlock();

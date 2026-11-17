@@ -80,6 +80,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             if (material.HasProperty("_EmissionColor")) material.SetColor("_EmissionColor", source.Emission);
             if (material.HasProperty("_Fullbright")) material.SetFloat("_Fullbright", source.Fullbright ? 1 : 0);
             if (material.HasProperty("_VertexColorAmbientOnly")) material.SetFloat("_VertexColorAmbientOnly", source.VertexColorAmbientOnly ? 1 : 0);
+            if (material.HasProperty("_PrecalculatedVertexLighting")) material.SetFloat("_PrecalculatedVertexLighting", source.PrecalculatedVertexLighting ? 1 : 0);
             if (source.AlphaBlend)
             {
                 material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);

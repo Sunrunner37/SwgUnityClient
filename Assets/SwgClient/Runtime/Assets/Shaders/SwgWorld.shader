@@ -22,6 +22,7 @@ Shader "SWG/World"
         _FloraTint("Flora terrain tint", Color) = (1,1,1,1)
         _Cutoff("Alpha cutoff", Range(0,1)) = 0
         _UseVertexColor("Use vertex color", Float) = 0
+        [HideInInspector] _PrecalculatedVertexLighting("Precalculated vertex lighting", Float) = 0
         [HideInInspector] _VertexColorAmbientOnly("Vertex color affects ambient only", Float) = 0
         _Billboard("Billboard", Float) = 0
         _SwayDisplacement("Sway displacement", Float) = 0
@@ -77,6 +78,7 @@ Shader "SWG/World"
             float _SwgPreview;
             half _UseVertexColor;
             half _VertexColorAmbientOnly;
+            half _PrecalculatedVertexLighting;
             float _Billboard;
             float _SwayDisplacement;
             float _SwayPeriod;
@@ -218,11 +220,24 @@ Shader "SWG/World"
                 ClipFloraFade(input.worldPosition, input.positionCS.xy, input.floraSeed, false);
                 half3 normal = normalize(input.normalWS);
                 half3 vertexTint = lerp(half3(1,1,1), input.color.rgb, _UseVertexColor);
-                if (_SwgInteriorLighting > .5) vertexTint = SRGBToLinear(vertexTint);
                 half3 ambientTint = lerp(half3(1,1,1), vertexTint, _VertexColorAmbientOnly);
                 half3 lighting = SwgSurfaceLighting(normal, input.worldPosition, _SwgInteriorLighting, _SwgInteriorAmbient.rgb, ambientTint);
                 if (_SwgInteriorLighting > .5)
-                    lighting += SwgInteriorDirectLighting(normal, input.worldPosition, _SwgInteriorLightCount, _SwgInteriorLightPositions, _SwgInteriorLightColors, _SwgInteriorLightAttenuation, _SwgInteriorLightDirections);
+                {
+                    if (_PrecalculatedVertexLighting > .5 && _UseVertexColor > .5)
+                    {
+                        // Native c_ambient uses baked vertex light directly. Cell lights explicitly
+                        // exclude these shaders; adding them again washes out every interior.
+                        lighting = SRGBToLinear(vertexTint);
+                        vertexTint = 1;
+                    }
+                    else
+                    {
+                        lighting += SwgInteriorDirectLighting(normal, input.worldPosition, _SwgInteriorLightCount, _SwgInteriorLightPositions, _SwgInteriorLightColors, _SwgInteriorLightAttenuation, _SwgInteriorLightDirections);
+                        lighting = SRGBToLinear(max(lighting, 0));
+                        vertexTint = SRGBToLinear(vertexTint);
+                    }
+                }
                 half previewBrightness = .55 + .45 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
                 lighting = lerp(lighting, previewBrightness.xxx, _SwgPreview);
                 lighting = lerp(lighting, half3(1,1,1), _Fullbright);

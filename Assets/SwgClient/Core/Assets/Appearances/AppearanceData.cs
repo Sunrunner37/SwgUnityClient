@@ -14,6 +14,7 @@ namespace Swg.Client.Core.Assets.Appearances
         public readonly List<SoundAppearance> Sounds = new List<SoundAppearance>();
         public bool HasContent => Parts.Count != 0 || Particles.Count != 0 || Sounds.Count != 0;
         public PortalLayout PortalLayout;
+        public readonly List<DoorAppearance> Doors = new List<DoorAppearance>();
         public readonly Dictionary<string, Matrix4x4> Hardpoints = new Dictionary<string, Matrix4x4>(StringComparer.OrdinalIgnoreCase);
         public List<ParticleAppearance> Particles = new List<ParticleAppearance>();
         public RiderSeatData? RiderSeat;

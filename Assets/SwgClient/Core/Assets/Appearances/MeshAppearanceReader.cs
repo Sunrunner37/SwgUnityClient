@@ -132,6 +132,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 bool fullbright = false;
                 Color emission = Color.black;
                 bool ambientVertexColor = false;
+                bool precalculatedVertexLighting = false;
                 ShtFile.TextureSwitcher switcher = null;
                 TextureData[] frames = null;
                 byte[] tint = null;
@@ -162,6 +163,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
                     alphaBlend = effect != null && Effect(loader, effect).AlphaBlendEnabled;
                     ambientVertexColor = effect != null && Effect(loader, effect).VertexColorAmbientOnly;
+                    precalculatedVertexLighting = effect != null && Effect(loader, effect).ContainsPrecalculatedVertexLighting;
                     fullbright = effect != null && Path.GetFileName(effect).Contains("emis_full");
                     var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, customization, customization, "HUEB");
                     if (texture != null && trim != null && effect != null && CharacterMaterialLoader.UsesTwoColor(effect))
@@ -181,7 +183,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     Warn(result, "No supported MAIN texture: " + shader);
                 }
 
-                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, AlphaBlend = alphaBlend, Fullbright = fullbright, Emission = emission, VertexColorAmbientOnly = ambientVertexColor, VertexColors = colors,
+                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, AlphaBlend = alphaBlend, Fullbright = fullbright, Emission = emission, VertexColorAmbientOnly = ambientVertexColor, PrecalculatedVertexLighting = precalculatedVertexLighting, VertexColors = colors,
                     DiffuseFrames = frames, MinimumFrameSeconds = switcher?.MinimumSeconds ?? 0, MaximumFrameSeconds = switcher?.MaximumSeconds ?? 0 });
                 result.Sources.Add(new StaticMeshSource { AppearancePath = path, ShaderPath = shader, DiffusePath = diffuse });
             }

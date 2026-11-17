@@ -10,6 +10,8 @@ namespace Swg.Client.Core.Assets.Formats.Eft
     /// <seealso href="https://github.com/swg-source/client-tools/blob/master/src/engine/client/library/clientGraphics/src/shared/ShaderImplementation.cpp">Native PASS layouts</seealso>
     public sealed class EftFile
     {
+        /// <summary>EFCT/0001 DATA marks cell lighting already baked into vertex colors; native cell diffuse lights exclude these shaders.</summary>
+        public bool ContainsPrecalculatedVertexLighting { get; private set; }
         public bool AlphaTestEnabled { get; private set; }
         public bool AlphaBlendEnabled { get; private set; }
         /// <summary>Native fixed-function materials can use baked vertex colors for ambient light while leaving diffuse light untinted.</summary>
@@ -20,6 +22,9 @@ namespace Swg.Client.Core.Assets.Formats.Eft
             var roots = IffNode.Parse(bytes);
             if (IffNode.Form(roots, "EFCT") == null)
                 throw new InvalidDataException("Expected an EFT shader effect");
+            var effect = IffNode.Form(roots, "EFCT");
+            var version = effect.Children.First(node => node.Tag == "FORM");
+            var data = version.Children.FirstOrDefault(node => node.Tag == "DATA")?.Data;
             var basePasses = BasePasses(roots).ToArray();
             var passes = basePasses.Select(ReadAlphaState).ToArray();
             if (passes.Length == 0)
@@ -28,6 +33,7 @@ namespace Swg.Client.Core.Assets.Formats.Eft
             // Their fixed-function alternatives expose the equivalent cutout state explicitly.
             return new EftFile
             {
+                ContainsPrecalculatedVertexLighting = version.Kind == "0001" && data != null && data.Length > 1 && data[1] != 0,
                 AlphaTestEnabled = passes.Any(pass => pass.Test),
                 AlphaBlendEnabled = passes.Any(pass => pass.Blend),
                 VertexColorAmbientOnly = basePasses.Any(ReadAmbientVertexColor)

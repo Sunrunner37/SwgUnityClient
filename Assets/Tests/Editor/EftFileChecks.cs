@@ -42,6 +42,17 @@ namespace Swg.Client.Tests.Editor
             Assert.That(EftFile.Parse(effect).VertexColorAmbientOnly, Is.EqualTo(expected));
         }
 
+        [TestCase("0001", true, true)]
+        [TestCase("0001", false, false)]
+        [TestCase("0000", true, false)]
+        public void ReadsTheEffectPrecalculatedLightingFlagInsteadOfInferringItFromFallbacks(string version, bool flag, bool expected)
+        {
+            var data = Chunk("DATA", new byte[] { 1, flag ? (byte)1 : (byte)0 });
+            var implementations = Form("IMPL", Form("0005", Pass(false)));
+            var effect = Form("EFCT", Form(version, Join(data, implementations)));
+            Assert.That(EftFile.Parse(effect).ContainsPrecalculatedVertexLighting, Is.EqualTo(expected));
+        }
+
         static byte[] Pass(bool alphaTest)
         {
             var data = TestHex.Decode("00010000010103000004050000000000040F000000000000000000000000000000000000040000000400000000000000000000004E49414D");

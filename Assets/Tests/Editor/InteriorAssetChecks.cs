@@ -6,6 +6,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.Assets.Formats.Pob;
+using Swg.Client.Core.Assets.Formats.Binary;
 using Swg.Client.Core.Assets.Formats.Sht;
 using Swg.Client.Core.Assets.Formats.Iff;
 using Swg.Client.Core.Configuration;
@@ -71,6 +72,138 @@ namespace Swg.Client.Tests.Editor
             Assert.That(entries.All(entry => assets.Loader.Sources.ContainsKey(entry.Template)), Is.True, "All faction furnishings must be traversed.");
             string otherFaction = faction == "imp" ? "rebel" : "imp";
             Assert.That(assets.Loader.Sources.ContainsKey("interiorlayout/faction_perk/hq/hq_s04_" + otherFaction + ".ilf"), Is.False);
+        }
+
+        [TestCase(true,5)]
+        [TestCase(false,5)]
+        [TestCase(true,4)]
+        [TestCase(false,3)]
+        [TestCase(false,1)]
+        public void PortalDoorsPreserveHardpointsAndDeduplicateTheirTwoCellSides(bool hardpoint,int portalVersion)
+        {
+            var authored = Matrix4x4.TRS(new Vector3(4,5,6), Quaternion.Euler(0,90,0), Vector3.one);
+            byte[] Cell(string name, uint target) => Form("CELL", Form("0005",
+                Chunk("DATA", Bytes(writer => { writer.Write(1u); writer.Write((byte)0); writer.Write(Encoding.ASCII.GetBytes(name + "\0\0")); writer.Write((byte)0); })),
+                Form("PRTL", Chunk(portalVersion.ToString("D4"), Bytes(writer =>
+                {
+                    if (portalVersion >= 5) writer.Write(false);
+                    if (portalVersion >= 2) writer.Write(true);
+                    writer.Write(0u); writer.Write(true); writer.Write(target);
+                    if (portalVersion >= 3) writer.Write(Encoding.ASCII.GetBytes("test_style\0"));
+                    if (portalVersion >= 4)
+                    {
+                        writer.Write(hardpoint);
+                        for (int row=0; row<3; row++) for (int column=0; column<4; column++) writer.Write(authored[row,column]);
+                    }
+                })))));
+            var bytes = Form("PRTO", Form("0004", Form("PRTS", Chunk("PRTL", Bytes(writer =>
+            {
+                writer.Write(4u);
+                foreach (var vertex in new[]{new Vector3(-1,0,0),new Vector3(1,0,0),new Vector3(1,3,0),new Vector3(-1,3,0)})
+                { writer.Write(vertex.x); writer.Write(vertex.y); writer.Write(vertex.z); }
+            }))), Form("CELS", Cell("outside",1), Cell("inside",0))));
+            var layout = PortalLayout.Parse(IffNode.Parse(bytes).Single(), _ => throw new InvalidOperationException());
+            Assert.That(layout.Doors.Count, Is.EqualTo(portalVersion < 3 ? 0 : 1), "The two cell records describe one physical door; old portals have no door styles.");
+            Assert.That(layout.Entrances.Count, Is.EqualTo(1));
+            if (portalVersion < 3) return;
+            var door = layout.Doors.Single();
+            Assert.That(door.CellNumber, Is.Zero); Assert.That(door.TargetCellNumber, Is.EqualTo(1));
+            Assert.That(Vector3.Distance(door.Transform.GetColumn(3),hardpoint ? new Vector3(4,5,6) : Vector3.zero), Is.LessThan(.0001f));
+            Assert.That(Vector3.Distance(door.Transform.MultiplyVector(Vector3.forward),hardpoint ? Vector3.right : Vector3.forward), Is.LessThan(.0001f));
+        }
+
+        [Test]
+        public void NativeCantinaDoorsUseTheSharedStyleTable()
+        {
+            using var assets = new TreRuntimeAssets(ClientSettings.From(Path.Combine(Application.dataPath, "../client.ini")));
+            var appearance = AppearanceLoader.LoadDetailed(assets.Loader,"object/building/corellia/shared_cantina_corellia.iff");
+            Assert.That(appearance.Doors.Count, Is.EqualTo(5));
+            Assert.That(appearance.Parts.Where((part,index) => appearance.Sources[index].ShaderPath == "shader/corl_metl_cantina_floor_cds16.sht").All(part => part.PrecalculatedVertexLighting), Is.True);
+            Assert.That(appearance.Parts.Where((part,index) => appearance.Sources[index].ShaderPath == "shader/thm_frn_chair_s03_as9.sht").All(part => !part.PrecalculatedVertexLighting), Is.True);
+            Assert.That(appearance.Doors.All(door => door.FirstPanel.Parts.Count > 0), Is.True);
+            var sideways = appearance.Doors.First(door => door.Portal.Style == "door_corl_cantina_s01");
+            var upward = appearance.Doors.First(door => door.Portal.Style == "door_corl_cantina_s02");
+            Assert.That(sideways.Movement.x, Is.EqualTo(-2.1f).Within(.001f));
+            Assert.That(upward.Movement, Is.EqualTo(Vector3.up * 3));
+            Assert.That(sideways.OpenSeconds, Is.EqualTo(.2f));
+            Assert.That(sideways.TriggerRadius, Is.EqualTo(3));
+        }
+
+        [TestCase(-2f,0f)]
+        [TestCase(0f,3f)]
+        public void DoorPanelsSlideInEitherAuthoredAxisAndReturnClosed(float x,float y)
+        {
+            var root = new GameObject("Native sliding door test");
+            try
+            {
+                var first = new GameObject("First panel").transform; first.SetParent(root.transform,false);
+                var second = new GameObject("Second panel").transform; second.SetParent(root.transform,false);
+                var appearance = new DoorAppearance { Portal = new PortalLayout.Door { Passable = true }, Movement = new Vector3(x,y,0), OpenSeconds = .2f, CloseSeconds = .4f, Spring = 1 };
+                var door = root.AddComponent<BuildingDoor>(); door.Initialize(appearance,first,second);
+                door.Advance(.1f,true);
+                Assert.That(Vector3.Distance(first.localPosition,appearance.Movement * .5f), Is.LessThan(.0001f));
+                Assert.That(second.localPosition, Is.EqualTo(-first.localPosition));
+                door.Advance(.1f,true);
+                Assert.That(first.localPosition, Is.EqualTo(appearance.Movement));
+                door.Advance(.2f,false);
+                Assert.That(Vector3.Distance(first.localPosition,appearance.Movement * .5f), Is.LessThan(.0001f));
+                door.Advance(.2f,false);
+                Assert.That(first.localPosition, Is.EqualTo(Vector3.zero));
+                appearance.Portal.Passable = false;
+                door.Advance(1,true);
+                Assert.That(first.localPosition, Is.EqualTo(Vector3.zero));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [TestCase("SWG/World", false)]
+        [TestCase("SWG/World", true)]
+        [TestCase("SWG/Character", false)]
+        public void InteriorLightingPreservesLegacyAttenuationAndDoesNotRelightBakedGeometry(string shader, bool baked)
+        {
+            var root = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            var material = new Material(Shader.Find(shader));
+            var target = RenderTexture.GetTemporary(64,64,24,RenderTextureFormat.ARGBFloat,RenderTextureReadWrite.Linear);
+            var pixels = new Texture2D(64,64,TextureFormat.RGBAFloat,false,true);
+            Mesh bakedMesh = null;
+            var previous = RenderTexture.active;
+            float environment = Shader.GetGlobalFloat("_SwgEnvironmentLighting");
+            try
+            {
+                Shader.SetGlobalFloat("_SwgEnvironmentLighting",1);
+                root.GetComponent<Renderer>().sharedMaterial = material;
+                if (material.HasProperty("_AlphaToMask")) material.SetFloat("_AlphaToMask",0);
+                if (baked)
+                {
+                    bakedMesh = UnityEngine.Object.Instantiate(root.GetComponent<MeshFilter>().sharedMesh);
+                    bakedMesh.colors = Enumerable.Repeat(new Color(.4f,.3f,.2f),bakedMesh.vertexCount).ToArray();
+                    root.GetComponent<MeshFilter>().sharedMesh = bakedMesh;
+                    material.SetFloat("_UseVertexColor",1);
+                    material.SetFloat("_PrecalculatedVertexLighting",1);
+                    material.SetFloat("_VertexColorAmbientOnly",1);
+                }
+                var point = new PortalLayout.RoomLight { Type = PortalLayout.LightType.Point, Diffuse = new Color(.8f,.4f,.2f), Transform = Matrix4x4.Translate(new Vector3(0,0,-4)), Attenuation = Vector3.up };
+                new InteriorLighting(new PortalLayout.Cell(), Matrix4x4.identity,new[]{point}).Apply(root);
+                var properties = new MaterialPropertyBlock(); root.GetComponent<Renderer>().GetPropertyBlock(properties);
+                using var commands = new UnityEngine.Rendering.CommandBuffer();
+                commands.SetRenderTarget(target); commands.ClearRenderTarget(true,true,Color.black);
+                commands.SetViewProjectionMatrices(Matrix4x4.Scale(new Vector3(1,1,-1))*Matrix4x4.Translate(new Vector3(0,0,5)),GL.GetGPUProjectionMatrix(Matrix4x4.Perspective(60,1,.1f,20),true));
+                commands.SetGlobalVector("_WorldSpaceCameraPos",new Vector4(0,0,-5,1));
+                commands.DrawMesh(root.GetComponent<MeshFilter>().sharedMesh,Matrix4x4.identity,material,0,0,properties);
+                Graphics.ExecuteCommandBuffer(commands);
+                RenderTexture.active=target; pixels.ReadPixels(new Rect(0,0,64,64),0,0); pixels.Apply();
+                var color = pixels.GetPixel(32,32);
+                Assert.That(color.r, Is.EqualTo(Mathf.GammaToLinearSpace(baked ? .4f : .2f)).Within(.003f));
+                Assert.That(color.g, Is.EqualTo(Mathf.GammaToLinearSpace(baked ? .3f : .1f)).Within(.002f));
+                Assert.That(color.b, Is.EqualTo(Mathf.GammaToLinearSpace(baked ? .2f : .05f)).Within(.002f));
+            }
+            finally
+            {
+                Shader.SetGlobalFloat("_SwgEnvironmentLighting",environment);
+                RenderTexture.active=previous; RenderTexture.ReleaseTemporary(target);
+                UnityEngine.Object.DestroyImmediate(root); UnityEngine.Object.DestroyImmediate(material); UnityEngine.Object.DestroyImmediate(pixels);
+                if (bakedMesh != null) UnityEngine.Object.DestroyImmediate(bakedMesh);
+            }
         }
 
         [Test]
@@ -230,7 +363,7 @@ namespace Swg.Client.Tests.Editor
                 RenderTexture.active=target; pixels.ReadPixels(new Rect(0,0,128,128),0,0); pixels.Apply();
                 float ambient = Mathf.GammaToLinearSpace(.1f);
                 float direct = Mathf.GammaToLinearSpace(.5f);
-                Assert.That(pixels.GetPixel(40,64).r, Is.EqualTo(ambient+direct).Within(.01f), "Native -K direction and unit Lambert response; no doubled probe intensity.");
+                Assert.That(pixels.GetPixel(40,64).r, Is.EqualTo(Mathf.GammaToLinearSpace(.6f)).Within(.01f), "Native -K direction and unit Lambert response; no doubled probe intensity.");
                 Assert.That(pixels.GetPixel(88,64).r, Is.EqualTo(ambient).Within(.005f), "Ceilings/back-facing walls must not receive the direct light.");
                 material.SetColor("_EmissionColor",new Color(.5f,.5f,.5f));
                 Graphics.ExecuteCommandBuffer(commands);
@@ -329,7 +462,7 @@ namespace Swg.Client.Tests.Editor
                 renderer.GetPropertyBlock(properties);
                 Assert.That(properties.GetFloat("_SwgInteriorLighting"), Is.EqualTo(1));
                 Assert.That(properties.GetInt("_SwgInteriorLightCount"), Is.Zero);
-                Assert.That(properties.GetColor("_SwgInteriorAmbient").r, Is.EqualTo(Mathf.GammaToLinearSpace(.5f)).Within(.0001f));
+                Assert.That(properties.GetColor("_SwgInteriorAmbient").r, Is.EqualTo(.5f).Within(.0001f));
                 Assert.That(material.GetFloat("_SwgInteriorLighting"), Is.Zero);
                 InteriorLighting.Reset(root); renderer.GetPropertyBlock(properties);
                 Assert.That(properties.GetFloat("_SwgInteriorLighting"), Is.Zero);

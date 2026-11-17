@@ -16,12 +16,15 @@ namespace Swg.Client.Runtime.Assets.Appearances
     {
         readonly string name;
         readonly SoundAppearance[] sounds;
+        readonly (DoorAppearance Definition, AppearanceResources Frame, AppearanceResources First, AppearanceResources Second)[] doors;
         readonly KeyValuePair<string, Matrix4x4>[] hardpoints;
         readonly RiderSeatData? riderSeat;
         readonly MeshPartResources[] parts;
         readonly ParticleEffectResources[] particles;
         public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
+            AppearanceResources DoorPart(AppearanceData data) => data == null ? null : new AppearanceResources(data, factory, worldShader, characterShader, particleShader, wrapMode);
+            doors = appearance.Doors.Select(door => (door, DoorPart(door.Frame), DoorPart(door.FirstPanel), DoorPart(door.SecondPanel))).ToArray();
             name = appearance.Key;
             sounds = appearance.Sounds.ToArray();
             hardpoints = appearance.Hardpoints.ToArray();
@@ -73,6 +76,26 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     part.AddComponent<AnimatedTexture>().Initialize(part.GetComponent<Renderer>(), resource.AnimationFrames, resource.MinimumFrameSeconds, resource.MaximumFrameSeconds);
             }
 
+            foreach (var door in doors)
+            {
+                int cell = door.Definition.Portal.CellNumber == 0 ? door.Definition.Portal.TargetCellNumber : door.Definition.Portal.CellNumber;
+                if (!cells.TryGetValue(cell, out var parentTransform))
+                {
+                    parentTransform = new GameObject(BuildingInterior.CellRootName(cell)).transform;
+                    parentTransform.SetParent(root.transform, false);
+                    cells.Add(cell, parentTransform);
+                }
+                var doorway = new GameObject("Door " + door.Definition.Portal.PortalIndex + " " + door.Definition.Portal.Style);
+                doorway.transform.SetParent(parentTransform, false);
+                var pose = door.Definition.Portal.Transform;
+                doorway.transform.SetLocalPositionAndRotation(pose.GetColumn(3), pose.rotation);
+                door.Frame?.Create(doorway.transform, false, previewLighting);
+                var first = door.First?.Create(doorway.transform, false, previewLighting);
+                var second = door.Second?.Create(doorway.transform, false, previewLighting);
+                if (second != null && door.Definition.FlipSecondPanel) second.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                if (!previewLighting) doorway.AddComponent<BuildingDoor>().Initialize(door.Definition, first?.transform, second?.transform);
+            }
+
             foreach (var hardpoint in hardpoints)
             {
                 var point = new GameObject(hardpoint.Key);
@@ -121,6 +144,12 @@ namespace Swg.Client.Runtime.Assets.Appearances
 
         public void Dispose()
         {
+            foreach (var door in doors)
+            {
+                door.Frame?.Dispose();
+                door.First?.Dispose();
+                door.Second?.Dispose();
+            }
             foreach (var effect in particles)
                 effect.Dispose();
             foreach (var part in parts)

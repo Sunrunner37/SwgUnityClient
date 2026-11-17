@@ -31,6 +31,16 @@ namespace Swg.Client.Core.Assets.Formats.Pob
             public Vector3 Attenuation;
         }
 
+        public sealed class Door
+        {
+            public int PortalIndex;
+            public int CellNumber;
+            public int TargetCellNumber;
+            public bool Passable;
+            public string Style;
+            public Matrix4x4 Transform;
+        }
+
         public sealed class Floor
         {
             public Vector3[] Vertices;
@@ -38,6 +48,7 @@ namespace Swg.Client.Core.Assets.Formats.Pob
         }
 
         public readonly List<Cell> Cells = new List<Cell>();
+        public readonly List<Door> Doors = new List<Door>();
         public readonly List<Vector3[]> Entrances = new List<Vector3[]>();
 
         public static PortalLayout Parse(IffNode root, Func<string, byte[]> read)
@@ -105,16 +116,38 @@ namespace Swg.Client.Core.Assets.Formats.Pob
                         cell.Lights.Add(light);
                     }
                 }
-                if (cell.Number != 0)
-                    continue;
                 foreach (var portal in cellVersion.Children.Where(child => child.Kind == "PRTL"))
                 {
                     var data = portal.Children.First();
+                    int portalVersion = int.Parse(data.Tag);
                     var entry = new ByteReader(data.Data);
-                    if (data.Tag == "0005") entry.Byte();
-                    bool solid = entry.Byte() != 0;
+                    bool disabled = portalVersion >= 5 && entry.Byte() != 0;
+                    bool passable = portalVersion == 1 || entry.Byte() != 0;
                     int index = checked((int)entry.U32());
-                    if (solid) result.Entrances.Add(portals[index]);
+                    bool clockwise = entry.Byte() != 0;
+                    int target = checked((int)entry.U32());
+                    if (cell.Number == 0 && passable && !disabled) result.Entrances.Add(portals[index]);
+                    if (portalVersion < 3) continue;
+                    string style = entry.CString();
+                    bool hasHardpoint = false;
+                    var transform = Matrix4x4.identity;
+                    if (portalVersion >= 4)
+                    {
+                        hasHardpoint = entry.Byte() != 0;
+                        for (int row = 0; row < 3; row++)
+                            for (int column = 0; column < 4; column++) transform[row, column] = entry.Float();
+                    }
+                    if (disabled || string.IsNullOrEmpty(style) || result.Doors.Any(door => door.PortalIndex == index)) continue;
+                    if (!hasHardpoint)
+                    {
+                        var polygon = portals[index];
+                        var bounds = new Bounds(polygon[0], Vector3.zero);
+                        foreach (var vertex in polygon) bounds.Encapsulate(vertex);
+                        var normal = Vector3.Cross(polygon[1] - polygon[0], polygon[2] - polygon[0]).normalized * (clockwise ? 1 : -1);
+                        transform = Matrix4x4.TRS(new Vector3(bounds.center.x, bounds.min.y, bounds.center.z), Quaternion.LookRotation(normal, Vector3.up), Vector3.one);
+                    }
+                    result.Doors.Add(new Door { PortalIndex = index, CellNumber = cell.Number, TargetCellNumber = target,
+                        Passable = passable, Style = style, Transform = transform });
                 }
             }
             return result;

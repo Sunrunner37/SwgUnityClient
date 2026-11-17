@@ -62,7 +62,10 @@ Shader "SWG/Character"
                 half brightness = .42 + .58 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
                 half3 lighting = SwgSurfaceLighting(normal, input.worldPosition, _SwgInteriorLighting, _SwgInteriorAmbient.rgb, half3(1,1,1));
                 if (_SwgInteriorLighting > .5)
+                {
                     lighting += SwgInteriorDirectLighting(normal, input.worldPosition, _SwgInteriorLightCount, _SwgInteriorLightPositions, _SwgInteriorLightColors, _SwgInteriorLightAttenuation, _SwgInteriorLightDirections);
+                    lighting = SRGBToLinear(max(lighting, 0));
+                }
                 half3 color = surface.rgb * _Tint.rgb * lerp(half3(brightness,brightness,brightness), lighting, _SwgEnvironmentLighting * (1 - _SwgPreview));
                 return half4(lerp(color, MixFog(color, input.fog), _SwgEnvironmentLighting * (1 - _SwgPreview)), 1);
             }

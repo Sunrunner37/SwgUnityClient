@@ -17,6 +17,7 @@ namespace Swg.Client.Core.Geometry
         public bool Fullbright;
         public Color Emission;
         public bool VertexColorAmbientOnly;
+        public bool PrecalculatedVertexLighting;
         public int? PortalCellNumber;
         public bool InteriorDecoration;
         public TextureData[] DiffuseFrames;
