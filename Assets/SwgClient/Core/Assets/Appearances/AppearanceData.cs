@@ -3,6 +3,7 @@ using Swg.Client.Core.Assets.Audio;
 using UnityEngine;
 using System;
 using System.Linq;
+using Swg.Client.Core.Assets.Formats.Idtl;
 using Swg.Client.Core.Assets.Particles;
 using System.Collections.Generic;
 using Swg.Client.Core.Geometry;
@@ -12,6 +13,7 @@ namespace Swg.Client.Core.Assets.Appearances
     public sealed class AppearanceData
     {
         public string Key;
+        public readonly List<IdtlFile> RadarShapes = new List<IdtlFile>();
         // Transport flight bindings identify shuttles even when their template uses the ordinary NPC type.
         public bool IsPassengerTransport => Parts.Any(part => part.Skinning?.Skeleton?.IsPassengerTransport == true);
         public readonly List<SoundAppearance> Sounds = new List<SoundAppearance>();

@@ -36,6 +36,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
         WorldFloraRenderer flora;
         int uploadsPerFrame;
         bool loading;
+        public IReadOnlyDictionary<SwgId, AppearanceData> LoadedAppearances => appearances;
         public IEnumerable<string> AppearanceKeys => appearances.Values.Select(appearance => appearance.Key);
 
         public void Initialize(WorldState state, WorldContentLoader content, GameReplication world, WorldAppearanceLibrary appearanceLibrary, int uploadBudget, WorldFloraRenderer flora)

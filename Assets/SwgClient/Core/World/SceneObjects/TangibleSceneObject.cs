@@ -9,6 +9,8 @@ namespace Swg.Client.Core.World.SceneObjects
         public uint PvpStatus;
         public uint Options;
         public bool CanAttack => (PvpStatus & 1) != 0;
+        // Core3 CreatureFlag::AGGRESSIVE (0x02) or ENEMY (0x20), relative to this client.
+        public bool IsHostile => (PvpStatus & 0x22) != 0;
         public bool CanConverse => (Options & 8) != 0;
         public string ResourceType;
         public int Volume = 1;

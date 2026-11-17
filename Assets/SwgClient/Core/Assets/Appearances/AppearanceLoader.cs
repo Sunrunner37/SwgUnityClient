@@ -1,6 +1,7 @@
 using Swg.Client.Core.Assets.Formats.ObjectTemplates;
 using Swg.Client.Core.Assets.Audio;
 using Swg.Client.Core.Assets.Formats.Pob;
+using Swg.Client.Core.Assets.Formats.Idtl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -112,6 +113,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
                 else if (root.Kind == "DTLA")
                 {
+                    int firstRadar = result.RadarShapes.Count;
                     var version = root.Children.First(n => n.Tag == "FORM");
                     var data = version.Children.Single(n => n.Kind == "DATA");
                     var children = data.Children.Where(n => n.Tag == "CHLD").Reverse().ToArray();
@@ -119,6 +121,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     var reader = new ByteReader(child.Data);
                     reader.U32();
                     LoadAppearance(loader, AppearancePath(reader.CString()), transform, result, stack, depth + 1, detailLevel, customization);
+                    ReadRadar(version, transform, result, firstRadar);
                 }
                 else if (root.Kind == "MESH")
                     MeshAppearanceReader.Load(loader, path, root, transform, result, customization);
@@ -152,6 +155,7 @@ namespace Swg.Client.Core.Assets.Appearances
                 }
                 else if (root.Kind == "CMPA")
                 {
+                    int firstRadar = result.RadarShapes.Count;
                     var version = root.Children.First(n => n.Tag == "FORM");
                     foreach (var part in version.Children.Where(n => n.Tag == "PART"))
                     {
@@ -164,6 +168,7 @@ namespace Swg.Client.Core.Assets.Appearances
                                 local[row, column] = reader.Float();
                         LoadChild(loader, appearance, transform * local, result, stack, depth + 1, detailLevel, customization);
                     }
+                    ReadRadar(version, transform, result, firstRadar);
                 }
                 else
                     Warn(result, "Unsupported render appearance " + root.Kind + ": " + path);
@@ -172,6 +177,15 @@ namespace Swg.Client.Core.Assets.Appearances
             {
                 stack.Remove(path);
             }
+        }
+
+        static void ReadRadar(IffNode version, Matrix4x4 transform, AppearanceData result, int firstChildShape)
+        {
+            var radar = version.Children.FirstOrDefault(node => node.Kind == "RADR");
+            if (radar == null || new ByteReader(radar.Chunk("INFO")).U32() == 0) return;
+            var geometry = IdtlFile.Parse(radar.Children.Single(node => node.Kind == "IDTL")).Transformed(transform);
+            result.RadarShapes.RemoveRange(firstChildShape, result.RadarShapes.Count - firstChildShape);
+            result.RadarShapes.Add(geometry);
         }
 
         static void LoadSkeletalAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result)
