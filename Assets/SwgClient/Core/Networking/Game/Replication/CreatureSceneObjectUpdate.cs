@@ -22,6 +22,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
         public float? RunSpeed;
         public float? SpeedMultiplier;
         public float? TurnScale;
+        public float? SlopeAngleRadians;
+        public float? SlopeSpeedMultiplier;
         public SwgId? TargetSwgId;
         public SwgId? WeaponSwgId;
         public SwgId? GroupSwgId;

@@ -407,6 +407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 6608250102235574741}
   minimumSize: {x: 736, y: 394}
 --- !u!1 &1080990261054516638
 GameObject:
@@ -1529,6 +1530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 6905374516610599797}
   minimumSize: {x: 795, y: 494}
 --- !u!1 &3501007521204828730
 GameObject:
@@ -6905,6 +6907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 97872965010879929}
   minimumSize: {x: 356, y: 99}
 --- !u!1 &8736266707578010231
 GameObject:
@@ -7191,6 +7194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 3203543060655076911}
   minimumSize: {x: 269, y: 104}
 --- !u!1 &9132374424934744976
 GameObject:
@@ -8030,6 +8034,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &6905374516610599797 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3818909247956156306, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+  m_PrefabInstance: {fileID: 7722455321611695335}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &8800347677972847927 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1227989171243330000, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
@@ -8215,6 +8230,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8714465540053651943, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
   m_PrefabInstance: {fileID: 8019298841768611399}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6608250102235574741 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3818909247956156306, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+  m_PrefabInstance: {fileID: 8019298841768611399}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!114 &9097539991322355607 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1227989171243330000, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}

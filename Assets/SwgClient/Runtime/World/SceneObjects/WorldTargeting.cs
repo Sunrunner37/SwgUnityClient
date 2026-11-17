@@ -5,6 +5,7 @@ using Swg.Client.Runtime.Networking;
 using Swg.Client.Runtime.UI.Interactions;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Runtime.Assets.Tre;
@@ -28,9 +29,11 @@ namespace Swg.Client.Runtime.World.SceneObjects
         public TreTexture hoverCursor;
         public Vector2 cursorHotspot = new Vector2(16, 16);
         public float maximumDistance = 256;
+        readonly List<(SwgId Id, float Distance)> cycleTargets = new List<(SwgId, float)>();
         readonly RaycastHit[] hits = new RaycastHit[64];
         readonly RaycastHit[] obstructions = new RaycastHit[64];
         SwgId lastClicked;
+        SwgId lastCycled;
         float lastClickTime = float.NegativeInfinity;
         ClientObjectInteractions interactions;
         ClientTargeting targeting;
@@ -71,6 +74,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
 
         void LateUpdate()
         {
+            if (Application.isFocused && !UiInput.TextInputFocused && !contextMenu.IsOpen && Keyboard.current?.tabKey.wasPressedThisFrame == true)
+                CycleTarget();
             var mouse = Mouse.current;
             bool overUi = UiInput.PointerOverUi || UiInput.TextInputFocused || !Application.isFocused;
             SwgId hovered = default;
@@ -102,8 +107,31 @@ namespace Swg.Client.Runtime.World.SceneObjects
             state.SceneObjects.TryGet(hovered, out var hoveredObject);
             var cursorKind = ClientCursor.ForObject(hoveredObject, interactions.ObjectType(hoveredObject), !hovered.IsNone && interactions.HasDefaultAction(hovered));
             cursors.SetWorldHover(!hovered.IsNone, cursor, cursorHotspot, cursorKind);
-            if (!contextMenu.IsOpen && !UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+            if (!contextMenu.IsOpen && !UiInput.TextInputFocused && UiInput.TryConsumeEscape())
                 targeting.Select(default);
+        }
+
+        internal void CycleTarget()
+        {
+            cycleTargets.Clear();
+            var position = state.SceneObjects.GetServerWorldPose(currentPlayer.SwgId).position;
+            foreach (var sceneObject in state.SceneObjects)
+            {
+                if (sceneObject is not CreatureSceneObject creature || creature.SwgId == currentPlayer.SwgId
+                    || !creature.CanAttack || creature.Posture == CreaturePosture.Dead || creature.Posture == CreaturePosture.Incapacitated
+                    || !ManagedSceneObject.TryGetObjectFrom(creature.SwgId, out var body)
+                    || !body.TryGetComponent<TargetableSceneObject>(out _)) continue;
+                float distance = (state.SceneObjects.GetServerWorldPose(creature.SwgId).position - position).sqrMagnitude;
+                if (distance <= maximumDistance * maximumDistance) cycleTargets.Add((creature.SwgId, distance));
+            }
+            cycleTargets.Sort((left, right) => {
+                int distance = left.Distance.CompareTo(right.Distance);
+                return distance != 0 ? distance : left.Id.Value.CompareTo(right.Id.Value);
+            });
+            if (cycleTargets.Count == 0) return;
+            int selected = targeting.SelectedSwgId == lastCycled ? cycleTargets.FindIndex(candidate => candidate.Id == lastCycled) : -1;
+            lastCycled = cycleTargets[(selected + 1) % cycleTargets.Count].Id;
+            targeting.Select(lastCycled);
         }
 
         internal SwgId Pick(Ray ray)

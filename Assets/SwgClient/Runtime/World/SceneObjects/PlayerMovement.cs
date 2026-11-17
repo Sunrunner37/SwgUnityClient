@@ -50,9 +50,23 @@ namespace Swg.Client.Runtime.World.SceneObjects
             movement = GetComponent<SceneObjectMovement>();
             animation = GetComponent<CharacterAnimation>();
             worldCamera.GetComponent<WorldOrbitCamera>().target = transform;
+            state.SceneObjects.Subscribe(this.player.SwgId, OnPlayerChanged);
         }
 
-        void OnDestroy() { if (collision != null) collision.enabled = false; }
+        void OnPlayerChanged(SceneObjectChange changes)
+        {
+            if ((changes & SceneObjectChange.Correction) == 0) return;
+            CurrentSpeed = 0;
+            pendingMovement = false;
+            wasMoving = false;
+            nextSend = Time.unscaledTime + sendInterval;
+        }
+
+        void OnDestroy()
+        {
+            state?.SceneObjects.Unsubscribe(player.SwgId, OnPlayerChanged);
+            if (collision != null) collision.enabled = false;
+        }
 
         void Update()
         {
@@ -120,14 +134,6 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 var heading = serverRotation * Vector3.forward;
                 // Move along the facing direction through turns instead of sliding sideways.
                 float alignment = wantsMovement ? Mathf.Clamp01(Vector3.Dot(heading, direction.normalized)) : 0;
-                float targetSpeed = player.MovementSpeed * input.magnitude * alignment;
-                float previousSpeed = CurrentSpeed;
-                CurrentSpeed = mounted
-                    ? AdvanceVehicleSpeed(CurrentSpeed, targetSpeed, vehicleAcceleration * player.AccelerationMultiplierBase * player.AccelerationMultiplier, seconds)
-                    : targetSpeed;
-                float distance = (mounted ? (previousSpeed + CurrentSpeed) * .5f : CurrentSpeed) * seconds;
-                var serverPosition = serverPose.position + heading * distance;
-                var cellSwgId = player.ParentSwgId;
                 if (ManagedSceneObject.TryGetObjectFrom(controlled.SwgId, out var body))
                 {
                     if (collision == null || collision.gameObject != body)
@@ -136,6 +142,18 @@ namespace Swg.Client.Runtime.World.SceneObjects
                         if (!body.TryGetComponent(out collision)) collision = body.AddComponent<PlayerCollision>();
                         collision.Initialize(state, mounted);
                     }
+                }
+                float terrainSpeed = collision == null ? 1 : collision.TerrainSpeed(heading, player.SlopeAngleRadians, player.SlopeSpeedMultiplier);
+                float targetSpeed = player.MovementSpeed * input.magnitude * alignment * terrainSpeed;
+                float previousSpeed = CurrentSpeed;
+                CurrentSpeed = mounted
+                    ? AdvanceVehicleSpeed(CurrentSpeed, targetSpeed, vehicleAcceleration * player.AccelerationMultiplierBase * player.AccelerationMultiplier, seconds)
+                    : targetSpeed;
+                float distance = (mounted ? (previousSpeed + CurrentSpeed) * .5f : CurrentSpeed) * seconds;
+                var serverPosition = serverPose.position + heading * distance;
+                var cellSwgId = player.ParentSwgId;
+                if (body != null)
+                {
                     serverPosition = collision.Move(heading, distance, seconds) + state.RenderOrigin;
                     if (!mounted) cellSwgId = collision.CellSwgId;
                 }

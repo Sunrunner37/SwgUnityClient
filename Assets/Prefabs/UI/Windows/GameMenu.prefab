@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 7034464416619519539}
   minimumSize: {x: 296, y: 120}
 --- !u!222 &508662303635749335
 CanvasRenderer:
@@ -1784,3 +1785,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8714465540053651943, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
   m_PrefabInstance: {fileID: 6151932104589058465}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7034464416619519539 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3818909247956156306, guid: b32f26fa44ea60d4da988f3cfe4111a2, type: 3}
+  m_PrefabInstance: {fileID: 6151932104589058465}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button

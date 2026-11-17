@@ -208,7 +208,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             var managed = instance.AddComponent<ManagedSceneObject>();
             managed.Bind(sceneObject.SwgId);
             BuildingInterior.ApplyLighting(sceneObject, instance);
-            if (appearance.Sounds.Count == 0 && this.state.Templates.IsTargetable(sceneObject.TemplatePath))
+            if (appearance.Sounds.Count == 0 && !appearance.IsPassengerTransport && this.state.Templates.IsTargetable(sceneObject.TemplatePath))
                 instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject && !appearance.RiderSeat.HasValue);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
             if (sceneObject is CreatureSceneObject vehicle && instance.TryGetComponent<VehicleExhaust>(out var exhaust))

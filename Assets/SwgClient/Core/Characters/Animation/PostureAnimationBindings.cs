@@ -57,6 +57,7 @@ namespace Swg.Client.Core.Characters.Animation
             if (sky == null || takeoff == null || land == null)
                 return false;
 
+            skeleton.IsPassengerTransport = true;
             // Core3 ShuttleDepartureTask uses Upright for grounded and Prone for departed.
             // The native transport LAT supplies the sky loop and complete flight/gear transitions.
             skeleton.Postures.Add(CreaturePosture.Prone, load(sky));

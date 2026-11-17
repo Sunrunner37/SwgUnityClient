@@ -13,6 +13,7 @@ using System.Collections;
 using Swg.Client.Runtime.World.Loading;
 using Swg.Client.Runtime.World;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Datapad;
 using Swg.Client.Runtime.UI.Travel;
 using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Runtime.Assets.Shaders;
@@ -84,6 +85,13 @@ namespace Swg.Client.Runtime.UI.Testing
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
                 builder.RegisterType<WorldRenderingContext>().SingleInstance();
                 builder.RegisterType<ItemPreviewCache>().SingleInstance();
+                builder.Register(context =>
+                {
+                    var previews = new GameObject("Datapad previews").AddComponent<DatapadPreviewCache>();
+                    previews.Initialize(context.Resolve<ClientDatapad>(), context.Resolve<WorldContentLoader>(), context.Resolve<ItemPreviewCache>());
+                    UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
+                    return previews;
+                }).SingleInstance();
                 builder.Register(context =>
                 {
                     var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();

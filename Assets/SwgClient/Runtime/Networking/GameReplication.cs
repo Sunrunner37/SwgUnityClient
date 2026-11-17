@@ -13,6 +13,7 @@ using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Networking.Game.Packets.Scene;
 using Swg.Client.Core.Networking.Game.Packets.Combat;
+using Swg.Client.Core.Networking.Game.Packets.Movement;
 
 namespace Swg.Client.Runtime.Networking
 {
@@ -36,11 +37,13 @@ namespace Swg.Client.Runtime.Networking
 
         CurrentPlayer currentPlayer;
         CraftingProgress craftingProgress;
-        public void Initialize(WorldState state, CurrentPlayer currentPlayer, CraftingProgress craftingProgress)
+        Action<TeleportAckPacket> sendTeleportAcknowledgement;
+        public void Initialize(WorldState state, CurrentPlayer currentPlayer, CraftingProgress craftingProgress, Action<TeleportAckPacket> sendTeleportAcknowledgement)
         {
             State = state;
             this.currentPlayer = currentPlayer;
             this.craftingProgress = craftingProgress;
+            this.sendTeleportAcknowledgement = sendTeleportAcknowledgement;
         }
         void Update() => ApplyPending();
         void OnDestroy() => StopReceiving();
@@ -165,22 +168,41 @@ namespace Swg.Client.Runtime.Networking
         {
             Enqueue(swgId, () =>
             {
-                // Core3 broadcasts an extrapolated vehicle pose back to its rider. Local input owns this prediction; explicit controller corrections still apply.
+                // Core3 echoes extrapolated vehicle poses to their rider; local input owns that prediction.
                 if (isBroadcast && SceneObjects.TryGet<CreatureSceneObject>(currentPlayer.SwgId, out var localPlayer) && localPlayer.Mount?.SwgId == swgId && (localPlayer.States & CreatureState.RidingMount) != 0)
                     return;
-                var parentSwgId = update.ParentSwgId;
-                // A rider still receives world-space corrections; they do not remove its mount containment.
-                if (parentSwgId == 0 && SceneObjects.TryGet<CreatureSceneObject>(swgId, out var rider) && rider.Mount != null && (rider.States & CreatureState.RidingMount) != 0)
-                {
-                    parentSwgId = null;
-                    rider.Mount.Apply(update);
-                    SceneObjects.NotifyChanged(rider.Mount, SceneObjectChange.Transform);
-                }
-                var state = ApplyObject(swgId, typeof(SpatialSceneObject), sceneObject => ((SpatialSceneObject)sceneObject).Apply(update),
-                    SceneObjectChange.Transform, parentSwgId: parentSwgId);
-                if (update.MovementCounter.HasValue)
-                    state.MovementCounter = update.MovementCounter.Value;
+                ApplyMovement(swgId, update, SceneObjectChange.Transform);
             });
+        }
+
+        internal void ApplyCorrection(SwgId swgId, MovementUpdate update)
+        {
+            Enqueue(swgId, () =>
+            {
+                var changes = SceneObjectChange.Transform;
+                if (swgId == currentPlayer.SwgId) changes |= SceneObjectChange.Correction;
+                var state = ApplyMovement(swgId, update, changes);
+                // Core3 ignores further player movement until this arrives. Snap/reset prediction first.
+                if (swgId == currentPlayer.SwgId)
+                    sendTeleportAcknowledgement(new TeleportAckPacket(swgId, state.MovementCounter));
+            });
+        }
+
+        ReplicationState ApplyMovement(SwgId swgId, MovementUpdate update, SceneObjectChange changes)
+        {
+            var parentSwgId = update.ParentSwgId;
+            // World-space rider corrections retain mount containment and correct the controlled vehicle too.
+            if (parentSwgId == 0 && SceneObjects.TryGet<CreatureSceneObject>(swgId, out var rider) && rider.Mount != null && (rider.States & CreatureState.RidingMount) != 0)
+            {
+                parentSwgId = null;
+                rider.Mount.Apply(update);
+                SceneObjects.NotifyChanged(rider.Mount, changes);
+            }
+            var state = ApplyObject(swgId, typeof(SpatialSceneObject), sceneObject => ((SpatialSceneObject)sceneObject).Apply(update),
+                changes, parentSwgId: parentSwgId);
+            if (update.MovementCounter.HasValue)
+                state.MovementCounter = update.MovementCounter.Value;
+            return state;
         }
 
         internal void Commit(SwgId swgId, ContainmentUpdate update)

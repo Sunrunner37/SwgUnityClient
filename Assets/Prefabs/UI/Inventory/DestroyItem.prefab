@@ -202,6 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 2913011922890750621}
   minimumSize: {x: 280, y: 100}
 --- !u!1 &1815190669451792302
 GameObject:

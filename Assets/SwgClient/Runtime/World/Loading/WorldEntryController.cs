@@ -1,5 +1,6 @@
 using Swg.Client.Runtime.World.Streaming;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Datapad;
 using Swg.Client.Runtime.UI.Travel;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Runtime.Networking;
@@ -45,6 +46,7 @@ namespace Swg.Client.Runtime.World.Loading
         WorldLoadingData prepared;
         WorldController world;
         InventoryPreviewCache inventoryPreviews;
+        DatapadPreviewCache datapadPreviews;
         Scene worldScene;
         AsyncOperation sceneLoad;
         Coroutine preparation;
@@ -203,6 +205,7 @@ namespace Swg.Client.Runtime.World.Loading
                 session.Resolve<ClientInventory>().Open();
                 session.Resolve<ClientDatapad>().Open();
                 inventoryPreviews = session.Resolve<InventoryPreviewCache>();
+                datapadPreviews = session.Resolve<DatapadPreviewCache>();
             }
             catch (Exception error)
             {
@@ -221,7 +224,7 @@ namespace Swg.Client.Runtime.World.Loading
         IEnumerator AwaitInventoryPreviews()
         {
             Phase = "Preparing inventory previews";
-            yield return WaitFor(() => inventoryPreviews.IsReady, worldBuildTimeout, "Inventory preview preparation timed out.");
+            yield return WaitFor(() => inventoryPreviews.IsReady && datapadPreviews.IsReady, worldBuildTimeout, "Inventory preview preparation timed out.");
         }
 
         IEnumerator BuildWorldGeometry()

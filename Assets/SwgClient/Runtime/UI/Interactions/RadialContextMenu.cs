@@ -151,7 +151,7 @@ namespace Swg.Client.Runtime.UI.Interactions
         {
             if (!IsOpen)
                 return;
-            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true)
+            if (UiInput.TryConsumeEscape())
                 Close();
             else if (Time.frameCount > renderedFrame && Mouse.current?.leftButton.wasReleasedThisFrame == true && Hovered != null)
                 Hovered.Select();

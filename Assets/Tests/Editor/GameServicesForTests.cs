@@ -14,6 +14,7 @@ using Swg.Client.Core.Networking.Game.Handlers;
 using Swg.Client.Core.Networking.Game;
 using Swg.Client.Core.Networking.Game.Packets.Player;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
+using Swg.Client.Core.Networking.Game.Packets.Movement;
 
 namespace Swg.Client.Tests.Editor
 {
@@ -42,10 +43,10 @@ namespace Swg.Client.Tests.Editor
             player = new CurrentPlayer(registry);
             return new WorldState(registry);
         }
-        internal static GameReplication CreateReplication(WorldState state, CurrentPlayer currentPlayer)
+        internal static GameReplication CreateReplication(WorldState state, CurrentPlayer currentPlayer, System.Action<TeleportAckPacket> sendTeleportAcknowledgement = null)
         {
             var replication = CreateHelper("Test replication").AddComponent<GameReplication>();
-            replication.Initialize(state, currentPlayer, new CraftingProgress());
+            replication.Initialize(state, currentPlayer, new CraftingProgress(), sendTeleportAcknowledgement ?? (_ => { }));
             replication.gameObject.SetActive(false);
             return replication;
         }
@@ -61,7 +62,7 @@ namespace Swg.Client.Tests.Editor
             builder.RegisterType<ClientTravel>().SingleInstance();
             builder.RegisterInstance(new System.Action<PlanetTravelPointListRequestPacket>(_ => { }));
             var progress = new CraftingProgress();
-            replication.Initialize(replication.State, currentPlayer, progress);
+            replication.Initialize(replication.State, currentPlayer, progress, _ => { });
             builder.RegisterInstance(progress);
             // Routing tests construct every handler but do not open a network connection.
             builder.Register(_ => new ClientCommands(_ => { }, _ => { }, currentPlayer)).SingleInstance();

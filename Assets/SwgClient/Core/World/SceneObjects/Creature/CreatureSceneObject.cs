@@ -34,6 +34,9 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
         public float RunSpeed;
         public float SpeedMultiplier = 1;
         public float TurnScale = 1;
+        public float SlopeAngleRadians;
+        // CREO4 includes the slope_move skill bonus; do not add it again locally.
+        public float SlopeSpeedMultiplier = 1;
         // Matches Core3 PlayerManager's allowed speed: getRunSpeed() * getSpeedMultiplierMod().
         public float MovementSpeed => Math.Max(0, RunSpeed * SpeedMultiplier);
 
@@ -67,6 +70,8 @@ namespace Swg.Client.Assets.SwgClient.Core.World.SceneObjects.Creature
                 RunSpeed = update.RunSpeed.Value;
             if (update.SpeedMultiplier.HasValue)
                 SpeedMultiplier = update.SpeedMultiplier.Value;
+            if (update.SlopeAngleRadians.HasValue) SlopeAngleRadians = update.SlopeAngleRadians.Value;
+            if (update.SlopeSpeedMultiplier.HasValue) SlopeSpeedMultiplier = update.SlopeSpeedMultiplier.Value;
             if (update.TurnScale.HasValue)
                 TurnScale = update.TurnScale.Value;
             if (update.Equipment != null)

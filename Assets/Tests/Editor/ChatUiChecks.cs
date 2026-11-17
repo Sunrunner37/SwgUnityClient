@@ -13,6 +13,52 @@ namespace Swg.Client.Tests.Editor
     public sealed class ChatUiChecks
     {
         [Test]
+        public void WindowCloseFollowsInteractionAndInvokesItsExistingAction()
+        {
+            var parent = new GameObject("Window stack", typeof(RectTransform));
+            UiWindow Add(string name)
+            {
+                var root = new GameObject(name, typeof(RectTransform), typeof(UiWindow));
+                root.transform.SetParent(parent.transform);
+                var window = root.GetComponent<UiWindow>();
+                // Edit Mode does not run this MonoBehaviour lifecycle automatically.
+                typeof(UiWindow).GetMethod("OnEnable", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(window, null);
+                window.closeButton = new GameObject("Close", typeof(RectTransform), typeof(Button)).GetComponent<Button>();
+                window.closeButton.transform.SetParent(root.transform);
+                window.closeButton.onClick.AddListener(() => { root.SetActive(false); typeof(UiWindow).GetMethod("OnDisable", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(window, null); });
+                return window;
+            }
+            try
+            {
+                var first = Add("Inventory");
+                var second = Add("Datapad");
+                Assert.That(WindowStack.LastWindow(), Is.SameAs(second));
+                first.Focus();
+                Assert.That(WindowStack.LastWindow(), Is.SameAs(first));
+                WindowStack.LastWindow().closeButton.onClick.Invoke();
+                Assert.That(first.gameObject.activeSelf, Is.False);
+                Assert.That(second.gameObject.activeSelf, Is.True);
+                Assert.That(WindowStack.LastWindow(), Is.SameAs(second));
+            }
+            finally
+            {
+                foreach (var window in parent.GetComponentsInChildren<UiWindow>(true))
+                    typeof(UiWindow).GetMethod("OnDisable", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(window, null);
+                Object.DestroyImmediate(parent);
+            }
+        }
+
+        [Test]
+        public void AllClosableHudWindowsUseTheirPrefabCloseAction()
+        {
+            var hud = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/Hud/WorldHud.prefab");
+            Assert.That(hud.GetComponent<WindowStack>(), Is.Not.Null);
+            foreach (var window in hud.GetComponentsInChildren<UiWindow>(true))
+                foreach (var button in window.GetComponentsInChildren<Button>(true))
+                    if (button.name == "Close") Assert.That(window.closeButton, Is.Not.Null, window.name);
+        }
+
+        [Test]
         public void ChatIdentityAndSendDestinationDoNotDependOnHierarchyNames()
         {
             const string path = "Assets/Prefabs/UI/Chat/ChatWindow.prefab";

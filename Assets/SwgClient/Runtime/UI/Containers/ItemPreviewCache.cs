@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Swg.Client.Core.Assets.Appearances;
 using Swg.Client.Core.World;
+using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Runtime.Assets.Appearances;
 using Swg.Client.Runtime.Assets.Shaders;
 using Swg.Client.Runtime.World;
@@ -38,6 +39,9 @@ namespace Swg.Client.Runtime.UI.Containers
             this.materials = materials;
             this.rendering = rendering;
         }
+
+        public AppearanceRequest Describe(SceneObject sceneObject, string previewPath) => sceneObject != null && previewPath == sceneObject.TemplatePath
+            ? loader.DescribeAppearance(sceneObject) : new AppearanceRequest(previewPath);
 
         public bool TryGet(string key, out Preview preview) => appearances.TryGetValue(key, out preview);
 

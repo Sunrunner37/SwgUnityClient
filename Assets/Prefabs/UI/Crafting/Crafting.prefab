@@ -12274,6 +12274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 2003494066445119927}
   minimumSize: {x: 412.80002, y: 428}
 --- !u!1 &4045245116096387558
 GameObject:
@@ -14727,6 +14728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 3088515631128349071}
   minimumSize: {x: 627.2, y: 416}
 --- !u!1 &5218870161437885689
 GameObject:
@@ -17183,6 +17185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 7093420050436999610}
   minimumSize: {x: 680, y: 508}
 --- !u!1 &5764025271389630997
 GameObject:
@@ -19367,6 +19370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 365051492955454154}
   minimumSize: {x: 270.4, y: 152}
 --- !u!1 &6429395980311184706
 GameObject:
@@ -21331,6 +21335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 5576834439097745695}
   minimumSize: {x: 1084, y: 579.2}
 --- !u!1 &6955752700586725445
 GameObject:
@@ -28337,6 +28342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b90c99ffa9cf99640a0adb34c86b078b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.UiWindow
+  closeButton: {fileID: 8264218679656104333}
   minimumSize: {x: 449.6, y: 368}
 --- !u!1 &8976982190387213462
 GameObject:

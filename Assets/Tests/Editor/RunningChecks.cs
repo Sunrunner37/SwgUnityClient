@@ -26,6 +26,61 @@ namespace Swg.Client.Tests.Editor
     public sealed class RunningChecks
     {
         [Test]
+        public void UphillSpeedUsesTheNegotiatedServerMultiplierWithoutBlockingSteepSlopes()
+        {
+            var normal = Quaternion.AngleAxis(-70, Vector3.right) * Vector3.up;
+            float lowSkill = PlayerCollision.SlopeSpeed(normal, Vector3.forward, 15 * Mathf.Deg2Rad, .1f);
+            float highSkill = PlayerCollision.SlopeSpeed(normal, Vector3.forward, 15 * Mathf.Deg2Rad, .8f);
+            Assert.That(lowSkill, Is.InRange(.1f, 1f));
+            Assert.That(highSkill, Is.GreaterThan(lowSkill));
+            Assert.That(PlayerCollision.SlopeSpeed(Vector3.up, Vector3.forward, .25f, .1f), Is.EqualTo(1));
+            Assert.That(PlayerCollision.SlopeSpeed(normal, Vector3.back, .25f, .1f), Is.EqualTo(1));
+            Assert.That(PlayerCollision.SlopeSpeed(normal, Vector3.forward, .25f, 1), Is.EqualTo(1));
+            var root = new GameObject("Navigable terrain capsule");
+            try
+            {
+                root.AddComponent<PlayerCollision>().Initialize(GameServicesForTests.CreateState(out _), false);
+                Assert.That(root.GetComponent<CharacterController>().slopeLimit, Is.EqualTo(90));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [Test]
+        public void CapsuleClimbsSteepTerrainButStillStopsAtWalls()
+        {
+            var floor = new GameObject("Steep terrain", typeof(MeshCollider));
+            var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            var body = new GameObject("Climber");
+            var mesh = new Mesh();
+            try
+            {
+                float grade = Mathf.Tan(65 * Mathf.Deg2Rad);
+                mesh.vertices = new[] { new Vector3(-5, 0, -2), new Vector3(-5, 8 * grade, 6), new Vector3(5, 0, -2), new Vector3(5, 8 * grade, 6) };
+                mesh.triangles = new[] { 0, 1, 2, 2, 1, 3 };
+                mesh.RecalculateNormals();
+                floor.GetComponent<MeshCollider>().sharedMesh = mesh;
+                floor.layer = LayerMask.NameToLayer(Swg.Client.Runtime.World.Terrain.WorldTerrainRenderer.LayerName);
+                wall.transform.position = new Vector3(0, 10, 2);
+                wall.transform.localScale = new Vector3(10, 30, .2f);
+                body.transform.position = new Vector3(0, grade + .05f, -1);
+                var collision = body.AddComponent<PlayerCollision>();
+                collision.Initialize(GameServicesForTests.CreateState(out _), false);
+                float startHeight = body.transform.position.y;
+                for (int i = 0; i < 150; i++) collision.Move(Vector3.forward, .05f, .02f);
+                Assert.That(body.transform.position.z, Is.GreaterThan(0), "Steep ground must remain navigable.");
+                Assert.That(body.transform.position.y, Is.GreaterThan(startHeight + 1));
+                Assert.That(body.transform.position.z, Is.LessThan(2), "Raising the slope limit must not bypass walls.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(body);
+                UnityEngine.Object.DestroyImmediate(floor);
+                UnityEngine.Object.DestroyImmediate(wall);
+                UnityEngine.Object.DestroyImmediate(mesh);
+            }
+        }
+
+        [Test]
         public void FinalStopWaitsForTheNextMovementSendSlotAndStaysPending()
         {
             var root = new GameObject("Movement send timing check");
@@ -44,6 +99,30 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(Get("wasMoving"), Is.False);
                 Assert.DoesNotThrow(() => movement.Move(Vector2.zero, .016f));
                 Assert.That(Get("pendingMovement"), Is.True, "The following idle frame must retain the unsent stop.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [Test]
+        public void ServerCorrectionDiscardsSpeedAndPendingPredictedMovement()
+        {
+            var root = new GameObject("Movement correction reset test");
+            try
+            {
+                var movement = root.AddComponent<PlayerMovement>();
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                void Set(string name,object value) => typeof(PlayerMovement).GetField(name,flags).SetValue(movement,value);
+                object Get(string name) => typeof(PlayerMovement).GetField(name,flags).GetValue(movement);
+                typeof(PlayerMovement).GetProperty(nameof(PlayerMovement.CurrentSpeed)).SetValue(movement,17f);
+                Set("pendingMovement",true); Set("wasMoving",true);
+                var changed = typeof(PlayerMovement).GetMethod("OnPlayerChanged",flags);
+                changed.Invoke(movement,new object[]{SceneObjectChange.Transform});
+                Assert.That(movement.CurrentSpeed, Is.EqualTo(17));
+                changed.Invoke(movement,new object[]{SceneObjectChange.Transform | SceneObjectChange.Correction});
+                Assert.That(movement.CurrentSpeed, Is.Zero);
+                Assert.That(Get("pendingMovement"), Is.False);
+                Assert.That(Get("wasMoving"), Is.False);
+                Assert.That((float)Get("nextSend"), Is.GreaterThan(Time.unscaledTime));
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }
@@ -130,6 +209,8 @@ namespace Swg.Client.Tests.Editor
             creature.Apply(update);
             Assert.That(creature.MovementSpeed, Is.EqualTo(8.76f).Within(.00001f));
             Assert.That(creature.TurnScale, Is.EqualTo(.75f));
+            Assert.That(creature.SlopeAngleRadians, Is.EqualTo(1f));
+            Assert.That(creature.SlopeSpeedMultiplier, Is.Zero);
         }
 
         [Test]
@@ -143,7 +224,11 @@ namespace Swg.Client.Tests.Editor
             Assert.That(CreatureView4.ReadDeltaField(5, new ByteReader(BitConverter.GetBytes(.5f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(7, new ByteReader(BitConverter.GetBytes(8f)), update), Is.True);
             Assert.That(CreatureView4.ReadDeltaField(10, new ByteReader(BitConverter.GetBytes(.8f)), update), Is.True);
+            CreatureView4.ReadDeltaField(8, new ByteReader(BitConverter.GetBytes(.25f)), update);
+            CreatureView4.ReadDeltaField(9, new ByteReader(BitConverter.GetBytes(.4f)), update);
             creature.Apply(update);
+            Assert.That(creature.SlopeAngleRadians, Is.EqualTo(.25f));
+            Assert.That(creature.SlopeSpeedMultiplier, Is.EqualTo(.4f));
             Assert.That(creature.MovementSpeed, Is.EqualTo(4));
             Assert.That(creature.TurnScale, Is.EqualTo(.8f));
             Assert.That(update.Changes, Is.EqualTo(SceneObjectChange.None));

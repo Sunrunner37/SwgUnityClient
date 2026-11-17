@@ -91,11 +91,6 @@ namespace Swg.Client.Runtime.UI.Conversation
         void LateUpdate()
         {
             if (!conversation.IsOpen) return;
-            if (!UiInput.TextInputFocused && Keyboard.current?.escapeKey.wasPressedThisFrame == true)
-            {
-                conversation.Stop();
-                return;
-            }
             var area = (RectTransform)transform;
             Vector2 point = area.rect.center + new Vector2(0, area.rect.height * .15f);
             var camera = rendering.WorldCamera;

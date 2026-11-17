@@ -1,4 +1,11 @@
+using System.Collections.Generic;
+using Swg.Client.Core.Assets.Formats.Binary;
+using Swg.Client.Core.Networking.Game.Packets;
+using Swg.Client.Core.Networking.Game.Packets.Movement;
+using Swg.Client.Core.Networking.Game.Handlers;
+using Swg.Client.Core.Networking.Game.Handlers.Movement;
 using Swg.Client.Core.Characters;
+using Swg.Client.Runtime;
 using Swg.Client.Runtime.Assets.Appearances;
 using System.IO;
 using System.Linq;
@@ -149,6 +156,97 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(callbacks, Is.EqualTo(1), "An explicitly server-owned callback is still forwarded unchanged.");
             }
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
+        }
+
+        [Test]
+        public void TeleportAcknowledgementMatchesCore3ObjectControllerEnvelope()
+        {
+            using var bytes = new MemoryStream();
+            using var writer = new BinaryWriter(bytes);
+            new TeleportAckPacket(42,77).WriteTo(writer);
+            var packet = ObjectControllerPacket.ReadFrom(new ByteReader(bytes.ToArray()));
+            Assert.That(packet.Flags, Is.EqualTo(0x23));
+            Assert.That(packet.ControllerType, Is.EqualTo(0x13f));
+            Assert.That(packet.SwgId, Is.EqualTo(42));
+            Assert.That(packet.Reserved, Is.Zero);
+            var payload = new ByteReader(packet.Payload);
+            Assert.That(payload.U32(), Is.EqualTo(77));
+            Assert.That(payload.Remaining, Is.Zero, "TeleportAckCallback consumes one movement counter.");
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void PlayerControllerCorrectionsAreAcknowledgedOnlyAfterApplyingThePose(bool withParent)
+        {
+            var state = GameServicesForTests.CreateState(out var player);
+            player.BeginScene(1);
+            var creature = new CreatureSceneObject { SwgId = 1 };
+            state.SceneObjects.Add(creature);
+            var acknowledgements = new List<TeleportAckPacket>();
+            var correction = new Vector3(3,2,4);
+            var replication = GameServicesForTests.CreateReplication(state,player,packet =>
+            {
+                Assert.That(creature.Position, Is.EqualTo(correction), "Unlock server movement only after applying the correction.");
+                acknowledgements.Add(packet);
+            });
+            try
+            {
+                using var bytes = new MemoryStream();
+                using var writer = new BinaryWriter(bytes);
+                writer.Write(77u);
+                if (withParent) writer.Write(99ul);
+                writer.Write(0f); writer.Write(0f); writer.Write(0f); writer.Write(1f);
+                writer.Write(correction.x); writer.Write(correction.y); writer.Write(correction.z); writer.Write(0f);
+                IObjectControllerHandler handler = withParent ? new TransformWithParentControllerHandler(replication) : new TransformControllerHandler(replication);
+                var packet = new ObjectControllerPacket(0x1b,withParent ? 0xf1u : 0x71u,1,bytes.ToArray());
+                handler.Handle(packet);
+                Assert.That(acknowledgements, Is.Empty, "Receiving on the network thread must not acknowledge unapplied state.");
+                Assert.That(creature.Position, Is.EqualTo(Vector3.zero));
+                replication.ApplyPending();
+                Assert.That(creature.ParentSwgId.Value, Is.EqualTo(withParent ? 99ul : 0ul));
+                Assert.That(acknowledgements.Count, Is.EqualTo(1));
+                Assert.That(acknowledgements[0].PlayerSwgId.Value, Is.EqualTo(1));
+                Assert.That(acknowledgements[0].MovementCounter, Is.EqualTo(77));
+                Assert.That(replication.NextPlayerMovementCounter(), Is.EqualTo(78));
+                // Other players' authoritative updates and ordinary broadcasts do not acknowledge our teleport.
+                handler.Handle(new ObjectControllerPacket(0x1b,packet.ControllerType,2,packet.Payload));
+                replication.Commit(1,new MovementUpdate(correction,Quaternion.identity,creature.ParentSwgId,79),isBroadcast:true);
+                replication.ApplyPending();
+                Assert.That(acknowledgements.Count, Is.EqualTo(1));
+            }
+            finally { Object.DestroyImmediate(replication.gameObject); }
+        }
+
+        [Test]
+        public void MountedTeleportSnapsTheControlledVehicleBeforeAcknowledging()
+        {
+            var registry = new SceneObjectRegistry();
+            using var services = ManagedObjectTestScope.Use(registry);
+            var state = GameServices.Resolve<WorldState>();
+            var player = GameServices.Resolve<CurrentPlayer>();
+            player.BeginScene(1);
+            var rider = new CreatureSceneObject { SwgId = 1, States = CreatureState.RidingMount };
+            var vehicle = new CreatureSceneObject { SwgId = 2 };
+            registry.Add(rider); registry.Add(vehicle); registry.Reparent(1,2);
+            var body = new GameObject("Controlled vehicle correction test");
+            var correction = new Vector3(2,0,3); // Below the ordinary interpolation/teleport threshold.
+            int acknowledgements = 0;
+            var replication = GameServicesForTests.CreateReplication(state,player,packet =>
+            {
+                Assert.That(body.transform.position, Is.EqualTo(correction), "Prediction must not resume from the pre-correction vehicle position.");
+                Assert.That(rider.Position, Is.EqualTo(correction));
+                acknowledgements++;
+            });
+            try
+            {
+                body.AddComponent<SceneObjectMovement>().Initialize(vehicle);
+                replication.ApplyCorrection(1,new MovementUpdate(correction,Quaternion.identity,0,55,0));
+                replication.ApplyPending();
+                Assert.That(rider.Mount, Is.SameAs(vehicle));
+                Assert.That(acknowledgements, Is.EqualTo(1));
+                Assert.That(body.GetComponent<SceneObjectMovement>().enabled, Is.False, "Server teleports snap rather than interpolate.");
+            }
+            finally { Object.DestroyImmediate(body); Object.DestroyImmediate(replication.gameObject); }
         }
 
         [Test]

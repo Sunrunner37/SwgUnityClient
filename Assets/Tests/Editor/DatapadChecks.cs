@@ -1,3 +1,10 @@
+using Autofac;
+using Swg.Client.Runtime;
+using Swg.Client.Runtime.World;
+using Swg.Client.Runtime.World.Loading;
+using Swg.Client.Runtime.Assets.Shaders;
+using Swg.Client.Core.Networking.Login;
+using UnityEngine.SceneManagement;
 using Swg.Client.Core.Characters;
 using Swg.Client.Core;
 using System;
@@ -34,6 +41,79 @@ namespace Swg.Client.Tests.Editor
 {
     public sealed class DatapadChecks
     {
+        [UnityTest, Category("NativeAssets")]
+        public IEnumerator DatapadPreloadsAndRefreshesWithoutOpeningOrRenderingAWindow()
+        {
+            yield return new EnterPlayMode();
+            var initial = SceneManager.GetActiveScene();
+            SceneManager.SetActiveScene(SceneManager.CreateScene("Datapad preload check"));
+            yield return SceneManager.UnloadSceneAsync(initial);
+            var registry = new SceneObjectRegistry();
+            using var scope = ManagedObjectTestScope.Use(registry, builder =>
+            {
+                builder.RegisterInstance(ClientSettings.From(Path.Combine(Application.dataPath, "../client.ini")));
+                builder.RegisterInstance(new Admission { Username = "test", Galaxy = new Galaxy { Name = "Offline" } });
+                builder.RegisterInstance(new Action<string, string, SwgId>((name, args, target) => { }));
+                builder.RegisterType<TreRuntimeAssets>().SingleInstance();
+                builder.RegisterType<StringTableLocalizer>().SingleInstance();
+                builder.RegisterType<SceneObjectNameResolver>().SingleInstance();
+                builder.RegisterType<DraftSchematicCatalog>().SingleInstance();
+                builder.RegisterType<ClientDatapad>().SingleInstance();
+                builder.RegisterType<AppearanceCache>().SingleInstance();
+                builder.RegisterType<WorldContentLoader>().SingleInstance();
+                builder.RegisterType<SwgMaterialFactory>().SingleInstance();
+                builder.RegisterType<ItemPreviewCache>().SingleInstance();
+                var rendering = new WorldRenderingContext();
+                rendering.Initialize(Shader.Find("SWG/World"), Shader.Find("SWG/Character"), Shader.Find("SWG/Particle"), null, null, null);
+                builder.RegisterInstance(rendering);
+            });
+            var assets = GameServices.Resolve<TreRuntimeAssets>();
+            yield return new WaitUntil(() => assets.Ready.IsCompleted);
+            var state = GameServices.Resolve<WorldState>();
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/corellia.trn");
+            state.Templates = new ObjectTemplateCatalog(assets.Loader);
+            registry.Add(new SceneObject { SwgId = 1 });
+            registry.Add(new TangibleSceneObject { SwgId = 2, ParentSwgId = 1, TemplatePath = "object/tangible/datapad/shared_character_datapad.iff" });
+            var item = new TangibleSceneObject { SwgId = 3, ParentSwgId = 2, TemplatePath = "object/tangible/terminal/shared_terminal_mission.iff" };
+            registry.Add(item);
+            var datapad = GameServices.Resolve<ClientDatapad>();
+            var cache = GameServices.Resolve<ItemPreviewCache>();
+            var loader = GameServices.Resolve<WorldContentLoader>();
+            var root = new GameObject("Datapad preloader test");
+            var warming = root.AddComponent<DatapadPreviewCache>();
+            IEnumerator Ready()
+            {
+                float deadline = Time.realtimeSinceStartup + 60;
+                while (!warming.IsReady && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.That(warming.IsReady, Is.True);
+            }
+            try
+            {
+                warming.Initialize(datapad, loader, cache);
+                yield return Ready();
+                var request = cache.Describe(item, item.TemplatePath);
+                Assert.That(cache.TryGet(request.Key, out var first), Is.True);
+                yield return cache.Prepare(new[] { request });
+                Assert.That(cache.TryGet(request.Key, out var again), Is.True);
+                Assert.That(again, Is.SameAs(first), "Opening the window reuses already prepared GPU resources.");
+                var added = new TangibleSceneObject { SwgId = 4, ParentSwgId = 2, TemplatePath = "object/tangible/furniture/all/shared_frn_all_plant_potted_lg_s4.iff" };
+                registry.Add(added);
+                registry.NotifyChanged(added, SceneObjectChange.Appearance);
+                Assert.That(warming.IsReady, Is.False);
+                yield return Ready();
+                Assert.That(cache.TryGet(cache.Describe(added, added.TemplatePath).Key, out _), Is.True);
+                item.TemplatePath = added.TemplatePath;
+                registry.NotifyChanged(item, SceneObjectChange.Appearance);
+                yield return Ready();
+                Assert.That(cache.TryGet(cache.Describe(item, item.TemplatePath).Key, out _), Is.True);
+                Assert.That(root.GetComponentsInChildren<Camera>(true), Is.Empty, "Preparing previews does not create a rendering window.");
+            }
+            finally { warming.Dispose(); }
+            yield return new ExitPlayMode();
+        }
+
         [Test]
         public void ExperimentsMatchNativePositionsGroupAndDeduplicateBeforeRendering()
         {

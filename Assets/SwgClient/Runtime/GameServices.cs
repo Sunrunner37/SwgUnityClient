@@ -6,6 +6,7 @@ using Swg.Client.Core.Networking.Game.Packets.Player;
 using Swg.Client.Runtime.UI;
 using Swg.Client.Core;
 using Swg.Client.Runtime.UI.Inventory;
+using Swg.Client.Runtime.UI.Datapad;
 using Swg.Client.Runtime.UI.Containers;
 using Swg.Client.Core.Networking.Game.Packets.Ui;
 using Swg.Client.Core.Networking.Game.Packets.Commands;
@@ -152,7 +153,7 @@ namespace Swg.Client.Runtime
                 builder.Register(context =>
                 {
                     var replication = new GameObject("Game replication").AddComponent<GameReplication>();
-                    replication.Initialize(context.Resolve<WorldState>(), context.Resolve<CurrentPlayer>(), context.Resolve<CraftingProgress>());
+                    replication.Initialize(context.Resolve<WorldState>(), context.Resolve<CurrentPlayer>(), context.Resolve<CraftingProgress>(), packet => connection.Send(packet));
                     UnityEngine.Object.DontDestroyOnLoad(replication.gameObject);
                     return replication;
                 }).AsSelf().SingleInstance().AutoActivate();
@@ -160,6 +161,13 @@ namespace Swg.Client.Runtime
                 builder.RegisterType<WorldContentLoader>().SingleInstance();
                 builder.RegisterType<WorldRenderingContext>().SingleInstance();
                 builder.RegisterType<ItemPreviewCache>().SingleInstance();
+                builder.Register(context =>
+                {
+                    var previews = new GameObject("Datapad previews").AddComponent<DatapadPreviewCache>();
+                    previews.Initialize(context.Resolve<ClientDatapad>(), context.Resolve<WorldContentLoader>(), context.Resolve<ItemPreviewCache>());
+                    UnityEngine.Object.DontDestroyOnLoad(previews.gameObject);
+                    return previews;
+                }).SingleInstance();
                 builder.Register(context =>
                 {
                     var previews = new GameObject("Inventory previews").AddComponent<InventoryPreviewCache>();

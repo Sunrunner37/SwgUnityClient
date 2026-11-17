@@ -90,7 +90,7 @@ namespace Swg.Client.Tests.Editor
             try
             {
                 var replication = root.AddComponent<GameReplication>();
-                replication.Initialize(world, player, progress);
+                replication.Initialize(world, player, progress, _ => { });
                 replication.UpdatePlayer(owner => owner.CharacterSheet.Update(sheet => sheet.Food = 42, CharacterSheetChange.Status),
                     crafting => crafting.Update(value => value.ExperimentationPoints = 11));
                 Assert.That(player.CharacterSheet.Food, Is.Zero);

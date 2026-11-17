@@ -19,7 +19,8 @@ namespace Swg.Client.Core.Networking.Game.Replication
             update.SpeedMultiplier = reader.Float();
             update.ListenSwgId = reader.U64();
             update.RunSpeed = reader.Float();
-            reader.Skip(8); // Slope angle / percent.
+            update.SlopeAngleRadians = reader.Float();
+            update.SlopeSpeedMultiplier = reader.Float();
             update.TurnScale = reader.Float();
             reader.Skip(8); // Walk speed / water modifier.
             ReplicationReader.SkipVector(reader, sizeof(ulong)); // Unused group critical objects.
@@ -37,8 +38,6 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     update.AccelerationMultiplier = reader.Float();
                     break;
                 case 4:
-                case 8:
-                case 9:
                 case 11:
                 case 12:
                     reader.Float();
@@ -57,6 +56,12 @@ namespace Swg.Client.Core.Networking.Game.Replication
                     break;
                 case 7:
                     update.RunSpeed = reader.Float();
+                    break;
+                case 8:
+                    update.SlopeAngleRadians = reader.Float();
+                    break;
+                case 9:
+                    update.SlopeSpeedMultiplier = reader.Float();
                     break;
                 case 10:
                     update.TurnScale = reader.Float();

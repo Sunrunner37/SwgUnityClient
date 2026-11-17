@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,6 +19,18 @@ namespace Swg.Client.Runtime.UI.Windows
     [DisallowMultipleComponent, RequireComponent(typeof(RectTransform))]
     public sealed class UiWindow : MonoBehaviour
     {
+        internal static readonly List<UiWindow> OpenWindows = new List<UiWindow>();
+        static long nextFocus;
+        internal long FocusOrder { get; private set; }
+        public Button closeButton;
+        void OnEnable() { OpenWindows.Add(this); FocusOrder = ++nextFocus; }
+        void OnDisable() => OpenWindows.Remove(this);
+        internal void Focus()
+        {
+            FocusOrder = ++nextFocus;
+            transform.SetAsLastSibling();
+        }
+
         public Vector2 minimumSize = new Vector2(296, 120);
         RectTransform Parent => (RectTransform)transform.parent;
 
@@ -26,7 +40,7 @@ namespace Swg.Client.Runtime.UI.Windows
         readonly Vector3[] corners = new Vector3[4];
         public void BeginDrag(PointerEventData pointer)
         {
-            transform.SetAsLastSibling();
+            Focus();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(Parent, pointer.position, pointer.pressEventCamera, out pointerStart);
             ((RectTransform)transform).GetWorldCorners(corners);
             minimumStart = Parent.InverseTransformPoint(corners[0]);

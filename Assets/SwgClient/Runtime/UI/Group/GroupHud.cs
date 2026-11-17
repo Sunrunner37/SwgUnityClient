@@ -82,7 +82,7 @@ namespace Swg.Client.Runtime.UI.Group
                 ManagedSceneObject.TryGetObjectFrom(member.SwgId, out var body);
                 row.Show(member, group.LeaderSwgId == member.SwgId, creature, body, playerBody == null ? null : playerBody.transform, worldCamera);
             }
-            if (menuOverlay.activeSelf && (!group.Contains(menuTarget) || Keyboard.current?.escapeKey.wasPressedThisFrame == true)) CloseMenu();
+            if (menuOverlay.activeSelf && (!group.Contains(menuTarget) || UiInput.TryConsumeEscape())) CloseMenu();
         }
         public void Select(SwgId swgId) => targeting.Select(swgId);
         public void OpenMenu(SwgId swgId, Vector2 screenPosition)

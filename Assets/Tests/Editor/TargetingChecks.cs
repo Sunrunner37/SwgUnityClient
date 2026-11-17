@@ -1,6 +1,7 @@
 using Swg.Client.Core.Characters;
 using Swg.Client.Core.Assets.Appearances;
 using System.Collections.Generic;
+using System.Reflection;
 using System.IO;
 using Swg.Client.Core.Assets;
 using Swg.Client.Core.Assets.Tre;
@@ -35,6 +36,61 @@ namespace Swg.Client.Tests.Editor
             using var loader = new TreAssetLoader(settings.TreDirectory, settings.TreArchivePriorities);
             var catalog = new ObjectTemplateCatalog(loader);
             Assert.That(catalog.IsTargetable(template), Is.True);
+        }
+
+        [TestCase("object/creature/npc/theme_park/shared_player_shuttle.iff")]
+        [TestCase("object/creature/npc/theme_park/shared_player_transport.iff")]
+        [TestCase("object/mobile/shared_player_transport.iff")]
+        [Category("NativeAssets")]
+        public void PassengerTransportsAreNotWorldTargets(string path)
+        {
+            using var loader = new TreAssetLoader(@"D:\SwgEmu\emu\SWGEmu");
+            var appearance = AppearanceLoader.LoadDetailed(loader, path);
+            Assert.That(appearance.Parts, Is.Not.Empty);
+            Assert.That(appearance.IsPassengerTransport, Is.True);
+        }
+
+        [Test]
+        public void TabSelectsNearestAttackableThenCyclesWithoutAttacking()
+        {
+            var registry = new SceneObjectRegistry();
+            var state = GameServicesForTests.CreateState(registry, out var currentPlayer);
+            currentPlayer.BeginScene(1);
+            state.BeginScene(Vector3.zero, "terrain/test.trn");
+            registry.Add(new CreatureSceneObject { SwgId = 1 });
+            var sent = new List<TargetUpdatePacket>();
+            using var targeting = new ClientTargeting(state, sent.Add, currentPlayer);
+            var roots = new List<GameObject>();
+            void Add(ulong id, float distance, uint flags, CreaturePosture posture = CreaturePosture.Upright, bool rendered = true)
+            {
+                registry.Add(new CreatureSceneObject { SwgId = id, Position = new Vector3(distance, 0, 0), PvpStatus = flags, Posture = posture });
+                if (!rendered) return;
+                var body = new GameObject("Cycle candidate");
+                roots.Add(body);
+                body.AddComponent<ManagedSceneObject>().Bind(id);
+                body.AddComponent<TargetableSceneObject>().Initialize(id, new AppearanceData(), true);
+            }
+            var root = new GameObject("Tab selection");
+            root.SetActive(false);
+            try
+            {
+                var world = root.AddComponent<WorldTargeting>();
+                void Set(string name, object value) => typeof(WorldTargeting).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(world, value);
+                Set("state", state); Set("currentPlayer", currentPlayer); Set("targeting", targeting);
+                world.maximumDistance = 40;
+                Add(101, 20, 1); Add(102, 5, 1); Add(103, 1, 0); Add(104, 2, 1, CreaturePosture.Dead);
+                Add(105, 50, 1); Add(106, 3, 1, rendered: false);
+                targeting.Select(101); // A manual target does not skip the nearest on the first Tab.
+                world.CycleTarget(); Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(102));
+                world.CycleTarget(); Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(101));
+                world.CycleTarget(); Assert.That(targeting.SelectedSwgId.Value, Is.EqualTo(102));
+                Assert.That(sent.Count, Is.EqualTo(4), "Only selection packets are emitted.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+                foreach (var body in roots) UnityEngine.Object.DestroyImmediate(body);
+            }
         }
 
         [Test]

@@ -19,6 +19,8 @@ namespace Swg.Client.Core.World
         Waypoint = 1024,
         Group = 2048,
         Performance = 4096,
+        // Explicit authoritative corrections snap prediction; ordinary transform notifications interpolate.
+        Correction = 8192,
         All = Transform | Appearance | Containment | Vitals | Target | Inventory | Posture | State | Skills | Waypoint | Group | Performance
     }
 }

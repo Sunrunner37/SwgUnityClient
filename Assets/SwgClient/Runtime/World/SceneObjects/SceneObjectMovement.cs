@@ -38,7 +38,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if ((changes & SceneObjectChange.Replaced) != 0)
                 this.state.SceneObjects.TryGet<SpatialSceneObject>(swgId, out this.sceneObject);
             if ((changes & (SceneObjectChange.Transform | SceneObjectChange.Containment | SceneObjectChange.Replaced)) != 0)
-                UpdatePose((changes & SceneObjectChange.Containment) != 0);
+                UpdatePose((changes & (SceneObjectChange.Containment | SceneObjectChange.Correction)) != 0);
         }
 
         void UpdatePose(bool snap)

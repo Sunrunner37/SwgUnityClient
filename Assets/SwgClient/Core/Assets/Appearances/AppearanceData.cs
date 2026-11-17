@@ -2,6 +2,7 @@ using Swg.Client.Core.Assets.Formats.Pob;
 using Swg.Client.Core.Assets.Audio;
 using UnityEngine;
 using System;
+using System.Linq;
 using Swg.Client.Core.Assets.Particles;
 using System.Collections.Generic;
 using Swg.Client.Core.Geometry;
@@ -11,6 +12,8 @@ namespace Swg.Client.Core.Assets.Appearances
     public sealed class AppearanceData
     {
         public string Key;
+        // Transport flight bindings identify shuttles even when their template uses the ordinary NPC type.
+        public bool IsPassengerTransport => Parts.Any(part => part.Skinning?.Skeleton?.IsPassengerTransport == true);
         public readonly List<SoundAppearance> Sounds = new List<SoundAppearance>();
         public bool HasContent => Parts.Count != 0 || Particles.Count != 0 || Sounds.Count != 0;
         public PortalLayout PortalLayout;

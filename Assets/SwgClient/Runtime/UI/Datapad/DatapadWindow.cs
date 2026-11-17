@@ -149,8 +149,7 @@ namespace Swg.Client.Runtime.UI.Datapad
             first = Mathf.Min(first, entries.Length);
             return (first, Mathf.Min(count, entries.Length - first));
         }
-        AppearanceRequest Describe(ClientDatapad.Entry entry) => entry.SceneObject != null && entry.PreviewPath == entry.SceneObject.TemplatePath
-            ? loader.DescribeAppearance(entry.SceneObject) : new AppearanceRequest(entry.PreviewPath);
+        AppearanceRequest Describe(ClientDatapad.Entry entry) => cache.Describe(entry.SceneObject, entry.PreviewPath);
         void ClearCells()
         {
             foreach (var cell in cells) { cell.gameObject.SetActive(false); Destroy(cell.gameObject); }

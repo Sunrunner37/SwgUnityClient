@@ -43,6 +43,7 @@ namespace Swg.Client.Core.Characters.Animation
 
         public SkeletalAnimation ResolveAmbient(string performance, string mood) => animationResolver.ResolveAmbient(performance, mood);
 
+        public bool IsPassengerTransport { get; internal set; }
         public Joint[] Joints { get; private set; }
         public Matrix4x4[] BindPoses { get; private set; }
         public readonly Dictionary<string, SkeletalAnimation> RidingPoses = new Dictionary<string, SkeletalAnimation>(StringComparer.Ordinal);

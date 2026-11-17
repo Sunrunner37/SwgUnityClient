@@ -26,7 +26,9 @@ namespace Swg.Client.Runtime.World.SceneObjects
             controller.radius = mounted ? .65f : .25f;
             controller.center = Vector3.up * (controller.height * .5f + .03f);
             controller.skinWidth = .025f;
-            controller.slopeLimit = 55;
+            // Terrain is traversable; its uphill cost is applied to movement speed.
+            // The capsule still blocks vertical walls and building entrances.
+            controller.slopeLimit = 90;
             mask = ~(1 << LayerMask.NameToLayer(TargetableSceneObject.LayerName));
             enabled = true;
             controller.enabled = true;
@@ -75,6 +77,26 @@ namespace Swg.Client.Runtime.World.SceneObjects
                     transform.position = new Vector3(transform.position.x, ground, transform.position.z);
             }
             return transform.position;
+        }
+
+        public float TerrainSpeed(Vector3 heading, float angleRadians, float uphillMultiplier)
+        {
+            // Sample the rendered terrain collider, not the procedural generator every frame.
+            if (!CellSwgId.IsNone || !Physics.Raycast(transform.position + Vector3.up * .6f,
+                    Vector3.down, out var ground, 2f, mask, QueryTriggerInteraction.Ignore)
+                || ground.collider.gameObject.layer != LayerMask.NameToLayer(WorldTerrainRenderer.LayerName))
+                return 1;
+            return SlopeSpeed(ground.normal, heading, angleRadians, uphillMultiplier);
+        }
+
+        internal static float SlopeSpeed(Vector3 normal, Vector3 heading, float angleRadians, float uphillMultiplier)
+        {
+            // Native CreatureController: interpolate from normal speed at the tolerance
+            // to the server's negotiated multiplier on a vertical uphill face.
+            float threshold = -Mathf.Sin(angleRadians);
+            float slope = Vector3.Dot(normal, heading);
+            if (slope >= threshold || threshold <= -1) return 1;
+            return Mathf.Lerp(1, Mathf.Clamp01(uphillMultiplier), (slope - threshold) / (-1 - threshold));
         }
 
         internal static BuildingFloor FindBuildingFloor(RaycastHit[] hits, int count)

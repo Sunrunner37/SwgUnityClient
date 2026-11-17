@@ -17,7 +17,7 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Movement
         public void Handle(ObjectControllerPacket packet)
         {
             var update = MovementReader.ReadControllerTransform(new ByteReader(packet.Payload), false);
-            replication.Commit(packet.SwgId, update);
+            replication.ApplyCorrection(packet.SwgId, update);
         }
     }
 }

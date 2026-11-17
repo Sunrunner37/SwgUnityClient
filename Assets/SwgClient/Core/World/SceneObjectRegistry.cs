@@ -214,7 +214,7 @@ namespace Swg.Client.Core.World
             // Reparenting changes descendant world poses, not their own containment.
             // Forward pose changes without making inventory, missions and UI rebuild unchanged contents.
             var inherited = (changes & (SceneObjectChange.Transform | SceneObjectChange.Containment)) != 0
-                ? SceneObjectChange.Transform : SceneObjectChange.None;
+                ? SceneObjectChange.Transform | (changes & SceneObjectChange.Correction) : SceneObjectChange.None;
             if (inherited != SceneObjectChange.None)
                 foreach (var child in value.Children)
                     Publish(child, inherited);

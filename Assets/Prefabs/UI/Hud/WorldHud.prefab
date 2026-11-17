@@ -472,6 +472,7 @@ GameObject:
   - component: {fileID: 7445153098972060794}
   - component: {fileID: 3853955716574208185}
   - component: {fileID: 3982218606504792263}
+  - component: {fileID: 5866049482353686407}
   m_Layer: 5
   m_Name: WorldHud
   m_TagString: Untagged
@@ -672,6 +673,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Inventory.ContainerWindows
   windowPrefab: {fileID: 4137942829330770230, guid: 8621ecd0655de8e46b089ed275847a34, type: 3}
   contextMenu: {fileID: 5306935580092546701}
+--- !u!114 &5866049482353686407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7215996259141536535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4647372332a0d34588b288aee31ed9b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Windows.WindowStack
 --- !u!1 &8135799122445725383
 GameObject:
   m_ObjectHideFlags: 0
