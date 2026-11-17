@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using Swg.Client.Core.Assets.Tre;
@@ -62,6 +63,24 @@ namespace Swg.Client.Core.Assets.Formats.Sht
             string baseShader = new ByteReader(version.Chunk("NAME")).CString().Replace('\\', '/');
             return new TextureSwitcher { BaseShader = "shader/" + Path.GetFileName(baseShader).ToLowerInvariant(), Frames = frames,
                 MinimumSeconds = Math.Min(minimum, maximum), MaximumSeconds = Math.Max(minimum, maximum) };
+        }
+
+        /// <summary>MAIN material emission is independent of illumination; MATL stores ambient, diffuse, emissive and specular ARGB, then shininess.</summary>
+        public static bool TryGetEmission(IEnumerable<IffNode> nodes, out Color emission)
+        {
+            emission = Color.black;
+            var materials = IffNode.Form(nodes, "MATS");
+            if (materials == null) return false;
+            foreach (var material in materials.Children.Where(node => node.Kind == "0000"))
+            {
+                if (new ByteReader(material.Chunk("TAG ")).U32() != 0x4d41494e) continue; // MAIN.
+                var reader = new ByteReader(material.Chunk("MATL"));
+                reader.Skip(32);
+                float alpha = reader.Float();
+                emission = new Color(reader.Float(), reader.Float(), reader.Float(), alpha);
+                return true;
+            }
+            return false;
         }
 
         public static bool TryGetMainTexture(byte[] bytes, out string texturePath) => TryGetMainTexture(IffNode.Parse(bytes), out texturePath);

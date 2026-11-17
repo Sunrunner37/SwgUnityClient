@@ -222,7 +222,7 @@ namespace Swg.Client.Runtime.World.Loading
                         }
 
                         var appearance = LoadAppearance(loader, new AppearanceRequest(entry.TemplatePath));
-                        if (appearance.Parts.Count == 0 && appearance.Particles.Count == 0)
+                        if (!appearance.HasContent)
                             continue;
                         region.ScenerySwgIds.Add(entry.SwgId);
                         region.Scenery.Add(entry.SwgId, appearance);
@@ -272,7 +272,7 @@ namespace Swg.Client.Runtime.World.Loading
                     try
                     {
                         var appearance = LoadAppearance(loader, pair.Value);
-                        if (appearance.Parts.Count != 0 || appearance.Particles.Count != 0)
+                        if (appearance.HasContent)
                             appearances.Add(pair.Key, appearance);
                     }
                     catch (Exception error)

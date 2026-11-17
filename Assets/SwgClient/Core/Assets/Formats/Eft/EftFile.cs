@@ -12,13 +12,16 @@ namespace Swg.Client.Core.Assets.Formats.Eft
     {
         public bool AlphaTestEnabled { get; private set; }
         public bool AlphaBlendEnabled { get; private set; }
+        /// <summary>Native fixed-function materials can use baked vertex colors for ambient light while leaving diffuse light untinted.</summary>
+        public bool VertexColorAmbientOnly { get; private set; }
 
         public static EftFile Parse(byte[] bytes)
         {
             var roots = IffNode.Parse(bytes);
             if (IffNode.Form(roots, "EFCT") == null)
                 throw new InvalidDataException("Expected an EFT shader effect");
-            var passes = BasePasses(roots).Select(ReadAlphaState).ToArray();
+            var basePasses = BasePasses(roots).ToArray();
+            var passes = basePasses.Select(ReadAlphaState).ToArray();
             if (passes.Length == 0)
                 throw new InvalidDataException("Effect has no inline render pass");
             // Programmable variants can clip in their pixel shader with alpha testing disabled.
@@ -26,7 +29,8 @@ namespace Swg.Client.Core.Assets.Formats.Eft
             return new EftFile
             {
                 AlphaTestEnabled = passes.Any(pass => pass.Test),
-                AlphaBlendEnabled = passes.Any(pass => pass.Blend)
+                AlphaBlendEnabled = passes.Any(pass => pass.Blend),
+                VertexColorAmbientOnly = basePasses.Any(ReadAmbientVertexColor)
             };
         }
 
@@ -44,6 +48,25 @@ namespace Swg.Client.Core.Assets.Formats.Eft
                     foreach (var pass in BasePasses(node.Children))
                         yield return pass;
             }
+        }
+
+        static bool ReadAmbientVertexColor(IffNode pass)
+        {
+            var pipeline = IffNode.Form(pass.Children, "PFFP");
+            if (pipeline == null) return false;
+            var version = pipeline.Children.FirstOrDefault(node => node.Tag == "0001" || node.Tag == "0000");
+            if (version == null) return false;
+            var reader = new ByteReader(version.Data);
+            bool lighting = reader.Byte() != 0;
+            reader.Byte(); // Specular enabled.
+            bool colorVertex = reader.Byte() != 0;
+            if (version.Tag == "0000") reader.U32(); // Deprecated material tag.
+            byte ambient = reader.Byte();
+            byte diffuse = reader.Byte();
+            byte specular = reader.Byte();
+            byte emissive = reader.Byte();
+            // MaterialSource: 0 = material, 1 = vertex color 0, 2 = vertex color 1.
+            return lighting && colorVertex && ambient == 1 && diffuse == 0 && specular == 0 && emissive == 0;
         }
 
         static (bool Test, bool Blend) ReadAlphaState(IffNode pass)

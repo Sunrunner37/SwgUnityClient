@@ -1,3 +1,5 @@
+using Swg.Client.Core.Assets.Formats.ObjectTemplates;
+using Swg.Client.Core.Assets.Audio;
 using Swg.Client.Core.Assets.Formats.Pob;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,33 @@ namespace Swg.Client.Core.Assets.Appearances
             return result;
         }
 
-        static void LoadAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result, HashSet<string> stack, int depth, int detailLevel, IReadOnlyDictionary<string, short> customization)
+        static void LoadInterior(TreAssetLoader loader, string template, Matrix4x4 transform, AppearanceData result,
+            HashSet<string> stack, int depth, int detailLevel, IReadOnlyDictionary<string, short> customization)
+        {
+            string layoutPath = null;
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            while (template != null && seen.Add(template))
+            {
+                var metadata = SharedBuildingTemplate.Parse(loader.Read(template));
+                if (metadata.InteriorLayout != null) { layoutPath = metadata.InteriorLayout; break; }
+                template = metadata.BaseTemplate;
+            }
+            if (string.IsNullOrEmpty(layoutPath)) return;
+            foreach (var entry in IlfFile.Parse(loader.Read(layoutPath)).Entries)
+            {
+                var cell = result.PortalLayout.Cells.FirstOrDefault(value => value.Name == entry.Cell);
+                if (cell == null) { Debug.LogWarning("Interior layout references missing cell " + entry.Cell + ": " + layoutPath); continue; }
+                int first = result.Parts.Count;
+                LoadChild(loader, entry.Template, transform * entry.Transform, result, stack, depth + 1, detailLevel, customization);
+                for (int i = first; i < result.Parts.Count; i++)
+                {
+                    result.Parts[i].PortalCellNumber = cell.Number;
+                    result.Parts[i].InteriorDecoration = true;
+                }
+            }
+        }
+
+        static void LoadAppearance(TreAssetLoader loader, string path, Matrix4x4 transform, AppearanceData result, HashSet<string> stack, int depth, int detailLevel, IReadOnlyDictionary<string, short> customization, bool loadInterior = true)
         {
             if (depth > 24 || !stack.Add(path))
                 throw new InvalidDataException("Appearance reference cycle/depth limit: " + path);
@@ -41,6 +69,12 @@ namespace Swg.Client.Core.Assets.Appearances
                 var root = roots.SingleOrDefault(n => n.Tag == "FORM") ?? throw new InvalidDataException("Expected appearance form: " + path);
                 if (path.StartsWith("object/", StringComparison.Ordinal))
                 {
+                    // Native sound-object appearances are tool markers, not world geometry.
+                    if (path.StartsWith("object/soundobject/", StringComparison.Ordinal))
+                    {
+                        result.Sounds.AddRange(SoundAppearance.Load(loader, path, transform));
+                        return;
+                    }
                     var appearances = References(bytes, "appearance/", new[] { ".apt", ".lod", ".msh", ".pob", ".cmp", ".prt", ".sat" });
                     if (appearances.Count > 0)
                     {
@@ -48,6 +82,8 @@ namespace Swg.Client.Core.Assets.Appearances
                             LoadSkeletalAppearance(loader, path, transform, result);
                         else
                             LoadAppearance(loader, appearances[0], transform, result, stack, depth + 1, detailLevel, customization);
+                        if (loadInterior && root.Kind == "SBOT" && result.PortalLayout != null)
+                            LoadInterior(loader, path, transform, result, stack, depth, detailLevel, customization);
                         return;
                     }
 
@@ -56,9 +92,14 @@ namespace Swg.Client.Core.Assets.Appearances
                     foreach (var inherited in References(bytes, "object/", new[] { ".iff" }).Where(p => p != path))
                     {
                         int count = result.Parts.Count + result.Particles.Count;
-                        LoadAppearance(loader, inherited, transform, result, stack, depth + 1, detailLevel, customization);
+                        // Resolve inherited geometry first; the most-derived building chooses its layout.
+                        LoadAppearance(loader, inherited, transform, result, stack, depth + 1, detailLevel, customization, false);
                         if (result.Parts.Count + result.Particles.Count != count)
+                        {
+                            if (loadInterior && root.Kind == "SBOT" && result.PortalLayout != null)
+                                LoadInterior(loader, path, transform, result, stack, depth, detailLevel, customization);
                             return;
+                        }
                     }
 
                     return;

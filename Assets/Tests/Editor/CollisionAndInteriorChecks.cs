@@ -1,3 +1,5 @@
+using Swg.Client.Core.World.Terrain;
+using Swg.Client.Runtime.World.Terrain;
 using System;
 using Autofac;
 using Swg.Client.Core.Assets.Tre;
@@ -69,7 +71,11 @@ namespace Swg.Client.Tests.Editor
             var registry = new SceneObjectRegistry();
             var context = new WorldRenderingContext();
             context.Initialize(null, null, Shader.Find("Sprites/Default"), null, null, null);
-            using var services = ManagedObjectTestScope.Use(registry, builder => builder.RegisterInstance(context));
+            using var services = ManagedObjectTestScope.Use(registry, builder =>
+            {
+                builder.RegisterInstance(context);
+                builder.Register(c => new WorldTerrainRenderer(new SwgMaterialFactory(null), c.Resolve<WorldState>(), context)).SingleInstance();
+            });
             GameServices.Resolve<CurrentPlayer>().BeginScene(1);
             var building = new TangibleSceneObject { SwgId = 100 };
             registry.Add(building);
@@ -85,13 +91,20 @@ namespace Swg.Client.Tests.Editor
                 Assert.That(exterior.activeSelf, Is.True);
                 Assert.That(exterior.GetComponentsInChildren<MeshFilter>().Length, Is.EqualTo(appearance.Parts.Count(part => part.PortalCellNumber == 0)));
                 registry.Reparent(1, 101);
-                Assert.That(exterior.activeInHierarchy, Is.False);
+                Assert.That(exterior.activeInHierarchy, Is.True, "The outdoor apron must remain available through the doors.");
+                var properties = new MaterialPropertyBlock();
+                var exteriorRenderer = exterior.GetComponentInChildren<Renderer>();
+                exteriorRenderer.GetPropertyBlock(properties);
+                Assert.That(properties.GetFloat("_SwgExteriorPortalClip"), Is.EqualTo(1));
                 Assert.That(root.GetComponentsInChildren<MeshFilter>().Length, Is.GreaterThan(0), "Room geometry remains visible.");
                 Assert.That(root.GetComponentsInChildren<MeshCollider>().Any(collider => collider.TryGetComponent<BuildingFloor>(out _)), Is.True);
-                Assert.That(root.GetComponentsInChildren<MeshCollider>().Any(collider => collider.transform.IsChildOf(exterior.transform)), Is.False);
+                Assert.That(exterior.GetComponentsInChildren<MeshCollider>().All(collider => !collider.enabled), Is.True);
                 registry.Reparent(1, 0);
                 Assert.That(exterior.activeSelf, Is.True);
                 Assert.That(exterior.GetComponentsInChildren<MeshCollider>(), Is.Not.Empty);
+                Assert.That(exterior.GetComponentsInChildren<MeshCollider>().All(collider => collider.enabled), Is.True);
+                exteriorRenderer.GetPropertyBlock(properties);
+                Assert.That(properties.GetFloat("_SwgExteriorPortalClip"), Is.Zero);
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }
@@ -269,7 +282,11 @@ namespace Swg.Client.Tests.Editor
             var layout = PortalLayout.Parse(IffNode.Form(IffNode.Parse(loader.Read("appearance/ply_corl_assoc_hall_civ_s01.pob")), "PRTO"), loader.Read);
             var context = new WorldRenderingContext();
             context.Initialize(null, null, Shader.Find("Sprites/Default"), null, null, null);
-            using var services = ManagedObjectTestScope.Use(new SceneObjectRegistry(), builder => builder.RegisterInstance(context));
+            using var services = ManagedObjectTestScope.Use(new SceneObjectRegistry(), builder =>
+            {
+                builder.RegisterInstance(context);
+                builder.Register(c => new WorldTerrainRenderer(new SwgMaterialFactory(null), c.Resolve<WorldState>(), context)).SingleInstance();
+            });
             var root = new GameObject("Guild hall mounted entrance test");
             root.transform.position = new Vector3(10000, 0, 10000);
             try
@@ -353,6 +370,135 @@ namespace Swg.Client.Tests.Editor
             Assert.That(layout.Cells[0].Floor, Is.Null);
             Assert.That(layout.Cells[1].Number, Is.EqualTo(1));
             Assert.That(layout.Cells[1].AppearancePath, Is.EqualTo("appearance/hall.msh"));
+        }
+
+        [Test]
+        public void BelowGroundRoomIgnoresTerrainAndReturnsToOutdoorCollisionOnExit()
+        {
+            var registry = new SceneObjectRegistry();
+            var context = new WorldRenderingContext();
+            context.Initialize(Shader.Find("SWG/World"), null, Shader.Find("Sprites/Default"), null, null, null);
+            using var services = ManagedObjectTestScope.Use(registry, builder =>
+            {
+                builder.RegisterInstance(context);
+                builder.Register(c => new WorldTerrainRenderer(new SwgMaterialFactory(null), c.Resolve<WorldState>(), context)).SingleInstance();
+            });
+            var state = GameServices.Resolve<WorldState>();
+            var currentPlayer = GameServices.Resolve<CurrentPlayer>();
+            currentPlayer.BeginScene(1);
+            registry.Add(new TangibleSceneObject { SwgId = 100 });
+            registry.Add(new CellSceneObject { SwgId = 101, ParentSwgId = 100, Number = 1 });
+            var player = new CreatureSceneObject { SwgId = 1, ParentSwgId = 101 };
+            registry.Add(player);
+            var root = new GameObject("Below-ground starport regression");
+            root.transform.position = new Vector3(10000, 0, 10000);
+            PortalLayout.Floor Floor(float left, float right) => new PortalLayout.Floor
+            {
+                Vertices = new[] { new Vector3(left, 0, -5), new Vector3(right, 0, -5), new Vector3(left, 0, 5), new Vector3(right, 0, 5) },
+                Triangles = new[] { 0, 2, 1, 1, 2, 3 }
+            };
+            var layout = new PortalLayout();
+            layout.Cells.Add(new PortalLayout.Cell { Number = 0, Floor = Floor(5, 7) });
+            layout.Cells.Add(new PortalLayout.Cell { Number = 1, Floor = Floor(-5, 5) });
+            try
+            {
+                var terrain = Box(root.transform, "Terrain above the room", new Vector3(0, .25f, 0), new Vector3(40, .5f, 40));
+                terrain.layer = LayerMask.NameToLayer(WorldTerrainRenderer.LayerName);
+                var building = new GameObject("Starport");
+                building.transform.SetParent(root.transform, false);
+                building.AddComponent<BuildingInterior>().Initialize(100, layout);
+                var room = building.GetComponentsInChildren<BuildingFloor>().Single(floor => floor.cellNumber == 1);
+                Assert.That(room.GetComponent<MeshRenderer>(), Is.Null, "Room collision floors must not project a screen-space terrain mask.");
+                var actor = new GameObject("Player");
+                actor.transform.SetParent(root.transform, false);
+                actor.transform.localPosition = Vector3.up * .52f;
+                var collision = actor.AddComponent<PlayerCollision>();
+                collision.Initialize(state, false);
+                for (int i = 0; i < 60; i++) collision.Move(Vector3.zero, 0, 1f / 60);
+                Assert.That(actor.transform.localPosition.y, Is.EqualTo(0).Within(.06f), "Terrain must not lift the player above the native floor.");
+                Assert.That(collision.CellSwgId, Is.EqualTo(new SwgId(101)));
+                for (int i = 0; i < 100; i++) collision.Move(Vector3.right, .1f, 1f / 60);
+                Assert.That(actor.transform.localPosition.x, Is.GreaterThan(8));
+                Assert.That(actor.transform.localPosition.y, Is.EqualTo(.5f).Within(.06f));
+                Assert.That(collision.CellSwgId.IsNone, Is.True, "Outdoor transforms must not retain the old room.");
+                Assert.That(actor.GetComponent<CharacterController>().excludeLayers.value, Is.Zero);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(root); }
+        }
+
+        [Test]
+        public void InteriorTerrainCutoutsFollowWorldFootprintsAndReleaseOnRemoval()
+        {
+            var context = new WorldRenderingContext();
+            context.Initialize(Shader.Find("SWG/World"), null, Shader.Find("Sprites/Default"), null, null, null);
+            using var services = ManagedObjectTestScope.Use(new SceneObjectRegistry(), builder =>
+            {
+                builder.RegisterInstance(context);
+                builder.Register(c => new WorldTerrainRenderer(new SwgMaterialFactory(null), c.Resolve<WorldState>(), context)).SingleInstance();
+            });
+            var terrain = GameServices.Resolve<WorldTerrainRenderer>();
+            var root = new GameObject("World-space terrain cutout test");
+            var center = new Vector3(10000, 0, 10000);
+            var previous = RenderTexture.active;
+            Texture2D pixels = null;
+            try
+            {
+                var layout = new PortalLayout();
+                layout.Cells.Add(new PortalLayout.Cell { Number = 1, Floor = new PortalLayout.Floor
+                {
+                    Vertices = new[] { new Vector3(-3, -2, -1), new Vector3(1, -2, -1), new Vector3(-3, -2, 2), new Vector3(1, -2, 2) },
+                    Triangles = new[] { 0, 2, 1, 1, 2, 3 }
+                } });
+                var building = new GameObject("Sunken room");
+                building.transform.SetParent(root.transform, false);
+                building.transform.position = center;
+                building.AddComponent<BuildingInterior>().Initialize(100, layout);
+                terrain.AddOrReplace(Vector2Int.zero, WorldTerrainPatch.Build(new WorldTerrain(), center, 8, 1), root.transform);
+                var terrainObject = root.GetComponentsInChildren<MeshRenderer>().Single().gameObject;
+                terrain.RefreshInteriorMasks();
+                var material = terrainObject.GetComponent<Renderer>().sharedMaterial;
+                var mask = (RenderTexture)material.GetTexture("_TerrainHoleMap");
+                Assert.That(mask, Is.Not.Null);
+                RenderTexture.active = mask;
+                pixels = new Texture2D(mask.width, mask.height, TextureFormat.RGBA32, false);
+                pixels.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+                pixels.Apply();
+                var rect = material.GetVector("_TerrainHoleRect");
+                float Sample(float x, float z) => pixels.GetPixelBilinear((10000 + x - rect.x) * rect.z, (10000 + z - rect.y) * rect.w).r;
+                Assert.That(Sample(-2, 1), Is.GreaterThan(.9f), "Terrain directly above the sunken room is removed.");
+                Assert.That(Sample(2, 1), Is.LessThan(.1f), "Outdoor terrain beside the room remains visible.");
+                Assert.That(Sample(-2, -3), Is.LessThan(.1f), "The mask must not be flipped or projected toward the camera.");
+                terrain.RefreshInteriorMasks();
+                Assert.That(material.GetTexture("_TerrainHoleMap"), Is.SameAs(mask), "Unchanged footprints reuse the cached mask.");
+                // Erase the existing mask as a sentinel: an unrelated upload must not redraw it.
+                RenderTexture.active = mask;
+                GL.Clear(false, true, Color.clear);
+                terrain.AddOrReplace(Vector2Int.one, WorldTerrainPatch.Build(new WorldTerrain(), center + Vector3.right * 100, 8, 1), root.transform);
+                terrain.RefreshInteriorMasks();
+                pixels.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+                pixels.Apply();
+                Assert.That(Sample(-2, 1), Is.LessThan(.1f), "Uploading a distant tile must not rasterize this unchanged mask.");
+                // Updating an intersecting building still invalidates its existing tiles.
+                terrain.RegisterInterior(building.GetComponent<BuildingInterior>());
+                terrain.RefreshInteriorMasks();
+                RenderTexture.active = mask;
+                pixels.ReadPixels(new Rect(0, 0, mask.width, mask.height), 0, 0);
+                pixels.Apply();
+                Assert.That(Sample(-2, 1), Is.GreaterThan(.9f));
+                RenderTexture.active = previous;
+                terrain.RemoveInterior(building.GetComponent<BuildingInterior>());
+                UnityEngine.Object.DestroyImmediate(building);
+                terrain.RefreshInteriorMasks();
+                Assert.That(material.GetTexture("_TerrainHoleMap"), Is.SameAs(Texture2D.blackTexture));
+                Assert.That(mask == null, Is.True);
+            }
+            finally
+            {
+                RenderTexture.active = previous;
+                if (pixels != null) UnityEngine.Object.DestroyImmediate(pixels);
+                terrain.Clear();
+                UnityEngine.Object.DestroyImmediate(root);
+            }
         }
 
         static GameObject Box(Transform parent, string name, Vector3 position, Vector3 size)

@@ -18,6 +18,17 @@ namespace Swg.Client.Core.Assets.Formats.Pob
             public string Name;
             public string AppearancePath;
             public Floor Floor;
+            public readonly List<RoomLight> Lights = new List<RoomLight>();
+        }
+
+        public enum LightType : byte { Ambient, Directional, Point }
+        public sealed class RoomLight
+        {
+            public LightType Type;
+            public Color Diffuse;
+            public Color Specular;
+            public Matrix4x4 Transform;
+            public Vector3 Attenuation;
         }
 
         public sealed class Floor
@@ -71,6 +82,27 @@ namespace Swg.Client.Core.Assets.Formats.Pob
                     catch (Exception error) when (error is IOException || error is InvalidOperationException || error is ArgumentException || error is OverflowException)
                     {
                         Debug.LogWarning("Portal cell " + cell.Number + " floor " + path + ": " + error.Message + "; keeping its visual appearance.");
+                    }
+                }
+                var lights = cellVersion.Children.FirstOrDefault(child => child.Tag == "LGHT");
+                if (lights != null)
+                {
+                    var lightReader = new ByteReader(lights.Data);
+                    uint count = lightReader.U32();
+                    Color ReadColor()
+                    {
+                        float alpha = lightReader.Float();
+                        return new Color(lightReader.Float(), lightReader.Float(), lightReader.Float(), alpha);
+                    }
+                    for (int i = 0; i < count; i++)
+                    {
+                        var light = new RoomLight { Type = (LightType)lightReader.Byte(), Diffuse = ReadColor(), Specular = ReadColor(), Transform = Matrix4x4.identity };
+                        for (int row = 0; row < 3; row++)
+                            for (int column = 0; column < 4; column++) light.Transform[row, column] = lightReader.Float();
+                        light.Attenuation = new Vector3(lightReader.Float(), lightReader.Float(), lightReader.Float());
+                        // Native PortalPropertyTemplate corrects the Maya exporter's light orientation.
+                        light.Transform *= Matrix4x4.Rotate(Quaternion.Euler(0, 180, 0));
+                        cell.Lights.Add(light);
                     }
                 }
                 if (cell.Number != 0)

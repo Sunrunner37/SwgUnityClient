@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.Terrain;
 using Swg.Client.Core;
 using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
@@ -39,9 +40,14 @@ namespace Swg.Client.Runtime.World.SceneObjects
             Physics.SyncTransforms();
             float step = mounted ? .1f : .45f;
             int count = Physics.RaycastNonAlloc(transform.position + heading * (distance + controller.radius) + Vector3.up * 1.25f,
-                Vector3.down, hits, 1.5f, mask, QueryTriggerInteraction.Ignore);
-            if (!mounted && FindBuildingFloor(hits, count) != null)
+                Vector3.down, hits, controller.height * transform.lossyScale.y + 1.25f, mask, QueryTriggerInteraction.Ignore);
+            var upcomingFloor = FindBuildingFloor(hits, count);
+            if (!mounted && upcomingFloor != null)
                 step = 1.2f;
+            // Native room floors can sit below the outdoor terrain. Let the capsule reach
+            // that floor rather than reporting terrain height as a valid interior position.
+            controller.excludeLayers = !mounted && upcomingFloor != null && upcomingFloor.cellNumber > 0
+                ? 1 << LayerMask.NameToLayer(WorldTerrainRenderer.LayerName) : 0;
             controller.stepOffset = Mathf.Min(controller.height - .05f, step / transform.lossyScale.y);
             var previousPosition = transform.position;
             controller.Move(heading * distance + Vector3.down * (9.81f * seconds));

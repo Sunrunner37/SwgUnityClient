@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.Terrain;
 using System.Collections.Generic;
 using System.Linq;
 using Swg.Client.Core;
@@ -6,6 +7,7 @@ using Swg.Client.Core.World;
 using Swg.Client.Core.World.SceneObjects;
 using Swg.Client.Core.Assets.Formats.Pob;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Swg.Client.Runtime.World.SceneObjects
 {
@@ -13,17 +15,24 @@ namespace Swg.Client.Runtime.World.SceneObjects
     public sealed class BuildingInterior : MonoBehaviour
     {
         internal const string ExteriorCellName = "Exterior cell";
+        internal static string CellRootName(int number) => number == 0 ? ExteriorCellName : "Interior cell " + number;
+        readonly Dictionary<int, InteriorLighting> lighting = new Dictionary<int, InteriorLighting>();
         public SwgId BuildingSwgId { get; private set; }
-        GameObject exterior;
+        ExteriorPortalVisibility exterior;
+        Camera worldCamera;
+        bool playerInside;
         readonly List<Mesh> meshes = new List<Mesh>();
         readonly List<GameObject> barriers = new List<GameObject>();
         WorldState state;
         CurrentPlayer player;
         Material barrierMaterial;
+        WorldTerrainRenderer terrain;
         public void Initialize(SwgId swgId, PortalLayout layout)
         {
             BuildingSwgId = swgId;
-            exterior = transform.Find(ExteriorCellName)?.gameObject;
+            var exteriorRoot = transform.Find(ExteriorCellName);
+            if (exteriorRoot != null)
+                exterior = new ExteriorPortalVisibility(exteriorRoot.gameObject, layout.Entrances, transform.localToWorldMatrix);
             state = GameServices.Resolve<WorldState>();
             player = GameServices.Resolve<CurrentPlayer>();
             foreach (var cell in layout.Cells)
@@ -42,7 +51,23 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 room.building = this;
                 room.cellNumber = cell.Number;
             }
-            barrierMaterial = new Material(GameServices.Resolve<WorldRenderingContext>().ParticleShader);
+            // Share positional lights so illumination falls off across doorways instead of stopping at a cell boundary.
+            var pointLights = layout.Cells.SelectMany(cell => cell.Lights).Where(light => light.Type == PortalLayout.LightType.Point).ToArray();
+            foreach (var cell in layout.Cells)
+            {
+                if (cell.Number == 0) continue;
+                var roomLighting = new InteriorLighting(cell, transform.localToWorldMatrix, pointLights);
+                lighting.Add(cell.Number, roomLighting);
+                var room = transform.Find(CellRootName(cell.Number));
+                if (room != null) roomLighting.Apply(room.gameObject);
+                foreach (var occupant in state.SceneObjects.ChildrenOf(CellSwgId(cell.Number)))
+                    if (ManagedSceneObject.TryGetObjectFrom(occupant.SwgId, out var body)) roomLighting.Apply(body);
+            }
+            terrain = GameServices.Resolve<WorldTerrainRenderer>();
+            terrain.RegisterInterior(this);
+            var rendering = GameServices.Resolve<WorldRenderingContext>();
+            worldCamera = rendering.WorldCamera;
+            barrierMaterial = new Material(rendering.ParticleShader);
             foreach (var polygon in layout.Entrances)
             {
                 if (polygon.Length < 3) continue;
@@ -64,6 +89,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 barriers.Add(child);
                 child.SetActive(false);
             }
+            RenderPipelineManager.beginCameraRendering += BeforeCamera;
             state.SceneObjects.Subscribe(player.SwgId, OnPlayerChanged);
             OnPlayerChanged(SceneObjectChange.Containment);
         }
@@ -77,21 +103,42 @@ namespace Swg.Client.Runtime.World.SceneObjects
                     if (cell.ParentSwgId == BuildingSwgId && cell.CellSwgId == number) return cell.SwgId;
             return default;
         }
+        internal static void ApplyLighting(SpatialSceneObject sceneObject, GameObject body)
+        {
+            if (body.GetComponent<BuildingInterior>() != null) return;
+            if (sceneObject.Parent is CellSceneObject cell && ManagedSceneObject.TryGetObjectFrom(cell.ParentSwgId, out var building)
+                && building.TryGetComponent<BuildingInterior>(out var interior) && interior.lighting.TryGetValue(cell.Number, out var roomLighting))
+                roomLighting.Apply(body);
+            else InteriorLighting.Reset(body);
+        }
+
         void OnPlayerChanged(SceneObjectChange changes)
         {
             if ((changes & SceneObjectChange.Containment) == 0) return;
-            // Native exterior cells can contain closed shell geometry that overlaps the rooms.
-            // Keep it out of both rendering and collision while occupying this building's interior.
-            bool inside = player.Creature?.Parent is CellSceneObject cell && cell.ParentSwgId == BuildingSwgId;
-            if (exterior != null) exterior.SetActive(!inside);
+            // Keep the outside apron visible through the doors, without drawing the exterior
+            // shell across the rooms. This must not depend on crossing out of the current cell.
+            playerInside = player.Creature?.Parent is CellSceneObject cell && cell.ParentSwgId == BuildingSwgId;
+            exterior?.SetInside(playerInside);
             bool mounted = player.Creature?.Mount != null;
             foreach (var barrier in barriers) barrier.SetActive(mounted);
         }
+        void BeforeCamera(ScriptableRenderContext context, Camera camera)
+        {
+            if (!playerInside || camera != worldCamera || exterior == null) return;
+            // The orbit camera can pass through an entrance while the player stays indoors.
+            // Use its final pose immediately before rendering, after WorldOrbitCamera.LateUpdate.
+            var interiorPoint = ManagedSceneObject.CurrentPlayer.transform.position + Vector3.up * 1.4f;
+            exterior.UpdateCamera(camera.transform.position, interiorPoint);
+        }
+
         void OnDestroy()
         {
+            RenderPipelineManager.beginCameraRendering -= BeforeCamera;
             state?.SceneObjects.Unsubscribe(player.SwgId, OnPlayerChanged);
             foreach (var mesh in meshes) Destroy(mesh);
             if (barrierMaterial != null) Destroy(barrierMaterial);
+            terrain?.RemoveInterior(this);
+            exterior?.Dispose();
         }
     }
 }

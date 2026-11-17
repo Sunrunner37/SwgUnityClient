@@ -31,6 +31,17 @@ namespace Swg.Client.Tests.Editor
             Assert.That(EftFile.Parse(Form("EFCT", Form("0001", Form("IMPL", Form("0005", passes))))).AlphaTestEnabled, Is.False);
         }
 
+        [TestCase(0, true)]
+        [TestCase(1, false)]
+        public void BakedVertexColorCanTintAmbientWithoutTintingDiffuse(byte diffuseSource, bool expected)
+        {
+            var data = TestHex.Decode("00010000010103000004050000000000040F000000000000000000000000000000000000040000000400000000000000000000004E49414D");
+            var pipeline = Form("PFFP", Chunk("0001", new byte[] { 1, 0, 1, 1, diffuseSource, 0, 0 }));
+            var pass = Form("PASS", Form("0009", Join(Chunk("DATA", data), pipeline)));
+            var effect = Form("EFCT", Form("0001", Form("IMPL", Form("0005", pass))));
+            Assert.That(EftFile.Parse(effect).VertexColorAmbientOnly, Is.EqualTo(expected));
+        }
+
         static byte[] Pass(bool alphaTest)
         {
             var data = TestHex.Decode("00010000010103000004050000000000040F000000000000000000000000000000000000040000000400000000000000000000004E49414D");

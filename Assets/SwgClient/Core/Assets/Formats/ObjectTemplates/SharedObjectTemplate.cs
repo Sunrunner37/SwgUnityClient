@@ -11,11 +11,13 @@ namespace Swg.Client.Core.Assets.Formats.ObjectTemplates
     {
         public readonly int? GameObjectType;
         public readonly string BaseTemplate;
+        public readonly string ClientDataFile;
 
-        SharedObjectTemplate(int? gameObjectType, string baseTemplate)
+        SharedObjectTemplate(int? gameObjectType, string baseTemplate, string clientDataFile)
         {
             GameObjectType = gameObjectType;
             BaseTemplate = baseTemplate;
+            ClientDataFile = clientDataFile;
         }
 
         // List parameters interleave named headers, nested forms and unnamed binary XXXX records.
@@ -40,7 +42,9 @@ namespace Swg.Client.Core.Assets.Formats.ObjectTemplates
                 gameObjectType = unchecked((int)field.U32());
             var inherited = roots.FirstOrDefault()?.Children.FirstOrDefault(node => node.Kind == "DERV");
             string path = inherited == null ? null : IffNode.References(inherited.Data, "object/", ".iff").FirstOrDefault();
-            return new SharedObjectTemplate(gameObjectType, path);
+            var clientData = Field(shot, "clientDataFile");
+            string clientDataFile = clientData != null && clientData.Byte() == 1 ? clientData.CString() : null;
+            return new SharedObjectTemplate(gameObjectType, path, clientDataFile);
         }
     }
 }

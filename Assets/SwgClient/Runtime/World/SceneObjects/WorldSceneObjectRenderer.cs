@@ -71,7 +71,10 @@ namespace Swg.Client.Runtime.World.SceneObjects
             if ((changes & (SceneObjectChange.Containment | SceneObjectChange.Replaced)) != 0 && sceneObject is CreatureSceneObject rider && rider.Mount != null && ManagedSceneObject.TryGetObjectFrom(rider.SwgId, out var instance) && instance.GetComponent<VehicleRider>() == null && instance.TryGetComponent<CharacterAnimation>(out _))
                 instance.AddComponent<VehicleRider>().Initialize(rider);
             if ((changes & SceneObjectChange.Containment) != 0 && sceneObject is SpatialSceneObject spatial && ManagedSceneObject.TryGetObjectFrom(sceneObject.SwgId, out var body))
+            {
                 ConfigureCollision(spatial, body);
+                BuildingInterior.ApplyLighting(spatial, body);
+            }
             if ((changes & (SceneObjectChange.Appearance | SceneObjectChange.Containment)) != 0)
                 dirtyAppearances.Add(sceneObject.SwgId);
         }
@@ -204,7 +207,8 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 instance.AddComponent<BuildingInterior>().Initialize(sceneObject.SwgId, appearance.PortalLayout);
             var managed = instance.AddComponent<ManagedSceneObject>();
             managed.Bind(sceneObject.SwgId);
-            if (this.state.Templates.IsTargetable(sceneObject.TemplatePath))
+            BuildingInterior.ApplyLighting(sceneObject, instance);
+            if (appearance.Sounds.Count == 0 && this.state.Templates.IsTargetable(sceneObject.TemplatePath))
                 instance.AddComponent<TargetableSceneObject>().Initialize(sceneObject.SwgId, appearance, sceneObject is CreatureSceneObject && !appearance.RiderSeat.HasValue);
             instance.AddComponent<SceneObjectMovement>().Initialize(sceneObject);
             if (sceneObject is CreatureSceneObject vehicle && instance.TryGetComponent<VehicleExhaust>(out var exhaust))
@@ -236,6 +240,7 @@ namespace Swg.Client.Runtime.World.SceneObjects
                 if (parent is CellSceneObject) solid = false;
             foreach (var filter in instance.GetComponentsInChildren<MeshFilter>())
             {
+                if (filter.gameObject.layer == Physics.IgnoreRaycastLayer) continue;
                 if (filter.sharedMesh == null || filter.GetComponentInParent<ParticleSystem>() != null) continue;
                 filter.TryGetComponent<MeshCollider>(out var collider);
                 if (solid && collider == null)

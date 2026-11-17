@@ -1,3 +1,4 @@
+using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Swg.Client.Runtime.World.Terrain
     /// <summary>Builds terrain visuals and owns their meshes and materials.</summary>
     public sealed class WorldTerrainRenderer : IDisposable
     {
+        public const string LayerName = "SWG Terrain";
         readonly SwgMaterialFactory materialsFactory;
         readonly Shader worldShader;
         readonly WorldState state;
@@ -22,18 +24,23 @@ namespace Swg.Client.Runtime.World.Terrain
             public Mesh Mesh;
             public Material[] Materials;
             public float Spacing;
+            public RenderTexture Holes;
         }
 
         readonly Dictionary<Vector2Int, Tile> tiles = new Dictionary<Vector2Int, Tile>();
         public IEnumerable<Vector2Int> Keys => tiles.Keys;
         public IReadOnlyDictionary<Vector2Int, float> Resolutions => tiles.ToDictionary(pair => pair.Key, pair => pair.Value.Spacing);
 
+        readonly Dictionary<BuildingInterior, MeshCollider[]> interiors = new Dictionary<BuildingInterior, MeshCollider[]>();
+        readonly HashSet<Vector2Int> dirtyMasks = new HashSet<Vector2Int>();
+        Material cutoutMaterial;
         bool disposed;
         public WorldTerrainRenderer(SwgMaterialFactory materialsFactory, WorldState state, WorldRenderingContext context)
         {
             this.materialsFactory = materialsFactory;
             worldShader = context.WorldShader;
             this.state = state;
+            RenderPipelineManager.beginCameraRendering += BeforeCamera;
         }
 
         public void AddOrReplace(Vector2Int key, WorldTerrainPatch source, Transform parent)
@@ -43,6 +50,7 @@ namespace Swg.Client.Runtime.World.Terrain
             if (tiles.TryGetValue(key, out var previous))
                 Release(previous);
             tiles[key] = replacement;
+            dirtyMasks.Add(key);
         }
 
         public void Retain(IEnumerable<Vector2Int> keys)
@@ -52,6 +60,7 @@ namespace Swg.Client.Runtime.World.Terrain
             {
                 Release(tiles[key]);
                 tiles.Remove(key);
+                dirtyMasks.Remove(key);
             }
         }
 
@@ -128,7 +137,7 @@ namespace Swg.Client.Runtime.World.Terrain
             }
 
             mesh.RecalculateBounds();
-            var terrain = new GameObject("Native terrain");
+            var terrain = new GameObject("Native terrain") { layer = LayerMask.NameToLayer(LayerName) };
             terrain.transform.SetParent(parent, false);
             terrain.AddComponent<MeshFilter>().sharedMesh = mesh;
             terrain.AddComponent<MeshCollider>().sharedMesh = mesh;
@@ -140,6 +149,83 @@ namespace Swg.Client.Runtime.World.Terrain
                 Materials = materials,
                 Spacing = source.Spacing
             };
+        }
+
+        public void RegisterInterior(BuildingInterior interior)
+        {
+            RemoveInterior(interior);
+            var floors = interior.GetComponentsInChildren<BuildingFloor>().Where(floor => floor.cellNumber > 0)
+                .Select(floor => floor.GetComponent<MeshCollider>()).ToArray();
+            interiors[interior] = floors;
+            InvalidateMasks(floors);
+        }
+
+        public void RemoveInterior(BuildingInterior interior)
+        {
+            if (!interiors.TryGetValue(interior, out var floors)) return;
+            InvalidateMasks(floors);
+            interiors.Remove(interior);
+        }
+
+        static bool Overlaps(Bounds first, Bounds second) =>
+            first.min.x <= second.max.x && first.max.x >= second.min.x &&
+            first.min.z <= second.max.z && first.max.z >= second.min.z;
+
+        void InvalidateMasks(MeshCollider[] floors)
+        {
+            foreach (var pair in tiles)
+                if (floors.Any(floor => floor != null && Overlaps(floor.bounds, pair.Value.Object.GetComponent<Renderer>().bounds)))
+                    dirtyMasks.Add(pair.Key);
+        }
+
+        void BeforeCamera(ScriptableRenderContext context, Camera camera) => RefreshInteriorMasks();
+
+        // Rasterize only when tiles or interiors change. World-space footprints do not change
+        // with the camera and cannot hide outdoor terrain through a doorway.
+        internal void RefreshInteriorMasks()
+        {
+            if (dirtyMasks.Count == 0 || disposed) return;
+            using var commands = new CommandBuffer { name = "Interior terrain footprints" };
+            var properties = new MaterialPropertyBlock();
+            foreach (var key in dirtyMasks)
+            {
+                if (!tiles.TryGetValue(key, out var tile)) continue;
+                var bounds = tile.Object.GetComponent<Renderer>().bounds;
+                var floors = interiors.Values.SelectMany(value => value)
+                    .Where(floor => floor != null && Overlaps(floor.bounds, bounds)).ToArray();
+                if (floors.Length == 0 || bounds.size.x <= 0 || bounds.size.z <= 0)
+                {
+                    foreach (var material in tile.Materials) material.SetTexture("_TerrainHoleMap", Texture2D.blackTexture);
+                    Release(tile.Holes);
+                    tile.Holes = null;
+                    continue;
+                }
+                if (tile.Holes == null)
+                {
+                    int resolution = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(bounds.size.x, bounds.size.z) / .125f), 16, 2048);
+                    tile.Holes = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.R8)
+                    {
+                        name = "Native interior footprints", filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp
+                    };
+                    tile.Holes.Create();
+                }
+                cutoutMaterial ??= new Material(worldShader) { name = "Terrain footprint rasterizer" };
+                var rect = new Vector4(bounds.min.x, bounds.min.z, 1 / bounds.size.x, 1 / bounds.size.z);
+                properties.SetVector("_TerrainHoleRect", rect);
+                commands.SetRenderTarget(tile.Holes);
+                commands.ClearRenderTarget(false, true, Color.clear);
+                foreach (var floor in floors)
+                    commands.DrawMesh(floor.sharedMesh, floor.transform.localToWorldMatrix, cutoutMaterial, 0, cutoutMaterial.FindPass("TerrainCutout"), properties);
+                foreach (var material in tile.Materials)
+                {
+                    material.SetTexture("_TerrainHoleMap", tile.Holes);
+                    material.SetVector("_TerrainHoleRect", rect);
+                }
+            }
+            commands.SetRenderTarget(RenderTexture.active != null
+                ? new RenderTargetIdentifier(RenderTexture.active) : new RenderTargetIdentifier(BuiltinRenderTextureType.CameraTarget));
+            Graphics.ExecuteCommandBuffer(commands);
+            dirtyMasks.Clear();
         }
 
         static (int First, int Second, int Third) FamilyKey(int first, int second, int third)
@@ -159,6 +245,7 @@ namespace Swg.Client.Runtime.World.Terrain
         {
             if (tile.Object != null)
                 tile.Object.SetActive(false);
+            Release(tile.Holes);
             Release(tile.Mesh);
             foreach (var material in tile.Materials)
                 Release(material);
@@ -194,6 +281,8 @@ namespace Swg.Client.Runtime.World.Terrain
         {
             foreach (var tile in tiles.Values) Release(tile);
             tiles.Clear();
+            interiors.Clear();
+            dirtyMasks.Clear();
         }
 
         public void Dispose()
@@ -201,7 +290,9 @@ namespace Swg.Client.Runtime.World.Terrain
             if (disposed)
                 return;
             disposed = true;
+            RenderPipelineManager.beginCameraRendering -= BeforeCamera;
             Clear();
+            Release(cutoutMaterial);
         }
     }
 }

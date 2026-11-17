@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Swg.Client.Core.Assets.Audio;
+using Swg.Client.Runtime.Assets.Audio;
 using Swg.Client.Runtime.World.SceneObjects;
 using System;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
     public sealed class AppearanceResources : IDisposable
     {
         readonly string name;
+        readonly SoundAppearance[] sounds;
         readonly KeyValuePair<string, Matrix4x4>[] hardpoints;
         readonly RiderSeatData? riderSeat;
         readonly MeshPartResources[] parts;
@@ -20,6 +23,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public AppearanceResources(AppearanceData appearance, SwgMaterialFactory factory, Shader worldShader, Shader characterShader, Shader particleShader, TextureWrapMode wrapMode = TextureWrapMode.Repeat)
         {
             name = appearance.Key;
+            sounds = appearance.Sounds.ToArray();
             hardpoints = appearance.Hardpoints.ToArray();
             riderSeat = appearance.RiderSeat;
             parts = Enumerable.Range(0, appearance.Parts.Count).Select(i => MeshPartResources.FromAppearance(appearance, i, factory, appearance.Parts[i].UseCharacterShader ? characterShader : worldShader, wrapMode)).ToArray();
@@ -33,17 +37,23 @@ namespace Swg.Client.Runtime.Assets.Appearances
             CharacterAnimation animation = parts.Any(part => part.Skinning != null) ? root.AddComponent<CharacterAnimation>() : null;
             if (animation != null)
                 animation.detectMovement = detectMovement;
-            Transform exterior = null;
-            if (parts.Any(part => part.PortalCellNumber == 0))
-            {
-                exterior = new GameObject(BuildingInterior.ExteriorCellName).transform;
-                exterior.SetParent(root.transform, false);
-            }
+            var cells = new Dictionary<int, Transform>();
             for (int i = 0; i < parts.Length; i++)
             {
                 var part = new GameObject("Mesh " + i);
                 var resource = parts[i];
-                part.transform.SetParent(resource.PortalCellNumber == 0 ? exterior : root.transform, false);
+                var parentTransform = root.transform;
+                if (resource.PortalCellNumber is int cell)
+                {
+                    if (!cells.TryGetValue(cell, out parentTransform))
+                    {
+                        parentTransform = new GameObject(BuildingInterior.CellRootName(cell)).transform;
+                        parentTransform.SetParent(root.transform, false);
+                        cells.Add(cell, parentTransform);
+                    }
+                }
+                part.transform.SetParent(parentTransform, false);
+                if (resource.InteriorDecoration) part.layer = Physics.IgnoreRaycastLayer;
                 if (resource.Skinning == null)
                 {
                     part.AddComponent<MeshFilter>().sharedMesh = resource.Mesh;
@@ -98,6 +108,14 @@ namespace Swg.Client.Runtime.Assets.Appearances
                     renderer.receiveShadows = false;
                 }
             }
+            if (!previewLighting)
+                foreach (var sound in sounds)
+                {
+                    var emitter = new GameObject(sound.Path);
+                    emitter.transform.SetParent(root.transform, false);
+                    emitter.transform.SetLocalPositionAndRotation(sound.Transform.GetColumn(3), sound.Transform.rotation);
+                    emitter.AddComponent<WorldSoundEmitter>().Initialize(sound);
+                }
             return root;
         }
 

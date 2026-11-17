@@ -17,6 +17,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public Material Material { get; }
         public Bounds Bounds { get; }
         public int? PortalCellNumber { get; }
+        public bool InteriorDecoration { get; }
         public SkeletalMeshData Skinning { get; }
         public Texture[] AnimationFrames { get; private set; }
         public float MinimumFrameSeconds { get; private set; }
@@ -35,6 +36,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             };
             Skinning = source.Skinning;
             PortalCellNumber = source.PortalCellNumber;
+            InteriorDecoration = source.InteriorDecoration;
             Mesh.vertices = Skinning?.Vertices ?? source.Vertices;
             bool hasNormals = source.Normals != null && source.Normals.Length == source.Vertices.Length;
             if (hasNormals)
@@ -75,7 +77,9 @@ namespace Swg.Client.Runtime.Assets.Appearances
             bool hasColors = colors != null && colors.Length == source.Vertices.Length * 4;
             bool cutout = source.AlphaCutout;
             var material = factory.Create(shader, source.Diffuse, source.Tint, cutout ? (source.AlphaBlend ? 1f / 255f : .35f) : 0, hasColors, wrapMode);
+            if (material.HasProperty("_EmissionColor")) material.SetColor("_EmissionColor", source.Emission);
             if (material.HasProperty("_Fullbright")) material.SetFloat("_Fullbright", source.Fullbright ? 1 : 0);
+            if (material.HasProperty("_VertexColorAmbientOnly")) material.SetFloat("_VertexColorAmbientOnly", source.VertexColorAmbientOnly ? 1 : 0);
             if (source.AlphaBlend)
             {
                 material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);

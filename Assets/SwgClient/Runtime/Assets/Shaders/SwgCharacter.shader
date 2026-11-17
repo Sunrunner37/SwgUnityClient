@@ -2,6 +2,7 @@ Shader "SWG/Character"
 {
     Properties
     {
+        [HideInInspector] _SwgInteriorLighting("Native room lighting", Float) = 0
         _SwgPreview("UI preview lighting", Float) = 0
         _BaseMap("Diffuse", 2D) = "white" {}
         _Tint("Skin tint", Color) = (1,1,1,1)
@@ -11,6 +12,7 @@ Shader "SWG/Character"
     {
         Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" }
         HLSLINCLUDE
+        #pragma target 3.5
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
         #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
         #include "SwgShadows.hlsl"
@@ -18,6 +20,13 @@ Shader "SWG/Character"
         struct Varyings { float4 positionCS : SV_POSITION; float3 normalWS : TEXCOORD0; float2 uv : TEXCOORD1; float3 worldPosition : TEXCOORD2; half fog : TEXCOORD3; };
         TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
         CBUFFER_START(UnityPerMaterial)
+            float _SwgInteriorLighting;
+            half4 _SwgInteriorAmbient;
+            int _SwgInteriorLightCount;
+            float4 _SwgInteriorLightPositions[16];
+            float4 _SwgInteriorLightColors[16];
+            float4 _SwgInteriorLightAttenuation[16];
+            float4 _SwgInteriorLightDirections[16];
             float4 _BaseMap_ST;
             half4 _Tint;
             half _Cutoff;
@@ -51,8 +60,9 @@ Shader "SWG/Character"
                 half4 surface = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
                 clip(surface.a - _Cutoff);
                 half brightness = .42 + .58 * saturate(dot(normal, normalize(float3(-.35,.6,.8))));
-                Light light = SwgMainLight(input.worldPosition);
-                half3 lighting = max(SampleSH(normal), half3(0,0,0)) + light.color * saturate(dot(normal, light.direction)) * light.shadowAttenuation * .75;
+                half3 lighting = SwgSurfaceLighting(normal, input.worldPosition, _SwgInteriorLighting, _SwgInteriorAmbient.rgb, half3(1,1,1));
+                if (_SwgInteriorLighting > .5)
+                    lighting += SwgInteriorDirectLighting(normal, input.worldPosition, _SwgInteriorLightCount, _SwgInteriorLightPositions, _SwgInteriorLightColors, _SwgInteriorLightAttenuation, _SwgInteriorLightDirections);
                 half3 color = surface.rgb * _Tint.rgb * lerp(half3(brightness,brightness,brightness), lighting, _SwgEnvironmentLighting * (1 - _SwgPreview));
                 return half4(lerp(color, MixFog(color, input.fog), _SwgEnvironmentLighting * (1 - _SwgPreview)), 1);
             }

@@ -130,6 +130,8 @@ namespace Swg.Client.Core.Assets.Appearances
                 bool cutout = false;
                 bool alphaBlend = false;
                 bool fullbright = false;
+                Color emission = Color.black;
+                bool ambientVertexColor = false;
                 ShtFile.TextureSwitcher switcher = null;
                 TextureData[] frames = null;
                 byte[] tint = null;
@@ -154,10 +156,12 @@ namespace Swg.Client.Core.Assets.Appearances
                     }
                     else if (diffuse != null)
                         texture = Texture(loader, diffuse);
+                    ShtFile.TryGetEmission(shaderNodes, out emission);
                     tint = CharacterMaterialLoader.MainPaletteTint(loader, shaderNodes, customization, customization);
                     var effect = References(shaderBytes, "effect/", new[] { ".eft" }).FirstOrDefault();
                     cutout = effect != null && Effect(loader, effect).AlphaTestEnabled;
                     alphaBlend = effect != null && Effect(loader, effect).AlphaBlendEnabled;
+                    ambientVertexColor = effect != null && Effect(loader, effect).VertexColorAmbientOnly;
                     fullbright = effect != null && Path.GetFileName(effect).Contains("emis_full");
                     var trim = CharacterMaterialLoader.PaletteTint(loader, shaderNodes, customization, customization, "HUEB");
                     if (texture != null && trim != null && effect != null && CharacterMaterialLoader.UsesTwoColor(effect))
@@ -177,7 +181,7 @@ namespace Swg.Client.Core.Assets.Appearances
                     Warn(result, "No supported MAIN texture: " + shader);
                 }
 
-                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, AlphaBlend = alphaBlend, Fullbright = fullbright, VertexColors = colors,
+                result.Parts.Add(new MeshPart { Vertices = positions, Normals = normals, Uvs = uvs, Triangles = indices, Diffuse = texture, Tint = tint, AlphaCutout = cutout, AlphaBlend = alphaBlend, Fullbright = fullbright, Emission = emission, VertexColorAmbientOnly = ambientVertexColor, VertexColors = colors,
                     DiffuseFrames = frames, MinimumFrameSeconds = switcher?.MinimumSeconds ?? 0, MaximumFrameSeconds = switcher?.MaximumSeconds ?? 0 });
                 result.Sources.Add(new StaticMeshSource { AppearancePath = path, ShaderPath = shader, DiffusePath = diffuse });
             }

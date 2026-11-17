@@ -15,7 +15,10 @@ namespace Swg.Client.Core.Geometry
         public bool AlphaCutout;
         public bool AlphaBlend;
         public bool Fullbright;
+        public Color Emission;
+        public bool VertexColorAmbientOnly;
         public int? PortalCellNumber;
+        public bool InteriorDecoration;
         public TextureData[] DiffuseFrames;
         public float MinimumFrameSeconds;
         public float MaximumFrameSeconds;
