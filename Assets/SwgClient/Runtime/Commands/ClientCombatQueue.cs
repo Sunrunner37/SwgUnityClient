@@ -17,21 +17,23 @@ namespace Swg.Client.Runtime.Commands
             public readonly bool Executing;
             public readonly float Alpha;
             public readonly double EndsAt;
-            public Entry(uint actionCounter, ClientCommands.QueuedCommand command, bool executing, float alpha = 1, double endsAt = 0)
+            public readonly float Duration;
+            public Entry(uint actionCounter, ClientCommands.QueuedCommand command, bool executing, float alpha = 1, double endsAt = 0, float duration = 0)
             {
                 ActionCounter = actionCounter;
                 Command = command;
                 Executing = executing;
                 Alpha = alpha;
                 EndsAt = endsAt;
+                Duration = duration;
             }
         }
         readonly ClientCommands commands;
         readonly CommandCatalog catalog;
         (uint Counter, ClientCommands.QueuedCommand Command, double EndsAt, float Duration)? recovery;
         public event Action Changed;
-        /// <summary>Local action counter and realtime deadline computed from the authoritative recovery timer.</summary>
-        public event Action<uint, double> RecoveryStarted;
+        /// <summary>Local action counter and full authoritative recovery duration in seconds.</summary>
+        public event Action<uint, float> RecoveryStarted;
         public ClientCombatQueue(ClientCommands commands, CommandCatalog catalog)
         {
             this.commands = commands;
@@ -46,7 +48,7 @@ namespace Swg.Client.Runtime.Commands
             if (result.ErrorType == 0 && result.Timer > 0 && catalog.FindByCrc(command.CommandCrc)?.AddToCombatQueue == true)
             {
                 recovery = (counter, command, Time.realtimeSinceStartupAsDouble + result.Timer, result.Timer);
-                RecoveryStarted?.Invoke(counter, recovery.Value.EndsAt);
+                RecoveryStarted?.Invoke(counter, result.Timer);
             }
         }
         public bool TryGetRecovery(double now, out Entry entry)
@@ -55,7 +57,7 @@ namespace Swg.Client.Runtime.Commands
             if (!recovery.HasValue || now >= recovery.Value.EndsAt)
                 return false;
             var active = recovery.Value;
-            entry = new Entry(active.Counter, active.Command, true, Mathf.Clamp01((float)(active.EndsAt - now) / active.Duration), active.EndsAt);
+            entry = new Entry(active.Counter, active.Command, true, Mathf.Clamp01((float)(active.EndsAt - now) / active.Duration), active.EndsAt, active.Duration);
             return true;
         }
         public IEnumerable<Entry> GetEntries(double now)

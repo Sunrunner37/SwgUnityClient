@@ -121,6 +121,17 @@ namespace Swg.Client.Runtime.Networking
                 pending.Enqueue(() => { update(currentPlayer); updateCrafting?.Invoke(craftingProgress); });
         }
 
+        internal void UpdatePlayer(SwgId playerObjectSwgId, Action<CurrentPlayer> update)
+        {
+            if (!disposed)
+                pending.Enqueue(() =>
+                {
+                    // PLAY3 is public: nearby players' ghost objects must not change our status.
+                    if (SceneObjects.TryGet(playerObjectSwgId, out var ghost) && ghost.ParentSwgId == currentPlayer.SwgId)
+                        update(currentPlayer);
+                });
+        }
+
         internal void UpdateDraftDetails(uint crc, DraftSchematicDetails details)
         {
             if (!disposed)

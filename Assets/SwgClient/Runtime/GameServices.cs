@@ -154,6 +154,7 @@ namespace Swg.Client.Runtime
                 {
                     var replication = new GameObject("Game replication").AddComponent<GameReplication>();
                     replication.Initialize(context.Resolve<WorldState>(), context.Resolve<CurrentPlayer>(), context.Resolve<CraftingProgress>(), packet => connection.Send(packet));
+                    replication.gameObject.AddComponent<ClientActivity>().Initialize(context.Resolve<CurrentPlayer>(), context.Resolve<ClientCommands>());
                     UnityEngine.Object.DontDestroyOnLoad(replication.gameObject);
                     return replication;
                 }).AsSelf().SingleInstance().AutoActivate();

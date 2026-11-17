@@ -42,6 +42,19 @@ namespace Swg.Client.Tests.Editor
             finally { SynchronizationContext.SetSynchronizationContext(previous); }
         }
         [Test]
+        public void AttackEnqueuesTheExplicitTargetWithoutAServerRadialCallback()
+        {
+            var state = GameServicesForTests.CreateState(out var player);
+            string command = null;
+            SwgId target = default;
+            using var interactions = new ClientObjectInteractions(state, _ => { }, _ => { },
+                _ => Assert.Fail("Attack must use the command queue."),
+                (name, arguments, swgId) => { command = name; target = swgId; }, player, new ObjectMenuDefaults(state, player));
+            interactions.SelectMenuAction(123, ObjectMenuAction.Attack);
+            Assert.That(command, Is.EqualTo("attack"));
+            Assert.That(target, Is.EqualTo((SwgId)123));
+        }
+        [Test]
         public void MenuRequestMatchesCore3ControllerLayout()
         {
             using var stream = new MemoryStream();

@@ -35,7 +35,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
         float actionAge;
         float actionDuration;
         float actionPlaybackRate = 1;
-        double? actionDeadline;
+        float? requestedActionDuration;
         public int ActionId { get; private set; }
         public float ActionTime => actionAge;
         public float ActionPlaybackRate => actionPlaybackRate;
@@ -64,12 +64,12 @@ namespace Swg.Client.Runtime.Assets.Appearances
         public bool IsPlayingAction => actionAge < actionDuration;
         public string LastAction { get; private set; }
         public event System.Action<SkeletalAnimation> ActionStarted;
-        public bool PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction, double? endsAt = null, string performance = "")
+        public bool PlayAction(TreRuntimeAssets assets, string name, string weapon, bool reaction, float? durationSeconds = null, string performance = "")
         {
             if (UnableToAct || reaction && (actionPending || IsPlayingAction)) return false;
             if (actionLoading != null) StopCoroutine(actionLoading);
             ActionId++;
-            actionDeadline = endsAt;
+            requestedActionDuration = durationSeconds;
             actionLoading = StartCoroutine(LoadAction(assets, name, weapon, performance));
             return true;
         }
@@ -88,16 +88,16 @@ namespace Swg.Client.Runtime.Assets.Appearances
             actionAge = 0;
             actionDuration = read.Result.Where(clip => clip != null).Max(clip => clip.Duration);
             actionPlaybackRate = 1;
-            if (actionDeadline.HasValue) SetActionDeadline(actionDeadline.Value);
+            if (requestedActionDuration.HasValue) SetActionDuration(requestedActionDuration.Value);
             LastAction = name;
             ActionStarted?.Invoke(read.Result.First(clip => clip != null));
         }
-        /// <summary>Fits the remaining clip to the server recovery deadline, including time spent loading assets.</summary>
-        public void SetActionDeadline(double endsAt)
+        /// <summary>Uses the full server attack interval; asset and network latency must not accelerate the clip.</summary>
+        public void SetActionDuration(float durationSeconds)
         {
-            actionDeadline = endsAt;
+            requestedActionDuration = durationSeconds;
             if (IsPlayingAction)
-                actionPlaybackRate = (actionDuration - actionAge) / Mathf.Max(.01f, (float)(endsAt - Time.realtimeSinceStartupAsDouble));
+                actionPlaybackRate = actionDuration / Mathf.Max(.01f, durationSeconds);
         }
         public void SetCombatStance(TreRuntimeAssets assets, string weapon, bool combat)
         {
@@ -127,7 +127,7 @@ namespace Swg.Client.Runtime.Assets.Appearances
             stanceLoading = null;
             actionPending = false;
             ActionId++;
-            actionDeadline = null;
+            requestedActionDuration = null;
             actionPlaybackRate = 1;
             actionDuration = 0;
             foreach (var rig in rigs) { rig.Action = null; rig.CombatIdle = null; }

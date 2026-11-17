@@ -15,6 +15,22 @@ namespace Swg.Client.Tests.Editor
     public sealed class ObjectMenuDefaultsChecks
     {
         [Test]
+        public void LivingAttackableCreaturesDefaultToAttackButCorpsesDoNot()
+        {
+            var defaults = GameServicesForTests.CreateMenuDefaults();
+            var creature = new CreatureSceneObject { PvpStatus = 1 };
+            Assert.That(defaults.TryGetDefaultAction(creature, (ObjectTypeId)0x400, out var action), Is.True);
+            Assert.That(action, Is.SameAs(ObjectMenuAction.Attack));
+            Assert.That(action.Id, Is.EqualTo(3), "Core3 COMBAT_ATTACK");
+            creature.Posture = CreaturePosture.Dead;
+            Assert.That(defaults.TryGetDefaultAction(creature, (ObjectTypeId)0x400, out _), Is.False);
+            creature.Posture = CreaturePosture.Upright;
+            creature.PvpStatus = 0;
+            creature.Options = 8;
+            Assert.That(defaults.TryGetDefaultAction(creature, (ObjectTypeId)0x400, out action), Is.True);
+            Assert.That(action, Is.SameAs(ObjectMenuAction.ConverseStart));
+        }
+        [Test]
         public void SharedWorldMetadataAndCurrentPlayerDetermineMenuEntries()
         {
             using var assets = new TreRuntimeAssets(ClientSettings.From(Path.Combine(Application.dataPath, "../client.ini")));

@@ -62,6 +62,11 @@ namespace Swg.Client.Runtime.Networking
 
         internal bool TryGetDefaultAction(SceneObject sceneObject, ObjectTypeId objectType, out ObjectMenuAction action)
         {
+            if (objectType.IsCreature() && sceneObject is CreatureSceneObject target && target.CanAttack && target.Posture != CreaturePosture.Dead)
+            {
+                action = ObjectMenuAction.Attack;
+                return true;
+            }
             if (sceneObject is TangibleSceneObject tangible && tangible.CanConverse)
             {
                 action = ObjectMenuAction.ConverseStart;

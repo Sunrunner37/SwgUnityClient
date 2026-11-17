@@ -44,6 +44,16 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
 
         protected override void Handle(BaselinesPacket packet)
         {
+            if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 3)
+            {
+                var playerReader = new ByteReader(packet.Payload);
+                playerReader.U16();
+                var playerFlagsUpdate = PlayerView3.ReadBaseline(playerReader);
+                replication.Commit(packet.SwgId, new ReplicationLifecycleUpdate(objectType: (ReplicatedObjectType)packet.ObjectType));
+                replication.UpdatePlayer(packet.SwgId, playerFlagsUpdate);
+                return;
+            }
+
             if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 8)
             {
                 var waypointReader = new ByteReader(packet.Payload);

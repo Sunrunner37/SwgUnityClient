@@ -232,7 +232,7 @@ namespace Swg.Client.Tests.Editor
                 var animation = root.AddComponent<CharacterAnimation>();
                 animation.GetBones(skeleton);
                 await Run(animation.LoadAction(assets, "attack_mid_center_0", ""));
-                animation.SetActionDeadline(Time.realtimeSinceStartupAsDouble + seconds);
+                animation.SetActionDuration(seconds);
                 Assert.That(animation.ActionPlaybackRate, Is.EqualTo(clip.Duration / seconds).Within(.01f));
                 animation.Advance(0, seconds * .5f);
                 Assert.That(animation.ActionTime, Is.EqualTo(clip.Duration * .5f).Within(.01f));
@@ -243,7 +243,7 @@ namespace Swg.Client.Tests.Editor
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }
         [Test]
-        public async Task LateServerDurationRetimesOnlyTheRemainingClip()
+        public async Task LateServerDurationDoesNotCompressTheRemainingClip()
         {
             using var assets = new TreRuntimeAssets(Settings());
             await assets.Ready;
@@ -257,10 +257,10 @@ namespace Swg.Client.Tests.Editor
                 await Run(animation.LoadAction(assets, "attack_mid_center_0", ""));
                 animation.Advance(0, clip.Duration * .25f);
                 float before = animation.ActionTime;
-                animation.SetActionDeadline(Time.realtimeSinceStartupAsDouble + .5);
+                animation.SetActionDuration(.5f);
                 Assert.That(animation.ActionTime, Is.EqualTo(before), "A late timer must not restart the clip.");
                 animation.Advance(0, .25f);
-                Assert.That(animation.ActionTime, Is.EqualTo(clip.Duration * .625f).Within(.01f));
+                Assert.That(animation.ActionTime, Is.EqualTo(clip.Duration * .75f).Within(.01f));
                 animation.Advance(0, .3f);
                 Assert.That(animation.IsPlayingAction, Is.False);
                 int actionId = animation.ActionId;
@@ -271,7 +271,7 @@ namespace Swg.Client.Tests.Editor
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }
         [Test]
-        public async Task RecoveryDeadlineSurvivesPendingAssetLoading()
+        public async Task AssetLoadingDelayDoesNotAccelerateServerTimedAnimation()
         {
             using var assets = new TreRuntimeAssets(Settings());
             await assets.Ready;
@@ -284,12 +284,12 @@ namespace Swg.Client.Tests.Editor
                 animation.GetBones(skeleton);
                 var load = animation.LoadAction(assets, "attack_mid_center_0", "");
                 Assert.That(load.MoveNext(), Is.True);
-                double endsAt = Time.realtimeSinceStartupAsDouble + .5;
-                animation.SetActionDeadline(endsAt);
+                animation.SetActionDuration(.5f);
+                await Task.Delay(600); // The old deadline would already have elapsed before loading finished.
                 var wait = (CustomYieldInstruction)load.Current;
                 while (wait.keepWaiting) await Task.Delay(10);
                 await Run(load);
-                Assert.That(animation.ActionPlaybackRate, Is.GreaterThanOrEqualTo(clip.Duration / .5f));
+                Assert.That(animation.ActionPlaybackRate, Is.EqualTo(clip.Duration / .5f).Within(.001f));
                 animation.Advance(0, .51f);
                 Assert.That(animation.IsPlayingAction, Is.False);
             }

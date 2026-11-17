@@ -9,6 +9,7 @@ namespace Swg.Client.Runtime.Networking
     {
         static readonly Dictionary<byte, ObjectMenuAction> actions = new Dictionary<byte, ObjectMenuAction>();
         public static readonly ObjectMenuAction VehicleEnterExit = Define(205, "", 1);
+        public static readonly ObjectMenuAction Attack = Define(3, "@ui_radial:combat_attack", 1);
         public static readonly ObjectMenuAction Examine = Define(7, "@ui_radial:examine", 1);
         public static readonly ObjectMenuAction ConverseStart = Define(25, "@ui_radial:converse_start", 1);
         public static readonly ObjectMenuAction ConverseStop = Define(28, "@ui_radial:converse_stop", 1);

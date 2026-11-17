@@ -16,6 +16,7 @@ using UnityEngine.UI;
 namespace Swg.Client.Runtime.UI.Group
 {
     /// <summary>Prefab-backed group roster, shared HAM rendering, nameplates, and member context actions.</summary>
+    [DefaultExecutionOrder(210)] // Nameplate suppression follows this frame's world targeting.
     public sealed class GroupHud : MonoBehaviour, IUiPrefabSource
     {
         public enum MemberAction { Trade, Duel, Examine, ImageDesign, Kick, Follow, Teach }
@@ -81,6 +82,8 @@ namespace Swg.Client.Runtime.UI.Group
                 state.SceneObjects.TryGet<CreatureSceneObject>(member.SwgId, out var creature);
                 ManagedSceneObject.TryGetObjectFrom(member.SwgId, out var body);
                 row.Show(member, group.LeaderSwgId == member.SwgId, creature, body, playerBody == null ? null : playerBody.transform, worldCamera);
+                if (member.SwgId == targeting.SelectedSwgId || member.SwgId == targeting.HoveredSwgId)
+                    row.worldName.gameObject.SetActive(false);
             }
             if (menuOverlay.activeSelf && (!group.Contains(menuTarget) || UiInput.TryConsumeEscape())) CloseMenu();
         }

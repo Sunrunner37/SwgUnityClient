@@ -93,8 +93,8 @@ namespace Swg.Client.Tests.Editor
             using var setup = new QueueSetup();
             int notifications = 0;
             uint receivedCounter = 0;
-            double receivedDeadline = 0;
-            setup.Combat.RecoveryStarted += (counter, deadline) => { notifications++; receivedCounter = counter; receivedDeadline = deadline; };
+            float receivedDuration = 0;
+            setup.Combat.RecoveryStarted += (counter, duration) => { notifications++; receivedCounter = counter; receivedDuration = duration; };
             setup.Complete(setup.Commands.Enqueue("spatialChatInternal"), 2);
             setup.Complete(setup.Commands.Enqueue("attack"), 2, 1);
             setup.Complete(setup.Commands.Enqueue("attack"), 0);
@@ -104,8 +104,9 @@ namespace Swg.Client.Tests.Editor
             Assert.That(notifications, Is.EqualTo(1));
             Assert.That(receivedCounter, Is.EqualTo(actionCounter));
             Assert.That(setup.Combat.TryGetRecovery(Time.realtimeSinceStartupAsDouble, out var recovery), Is.True);
-            Assert.That(recovery.EndsAt, Is.EqualTo(receivedDeadline));
-            Assert.That(receivedDeadline - Time.realtimeSinceStartupAsDouble, Is.InRange(1.4, 1.5));
+            Assert.That(recovery.Duration, Is.EqualTo(receivedDuration));
+            Assert.That(receivedDuration, Is.EqualTo(1.5f));
+            Assert.That(recovery.EndsAt - Time.realtimeSinceStartupAsDouble, Is.InRange(1.4, 1.5));
         }
         [TestCase(.5f)]
         [TestCase(5f)]

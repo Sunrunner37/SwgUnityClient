@@ -56,7 +56,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -86,7 +86,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: ac17d06d86d831349ad5f0de15712ed4, type: 2}
   spriteBorder: {x: 18, y: 20, z: 18, w: 11}
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -290,7 +290,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: a3e992fb20fd4014e93b17d70912f9c8, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -405,7 +405,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 1da8f42c05e46d94c970f18e7793aaa7, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -466,7 +466,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.048039217, g: 0.29509804, b: 0.034313727, a: 1}
@@ -496,7 +496,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -557,7 +557,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 6706d44018b87964c8dddfc0ba76febf, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -645,7 +645,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.84313726, b: 0.09803922, a: 1}
@@ -675,7 +675,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -873,7 +873,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -900,7 +900,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 367ee2fa873072c4fbc75bb8c6f3299b, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -999,7 +999,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -1026,7 +1026,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 23eca58e2e0c4b044a2a5c8db1f4d6a0, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1080,7 +1080,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71e1fce9d4556a74fa58122e1a013190, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Hud.HamBars
   currentBars:
   - {fileID: 7332036282027250373}
@@ -1150,7 +1150,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.25490198, b: 1, a: 1}
@@ -1180,7 +1180,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1219,6 +1219,8 @@ RectTransform:
   - {fileID: 1808873867225862233}
   - {fileID: 2756305691166178453}
   - {fileID: 3042455713225689784}
+  - {fileID: 7563189063214141432}
+  - {fileID: 6790413298502938429}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1236,7 +1238,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd446f6c66079c14dbb358a6741d7d6a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Theming.UiThemeBinding
   theme: {fileID: 11400000, guid: a7c49d45fbf5e2b458692759e2080452, type: 2}
   colors:
@@ -1284,6 +1286,9 @@ MonoBehaviour:
   - text: {fileID: 5746888894811205431}
     sizeOffset: 0
   inputs: []
+  surfaces: []
+  effects: []
+  children: []
   onApplied:
     m_PersistentCalls:
       m_Calls: []
@@ -1297,7 +1302,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46358685d23a4914a932563f88c07f90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Targeting.TargetHud
   panel: {fileID: 5842516660278971449}
   targetName: {fileID: 5746888894811205431}
@@ -1305,6 +1310,8 @@ MonoBehaviour:
   hover: {fileID: 2756305691166178453}
   directionArrow: {fileID: 500149335212419195}
   ham: {fileID: 8688567246806035068}
+  selectedNameplate: {fileID: 5304158291947377280}
+  hoverNameplate: {fileID: 9175410611542291013}
   posture: {fileID: 6196129624181191238}
   postureIcons:
   - posture: 0
@@ -1394,7 +1401,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.32254902, g: 0.04117647, b: 0.02745098, a: 1}
@@ -1424,7 +1431,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1485,7 +1492,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.048039217, g: 0.08921569, b: 0.35, a: 1}
@@ -1515,7 +1522,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1616,7 +1623,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
@@ -1643,7 +1650,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1658,7 +1665,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -1719,7 +1726,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.92156863, g: 0.11764706, b: 0.078431375, a: 1}
@@ -1749,7 +1756,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1811,7 +1818,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
@@ -1838,7 +1845,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -1853,7 +1860,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -1952,7 +1959,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -1979,7 +1986,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 6e5fc39625e41cf4da8084172825d4f9, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2040,7 +2047,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2067,7 +2074,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 553618ec34249394db2c89fd49210f49, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2128,7 +2135,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2155,7 +2162,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 553618ec34249394db2c89fd49210f49, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2216,7 +2223,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2243,7 +2250,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: e9b4b7a398f80234e82c62df59659a71, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2304,7 +2311,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -2334,7 +2341,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2436,7 +2443,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
@@ -2463,7 +2470,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2478,7 +2485,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -2540,7 +2547,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
@@ -2567,7 +2574,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2582,7 +2589,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -2644,7 +2651,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
@@ -2671,7 +2678,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2686,7 +2693,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -2798,7 +2805,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2825,7 +2832,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: e9b4b7a398f80234e82c62df59659a71, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2886,7 +2893,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -2913,7 +2920,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 067e4edcda93c6840a01bd3e403d416b, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -2974,7 +2981,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -3001,7 +3008,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 4a214215f586288478b455e9f4144e8e, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3062,7 +3069,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -3089,7 +3096,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 553618ec34249394db2c89fd49210f49, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3188,7 +3195,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -3215,7 +3222,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: c305685c3e6e51d48b88d7e3b77f2a4d, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3277,7 +3284,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
@@ -3304,7 +3311,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3319,7 +3326,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 0.13725491, g: 0.47058824, b: 1, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -3380,7 +3387,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -3410,7 +3417,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3470,7 +3477,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3609,7 +3616,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
@@ -3636,7 +3643,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 70ed78ecde16a3a4cab1197d82795b78, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3651,7 +3658,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
   m_EffectColor: {r: 1, g: 0.78431374, b: 0.1764706, a: 1}
   m_EffectDistance: {x: 1, y: -1}
@@ -3712,7 +3719,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
@@ -3742,7 +3749,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 08ca39ac23fd01a48935fe30f7976c84, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3803,7 +3810,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -3830,7 +3837,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: e9b4b7a398f80234e82c62df59659a71, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -3891,7 +3898,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.8392157, b: 0.9843137, a: 1}
@@ -3918,11 +3925,124 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec37ae9c6ea494db51a7858c802809, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.Assets.Tre.TreTextureBinding
   asset: {fileID: 11400000, guid: 2712289f81d93b745a5d918b176849c4, type: 2}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   materialProperty: _BaseMap
+--- !u!1001 &306558026329344263
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1042465095439056197}
+    m_Modifications:
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8380583123406602135, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Name
+      value: Hover nameplate
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+--- !u!224 &6790413298502938429 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+  m_PrefabInstance: {fileID: 306558026329344263}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9175410611542291013 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8868862760196520770, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+  m_PrefabInstance: {fileID: 306558026329344263}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39900d3b281b64f418aaec7f5df13923, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Targeting.OverheadNameplate
 --- !u!1001 &1712185347189574885
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4037,10 +4157,123 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3d52345731f9d024dbdd3ad8dcca806b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Navigation.NavigationArrow
 --- !u!224 &3042455713225689784 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4465915900254602845, guid: 668d06ebea5174f4e86aa0cdffdb6dc9, type: 3}
   m_PrefabInstance: {fileID: 1712185347189574885}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3641336692109175234
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1042465095439056197}
+    m_Modifications:
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 52
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8380583123406602135, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+      propertyPath: m_Name
+      value: Selected nameplate
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+--- !u!114 &5304158291947377280 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8868862760196520770, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+  m_PrefabInstance: {fileID: 3641336692109175234}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39900d3b281b64f418aaec7f5df13923, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Swg.Client::Swg.Client.Runtime.UI.Targeting.OverheadNameplate
+--- !u!224 &7563189063214141432 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6520499830068667962, guid: d01958f4332d39e4283ad8cf5cbb3e9a, type: 3}
+  m_PrefabInstance: {fileID: 3641336692109175234}
   m_PrefabAsset: {fileID: 0}

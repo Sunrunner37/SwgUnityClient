@@ -81,6 +81,8 @@ namespace Swg.Client.Runtime.Networking
             {
                 if (menuDefaults.CanDestroy(sceneObject)) DestroyRequested?.Invoke(swgId);
             }
+            else if (radialId == ObjectMenuAction.Attack.Id)
+                enqueueCommand("attack", "", swgId);
             else if (radialId == ObjectMenuAction.Open.Id)
                 enqueueCommand("openContainer", "", swgId);
             else if (radialId == ObjectMenuAction.ConverseStart.Id)

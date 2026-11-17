@@ -41,6 +41,12 @@ namespace Swg.Client.Core.Networking.Game.Handlers.Replication
 
         protected override void Handle(DeltasPacket packet)
         {
+            if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 3)
+            {
+                replication.UpdatePlayer(packet.SwgId, PlayerView3.ReadDelta(new ByteReader(packet.Payload)));
+                return;
+            }
+
             if (packet.ObjectType == (uint)ReplicatedObjectType.Player && packet.View == 8)
             {
                 replication.UpdatePlayer(PlayerView8.ReadDelta(new ByteReader(packet.Payload)));

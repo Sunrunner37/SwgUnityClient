@@ -25,21 +25,21 @@ namespace Swg.Client.Runtime.World.SceneObjects
         bool awaitingDuration;
         void Play(string name, string weapon, bool reaction)
         {
-            double? endsAt = null;
+            float? duration = null;
             uint? counter = null;
             if (!reaction && queue != null && queue.TryGetRecovery(Time.realtimeSinceStartupAsDouble, out var recovery) && recovery.ActionCounter != appliedRecovery)
             {
-                endsAt = recovery.EndsAt;
+                duration = recovery.Duration;
                 counter = recovery.ActionCounter;
             }
-            if (!animation.PlayAction(assets, name, weapon, reaction, endsAt, creature.PerformanceType > 0 ? creature.PerformanceAnimation : "")) return;
-            awaitingDuration = !reaction && queue != null && !endsAt.HasValue;
+            if (!animation.PlayAction(assets, name, weapon, reaction, duration, creature.PerformanceType > 0 ? creature.PerformanceAnimation : "")) return;
+            awaitingDuration = !reaction && queue != null && !duration.HasValue;
             if (counter.HasValue) appliedRecovery = counter;
         }
-        void OnRecoveryStarted(uint counter, double endsAt)
+        void OnRecoveryStarted(uint counter, float duration)
         {
             if (!awaitingDuration) return;
-            animation.SetActionDeadline(endsAt);
+            animation.SetActionDuration(duration);
             appliedRecovery = counter;
             awaitingDuration = false;
         }

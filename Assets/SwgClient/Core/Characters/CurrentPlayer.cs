@@ -27,6 +27,7 @@ namespace Swg.Client.Core.Characters
         }
         public CharacterSheetData CharacterSheet { get; private set; } = new CharacterSheetData();
         public WeaponRanges WeaponRanges { get; internal set; }
+        public bool IsAfk { get; internal set; }
         readonly Dictionary<uint, double> buffs = new Dictionary<uint, double>();
         public IReadOnlyDictionary<uint, double> Buffs => buffs;
         public event Action BuffsChanged;
@@ -120,6 +121,7 @@ namespace Swg.Client.Core.Characters
             BuffsChanged?.Invoke();
             CharacterSheet = new CharacterSheetData();
             WeaponRanges = default;
+            IsAfk = false;
             experience.Clear();
             draftSchematics.Clear();
             draftDetails.Clear();
